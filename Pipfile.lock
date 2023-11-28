@@ -36,8 +36,8 @@
             "hashes": [
                 "sha256:299db8628cc73b237fc1cc57d3c2948faa0756e2a58b6194b5bf81dc2081f1e3"
             ],
-            "markers": "'linux' in sys_platform",
-            "version": "==1.6.1"
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==0.18.2"
         },
         "lxml": {
             "hashes": [
