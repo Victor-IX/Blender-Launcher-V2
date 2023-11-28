@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin
 
-import cchardet
 import lxml
 from bs4 import BeautifulSoup, SoupStrainer
 from modules._platform import get_platform, set_locale
