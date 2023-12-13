@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication
 from windows.main_window import BlenderLauncher
 from windows.update_window import BlenderLauncherUpdater
 
-version = "1.16.1"
+version = "1.16.2"
 
 # Setup logging config
 _format = "%(asctime)s - %(message)s"
