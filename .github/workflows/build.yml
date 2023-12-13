@@ -28,8 +28,10 @@ jobs:
           echo "Zipping to Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip"
           cd ./dist/release/
           zip Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip "./Blender Launcher"
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Archive zipfile
+        uses: actions/upload-artifact@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./dist/release/Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip
+          name: Ubuntu-build
+          files: dist/release/Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip
+          retention-days: 4
