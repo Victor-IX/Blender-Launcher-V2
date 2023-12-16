@@ -8,9 +8,11 @@ class BaseMenuWidget(QMenu):
 
     def __init__(self, title=""):
         super().__init__(title=title)
-        self.setWindowFlags(self.windowFlags() | Qt.NoDropShadowWindowHint)
+        self.setWindowFlags(self.windowFlags())
         self.action_height = BaseMenuWidget.action_height
-        self.screen_size = QApplication.desktop().screenGeometry(self)
+        desktop = QApplication.desktop()
+        assert desktop is not None
+        self.screen_size = desktop.screenGeometry(self)
         self.setToolTipsVisible(True)
 
     def trigger(self):
