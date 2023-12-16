@@ -11,5 +11,5 @@ class FileDialogWindow(QFileDialog):
             QFileDialog.ShowDirsOnly |
             QFileDialog.HideNameFilterDetails |
             QFileDialog.DontUseCustomDirectoryIcons)
-        return self.getExistingDirectory(
+        return super().getExistingDirectory(
             parent, title, directory, options)
