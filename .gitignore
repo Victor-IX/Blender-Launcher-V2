@@ -111,3 +111,4 @@ Blender Launcher.ini
 log_file.txt
 Blender-Launcher.code-workspace
 .pdm-python
+__pypackages__
