@@ -80,7 +80,7 @@ class GeneralTabWidget(SettingsFormWidget):
         self.NewBuildsCheckFrequency.setMaximum(24 * 60)
         self.NewBuildsCheckFrequency.setMinimum(120)
         self.NewBuildsCheckFrequency.setValue(
-            get_new_builds_check_frequency() / 60)
+            round(get_new_builds_check_frequency() / 60))
         self.NewBuildsCheckFrequency.editingFinished.connect(
             self.new_builds_check_frequency_changed)
 
