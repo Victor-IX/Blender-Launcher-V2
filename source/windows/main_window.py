@@ -162,7 +162,7 @@ class BlenderLauncher(QMainWindow, BaseWindow, Ui_MainWindow):
 
     def set_library_folder(self):
         library_folder = get_cwd().as_posix()
-        new_library_folder = FileDialogWindow().getExistingDirectory(
+        new_library_folder = FileDialogWindow().get_directory(
             self, "Select Library Folder", library_folder)
 
         if (new_library_folder):
