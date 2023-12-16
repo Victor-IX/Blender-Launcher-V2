@@ -31,6 +31,10 @@ MANIFEST
 *.manifest
 *.spec
 
+# PDM Stuff
+__pypackages__
+.pdm-python
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -105,10 +109,8 @@ docs/site
 
 # VS Code
 .vscode
+Blender-Launcher.code-workspace
 
 # Application related settings
 Blender Launcher.ini
 log_file.txt
-Blender-Launcher.code-workspace
-.pdm-python
-__pypackages__
