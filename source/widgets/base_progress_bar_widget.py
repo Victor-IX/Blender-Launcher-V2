@@ -18,8 +18,8 @@ class BaseProgressBarWidget(QProgressBar):
         total = total / 1048576
 
         # Update appearance
-        self.setMaximum(total)
-        self.setValue(obtained)
+        self.setMaximum(int(round(total)))
+        self.setValue(int(round(obtained)))
 
         # Repaint and call signal
         self.repaint()

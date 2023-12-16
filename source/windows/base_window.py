@@ -86,7 +86,7 @@ class BaseWindow(QWidget):
                 x = (size.width() - self.width()) * 0.5
                 y = (size.height() - self.height()) * 0.5
 
-            self.move(x, y)
+            self.move(int(round(x)), int(round(y)))
             event.accept()
 
     def _destroyed(self):
