@@ -79,14 +79,14 @@ class BaseWindow(QWidget):
                 parent.close_signal.connect(self.hide)
 
             if self.parent.isVisible():
-                x = parent.x() + (parent.width() - self.width()) * 0.5
-                y = parent.y() + (parent.height() - self.height()) * 0.5
+                x = parent.x() + (parent.width() - round(self.width()) * 0.5)
+                y = parent.y() + (parent.height() - round(self.height()) * 0.5)
             else:
                 size = parent.app.screens()[0].size()
-                x = (size.width() - self.width()) * 0.5
-                y = (size.height() - self.height()) * 0.5
+                x = (size.width() - round(self.width()) * 0.5)
+                y = (size.height() - round(self.height()) * 0.5)
 
-            self.move(int(round(x)), int(round(y)))
+            self.move(x, y)
             event.accept()
 
     def _destroyed(self):

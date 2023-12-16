@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QCursor
-from PyQt5.QtWidgets import QDesktopWidget, QMenu
+from PyQt5.QtWidgets import QApplication, QMenu
 
 
 class BaseMenuWidget(QMenu):
@@ -10,7 +10,7 @@ class BaseMenuWidget(QMenu):
         super().__init__(title=title)
         self.setWindowFlags(self.windowFlags() | Qt.NoDropShadowWindowHint)
         self.action_height = BaseMenuWidget.action_height
-        self.screen_size = QDesktopWidget().screenGeometry()
+        self.screen_size = QApplication.desktop().screenGeometry(self)
         self.setToolTipsVisible(True)
 
     def trigger(self):
@@ -25,7 +25,7 @@ class BaseMenuWidget(QMenu):
         reverse = False
 
         cursor = QCursor.pos()
-        cursor.setX(cursor.x() - self.action_height * 0.5)
+        cursor.setX(cursor.x() - round(self.action_height * 0.5))
 
         if cursor.y() > (self.screen_size.height() - menu_height):
             reverse = True
@@ -34,7 +34,7 @@ class BaseMenuWidget(QMenu):
             actions.reverse()
             cursor.setY(cursor.y() - actions_count * self.action_height + 15)
         else:
-            cursor.setY(cursor.y() - self.action_height * 0.5)
+            cursor.setY(cursor.y() - round(self.action_height * 0.5))
 
         i = 0
 
