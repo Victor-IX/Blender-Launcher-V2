@@ -171,6 +171,7 @@ class DownloadWidget(BaseBuildWidget):
     def init_template_installer(self, dist):
         self.build_state_widget.setExtract(False)
         self.build_dir = dist
+        print("init_template_installer Build Dir" + self.build_dir)
 
         if get_install_template():
             self.template_installer = TemplateInstaller(
