@@ -166,6 +166,7 @@ class DownloadWidget(BaseBuildWidget):
         self.extractor.finished.connect(self.init_template_installer)
         self.extractor.start()
         self.build_state_widget.setExtract()
+        self.extractor.wait()
 
     def init_template_installer(self, dist):
         self.build_state_widget.setExtract(False)
@@ -200,15 +201,18 @@ class DownloadWidget(BaseBuildWidget):
 
     def download_get_info(self):
         self.state = DownloadState.READING
-        if self.parent.platform == "Linux":
-            archive_name = Path(self.build_info.link).with_suffix("").stem
-        elif self.parent.platform in {"Windows", "macOS"}:
-            archive_name = Path(self.build_info.link).stem
+        if self.build_dir is not None:
+            if self.parent.platform == "Linux":
+                archive_name = Path(self.build_info.link).with_suffix("").stem
+            elif self.parent.platform in {"Windows", "macOS"}:
+                archive_name = Path(self.build_info.link).stem
 
-        self.build_info_reader = BuildInfoReader(
-            self.build_dir, archive_name=archive_name)
-        self.build_info_reader.finished.connect(self.download_rename)
-        self.build_info_reader.start()
+            self.build_info_reader = BuildInfoReader(
+                self.build_dir, archive_name=archive_name)
+            self.build_info_reader.finished.connect(self.download_rename)
+            self.build_info_reader.start()
+        else:
+            print("Error: self.build_dir is None")
 
     def download_rename(self, build_info):
         self.state = DownloadState.RENAMING
@@ -230,7 +234,7 @@ class DownloadWidget(BaseBuildWidget):
             name = f"{self.subversionLabel.text()} {self.branchLabel.text} {self.build_info.commit_time}"
             self.parent.show_message(
                 f"Blender {name} download finished!",
-                type=MessageType.DOWNLOADFINISHED)
+                message_type=MessageType.DOWNLOADFINISHED)
             self.destroy()
 
         self.build_state_widget.setExtract(False)

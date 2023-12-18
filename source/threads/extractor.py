@@ -22,6 +22,11 @@ class Extractor(QThread):
         self.progress_changed.emit(0, 0, "Extracting")
         self.started.emit()
 
+        try:
+            self._extract()
+        except Exception as e:
+            self.finished.emit(None)
+
         suffixes = self.source.suffixes
 
         if suffixes[-1] == ".zip":
