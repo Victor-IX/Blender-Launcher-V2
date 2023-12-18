@@ -17,7 +17,7 @@ class Extractor(QThread):
         self.manager = manager
         self.source = Path(source)
         self.dist = Path(dist)
-        print ("extractor self.dist" + self.dist)
+        print ("extractor self.dist: " + str(self.dist))
 
     def run(self):
         self.progress_changed.emit(0, 0, "Extracting")
