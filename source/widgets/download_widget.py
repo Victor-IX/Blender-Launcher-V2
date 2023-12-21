@@ -204,18 +204,16 @@ class DownloadWidget(BaseBuildWidget):
 
     def download_get_info(self):
         self.state = DownloadState.READING
-        if self.build_dir is not None:
-            if self.parent.platform == "Linux":
-                archive_name = Path(self.build_info.link).with_suffix("").stem
-            elif self.parent.platform in {"Windows", "macOS"}:
-                archive_name = Path(self.build_info.link).stem
+        if self.parent.platform == "Linux":
+            archive_name = Path(self.build_info.link).with_suffix("").stem
+        elif self.parent.platform in {"Windows", "macOS"}:
+            archive_name = Path(self.build_info.link).stem
 
-            self.build_info_reader = BuildInfoReader(
-                self.build_dir, archive_name=archive_name)
-            self.build_info_reader.finished.connect(self.download_rename)
-            self.build_info_reader.start()
-        else:
-            print("Error: self.build_dir is None")
+        self.build_info_reader = BuildInfoReader(
+            self.build_dir, archive_name=archive_name)
+        self.build_info_reader.finished.connect(self.download_rename)
+        self.build_info_reader.start()
+
 
     def download_rename(self, build_info):
         self.state = DownloadState.RENAMING
