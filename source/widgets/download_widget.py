@@ -1,4 +1,5 @@
 import re
+import time
 from enum import Enum
 from pathlib import Path
 
@@ -166,12 +167,13 @@ class DownloadWidget(BaseBuildWidget):
         self.extractor.finished.connect(self.init_template_installer)
         self.extractor.start()
         self.build_state_widget.setExtract()
-        self.extractor.wait()
+
+        # We need this for some reason to prevent the GUI from crashing
+        time.sleep(0.02)
 
     def init_template_installer(self, dist):
         self.build_state_widget.setExtract(False)
         self.build_dir = dist
-        print("init_template_installer Build Dir: " + str(self.build_dir))
 
         if get_install_template():
             self.template_installer = TemplateInstaller(

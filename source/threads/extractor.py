@@ -17,7 +17,6 @@ class Extractor(QThread):
         self.manager = manager
         self.source = Path(source)
         self.dist = Path(dist)
-        print ("Extractor self.dist: " + str(self.dist))
 
     def run(self):
         self.progress_changed.emit(0, 0, "Extracting")
@@ -38,7 +37,6 @@ class Extractor(QThread):
                     extracted_size, uncompress_size, "Extracting")
 
             zf.close()
-            print ("Extractor emit dist: " + str(self.dist / folder))
             self.finished.emit(self.dist / folder)
         elif suffixes[-2] == ".tar":
             tar = tarfile.open(self.source)
