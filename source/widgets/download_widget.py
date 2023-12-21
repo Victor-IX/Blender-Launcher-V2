@@ -214,7 +214,6 @@ class DownloadWidget(BaseBuildWidget):
         self.build_info_reader.finished.connect(self.download_rename)
         self.build_info_reader.start()
 
-
     def download_rename(self, build_info):
         self.state = DownloadState.RENAMING
         new_name = f"blender-{build_info.subversion}+{build_info.branch}.{build_info.build_hash}"
