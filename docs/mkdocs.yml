@@ -53,6 +53,6 @@ plugins:
       lang: en
 extra_css:
     - stylesheets/extra.css
-repo_url: https://github.com/Victor-IX/Blender-Launcher-V2-V2
+repo_url: https://github.com/Victor-IX/Blender-Launcher-V2
 edit_uri: ""
 copyright: Copyright &copy; 2022 Victor Chedeville │ Blender Launcher GPL-3.0 License │ Version 1.16.1

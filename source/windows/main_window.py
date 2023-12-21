@@ -781,7 +781,7 @@ class BlenderLauncher(QMainWindow, BaseWindow, Ui_MainWindow):
                 self.NewVersionButton.show()
                 self.show_message(
                     "New version of Blender Launcher is available!",
-                    latest_tag)
+                    value=latest_tag)
 
             self.latest_tag = latest_tag
 

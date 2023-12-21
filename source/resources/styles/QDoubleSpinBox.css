@@ -1,0 +1,14 @@
+QDoubleSpinBox {
+    background-color: #1F1F1F;
+    color: #E6E6E6;
+    border: 1px solid #444444;
+    padding: 1px;
+}
+
+QDoubleSpinBox:disabled {
+    color: #828282;
+}
+
+QDoubleSpinBox[text=\"\"] {
+    color: #E6E6E6;
+}

@@ -6,6 +6,7 @@ from modules.settings import (
     get_install_template,
     get_launch_blender_no_console,
     get_mark_as_favorite,
+    get_minimum_blender_stable_version,
     get_platform,
     get_quick_launch_key_seq,
     set_bash_arguments,
@@ -14,17 +15,25 @@ from modules.settings import (
     set_install_template,
     set_launch_blender_no_console,
     set_mark_as_favorite,
+    set_minimum_blender_stable_version,
     set_quick_launch_key_seq,
 )
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QComboBox, QHBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QDoubleSpinBox, QHBoxLayout, QLineEdit
 from widgets.settings_form_widget import SettingsFormWidget
 
 
 class BlenderBuildsTabWidget(SettingsFormWidget):
     def __init__(self):
         super().__init__()
+
+        # Minimum stable blender download version (this is mainly for cleanliness and speed)
+        self.MinStableBlenderVer = QDoubleSpinBox()
+        self.MinStableBlenderVer.setMinimum(2.4)
+        self.MinStableBlenderVer.setValue(get_minimum_blender_stable_version())
+        self.MinStableBlenderVer.setSingleStep(0.1)
+        self.MinStableBlenderVer.valueChanged.connect(set_minimum_blender_stable_version)
 
         # Mark As Favorite
         self.MarkAsFavorite = QComboBox()
@@ -81,6 +90,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             self.update_quick_launch_key_seq)
 
         # Layout
+        self._addRow("Minimum stable build to scrape", self.MinStableBlenderVer)
         self._addRow("Mark As Favorite", self.MarkAsFavorite)
         self._addRow("Install Template", self.InstallTemplate)
 
