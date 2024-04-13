@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Blender Launcher
+GenericName=Launcher
+Exec=$HOME/.local/bin/blenderlauncher
+Terminal=false
+Type=Application
+

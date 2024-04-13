@@ -5,10 +5,13 @@
 ## Installing Blender Launcher
 
 1. Download latest release for your OS from [releases page](https://github.com/DotBow/Blender-Launcher/releases/latest)
-1. Unpack `Blender Launcher.exe` file and place it somewhere on your drive
-1. Run `Blender Launcher.exe` file
-1. If this is a first launch, program will ask for choosing [Library Folder](library_folder.md)
-1. Enjoy!
+2. Unpack `Blender Launcher.exe` file and place it somewhere on your drive
+3. Run `Blender Launcher.exe` file
+4. If this is a first launch, program will ask for choosing [Library Folder](library_folder.md)
+5. Enjoy!
+
+### For Archlinux Users
+Install from AUR [blender-launcher-bin](https://aur.archlinux.org/packages/blender-launcher-bin)
 
 ## Updating Blender Launcher
 
