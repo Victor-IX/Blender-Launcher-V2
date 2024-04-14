@@ -3,5 +3,6 @@ Name=Blender Launcher
 GenericName=Launcher
 Exec=/usr/bin/blenderlauncher
 Terminal=false
+Icon=blenderlauncher
 Type=Application
 
