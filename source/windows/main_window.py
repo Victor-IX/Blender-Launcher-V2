@@ -259,6 +259,7 @@ class BlenderLauncher(BaseWindow):
         self.TabWidget.setCornerWidget(self.corner_settings_widget)
         self.CentralLayout.addWidget(self.TabWidget)
 
+        # Library tab
         self.update_system_titlebar(get_use_system_titlebar())
         self.LibraryTab = QWidget()
         self.LibraryTabLayout = QVBoxLayout()
@@ -266,12 +267,14 @@ class BlenderLauncher(BaseWindow):
         self.LibraryTab.setLayout(self.LibraryTabLayout)
         self.TabWidget.addTab(self.LibraryTab, "Library")
 
+        # Downloads tab
         self.DownloadsTab = QWidget()
         self.DownloadsTabLayout = QVBoxLayout()
         self.DownloadsTabLayout.setContentsMargins(0, 0, 0, 0)
         self.DownloadsTab.setLayout(self.DownloadsTabLayout)
         self.TabWidget.addTab(self.DownloadsTab, "Downloads")
 
+        # User tab
         self.UserTab = QWidget()
         self.UserTabLayout = QVBoxLayout()
         self.UserTabLayout.setContentsMargins(0, 0, 0, 0)
@@ -288,6 +291,7 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
         self.UserTabLayout.addWidget(self.UserToolBox)
 
+        # Library Page Stable
         self.LibraryStablePageWidget = BasePageWidget(
             parent=self,
             page_name="LibraryStableListWidget",
@@ -297,6 +301,7 @@ class BlenderLauncher(BaseWindow):
         )
         self.LibraryStableListWidget = self.LibraryToolBox.add_page_widget(self.LibraryStablePageWidget, "Stable")
 
+        # Library Page Daily
         self.LibraryDailyPageWidget = BasePageWidget(
             parent=self,
             page_name="LibraryDailyListWidget",
@@ -306,6 +311,7 @@ class BlenderLauncher(BaseWindow):
         )
         self.LibraryDailyListWidget = self.LibraryToolBox.add_page_widget(self.LibraryDailyPageWidget, "Daily")
 
+        # Library Page Experimental
         self.LibraryExperimentalPageWidget = BasePageWidget(
             parent=self,
             page_name="LibraryExperimentalListWidget",
@@ -316,6 +322,16 @@ class BlenderLauncher(BaseWindow):
         self.LibraryExperimentalListWidget = self.LibraryToolBox.add_page_widget(
             self.LibraryExperimentalPageWidget, "Experimental"
         )
+
+        # Library Page Project
+        self.LibraryProjectPageWidget = BasePageWidget(
+            parent=self,
+            page_name="LibraryProjectListWidget",
+            time_label="Commit Time",
+            info_text="Nothing to show yet",
+            extended_selection=True,
+        )
+        self.LibraryProjectListWidget = self.LibraryToolBox.add_page_widget(self.LibraryProjectPageWidget, "Project")
 
         self.DownloadsStablePageWidget = BasePageWidget(
             parent=self,
