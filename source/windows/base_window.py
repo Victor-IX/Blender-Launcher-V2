@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from modules.connection_manager import ConnectionManager
 from modules.icons import Icons
 from modules.settings import get_enable_high_dpi_scaling, get_use_system_titlebar
@@ -7,13 +9,16 @@ from PyQt5.QtCore import QFile, QPoint, Qt, QTextStream
 from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
+if TYPE_CHECKING:
+    from semver import Version
+
 if get_enable_high_dpi_scaling():
     QApplication.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling, True)
     QApplication.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
 
 
 class BaseWindow(QMainWindow):
-    def __init__(self, parent=None, app: QApplication | None = None, version=None):
+    def __init__(self, parent=None, app: QApplication | None = None, version: Version | None = None):
         super().__init__()
         self.parent = parent
 
@@ -82,7 +87,6 @@ class BaseWindow(QMainWindow):
         Arguments:
             b -- bool
         """
-        ...
 
     def mousePressEvent(self, event):
         self.pos = event.globalPos()

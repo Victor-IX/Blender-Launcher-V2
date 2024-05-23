@@ -62,7 +62,7 @@ QPushButton[LaunchButton=true]:disabled {
 }
 
 QPushButton[CreateButton=true] {
-    background-color:  white;
+    background-color: white;
     color: black;
     padding: 9px;
 }
@@ -127,4 +127,14 @@ QPushButton[ListHeader=true]:checked {
     background-color: transparent;
     border-top: 2px solid #FF7A00;
     padding: 0px 2px 2px 2px;
+}
+
+QPushButton[CollapseButton=true] {
+    background-color: #282828;
+}
+
+QPushButton[CollapseButton=true]:hover {
+    color: #FFFFFF;
+    background-color: #343434;
+    border: none;
 }

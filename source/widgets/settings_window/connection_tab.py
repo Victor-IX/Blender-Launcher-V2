@@ -15,16 +15,22 @@ from modules.settings import (
 )
 from PyQt5 import QtGui
 from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtWidgets import QCheckBox, QComboBox, QHBoxLayout, QLabel, QLineEdit
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit
 from widgets.settings_form_widget import SettingsFormWidget
+
+from .settings_group import SettingsGroup
 
 
 class ConnectionTabWidget(SettingsFormWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        # Proxy Settings
+        self.proxy_settings = SettingsGroup("Proxy", parent=self)
 
         # Custom TLS certificates
         self.UseCustomCertificatesCheckBox = QCheckBox()
+        self.UseCustomCertificatesCheckBox.setText("Use Custom TLS Certificates")
         self.UseCustomCertificatesCheckBox.clicked.connect(self.toggle_use_custom_tls_certificates)
         self.UseCustomCertificatesCheckBox.setChecked(get_use_custom_tls_certificates())
 
@@ -70,15 +76,19 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.ProxyPasswordLineEdit.editingFinished.connect(self.update_proxy_password)
 
         # Layout
-        self._addRow("Use Custom TLS Certificates", self.UseCustomCertificatesCheckBox)
-        self._addRow("Proxy Type", self.ProxyTypeComboBox)
+        layout = QFormLayout()
+        layout.addRow(self.UseCustomCertificatesCheckBox)
+        layout.addRow(QLabel("Type", self), self.ProxyTypeComboBox)
         sub_layout = QHBoxLayout()
         sub_layout.addWidget(self.ProxyHostLineEdit)
         sub_layout.addWidget(QLabel(" : "))
         sub_layout.addWidget(self.ProxyPortLineEdit)
-        self._addRow("Proxy IP", sub_layout)
-        self._addRow("Proxy User", self.ProxyUserLineEdit)
-        self._addRow("Proxy Password", self.ProxyPasswordLineEdit)
+        layout.addRow(QLabel("IP", self), sub_layout)
+        layout.addRow(QLabel("Proxy User", self), self.ProxyUserLineEdit)
+        layout.addRow(QLabel("Password", self), self.ProxyPasswordLineEdit)
+
+        self.proxy_settings.setLayout(layout)
+        self.addRow(self.proxy_settings)
 
     def toggle_use_custom_tls_certificates(self, is_checked):
         set_use_custom_tls_certificates(is_checked)

@@ -20,7 +20,7 @@ class SortingType(Enum):
 
 class BasePageWidget(QWidget):
     def __init__(self, parent, page_name, time_label, info_text, show_reload=False, extended_selection=False):
-        super().__init__()
+        super().__init__(parent)
         self.name = page_name
 
         self.layout = QVBoxLayout(self)

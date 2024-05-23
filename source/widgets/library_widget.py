@@ -105,7 +105,7 @@ class LibraryWidget(BaseBuildWidget):
             self.infoLabel = QLabel("Loading build information...")
             self.infoLabel.setWordWrap(True)
 
-            self.launchButton = LeftIconButtonWidget("")
+            self.launchButton = LeftIconButtonWidget("", parent=self)
             self.launchButton.setFixedWidth(85)
             self.launchButton.setProperty("CancelButton", True)
 
@@ -138,27 +138,16 @@ class LibraryWidget(BaseBuildWidget):
         self.branch = self.build_info.branch
         self.item.date = build_info.commit_time
 
-        self.launchButton = LeftIconButtonWidget("Launch")
+        self.launchButton = LeftIconButtonWidget("Launch", parent=self)
         self.launchButton.setFixedWidth(85)
         self.launchButton.setProperty("LaunchButton", True)
         self._launch_icon = None
 
-        if self.branch == "lts":
-            branch_name = "LTS"
-        elif (self.parent_widget is not None) and self.build_info.custom_name:
-            branch_name = self.build_info.custom_name
-        elif self.branch == "daily":
-            s = self.build_info.subversion.split(" ", 1)
-            branch_name = s[len(s) > 1]  # if there is a second one, select it. otherwise select the old one
-
-        else:
-            branch_name = re.sub(r"(\-|\_)", " ", self.build_info.branch).title()
-
-        sub = self.build_info.subversion.split(" ", 1)
-        self.subversionLabel = QLabel(sub[0])
+        self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
         self.subversionLabel.setIndent(20)
-        self.branchLabel = ElidedTextLabel(self.build_info.custom_name or branch_name)
+        self.subversionLabel.setToolTip(str(self.build_info.semversion))
+        self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash)
 
         self.build_state_widget = BuildStateWidget(self.parent)
@@ -168,7 +157,7 @@ class LibraryWidget(BaseBuildWidget):
         self.layout.addWidget(self.branchLabel, stretch=1)
 
         if self.parent_widget is not None:
-            self.lineEdit = BaseLineEdit()
+            self.lineEdit = BaseLineEdit(self)
             self.lineEdit.setMaxLength(256)
             self.lineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
             self.lineEdit.escapePressed.connect(self.rename_branch_rejected)
@@ -185,14 +174,14 @@ class LibraryWidget(BaseBuildWidget):
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # Context menu
-        self.menu_extended = BaseMenuWidget()
+        self.menu_extended = BaseMenuWidget(parent=self)
         self.menu_extended.setFont(self.parent.font_10)
 
         self.deleteAction = QAction("Delete From Drive", self)
         self.deleteAction.setIcon(self.parent.icons.delete)
         self.deleteAction.triggered.connect(self.ask_remove_from_drive)
 
-        self.editAction = QAction("Edit build...", self)
+        self.editAction = QAction("Edit Build...", self)
         self.editAction.setIcon(self.parent.icons.settings)
         self.editAction.triggered.connect(self.edit_build)
 
@@ -239,7 +228,7 @@ class LibraryWidget(BaseBuildWidget):
         self.installTemplateAction = QAction("Install Template")
         self.installTemplateAction.triggered.connect(self.install_template)
 
-        self.debugMenu = BaseMenuWidget("Debug")
+        self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
         self.debugLogAction = QAction("Debug Log")
@@ -493,6 +482,10 @@ class LibraryWidget(BaseBuildWidget):
                 b3d_exe = library_folder / self.link / "blender.exe"
             args.append(b3d_exe)
             args.extend(blender_args)
+
+        elif platform == "macOS":
+            b3d_exe = Path(self.link) / "Blender" / "Blender.app"
+            args.extend(["open", "-W", "-n", b3d_exe.as_posix(), "--args"])
         else:
             blender_args = shlex.split(blender_args_, posix=True)
             bash_args = get_bash_arguments()

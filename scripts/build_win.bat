@@ -1,6 +1,9 @@
+cd..
+ls
+
 if exist __pycache__ rd /S /Q __pycache__
 if exist build rd /S /Q build
-if exist "dist/debug" rd /S /Q "dist/debug"
+if exist "dist/release" rd /S /Q "dist/release"
 if exist "Blender Launcher.spec" del /Q "Blender Launcher.spec"
 
 python -OO -m PyInstaller ^
@@ -10,11 +13,11 @@ python -OO -m PyInstaller ^
 --noconsole ^
 --noupx ^
 --onefile ^
---debug=all ^
+--windowed ^
 --icon="source\resources\icons\bl\bl.ico" ^
 --name="Blender Launcher" ^
 --version-file="version.txt" ^
 --add-binary="source\resources\icons\winblender.ico;files" ^
 --add-binary="source\resources\certificates\custom.pem;files" ^
---distpath="./dist/debug" ^
+--distpath="./dist/release" ^
 source\main.py

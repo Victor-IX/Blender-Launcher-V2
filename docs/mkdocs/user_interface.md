@@ -9,9 +9,9 @@
 The top horizontal menu bar contains following buttons from left to right:
 
 1. Settings Menu
-1. Documentation
-1. Minimize to taskbar
-1. Minimize to tray
+2. Documentation
+3. Minimize to taskbar
+4. Minimize to tray
 
 **Main Window** layout consists of three main tabs with corresponding pages:
 
@@ -38,7 +38,7 @@ The top horizontal menu bar contains following buttons from left to right:
 The bottom status bar shows following information from left to right:
 
 1. Status of application
-1. Blender Launcher version number
+2. Blender Launcher version number
 
 ## Library Tab
 
@@ -57,9 +57,9 @@ Library tab is a place where all local builds are shown based on category. Each 
 
         Play icon :fontawesome-solid-play: on the right side of button indicates that build set to [quick launch](#add-to-quick-launch).
 
-1. Version number including subversion or phase (Alpha, Beta)
-1. Branch name
-1. Date and time of build commit target
+2. Version number including subversion or phase (Alpha, Beta)
+3. Branch name
+4. Date and time of build commit target
 
     !!! note
 
@@ -69,7 +69,7 @@ Library tab is a place where all local builds are shown based on category. Each 
 
         ++"Left Button"++ click on date and time label will show hash number and vice versa.
 
-1. Number of running instances / new build indicator
+5. Number of running instances / new build indicator
 
 !!! tip
 
@@ -86,6 +86,10 @@ Library tab is a place where all local builds are shown based on category. Each 
 
 Build context menu can be accessed via right click on build item.
 
+### Open previous file
+
+:   Open the last closed file
+
 #### Add To Quick Launch
 
 :   Sets selected build to be accessed from tray icon context menu or middle click on it.
@@ -93,6 +97,10 @@ Build context menu can be accessed via right click on build item.
 #### Add To Favorites
 
 :   Add selected build to Favorites page of User tab.
+
+### Debug
+
+:   Multiple option to investigate and debug the programe
 
 #### Register Extension [Windows only]
 
@@ -110,21 +118,25 @@ Build context menu can be accessed via right click on build item.
 
 :   Create [symbolic link](https://en.wikipedia.org/wiki/Symbolic_link) for selected build pointing to `%Library Folder%/blender_symlink`.
 
-#### Show Release Notes [Stable and LTS builds only]
-
-:   Reveal page with release notes for selected build in web browser.
-
-#### Show Folder
-
-:   Reveal folder containing selected build in system file explorer.
-
 #### Install Template
 
 :   Install template for selected build (check [template](library_folder.md#template) for more details).
 
+#### Show Release Notes [Stable and LTS builds only]
+
+:   Reveal page with release notes for the selected build in a web browser.
+
+#### Show Folder
+
+:   Reveal the folder containing the selected build in the system file explorer.
+
+### Edit Build
+
+:   Edit the build info used to display the installed build.
+
 #### Delete From Drive
 
-:   Delete selected build from drive and remove it from Blender Launcher.
+:   Delete the selected build from the drive and remove it from the Blender Launcher.
 
 ## Downloads Tab
 
@@ -138,15 +150,15 @@ Build context menu can be accessed via right click on build item.
 Downloads tab is a place where all available official builds are shown based on category. Each category contains a list of items which represents a build information. Downloadable build item shows following information from left to right:
 
 1. Download button
-1. Version number including subversion or phase (Alpha, Beta)
-1. Branch name
-1. Upload date and time of build to server
+2. Version number including subversion or phase (Alpha, Beta)
+3. Branch name
+4. Upload date and time of build to server
 
     !!! tip
 
         ++"Left Button"++ click on date and time label will show hash number and vice versa.
 
-1. New build indicator
+5. New build indicator
 
 !!! tip
 

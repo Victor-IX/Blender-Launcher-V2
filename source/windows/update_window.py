@@ -9,9 +9,10 @@ import distro
 from modules._platform import _popen, get_cwd, get_platform
 from modules.tasks import TaskQueue
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from threads.downloader import DownloadTask
 from threads.extractor import ExtractTask
+from threads.scraper import get_latest_tag
 from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from windows.base_window import BaseWindow
 
@@ -31,7 +32,7 @@ class GitHubRelease(TypedDict):
 
 
 class BlenderLauncherUpdater(BaseWindow):
-    def __init__(self, app, version, release_tag):
+    def __init__(self, app: QApplication, version, release_tag: str | None = None):
         super().__init__(app=app, version=version)
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
@@ -55,12 +56,21 @@ class BlenderLauncherUpdater(BaseWindow):
             "X-GitHub-Api-Version": "2022-11-28",
         }
 
-        self.release_tag = release_tag
         self.platform = get_platform()
         self.cwd = get_cwd()
 
         self.queue = TaskQueue(parent=self, worker_count=1)
         self.queue.start()
+
+        if release_tag is None:
+            assert self.manager is not None
+            release_tag = get_latest_tag(self.cm, "https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest")
+            if release_tag is None:
+                # This is ok because release_tag can only be None when
+                # update is invoked from CLI without a release tag
+                raise RuntimeError("Failed to automatically determine the latest release tag!")
+
+        self.release_tag = release_tag
 
         self.show()
         self.download()

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 class TabWidget(QWidget):
     def __init__(self, parent, label="New Tab"):
-        super().__init__()
+        super().__init__(parent)
 
         layout = QHBoxLayout()
         layout.setContentsMargins(6, 6, 6, 6)

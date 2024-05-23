@@ -20,7 +20,7 @@ There is known issue related to Qt and some Linux distributions like Mint where 
     ./Blender\ Launcher -set-library-folder "%PATH%"
     ```
 
-=== "Windows"
+=== "Windows CMD"
 
     ```
     "Blender Launcher.exe" -set-library-folder "%PATH%"
@@ -44,7 +44,7 @@ There is known issue related to Qt and some Linux distributions like Mint where 
 
 ### `bl_symlink`
 
-:   **bl_symlink** is a symbolic link that creates via [library build context menu](User-Interface#library-build-context-menu).
+:   **bl_symlink** is a symbolic link that creates via [library build context menu](user_interface.md#library-build-context-menu).
 
 ### `.temp`
 

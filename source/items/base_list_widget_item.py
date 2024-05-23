@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import re
 from typing import TYPE_CHECKING, Callable
-
+from datetime import timezone
 from modules._platform import set_locale
 from PyQt5.QtWidgets import QListWidgetItem
 
 if TYPE_CHECKING:
+    from semver import Version
     from widgets.base_list_widget import BaseListWidget
 
 
@@ -29,7 +30,9 @@ class BaseListWidgetItem(QListWidgetItem):
         if (self.date is None) or (other.date is None):
             return False
 
-        set_locale()
+        if self.date.tzinfo is None or other.date.tzinfo is None:
+            self.date = self.date.replace(tzinfo=timezone.utc)
+            other.date = other.date.replace(tzinfo=timezone.utc)
 
         return self.date > other.date
 
@@ -47,11 +50,8 @@ class BaseListWidgetItem(QListWidgetItem):
         ):
             return False
 
-        this_match = re.search(r"\d+\.\d+", this_widget.build_info.subversion)
-        other_match = re.search(r"\d+\.\d+", other_widget.build_info.subversion)
-
-        this_version = float(this_match.group(0))
-        other_version = float(other_match.group(0))
+        this_version: Version = this_widget.build_info.semversion
+        other_version: Version = other_widget.build_info.semversion
 
         if this_version == other_version:
             return self.compare_datetime(other)

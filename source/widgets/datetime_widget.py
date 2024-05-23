@@ -9,13 +9,15 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
+DATETIME_FORMAT = "%d %b %Y, %H:%M"
+
+
 class DateTimeWidget(QPushButton):
     left_arrow = "◂"
     right_arrow = "▸"
-    str_format = "%d %b %Y, %H:%M"
 
-    def __init__(self, dt: datetime, build_hash: str | None):
-        super().__init__()
+    def __init__(self, dt: datetime, build_hash: str | None, parent=None):
+        super().__init__(parent)
         self.build_hash = build_hash
 
         self.setProperty("TextOnly", True)
@@ -24,7 +26,7 @@ class DateTimeWidget(QPushButton):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
 
-        self.datetimeStr = dt.strftime(self.str_format)
+        self.datetimeStr = dt.strftime(DATETIME_FORMAT)
         self.datetimeLabel = QLabel(self.datetimeStr)
         self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.font_metrics = self.datetimeLabel.fontMetrics()

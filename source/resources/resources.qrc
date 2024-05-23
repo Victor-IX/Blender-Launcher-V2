@@ -22,6 +22,8 @@
     <file>icons/quick_launch.svg</file>
     <file>icons/download.svg</file>
     <file>icons/file.svg</file>
+    <file>icons/expand_less.svg</file>
+    <file>icons/expand_more.svg</file>
     <file>styles/global.qss</file>
     <file>fonts/OpenSans-SemiBold.ttf</file>
   </qresource>

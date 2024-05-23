@@ -6,8 +6,8 @@ class BaseLineEdit(QLineEdit):
     returnPressed = pyqtSignal()
     escapePressed = pyqtSignal()
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
     def keyPressEvent(self, event):
         super().keyPressEvent(event)

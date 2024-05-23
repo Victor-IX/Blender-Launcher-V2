@@ -19,14 +19,15 @@ class DialogWindow(BaseWindow):
 
     def __init__(
         self,
-        parent,
         title="Warning",
         text="Dialog Window",
         accept_text="Accept",
         cancel_text: str | None = "Cancel",
         icon=DialogIcon.WARNING,
+        parent=None,
+        app=None,
     ):
-        super().__init__(parent=parent)
+        super().__init__(parent=parent, app=app)
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.resize(160, 60)

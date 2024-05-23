@@ -8,7 +8,7 @@ class BaseToolBoxWidget(QTabWidget):
     tab_changed = pyqtSignal(int)
 
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent)
         self.pages = []
         self.parent = parent
         self.list_widgets = set()

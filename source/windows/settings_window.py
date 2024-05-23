@@ -79,11 +79,11 @@ class SettingsWindow(BaseWindow):
         self.AppearanceTab.layout().addWidget(self.AppearanceTabWidget)
 
         self.ConnectionTab = TabWidget(self.TabWidget, "Connection")
-        self.ConnectionTabWidget = connection_tab.ConnectionTabWidget()
+        self.ConnectionTabWidget = connection_tab.ConnectionTabWidget(parent=self.parent)
         self.ConnectionTab.layout().addWidget(self.ConnectionTabWidget)
 
         self.BlenderBuildsTab = TabWidget(self.TabWidget, "Blender Builds")
-        self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget()
+        self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget(parent=self.parent)
         self.BlenderBuildsTab.layout().addWidget(self.BlenderBuildsTabWidget)
 
         self.resize(self.sizeHint())
@@ -91,7 +91,7 @@ class SettingsWindow(BaseWindow):
 
     def _close(self):
         pending_to_restart = []
-        on_off_dct = {True: "ON", False: "OFF"}
+        checkdct = {True: "ON", False: "OFF"}
 
         """Update quick launch key"""
         enable_quick_launch_key_seq = get_enable_quick_launch_key_seq()
@@ -121,10 +121,10 @@ class SettingsWindow(BaseWindow):
         # Restart app if any of the connection settings changed
         if self.old_use_custom_tls_certificates != use_custom_tls_certificates:
             pending_to_restart.append(
-                "Use Custom TLS Certificates: {}🠆{}".format(
-                    on_off_dct.get(self.old_use_custom_tls_certificates),
-                    on_off_dct.get(use_custom_tls_certificates),
-                )
+                "Use Custom TLS Certificates: "
+                + checkdct[self.old_use_custom_tls_certificates]
+                + "🠆"
+                + checkdct[use_custom_tls_certificates]
             )
 
         if self.old_proxy_type != proxy_type:
@@ -160,10 +160,10 @@ class SettingsWindow(BaseWindow):
 
         if self.old_enable_high_dpi_scaling != enable_high_dpi_scaling:
             pending_to_restart.append(
-                "High DPI Scaling: {}🠆{}".format(
-                    on_off_dct.get(self.old_enable_high_dpi_scaling),
-                    on_off_dct.get(enable_high_dpi_scaling),
-                )
+                "High DPI Scaling: "
+                + checkdct[self.old_enable_high_dpi_scaling]
+                + "🠆"
+                + checkdct[enable_high_dpi_scaling],
             )
 
         """Update worker thread count"""

@@ -31,11 +31,11 @@ VSVersionInfo(
         u'04090000',
         [StringStruct(u'CompanyName', u'Victor Chedeville'),
         StringStruct(u'FileDescription', u'Blender Launcher'),
-        StringStruct(u'FileVersion', u'2.0.24'),
+        StringStruct(u'FileVersion', u'2.1.24'),
         StringStruct(u'LegalCopyright', u'GPLv3 © 2022 Victor Chedeville'),
         StringStruct(u'OriginalFilename', u'Blender Launcher.exe'),
         StringStruct(u'ProductName', u'Blender Launcher'),
-        StringStruct(u'ProductVersion', u'2.0.24')])
+        StringStruct(u'ProductVersion', u'2.1.24')])
       ]),
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

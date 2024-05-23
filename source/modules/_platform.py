@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import argparse
 import os
 import platform
 import sys
 from dataclasses import dataclass
 from functools import cache
-from locale import LC_ALL, setlocale
+from locale import LC_ALL, getdefaultlocale, setlocale
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT, Popen, call, check_call, check_output
 from tempfile import NamedTemporaryFile
@@ -13,7 +14,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import argparse
-    from io import BufferedWriter
 
 
 @cache
@@ -59,6 +59,43 @@ def set_locale():
         setlocale(LC_ALL, "en_US.UTF-8")
 
 
+default_locale = getdefaultlocale(("LC_ALL",))[0]
+
+
+def reset_locale():
+    setlocale(LC_ALL, default_locale)
+
+
+def show_windows_help(parser: argparse.ArgumentParser):
+    with (
+        NamedTemporaryFile("w+", suffix=".bat", delete=False) as f,
+        NamedTemporaryFile("w+", suffix=".txt", delete=False) as help_txt_file,
+    ):
+        help_txt_file.write(parser.format_help())
+        help_txt_file.flush()
+        help_txt_file.close()
+
+        lines = [f"echo{' ' + line if line else '.'}" for line in parser.format_help().splitlines()]
+        echos = "\n".join(lines)
+        f.write(
+            f"""
+            @echo off
+            cls
+            {echos}
+            pause
+            """
+        )
+
+        f.flush()
+        f.close()
+        call(["cmd", "/c", f.name])
+        try:
+            os.unlink(f.name)
+            os.unlink(help_txt_file.name)
+        except FileNotFoundError:
+            pass
+
+
 def get_environment():
     # Make a copy of the environment
     env = dict(os.environ)
@@ -75,8 +112,6 @@ def get_environment():
         env.pop(lp_key, None)
 
     return env
-
-
 
 
 def _popen(args, stdout: Path | None = None, stderr: Path | None = None):
@@ -142,6 +177,7 @@ def _check_output(args):
 
     return check_output(args, shell=False, stderr=DEVNULL, stdin=DEVNULL)
 
+
 @cache
 def is_frozen():
     """
@@ -152,9 +188,71 @@ def is_frozen():
 
     return bool(getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"))
 
+
 @cache
 def get_cwd():
     if is_frozen():
         return Path(os.path.dirname(sys.executable))
 
     return Path.cwd()
+
+
+@cache
+def get_config_path():
+    platform = get_platform()
+
+    config_path = ""
+    if platform == "Windows":
+        config_path = os.getenv("LOCALAPPDATA")
+    elif platform == "Linux":
+        # Borrowed from platformdirs
+        path = os.environ.get("XDG_CONFIG_HOME", "")
+        if not path.strip():
+            path = os.path.expanduser("~/.config")
+        config_path = path
+    elif platform == "macOS":
+        config_path = os.path.expanduser("~/Library/Application Support")
+
+    if not config_path:
+        return get_cwd()
+    return os.path.join(config_path, "Blender Launcher")
+
+
+@cache
+def local_config():
+    return get_cwd() / "Blender Launcher.ini"
+
+
+@cache
+def user_config():
+    return Path(get_config_path()) / "Blender Launcher.ini"
+
+
+def get_config_file():
+    # Prioritize local settings for portability
+    if (local := local_config()).exists():
+        return local
+    return user_config()
+
+
+@cache
+def get_cache_path():
+    platform = get_platform()
+
+    cache_path = ""
+    if platform == "Windows":
+        cache_path = os.getenv("LOCALAPPDATA")
+    elif platform == "Linux":
+        # Borrowed from platformdirs
+        cache_path = os.environ.get("XDG_CACHE_HOME", "")
+        if not cache_path.strip():
+            cache_path = os.path.expanduser("~/.cache")
+    elif platform == "macOS":
+        cache_path = os.path.expanduser("~/Library/Logs")
+    if not cache_path:
+        return os.getcwd()
+    return os.path.join(cache_path, "Blender Launcher")
+
+
+def stable_cache_path():
+    return Path(get_cache_path(), "stable_builds.json")

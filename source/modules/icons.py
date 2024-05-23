@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cache
 
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 
@@ -7,12 +8,14 @@ base_path = ":resources/icons/"
 WHITE = QColor(255, 255, 255, 255)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Icons:
     settings: QIcon
     wiki: QIcon
     minimize: QIcon
     close: QIcon
+    expand_more: QIcon
+    expand_less: QIcon
     folder: QIcon
     favorite: QIcon
     fake: QIcon
@@ -25,12 +28,15 @@ class Icons:
     none: QIcon
 
     @classmethod
+    @cache
     def get(cls, color=WHITE):
         return cls(
             load_icon(color, "settings"),
             load_icon(color, "wiki"),
             load_icon(color, "minimize"),
             load_icon(color, "close"),
+            load_icon(color, "expand_more"),
+            load_icon(color, "expand_less"),
             load_icon(color, "folder"),
             load_icon(color, "favorite"),
             load_icon(color, "fake"),

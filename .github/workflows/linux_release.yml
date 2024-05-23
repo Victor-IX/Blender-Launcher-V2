@@ -1,4 +1,4 @@
-name: Main
+name: Linux Release
 
 on:
   push:
@@ -22,7 +22,8 @@ jobs:
           python3 -m venv .venv
           source ./.venv/bin/activate
           pip install -e ./
-          sh ./build_linux.sh
+          python build_style.py
+          sh ./scripts/build_linux.sh
       - name: Zipping
         run: |
           echo "Zipping to Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip"

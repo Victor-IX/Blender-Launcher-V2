@@ -6,7 +6,10 @@ nav:
     - User Interface: user_interface.md
     - Library Folder: library_folder.md
     - Settings: settings.md
+    - Manual Blender Installation: manual_build_installation.md
+    - Build Initialization: build_initialization.md
     - Troubleshooting: troubleshooting.md
+    - Known Issues: known_issues.md
     - Feature Request: feature_request.md
     - Development: development.md
 docs_dir: mkdocs
@@ -44,8 +47,8 @@ markdown_extensions:
     - pymdownx.betterem:
         smart_enable: all
     - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
-        emoji_generator: !!python/name:materialx.emoji.to_svg
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
+        emoji_generator: !!python/name:material.extensions.emoji.to_svg
     - toc:
         permalink: true
 plugins:
@@ -55,4 +58,4 @@ extra_css:
     - stylesheets/extra.css
 repo_url: https://github.com/Victor-IX/Blender-Launcher-V2
 edit_uri: ""
-copyright: Copyright &copy; 2022 Victor Chedeville │ Blender Launcher GPL-3.0 License │ Version 2.0.24
+copyright: Copyright &copy; 2022 Victor Chedeville │ Blender Launcher GPL-3.0 License │ Version 2.1.24

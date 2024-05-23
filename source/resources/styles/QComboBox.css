@@ -5,6 +5,10 @@ QComboBox {
     padding: 1px 1px 1px 3px;
 }
 
+QComboBox:disabled {
+    color: #828282;
+}
+
 QComboBox QAbstractItemView {
     background-color: #1F1F1F;
     color: #E6E6E6;

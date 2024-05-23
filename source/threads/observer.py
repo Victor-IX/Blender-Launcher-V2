@@ -1,7 +1,6 @@
 import logging
 from subprocess import Popen
 
-from modules._platform import SubprocessTracker
 from PyQt5.QtCore import QThread, pyqtSignal
 
 logger = logging.getLogger()

@@ -4,100 +4,165 @@
 
 ## Settings Window
 
-To open the **Settings Window** use button with gear icon on top left of the **Main Window**. All changes saved automatically.
+To open the **Settings Window**, use the button with a gear icon on the top left of the **Main Window**. All changes are saved automatically.
 
-??? image "Screenshots"
+## General
 
-    <figure>
-      <img src="../imgs/settings_window.png"/>
-      <figcaption>Settings Window</figcaption>
-    </figure>
+![General page of Settings](imgs/settings_window_general.png)
 
-## Library Folder
+### Library Folder
 
-**Library Folder** - a directory on hard drive, where all downloaded builds are stored. For detailed information check [Library Folder](library_folder.md) page.
+**Library Folder** - a directory on the hard drive where all downloaded builds are stored. For detailed information, check the [Library Folder](library_folder.md) page.
 
-## System
+### Launch When System Starts
 
-### Taskbar Icon Color
+!!! info
+    This only works on Windows.
 
-:   Determines the color of the **Blender Launcher** icon in taskbar so it is both readable in light and dark system themes. To apply changes application should be restarted.
-
-### Launch When System Starts [Windows only]
-
-:   Determines if **Blender Launcher** will run when system starts.
+:   Determines if **Blender Launcher** will run when the system starts.
 
 ### Show Tray Icon
 
-:   Toggles visibility of tray icon. If option is disabled, **Blender Launcher** will shut down after closing its **Main Window**.
+:   Toggles the visibility of the tray icon. If the option is disabled, **Blender Launcher** will shut down after closing its **Main Window**.
 
 ### Launch Minimized To Tray
 
-:   Determines if **Main Window** will pop up when user execute **Blender Launcher** or only tray icon will be shown.
+:   Determines if the **Main Window** will pop up when the user executes **Blender Launcher**, or only the tray icon will be shown.
 
-## Interface
+### Worker Thread Count
 
-### Default Tab
+:   Sets the maximal number of **CPU Thread Blender** Launcher can use.
 
-:   Set what tab of will be opened when **Blender Launcher** starts.
+## Appearance
 
-### Sync Library & Downloads Pages
+![Appearance page of Settings](imgs/settings_window_appearance.png)
 
-:   Determines if pages of Library and Downloads tabs will be automatically matched between each over.
+### Window
 
-### Default Library Page
+#### Use System Title Bar
 
-:   Sets what page of Library tab will be opened when **Blender Launcher** starts.
+#### Enable High DPI Scaling
 
-### Default Downloads Page
+:   Determines if the **Blender Launcher** user interface will automatically scale based on the monitor's pixel density. To apply changes, the application should be restarted.
 
-:   Sets what page of Downloads tab will be opened when **Blender Launcher** starts.
+### Notifications
 
-### Enable High DPI Scaling
+#### New Available Build
 
-:   Determines if **Blender Launcher** user interface will automatically scale based on the monitor's pixel density. To apply changes application should be restarted.
+:   Show OS notifications when new builds of Blender are available in the Downloads tab.
 
-## Notifications
+#### Finished Downloading
 
-### When New Builds Are Available
+:   Show OS notifications when a build finished downloading and is added to the Library tab.
 
-:   Show OS notifications when new new builds of Blender are available in Downloads tab.
+#### Errors
 
-### When Downloading Finished
+:   Show OS notification when an error occurs on the Blender Launcher.
 
-:   Show OS notifications when build finished downloading and added to Library tab.
+### Tabs
 
-## New Build Actions
+#### Default Tab
 
-Actions that will be performed on newly added build to Library tab right after downloading is finished.
+:   Set which tab will be opened when **Blender Launcher** starts.
 
-### Mark As Favorite
+#### Sync Library & Downloads
 
-:   Mark every newly added build to Library tab as favorite depending on branch type.
+:   Determines if the pages of Library and Downloads tabs will be automatically matched with each other.
 
-### Install Template
+#### Default Library Page
 
-:   Installs template on newly added build to Library tab.
+:   Sets which page of the Library tab will be opened when **Blender Launcher** starts.
 
-## Blender Launching
+#### Default Downloads Page
 
-### Quick Launch Global Shortcut
+:   Sets which page of the Downloads tab will be opened when **Blender Launcher** starts.
 
-:   Launches build added to quick launch via user defined key sequence.
+## Connection
 
-### Hide Console On Startup [Windows only]
+![Connection page of Settings](imgs/settings_window_connection.png)
 
-:   Launch Blender via `blender-launcher.exe` to hide console on startup. Works on Blender version 3.0 and higher.
+### Proxy
+
+#### Use Custom TLS Certificates
+
+:   Enables the use of custom TLS certificates for secure communication with the proxy server.
+
+#### Type
+
+:   Specifies the type of proxy server to connect to (e.g., HTTP, SOCKS).
+
+#### IP
+
+:   Specifies the IP address of the proxy server and port number through which Blender Launcher will connect to the proxy server.
+
+#### Proxy User
+
+:   Specifies the username required to authenticate with the proxy server, if applicable.
+
+#### Password
+
+:   Specifies the password required to authenticate with the proxy server, if applicable.
+
+## Blender Builds
+
+![Blender Builds page of Settings](imgs/settings_window_blenderbuilds.png)
+
+### Checking For Builds
+
+#### Check Automatically
+
+:   Automatically check if a new build has been released and send a notification if there is a new one available.
+
+#### On Startup
+
+:   If Blender launcher will check for a new build when launched.
+
+#### Min Stable Build to Scrape
+
+:   Set the minimum Blender version to scrape; this reduces the request amount and speeds up the build gathering time.
+
+#### Scrape Stable Builds
+
+:   If the Blender Launcher will gather the Stable build, disabling this will speed up the gathering of the daily build.
+
+#### Scrape Automated Builds
+
+:   If the Blender Launcher will gather the automated daily build (daily, experimental, patch).
+
+### Downloading & Saving build
+
+Actions that will be performed on newly added builds to Library tab right after downloading is finished.
+
+#### Mark As Favorite
+
+:   Mark every newly added build to the Library tab as favorite depending on the branch type.
+
+#### Install Template
+
+:   Installs a template on newly added builds to the Library tab.
+
+### Launching Builds
+
+#### Quick Launch Global SHC
+
+:   Launches builds added to quick launch via a user-defined key sequence.
+
+#### Hide Console On Startup
+
+!!! info
+    This only works on Windows.
+
+:   Launch Blender via `blender-launcher.exe` to hide the console on startup. Works on Blender version 3.0 and higher.
 
     !!! warning "Known Issues"
 
-        When using this feature number of running instances will not be shown.
+        When using this feature, the number of running instances will not be shown.
 
-### Startup Arguments
+#### Startup Arguments
 
-:   Adds specific instructions as if Blender was launching from the command line (after the blender executable i.e. `blender [args …]`).
+:   Adds specific instructions as if Blender were launching from the command line (after the blender executable i.e. `blender [args …]`).
 
-:   For example `-W` (force opening Blender in fullscreen mode) argument internally will produce following command:
+:   For example, the `-W` (force opening Blender in fullscreen mode) argument internally will produce the following command:
 
     ```
     %path to blender executable% -W
@@ -105,12 +170,16 @@ Actions that will be performed on newly added build to Library tab right after d
 
 :   List of commands can be found on Blender manual [Command Line Arguments](https://docs.blender.org/manual/en/latest/advanced/command_line/arguments.html) page.
 
-### Bash Arguments [Linux only]
+#### Bash Arguments
 
-:   Adds specific instructions as if Blender was launching from the command line (before the blender executable i.e. `[args …] blender`).
+!!! info
+    This only works on Windows.
 
-:   For example `env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia` (force Blender to use dedicated graphics card) arguments internally will produce following command:
+:   Adds specific instructions as if Blender were launching from the command line (before the blender executable i.e. `[args …] blender`).
+
+:   For example, `env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia` (force Blender to use a dedicated graphics card) arguments internally will produce the following command:
 
     ```
     env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup %path to blender executable% %startup arguments%
     ```
+```

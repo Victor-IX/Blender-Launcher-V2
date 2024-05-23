@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class BaseListWidget(QListWidget):
-    def __init__(self, parent: BasePageWidget | None=None, extended_selection=False):
+    def __init__(self, parent: BasePageWidget | None = None, extended_selection=False):
         super().__init__(parent)
         self.parent: BasePageWidget | None = parent
 

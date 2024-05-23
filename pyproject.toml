@@ -1,23 +1,24 @@
 [project]
 name = "Blender-Launcher-V2"
-version = "2.0.24"
+version = "2.1.24"
 description = ""
 authors = []
 dependencies = [
-    "pyinstaller>=5.3.0",
-    "beautifulsoup4==4.11.1",
-    "pyqt5-qt5==5.15.2",
-    "pyqt5",
-    "urllib3[socks]==1.26.11",
-    "pynput==1.7.6",
-    "lxml",
-    "python-xlib",
-    "pywin32==303; sys_platform == \"win32\"",
-    "distro>=1.8.0",
+  "pyinstaller>=5.3.0",
+  "beautifulsoup4==4.11.1",
+  "pyqt5-qt5==5.15.2",                       # MacOS users must switch this to >=
+  "pyqt5",
+  "urllib3[socks]==1.26.11",
+  "pynput==1.7.6",
+  "lxml",
+  "python-xlib",
+  "pywin32==303; sys_platform == \"win32\"",
+  "distro>=1.8.0",
+  "semver>=3.0.2",
 ]
 requires-python = ">=3.9, <3.11"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 [build-system]
 build-backend = "pdm.backend"
@@ -30,52 +31,48 @@ verify_ssl = true
 name = "pypi"
 
 [tool.pdm.dev-dependencies]
-dev = [
-    "autopep8",
-    "flake8",
-    "rope",
-    "mkdocs",
-    "mkdocs-material",
-]
+dev = ["rope", "mkdocs", "mkdocs-material>=9.5.10", "ruff>=0.3.5"]
 
 [tool.ruff]
-extend-ignore = ["F401", "E501", "B905", "SIM114", "A003", "SIM108"]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+extend-ignore = ["F401", "E501", "B905", "SIM114", "A003", "SIM108", "ISC001"]
 extend-select = [
-  "A", # flake8-builtins
+  "A",     # flake8-builtins
   "ASYNC", # flake8-async
-  "UP", # pyupgrade
-  "I", # isort
-  "B", # flake8-bugbear
-  "ICN", # flake8-import-conventions
-  "F", # pyflakes
-  "RET", # flake8-return
-  "SIM", # flake8-simplify
-  "NPY", # NumPy-specific rules
-  "PERF", # perflint
-  "RUF", # Ruff-specific rules
-  "PIE", # flake8-pie
-  "DTZ", # flake8-datetimez
-  "C4", # flake8-comprehensions
-  "E", # Error
-  "EXE", # flake8-executable
-  "TCH", # flake8-type-checking
-  "W", # pycodestyle
-  "FA", # flake8-future-annotations
-  "ISC", # flake8-implicit-str-concat
-  "Q", # flake8-quotes
-  "SLF", # flake8-self
+  "UP",    # pyupgrade
+  "I",     # isort
+  "B",     # flake8-bugbear
+  "ICN",   # flake8-import-conventions
+  "F",     # pyflakes
+  "RET",   # flake8-return
+  "SIM",   # flake8-simplify
+  "NPY",   # NumPy-specific rules
+  "PERF",  # perflint
+  "RUF",   # Ruff-specific rules
+  "PIE",   # flake8-pie
+  "DTZ",   # flake8-datetimez
+  "C4",    # flake8-comprehensions
+  "E",     # Error
+  "EXE",   # flake8-executable
+  "TCH",   # flake8-type-checking
+  "W",     # pycodestyle
+  "FA",    # flake8-future-annotations
+  "ISC",   # flake8-implicit-str-concat
+  "Q",     # flake8-quotes
+  "SLF",   # flake8-self
 
   #Specific pylint rules
-  # "PL", # Pylint
+  # "PL",      # Pylint
   "PLR1711", # useless-return
   "PLR1714", # repeated-equality-comparison
 
 ]
 fixable = ["ALL"]
-line-length = 120
-target-version = "py39"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
 "source/resources_rc.py" = ["ALL"]
 

@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 
 class LeftIconButtonWidget(QPushButton):
-    def __init__(self, text, icon=None):
-        super().__init__()
+    def __init__(self, text, icon=None, parent=None):
+        super().__init__(parent)
         self.setText(" ")
 
         if icon is not None:

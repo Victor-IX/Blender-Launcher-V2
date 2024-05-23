@@ -1,27 +1,22 @@
 import os
 
 from modules.settings import (
-    get_check_for_new_builds_automatically,
-    get_enable_high_dpi_scaling,
+    get_config_file,
     get_launch_minimized_to_tray,
     get_launch_when_system_starts,
     get_library_folder,
-    get_make_error_popup,
-    get_new_builds_check_frequency,
     get_platform,
     get_show_tray_icon,
-    get_use_system_titlebar,
+    get_use_pre_release_builds,
     get_worker_thread_count,
-    set_check_for_new_builds_automatically,
-    set_enable_high_dpi_scaling,
+    migrate_config,
     set_launch_minimized_to_tray,
     set_launch_when_system_starts,
     set_library_folder,
-    set_make_error_popup,
-    set_new_builds_check_frequency,
     set_show_tray_icon,
-    set_use_system_titlebar,
+    set_use_pre_release_builds,
     set_worker_thread_count,
+    user_config,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QWidget
@@ -41,7 +36,6 @@ class GeneralTabWidget(SettingsFormWidget):
         self.LibraryFolderLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.LibraryFolderLineEdit.setReadOnly(True)
         self.LibraryFolderLineEdit.setCursorPosition(0)
-
         self.SetLibraryFolderButton = QPushButton(self.parent.icons.folder, "")
         self.SetLibraryFolderButton.clicked.connect(self.set_library_folder)
 
@@ -68,37 +62,7 @@ class GeneralTabWidget(SettingsFormWidget):
         self.ShowTrayIconCheckBox.setChecked(get_show_tray_icon())
         self.ShowTrayIconCheckBox.clicked.connect(self.toggle_show_tray_icon)
 
-        # Use System Title Bar
-        self.UseSystemTitleBar = QCheckBox()
-        self.UseSystemTitleBar.setChecked(get_use_system_titlebar())
-        self.UseSystemTitleBar.clicked.connect(self.toggle_system_titlebar)
-
-        # New Builds Check Settings
-        self.CheckForNewBuildsAutomatically = QCheckBox()
-        self.CheckForNewBuildsAutomatically.setChecked(False)
-        self.CheckForNewBuildsAutomatically.clicked.connect(self.toggle_check_for_new_builds_automatically)
-
-        self.NewBuildsCheckFrequency = QSpinBox()
-        self.NewBuildsCheckFrequency.setEnabled(get_check_for_new_builds_automatically())
-        self.NewBuildsCheckFrequency.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.NewBuildsCheckFrequency.setToolTip("Time in minutes between new builds check")
-        self.NewBuildsCheckFrequency.setMaximum(24 * 60)
-        self.NewBuildsCheckFrequency.setMinimum(120)
-        self.NewBuildsCheckFrequency.setValue(get_new_builds_check_frequency() // 60)
-        self.NewBuildsCheckFrequency.editingFinished.connect(self.new_builds_check_frequency_changed)
-
-        # High Dpi Scaling
-        self.EnableHighDpiScalingCheckBox = QCheckBox()
-        self.EnableHighDpiScalingCheckBox.clicked.connect(self.toggle_enable_high_dpi_scaling)
-        self.EnableHighDpiScalingCheckBox.setChecked(get_enable_high_dpi_scaling())
-
-        # Error popups
-        self.EnableErrorPopupsCheckBox = QCheckBox(self)
-        self.EnableErrorPopupsCheckBox.clicked.connect(self.toggle_enable_error_popups)
-        self.EnableErrorPopupsCheckBox.setChecked(get_make_error_popup())
-
         # Worker thread count
-
         self.WorkerThreadCount = QSpinBox()
 
         self.WorkerThreadCount.setToolTip(
@@ -120,6 +84,11 @@ class GeneralTabWidget(SettingsFormWidget):
 
             self.WorkerThreadCount.valueChanged.connect(warn_values_above_cpu)
 
+        # Pre-release builds
+        self.PreReleaseBuildsCheckBox = QCheckBox()
+        self.PreReleaseBuildsCheckBox.setChecked(get_use_pre_release_builds())
+        self.PreReleaseBuildsCheckBox.clicked.connect(self.toggle_use_pre_release_builds)
+
         # Layout
         self._addRow("Library Folder", self.LibraryFolderWidget, new_line=True)
 
@@ -129,15 +98,17 @@ class GeneralTabWidget(SettingsFormWidget):
         self._addRow("Show Tray Icon", self.ShowTrayIconCheckBox)
         self.LaunchMinimizedToTrayRow = self._addRow("Launch Minimized To Tray", self.LaunchMinimizedToTrayCheckBox)
         self.LaunchMinimizedToTrayRow.setEnabled(get_show_tray_icon())
-        self._addRow("Use System Title Bar", self.UseSystemTitleBar)
 
-        sub_layout = QHBoxLayout()
-        sub_layout.addWidget(self.CheckForNewBuildsAutomatically)
-        sub_layout.addWidget(self.NewBuildsCheckFrequency)
-        self._addRow("Check For New Builds Automatically", sub_layout)
-        self._addRow("Enable High DPI Scaling", self.EnableHighDpiScalingCheckBox)
-        self._addRow("Enable Error Popups", self.EnableErrorPopupsCheckBox)
         self._addRow("Worker Thread Count", self.WorkerThreadCount)
+
+        self._addRow("Use Pre-release Builds", self.PreReleaseBuildsCheckBox)
+
+        if get_config_file() != user_config():
+            self.migrate_button = QPushButton("Migrate local settings to user settings", self)
+            self.migrate_button.setProperty("CollapseButton", True)
+            self.migrate_button.clicked.connect(self.migrate_confirmation)
+
+            self.addRow(self.migrate_button)
 
     def set_library_folder(self):
         library_folder = str(get_library_folder())
@@ -168,22 +139,20 @@ class GeneralTabWidget(SettingsFormWidget):
         self.LaunchMinimizedToTrayRow.setEnabled(is_checked)
         self.parent.tray_icon.setVisible(is_checked)
 
-    def toggle_system_titlebar(self, is_checked):
-        set_use_system_titlebar(is_checked)
-        self.parent.update_system_titlebar(is_checked)
-
-    def toggle_check_for_new_builds_automatically(self, is_checked):
-        set_check_for_new_builds_automatically(is_checked)
-        self.NewBuildsCheckFrequency.setEnabled(is_checked)
-
-    def new_builds_check_frequency_changed(self):
-        set_new_builds_check_frequency(self.NewBuildsCheckFrequency.value() * 60)
-
-    def toggle_enable_high_dpi_scaling(self, is_checked):
-        set_enable_high_dpi_scaling(is_checked)
-
-    def toggle_enable_error_popups(self, is_checked):
-        set_make_error_popup(is_checked)
-
     def set_worker_thread_count(self):
         set_worker_thread_count(self.WorkerThreadCount.value())
+
+    def toggle_use_pre_release_builds(self, is_checked):
+        set_use_pre_release_builds(is_checked)
+
+    def migrate_confirmation(self):
+        text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
+        if user_config().exists():
+            text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
+        dlg = DialogWindow(text=text, parent=self.parent)
+        dlg.accepted.connect(self.migrate)
+
+    def migrate(self):
+        migrate_config(force=True)
+        self.migrate_button.hide()
+        # Most getters should get the settings from the new position, so a restart should not be required
