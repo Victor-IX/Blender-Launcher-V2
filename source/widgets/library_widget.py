@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import contextlib
+import datetime
 import logging
 import os
 import re
 import shlex
 import subprocess
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, _popen, get_platform
+from modules._platform import _call, _popen, get_cache_path, get_platform
 from modules.build_info import BuildInfo, ReadBuildTask, WriteBuildTask
 from modules.settings import (
     get_bash_arguments,
@@ -452,8 +454,14 @@ class LibraryWidget(BaseBuildWidget):
         if open_last:
             args.append("--open-last")
 
-        logger.debug("Running build with args %s", str(args))
-        proc = _popen(args)
+        # get the stdout/stderr filename
+        log_path = Path(get_cache_path())
+        t = datetime.datetime.now().astimezone().strftime("%Y%m%dT%H%M%S")
+        stdout_file = log_path / f"{t}-{self.build_info.full_semversion}.stdout.log"
+        stderr_file = log_path / f"{t}-{self.build_info.full_semversion}.stderr.log"
+
+        logger.debug("Running build with args %s\nLogging output to %s and %s", str(args), stdout_file, stderr_file)
+        proc = _popen(args, stdout=stdout_file, stderr=stderr_file)
         assert proc is not None
         if self.observer is None:
             self.observer = Observer(self)

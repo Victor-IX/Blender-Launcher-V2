@@ -1,10 +1,19 @@
+from __future__ import annotations
+
 import os
 import platform
 import sys
+from dataclasses import dataclass
 from functools import cache
 from locale import LC_ALL, setlocale
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT, Popen, call, check_call, check_output
+from tempfile import NamedTemporaryFile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
+    from io import BufferedWriter
 
 
 @cache
@@ -21,6 +30,20 @@ def get_platform():
         return sys.platform
 
     return platforms[sys.platform]
+
+
+@cache
+def get_architecture():
+    return platform.machine()
+
+
+@cache
+def get_launcher_name():
+    if sys.platform == "win32":
+        return ("Blender Launcher.exe", "Blender Launcher Updater.exe")
+
+    return ("Blender Launcher", "Blender Launcher Updater")
+
 
 @cache
 def get_platform_full():
@@ -54,14 +77,24 @@ def get_environment():
     return env
 
 
-def _popen(args):
+
+
+def _popen(args, stdout: Path | None = None, stderr: Path | None = None):
+    out = None
+    err = None
+    if stdout is not None:
+        out = open(stdout, "wb")  # noqa: SIM115
+    if stderr is not None:
+        err = open(stderr, "wb")  # noqa: SIM115
+
     if get_platform() == "Windows":
         DETACHED_PROCESS = 0x00000008
+
         return Popen(
             args,
             stdin=None,
-            stdout=None,
-            stderr=None,
+            stdout=out,
+            stderr=err,
             close_fds=True,
             creationflags=DETACHED_PROCESS,
             start_new_session=True,
@@ -69,8 +102,8 @@ def _popen(args):
 
     return Popen(
         args,
-        stdout=PIPE,
-        stderr=PIPE,
+        stdout=None,
+        stderr=None,
         close_fds=True,
         start_new_session=True,
         env=get_environment(),
