@@ -13,6 +13,7 @@ from modules.settings import (
     get_platform,
     get_show_tray_icon,
     get_use_pre_release_builds,
+    get_blender_preferences_management,
     get_worker_thread_count,
     migrate_config,
     set_launch_minimized_to_tray,
@@ -20,56 +21,67 @@ from modules.settings import (
     set_library_folder,
     set_show_tray_icon,
     set_use_pre_release_builds,
+    set_blender_preferences_management,
     set_worker_thread_count,
     user_config,
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QWidget
+from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QSpinBox, QGridLayout, QLabel, QHBoxLayout
 from widgets.settings_form_widget import SettingsFormWidget
 from windows.dialog_window import DialogWindow
 from windows.file_dialog_window import FileDialogWindow
 
+from .settings_group import SettingsGroup
+
 
 class GeneralTabWidget(SettingsFormWidget):
-    def __init__(self, parent):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         self.parent = parent
 
+        # Application Settings
+        self.application_settings = SettingsGroup("Application", parent=self)
+        
         # Library Folder
+        self.LibraryFolderLayoutLabel = QLabel()
+        self.LibraryFolderLayoutLabel.setText("Library Folder:")
         self.LibraryFolderLineEdit = QLineEdit()
         self.LibraryFolderLineEdit.setText(str(get_actual_library_folder()))
         self.LibraryFolderLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.LibraryFolderLineEdit.setReadOnly(True)
         self.LibraryFolderLineEdit.setCursorPosition(0)
         self.SetLibraryFolderButton = QPushButton(self.parent.icons.folder, "")
+        self.SetLibraryFolderButton.setFixedWidth(25)
+        self.SetLibraryFolderButton.clicked.connect(self.prompt_library_folder)
         self.SetLibraryFolderButton.clicked.connect(self.prompt_library_folder)
 
-        self.LibraryFolderWidget = QWidget()
-        self.LibraryFolderLayout = QHBoxLayout(self.LibraryFolderWidget)
-        self.LibraryFolderLayout.setContentsMargins(6, 0, 6, 0)
+        self.LibraryFolderLayout = QHBoxLayout()
         self.LibraryFolderLayout.setSpacing(0)
-
         self.LibraryFolderLayout.addWidget(self.LibraryFolderLineEdit)
         self.LibraryFolderLayout.addWidget(self.SetLibraryFolderButton)
 
         # Launch When System Starts
         self.LaunchWhenSystemStartsCheckBox = QCheckBox()
+        self.LaunchWhenSystemStartsCheckBox.setText("Launch When System Starts")
         self.LaunchWhenSystemStartsCheckBox.setChecked(get_launch_when_system_starts())
         self.LaunchWhenSystemStartsCheckBox.clicked.connect(self.toggle_launch_when_system_starts)
 
         # Launch Minimized To Tray
         self.LaunchMinimizedToTrayCheckBox = QCheckBox()
+        self.LaunchMinimizedToTrayCheckBox.setText("Launch Minimized To Tray")
         self.LaunchMinimizedToTrayCheckBox.setChecked(get_launch_minimized_to_tray())
         self.LaunchMinimizedToTrayCheckBox.clicked.connect(self.toggle_launch_minimized_to_tray)
 
         # Show Tray Icon
         self.ShowTrayIconCheckBox = QCheckBox()
+        self.ShowTrayIconCheckBox.setText("Show Tray Icon")
         self.ShowTrayIconCheckBox.setChecked(get_show_tray_icon())
         self.ShowTrayIconCheckBox.clicked.connect(self.toggle_show_tray_icon)
 
         # Worker thread count
+        self.WorkerThreadCountBox = QLabel()
+        self.WorkerThreadCountBox.setText("Worker Thread Count")
         self.WorkerThreadCount = QSpinBox()
-
         self.WorkerThreadCount.setToolTip(
             "Determines how many IO operations can be done at once, ex. Downloading, deleting, and extracting files"
         )
@@ -85,28 +97,45 @@ class GeneralTabWidget(SettingsFormWidget):
                 if v > cpu_count:
                     self.WorkerThreadCount.setSuffix(f" (warning: value above {cpu_count} (cpu count) !!)")
                 else:
-                    self.WorkerThreadCount.setSuffix(None)
+                    self.WorkerThreadCount.setSuffix("")
 
             self.WorkerThreadCount.valueChanged.connect(warn_values_above_cpu)
 
         # Pre-release builds
         self.PreReleaseBuildsCheckBox = QCheckBox()
+        self.PreReleaseBuildsCheckBox.setText("Use Pre-release Builds")
         self.PreReleaseBuildsCheckBox.setChecked(get_use_pre_release_builds())
         self.PreReleaseBuildsCheckBox.clicked.connect(self.toggle_use_pre_release_builds)
 
         # Layout
-        self._addRow("Library Folder", self.LibraryFolderWidget, new_line=True)
-
+        self.application_layout = QGridLayout()
+        self.application_layout.addWidget(self.LibraryFolderLayoutLabel, 0, 0, 1, 1)
+        self.application_layout.addLayout(self.LibraryFolderLayout, 1, 0, 1, 3)
         if get_platform() == "Windows":
-            self._addRow("Launch When System Starts", self.LaunchWhenSystemStartsCheckBox)
+            self.application_layout.addWidget(self.LaunchWhenSystemStartsCheckBox, 2, 0, 1, 1)
+        self.application_layout.addWidget(self.ShowTrayIconCheckBox, 3, 0, 1, 1)
+        self.application_layout.addWidget(self.LaunchMinimizedToTrayCheckBox, 4, 0, 1, 1)
+        self.application_layout.addWidget(self.WorkerThreadCountBox, 5, 0, 1, 1)
+        self.application_layout.addWidget(self.WorkerThreadCount, 5, 1, 1, 2)
+        self.application_layout.addWidget(self.PreReleaseBuildsCheckBox, 6, 0, 1, 1)
+        self.application_settings.setLayout(self.application_layout)
 
-        self._addRow("Show Tray Icon", self.ShowTrayIconCheckBox)
-        self.LaunchMinimizedToTrayRow = self._addRow("Launch Minimized To Tray", self.LaunchMinimizedToTrayCheckBox)
-        self.LaunchMinimizedToTrayRow.setEnabled(get_show_tray_icon())
+        # Advence Options Settings
+        self.advanced_settings = SettingsGroup("Advanced", parent=self)
+        
+        # Show Preference Menu
+        self.BlenderPreferencesMenuCheckBox = QCheckBox()
+        self.BlenderPreferencesMenuCheckBox.setText("Show Blender Preference Menu")
+        self.BlenderPreferencesMenuCheckBox.setChecked(get_blender_preferences_management())
+        self.BlenderPreferencesMenuCheckBox.clicked.connect(self.toggle_blender_preferences_management)
 
-        self._addRow("Worker Thread Count", self.WorkerThreadCount)
+        # Layout
+        self.advanced_layout = QGridLayout()
+        self.advanced_layout.addWidget(self.BlenderPreferencesMenuCheckBox, 0, 0, 1, 1)
+        self.advanced_settings.setLayout(self.advanced_layout)
 
-        self._addRow("Use Pre-release Builds", self.PreReleaseBuildsCheckBox)
+        self.addRow(self.application_settings)
+        self.addRow(self.advanced_settings)
 
         if get_config_file() != user_config():
             self.migrate_button = QPushButton("Migrate local settings to user settings", self)
@@ -161,7 +190,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def toggle_show_tray_icon(self, is_checked):
         set_show_tray_icon(is_checked)
-        self.LaunchMinimizedToTrayRow.setEnabled(is_checked)
+        self.LaunchMinimizedToTrayCheckBox.setEnabled(is_checked)
         self.parent.tray_icon.setVisible(is_checked)
 
     def set_worker_thread_count(self):
@@ -169,6 +198,9 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def toggle_use_pre_release_builds(self, is_checked):
         set_use_pre_release_builds(is_checked)
+
+    def toggle_blender_preferences_management(self, is_checked):
+        set_blender_preferences_management(is_checked)
 
     def migrate_confirmation(self):
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"

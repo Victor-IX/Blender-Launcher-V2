@@ -24,6 +24,7 @@ from modules.settings import (
     get_check_for_new_builds_on_startup,
     get_default_downloads_page,
     get_default_library_page,
+    get_default_preferences_tab,
     get_default_tab,
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
@@ -74,6 +75,7 @@ from widgets.download_widget import DownloadState, DownloadWidget
 from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
+from widgets.preference_factory_widget import PreferenceFactoryWidget
 from windows.base_window import BaseWindow
 from windows.dialog_window import DialogIcon, DialogWindow
 from windows.file_dialog_window import FileDialogWindow
@@ -305,15 +307,23 @@ class BlenderLauncher(BaseWindow):
         self.UserTab.setLayout(self.UserTabLayout)
         self.TabWidget.addTab(self.UserTab, "User")
 
+        self.PreferencesTab = QWidget()
+        self.PreferencesTabLayout = QVBoxLayout()
+        self.PreferencesTabLayout.setContentsMargins(0, 0, 0, 0)
+        self.PreferencesTab.setLayout(self.PreferencesTabLayout)
+        self.TabWidget.addTab(self.PreferencesTab, "Preferences")
+
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
         self.UserToolBox = BaseToolBoxWidget(self)
+        self.PreferencesToolBox = BaseToolBoxWidget(self)
 
         self.toggle_sync_library_and_downloads_pages(get_sync_library_and_downloads_pages())
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
         self.UserTabLayout.addWidget(self.UserToolBox)
+        self.PreferencesTabLayout.addWidget(self.PreferencesToolBox)
 
         self.LibraryStablePageWidget = BasePageWidget(
             parent=self,
@@ -385,9 +395,20 @@ class BlenderLauncher(BaseWindow):
         )
         self.UserCustomListWidget = self.UserToolBox.add_page_widget(self.UserCustomPageWidget, "Custom")
 
+        self.PreferencesPageWidget = BasePageWidget(
+            parent=self,
+            page_name="PreferencesPageWidget",
+            time_label="Commit Time",
+            info_text="Nothing to show yet",
+            show_reload=True,
+            extended_selection=True,
+        )
+        self.PreferencesListWidget = self.PreferencesToolBox.add_page_widget(self.PreferencesPageWidget, "Versions")
+
         self.TabWidget.setCurrentIndex(get_default_tab())
         self.LibraryToolBox.setCurrentIndex(get_default_library_page())
         self.DownloadsToolBox.setCurrentIndex(get_default_downloads_page())
+        self.PreferencesToolBox.setCurrentIndex(get_default_preferences_tab())
 
         # Status bar
         self.status_bar = QStatusBar(self)
@@ -419,6 +440,9 @@ class BlenderLauncher(BaseWindow):
 
         # Draw library
         self.draw_library()
+
+        # Draw preferences
+        self.draw_preferences_factory()
 
         # Setup tray icon context Menu
         quit_action = QAction("Quit", self)
@@ -693,17 +717,13 @@ class BlenderLauncher(BaseWindow):
 
     def kill_thread_with_task(self, task: Task):
         """
-        Kills a thread listener using the current action.
+        Kills a thread listener using the current task
 
-        Parameters
-        ----------
-        action : Action
+        Arguments:
+            task -- Task to search for
 
-
-        Returns
-        -------
-        bool
-            success.
+        Returns:
+            Success.
         """
         thread = self.task_queue.thread_with_task(task)
         if thread is not None:
@@ -744,6 +764,7 @@ class BlenderLauncher(BaseWindow):
         self.LibraryDailyListWidget.clear_()
         self.LibraryExperimentalListWidget.clear_()
         self.UserCustomListWidget.clear_()
+        self.PreferencesListWidget.clear_()
 
         self.library_drawer = DrawLibraryTask()
         self.library_drawer.found.connect(self.draw_to_library)
@@ -951,6 +972,10 @@ class BlenderLauncher(BaseWindow):
         widget = UnrecoBuildWidget(self, path, list_widget, item)
 
         list_widget.insert_item(item, widget)
+
+    def draw_preferences_factory(self):
+        item = BaseListWidgetItem()
+        self.PreferencesListWidget.add_item(item, PreferenceFactoryWidget(self, self.PreferencesListWidget))
 
     def focus_widget(self, widget: BaseBuildWidget):
         tab: QWidget | None = None

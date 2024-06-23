@@ -18,6 +18,7 @@ tabs = {
     "Library": 0,
     "Downloads": 1,
     "User": 2,
+    "Preferences": 3,
 }
 
 library_pages = {
@@ -240,6 +241,14 @@ def get_default_tab():
 
 def set_default_tab(tab):
     get_settings().setValue("default_tab", tabs[tab])
+
+
+def get_default_preferences_tab():
+    return get_settings().value("default_preferences_tab", defaultValue=0, type=int)
+
+
+def set_default_preferences_tab(tab):
+    get_settings().setValue("default_preferences_tab", tabs[tab])
 
 
 def get_list_sorting_type(list_name):
@@ -515,6 +524,14 @@ def get_use_pre_release_builds():
 
 def set_use_pre_release_builds(b: bool):
     get_settings().setValue("use_pre_release_builds", b)
+    
+
+def get_blender_preferences_management():
+    return get_settings().value("blender_preferences_management", defaultValue=False, type=bool)
+
+
+def set_blender_preferences_management(b: bool):
+    get_settings().setValue("blender_preferences_management", b)
 
 
 def get_use_system_titlebar():
