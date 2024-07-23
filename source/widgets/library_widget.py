@@ -18,6 +18,7 @@ from modules.settings import (
     get_launch_blender_no_console,
     get_library_folder,
     get_mark_as_favorite,
+    get_blender_preferences_management,
     set_favorite_path,
 )
 from modules.shortcut import create_shortcut
@@ -29,7 +30,7 @@ from PyQt5.QtGui import (
     QDropEvent,
     QHoverEvent,
 )
-from PyQt5.QtWidgets import QAction, QApplication, QHBoxLayout, QLabel, QWidget
+from PyQt5.QtWidgets import QAction, QApplication, QHBoxLayout, QLabel, QWidget, QComboBox
 from threads.observer import Observer
 from threads.register import Register
 from threads.remover import RemovalTask
@@ -42,7 +43,7 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.dialog_window import DialogWindow
+from windows.dialog_window import DialogWindow, DialogIcon
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -141,7 +142,7 @@ class LibraryWidget(BaseBuildWidget):
         self._launch_icon = None
 
         self.subversionLabel = QLabel(self.build_info.display_version)
-        self.subversionLabel.setFixedWidth(85)
+        self.subversionLabel.setFixedWidth(100)
         self.subversionLabel.setIndent(20)
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
         self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
@@ -149,9 +150,17 @@ class LibraryWidget(BaseBuildWidget):
 
         self.build_state_widget = BuildStateWidget(self.parent)
 
+        if get_blender_preferences_management():
+            self.dropdownMenu = QComboBox(self)
+            self.dropdownMenu.setFixedWidth(100)
+            self.dropdownMenu.addItems(["Main", "New"])
+
         self.layout.addWidget(self.launchButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
+        
+        if get_blender_preferences_management():
+            self.layout.addWidget(self.dropdownMenu)
 
         if self.parent_widget is not None:
             self.lineEdit = BaseLineEdit(self)
@@ -215,9 +224,13 @@ class LibraryWidget(BaseBuildWidget):
         self.createShortcutAction = QAction("Create Shortcut")
         self.createShortcutAction.triggered.connect(self.create_shortcut)
 
-        self.showFolderAction = QAction("Show Folder")
+        self.showFolderAction = QAction("Show Version Folder")
         self.showFolderAction.setIcon(self.parent.icons.folder)
         self.showFolderAction.triggered.connect(self.show_folder)
+
+        self.showDefaultPreferencesFolderAction = QAction("Show Preferences Folder")
+        self.showDefaultPreferencesFolderAction.setIcon(self.parent.icons.folder)
+        self.showDefaultPreferencesFolderAction.triggered.connect(self.show_preferences_folder)
 
         self.createSymlinkAction = QAction("Create Symlink")
         self.createSymlinkAction.triggered.connect(self.create_symlink)
@@ -275,6 +288,7 @@ class LibraryWidget(BaseBuildWidget):
                 self.menu.addAction(self.showReleaseNotesAction)
 
         self.menu.addAction(self.showFolderAction)
+        self.menu.addAction(self.showDefaultPreferencesFolderAction)
         self.menu.addAction(self.editAction)
         self.menu.addAction(self.deleteAction)
 
@@ -461,6 +475,9 @@ class LibraryWidget(BaseBuildWidget):
                 else:
                     args = [b3d_exe.as_posix(), *blender_args.split(" ")]
 
+            if self.dropdownMenu.currentText() == "Main":
+                args = 'set "BLENDER_USER_RESOURCES=C:\\BlenderLauncher\\config\\4.2\\Main" & ' + args
+
         elif platform == "Linux":
             bash_args = get_bash_arguments()
 
@@ -562,6 +579,18 @@ class LibraryWidget(BaseBuildWidget):
 
     def build_info_writer_finished(self):
         self.build_info_writer = None
+
+    @QtCore.pyqtSlot()
+    def info_no_preferences_folder(self):
+        self.item.setSelected(True)
+        self.dlg = DialogWindow(
+            icon=DialogIcon.INFO,
+            parent=self.parent,
+            title="Info",
+            text="No preferences folder found for this build",
+            accept_text="Ok",
+            cancel_text=None,
+        )
 
     @QtCore.pyqtSlot()
     def ask_remove_from_drive(self):
@@ -741,6 +770,32 @@ class LibraryWidget(BaseBuildWidget):
             os.startfile(folder.as_posix())
         elif platform == "Linux":
             subprocess.call(["xdg-open", folder.as_posix()])
+
+    def show_preferences_folder(self):
+        platform = get_platform()
+        version = self.build_info.display_version
+        segments = version.split(".")
+
+        if len(segments) >= 3:
+            version = ".".join(segments[:-1])
+
+        if "(" in version:
+            version = version.split("(")[0]
+
+        if platform == "Windows":
+            appdata_folder = os.getenv("APPDATA")
+            folder = os.path.join(appdata_folder, "Blender Foundation\Blender", version)
+            print(folder)
+            if os.path.exists(folder):
+                os.startfile(folder)
+            else:
+                self.info_no_preferences_folder()
+        elif platform == "Linux":
+            folder = os.path.expanduser("~/.config/blender")
+            if os.path.exists(folder):
+                subprocess.call(["xdg-open", folder])
+            else:
+                self.info_no_preferences_folder()
 
     def list_widget_deleted(self):
         self.list_widget = None
