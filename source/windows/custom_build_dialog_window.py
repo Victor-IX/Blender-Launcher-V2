@@ -201,10 +201,8 @@ class CustomBuildDialogWindow(BaseWindow):
 
         self.show()
 
-    def accept(self):
-        # create build_info
-
-        build_info = BuildInfo(
+    def current_binfo(self):
+        return BuildInfo(
             str(self.path),
             self.subversion_edit.text(),
             self.hash_edit.text(),
@@ -214,6 +212,11 @@ class CustomBuildDialogWindow(BaseWindow):
             self.favorite.isChecked(),
             self.executable_choice.text(),
         )
+
+    def accept(self):
+        # create build_info
+
+        build_info = self.current_binfo()
 
         self.accepted.emit(build_info)
         self.close()
@@ -236,7 +239,11 @@ class CustomBuildDialogWindow(BaseWindow):
         self.accept_button.setEnabled(is_chosen)
 
     def auto_detect_info(self):
-        a = ReadBuildTask(self.path, custom_exe=self.executable_choice.text(), auto_write=False)
+        a = ReadBuildTask(
+            self.path,
+            info=self.current_binfo(),
+            auto_write=False,
+        )
         a.finished.connect(self.load_from_build_info)
         a.failure.connect(self.auto_detect_failed)
         self.parent_.task_queue.append(a)

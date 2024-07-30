@@ -9,13 +9,18 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, _popen, get_platform
-from modules.build_info import BuildInfo, ReadBuildTask, WriteBuildTask
+from modules._platform import _call, get_platform
+from modules.build_info import (
+    BuildInfo,
+    LaunchMode,
+    LaunchOpenLast,
+    LaunchWithBlendFile,
+    ReadBuildTask,
+    WriteBuildTask,
+    launch_build,
+)
 from modules.settings import (
-    get_bash_arguments,
-    get_blender_startup_arguments,
     get_favorite_path,
-    get_launch_blender_no_console,
     get_library_folder,
     get_mark_as_favorite,
     set_favorite_path,
@@ -166,7 +171,10 @@ class LibraryWidget(BaseBuildWidget):
         self.layout.addWidget(self.build_state_widget)
 
         self.launchButton.clicked.connect(
-            lambda: self.launch(update_selection=True, open_last=self.hovering_and_shifting)
+            lambda: self.launch(
+                update_selection=True,
+                launch_mode=LaunchOpenLast() if self.hovering_and_shifting else None,
+            )
         )
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
@@ -184,7 +192,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.openRecentAction = QAction("Open Previous File", self)
         self.openRecentAction.setIcon(self.parent.icons.file)
-        self.openRecentAction.triggered.connect(lambda: self.launch(open_last=True))
+        self.openRecentAction.triggered.connect(lambda: self.launch(launch_mode=LaunchOpenLast()))
         self.openRecentAction.setToolTip(
             "This action opens the last file used in this build."
             "\n(Appends `--open-last` to the execution arguments)"
@@ -320,8 +328,8 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.trigger()
 
     def mouseDoubleClickEvent(self, _event):
-        if self.build_info is not None:
-            self.launch(open_last=self.hovering_and_shifting)
+        if self.build_info is not None and self.hovering_and_shifting:
+            self.launch(launch_mode=LaunchOpenLast())
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.MouseButton.LeftButton:
@@ -360,7 +368,7 @@ class LibraryWidget(BaseBuildWidget):
         mime_data = e.mimeData()
         assert mime_data is not None
         for file in mime_data.urls():
-            self.launch(True, blendfile=Path(file.toLocalFile()))
+            self.launch(True, launch_mode=LaunchWithBlendFile(Path(file.toLocalFile())))
         self.setStyleSheet("background-color:")
 
     def eventFilter(self, obj, event):
@@ -417,7 +425,7 @@ class LibraryWidget(BaseBuildWidget):
         self.deleteAction.setEnabled(True)
         self.installTemplateAction.setEnabled(True)
 
-    def launch(self, update_selection=False, exe=None, blendfile: Path | None = None, open_last=False):
+    def launch(self, update_selection=False, exe=None, launch_mode: LaunchMode | None = None):
         assert self.build_info is not None
         if update_selection is True:
             self.list_widget.clearSelection()
@@ -431,69 +439,8 @@ class LibraryWidget(BaseBuildWidget):
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
 
-        platform = get_platform()
-        library_folder = Path(get_library_folder())
-        blender_args = get_blender_startup_arguments()
+        proc = launch_build(self.build_info, exe, launch_mode=launch_mode)
 
-        proc = None
-
-        b3d_exe: Path
-        args: str | list[str] = ""
-        if platform == "Windows":
-            if exe is not None:
-                b3d_exe = library_folder / self.link / exe
-                args = ["cmd /C", b3d_exe.as_posix()]
-            else:
-                cexe = self.build_info.custom_executable
-                if cexe:
-                    b3d_exe = library_folder / self.link / cexe
-                else:
-                    if (
-                        get_launch_blender_no_console()
-                        and (library_folder / self.link / "blender-launcher.exe").exists()
-                    ):
-                        b3d_exe = library_folder / self.link / "blender-launcher.exe"
-                    else:
-                        b3d_exe = library_folder / self.link / "blender.exe"
-
-                if blender_args == "":
-                    args = b3d_exe.as_posix()
-                else:
-                    args = [b3d_exe.as_posix(), *blender_args.split(" ")]
-
-        elif platform == "Linux":
-            bash_args = get_bash_arguments()
-
-            if bash_args != "":
-                bash_args += " "
-            bash_args += "nohup"
-
-            cexe = self.build_info.custom_executable
-            if cexe:
-                b3d_exe = library_folder / self.link / cexe
-            else:
-                b3d_exe = library_folder / self.link / "blender"
-
-            args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
-
-        elif platform == "macOS":
-            b3d_exe = Path(self.link) / "Blender" / "Blender.app"
-            args = f"open -W -n {b3d_exe.as_posix()} --args"
-
-        if blendfile is not None:
-            if isinstance(args, list):
-                args.append(blendfile.as_posix())
-            else:
-                args += f' "{blendfile.as_posix()}"'
-
-        if open_last:
-            if isinstance(args, list):
-                args.append("--open-last")
-            else:
-                args += " --open-last"
-
-        logger.debug("Running build with args %s", str(args))
-        proc = _popen(args)
         assert proc is not None
         if self.observer is None:
             self.observer = Observer(self)
