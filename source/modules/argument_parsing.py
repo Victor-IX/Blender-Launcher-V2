@@ -29,19 +29,20 @@ def error(parser: ArgumentParser, msg: str):
 def show_help(
     parser: ArgumentParser,
     update_parser: ArgumentParser,
+    launch_parser: ArgumentParser,
     args: Namespace,
 ):
     if is_frozen() and sys.platform == "win32":
         if args.command == "update":
             show_windows_help(update_parser)
-        # elif args.command == "launch":
-        #     print_windows_help(launch_parser)
+        elif args.command == "launch":
+            show_windows_help(launch_parser)
         else:
             show_windows_help(parser)
     else:
         if args.command == "update":
             update_parser.print_help()
-        # elif args.command == "launch":
-        #     launch_parser.print_help()
+        elif args.command == "launch":
+            launch_parser.print_help()
         else:
             parser.print_help()

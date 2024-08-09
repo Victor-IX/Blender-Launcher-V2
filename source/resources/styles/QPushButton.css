@@ -62,7 +62,7 @@ QPushButton[LaunchButton=true]:disabled {
 }
 
 QPushButton[CreateButton=true] {
-    background-color: white;
+    background-color: rgb(218, 218, 218);
     color: black;
     padding: 9px;
 }

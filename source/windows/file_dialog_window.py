@@ -1,4 +1,6 @@
-from PyQt5.QtWidgets import QFileDialog
+from __future__ import annotations
+
+from PyQt5.QtWidgets import QFileDialog, QWidget
 
 
 class FileDialogWindow(QFileDialog):
@@ -13,3 +15,37 @@ class FileDialogWindow(QFileDialog):
             | QFileDialog.DontUseCustomDirectoryIcons
         )
         return QFileDialog.getExistingDirectory(parent, title, directory, options)
+
+    def get_open_filename(
+        self,
+        parent: QWidget | None = None,
+        title: str | None = None,
+        directory: str | None = None,
+    ):
+        return QFileDialog.getOpenFileName(
+            parent=parent,
+            caption=title,
+            directory=directory,
+            options=(
+                QFileDialog.DontUseNativeDialog
+                | QFileDialog.HideNameFilterDetails
+                | QFileDialog.DontUseCustomDirectoryIcons
+            ),
+        )
+
+    def get_save_filename(
+        self,
+        parent: QWidget | None = None,
+        title: str | None = None,
+        directory: str | None = None,
+    ):
+        return QFileDialog.getSaveFileName(
+            parent=parent,
+            caption=title,
+            directory=directory,
+            options=(
+                QFileDialog.DontUseNativeDialog
+                | QFileDialog.HideNameFilterDetails
+                | QFileDialog.DontUseCustomDirectoryIcons
+            ),
+        )

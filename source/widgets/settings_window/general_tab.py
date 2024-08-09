@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
 
+from modules._platform import is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_config_file,
     get_cwd,
     get_launch_minimized_to_tray,
+    get_launch_timer_duration,
     get_launch_when_system_starts,
     get_library_folder,
     get_platform,
@@ -16,6 +19,7 @@ from modules.settings import (
     get_worker_thread_count,
     migrate_config,
     set_launch_minimized_to_tray,
+    set_launch_timer_duration,
     set_launch_when_system_starts,
     set_library_folder,
     set_show_tray_icon,
@@ -23,9 +27,11 @@ from modules.settings import (
     set_worker_thread_count,
     user_config,
 )
+from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QWidget
+from PyQt5.QtWidgets import QCheckBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSpinBox, QWidget
 from widgets.settings_form_widget import SettingsFormWidget
+from widgets.settings_window.settings_group import SettingsGroup
 from windows.dialog_window import DialogWindow
 from windows.file_dialog_window import FileDialogWindow
 
@@ -115,6 +121,43 @@ class GeneralTabWidget(SettingsFormWidget):
 
             self.addRow(self.migrate_button)
 
+        self.file_association_group = SettingsGroup("File association", parent=self)
+        layout = QGridLayout()
+        self.create_shortcut_button = QPushButton(f"Create {get_shortcut_type()}", parent=self.file_association_group)
+        self.create_shortcut_button.clicked.connect(self.create_shortcut)
+        layout.addWidget(self.create_shortcut_button, 0, 0, 1, 2)
+
+        if sys.platform == "win32":
+            from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
+
+            self.register_file_association_button = QPushButton(
+                "Register File Association", parent=self.file_association_group
+            )
+            self.unregister_file_association_button = QPushButton(
+                "Unregister File Association", parent=self.file_association_group
+            )
+            self.register_file_association_button.clicked.connect(register_windows_filetypes)
+            self.register_file_association_button.clicked.connect(self.refresh_association_buttons)
+            self.unregister_file_association_button.clicked.connect(unregister_windows_filetypes)
+            self.unregister_file_association_button.clicked.connect(self.refresh_association_buttons)
+            self.refresh_association_buttons()
+            layout.addWidget(self.register_file_association_button, 1, 0, 1, 1)
+            layout.addWidget(self.unregister_file_association_button, 1, 1, 1, 1)
+
+        self.launch_timer_duration = QSpinBox()
+        self.launch_timer_duration.setToolTip(
+            "Determines how much time you have while opening blendfiles to change the build you're launching"
+        )
+        self.launch_timer_duration.setRange(-1, 120)
+        self.launch_timer_duration.setValue(get_launch_timer_duration())
+        self.launch_timer_duration.valueChanged.connect(self.set_launch_timer_duration)
+        self.set_launch_timer_duration()
+        layout.addWidget(QLabel("Launch Timer Duration (secs)"), 2, 0, 1, 1)
+        layout.addWidget(self.launch_timer_duration, 2, 1, 1, 1)
+
+        self.file_association_group.setLayout(layout)
+        self.addRow(self.file_association_group)
+
     def prompt_library_folder(self):
         library_folder = str(get_library_folder())
         new_library_folder = FileDialogWindow().get_directory(self, "Select Library Folder", library_folder)
@@ -167,6 +210,15 @@ class GeneralTabWidget(SettingsFormWidget):
     def set_worker_thread_count(self):
         set_worker_thread_count(self.WorkerThreadCount.value())
 
+    def set_launch_timer_duration(self):
+        if self.launch_timer_duration.value() == -1:
+            self.launch_timer_duration.setSuffix(" (Disabled)")
+        elif self.launch_timer_duration.value() == 0:
+            self.launch_timer_duration.setSuffix("s (Immediate)")
+        else:
+            self.launch_timer_duration.setSuffix("s")
+        set_launch_timer_duration(self.launch_timer_duration.value())
+
     def toggle_use_pre_release_builds(self, is_checked):
         set_use_pre_release_builds(is_checked)
 
@@ -181,3 +233,21 @@ class GeneralTabWidget(SettingsFormWidget):
         migrate_config(force=True)
         self.migrate_button.hide()
         # Most getters should get the settings from the new position, so a restart should not be required
+
+    def create_shortcut(self):
+        destination = get_default_shortcut_destination()
+        file_place = FileDialogWindow().get_save_filename(
+            parent=self, title="Choose destination", directory=str(destination)
+        )
+        if file_place[0]:
+            generate_program_shortcut(Path(file_place[0]))
+
+    def refresh_association_buttons(self):
+        from modules.shortcut import association_is_registered
+
+        if association_is_registered():
+            self.register_file_association_button.setEnabled(False)
+            self.unregister_file_association_button.setEnabled(True)
+        else:
+            self.register_file_association_button.setEnabled(True)
+            self.unregister_file_association_button.setEnabled(False)

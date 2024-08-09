@@ -6,10 +6,14 @@ import os
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import NoReturn
 
 import modules._resources_rc
 from modules import argument_parsing as ap
 from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules.cli_launching import cli_launch
+from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
+from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
 from PyQt5.QtWidgets import QApplication
 from semver import Version
 from windows.dialog_window import DialogWindow
@@ -65,11 +69,15 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command")
 
-    update_parser = subparsers.add_parser("update", help="Update the application to a new version.", add_help=False)
+    update_parser = subparsers.add_parser(
+        "update",
+        help="Update the application to a new version.",
+        add_help=False,
+    )
     add_help(update_parser)
     update_parser.add_argument("version", help="Version to update to.", nargs="?")
 
-    parser.add_argument("-debug", help="Enable debug logging.", action="store_true")
+    parser.add_argument("-d", "-debug", "--debug", help="Enable debug logging.", action="store_true")
     parser.add_argument("-set-library-folder", help="Set library folder", type=Path)
     parser.add_argument(
         "--offline",
@@ -84,12 +92,40 @@ def main():
         action="store_true",
     )
 
-    # possible launch_parser
-    # args:
-    #   "launch":               Launch a specific version of Blender. If no file or version is specified,
-    #                            the favorite build is chosen. If there is no favorite build, TODO: BUILD_CHOOSER
-    #   "-f" | "--file":        Path to a specific Blender file to launch.
-    #   "-v" | "--version":     Version to launch. If not specified, the latest stable release is used.
+    launch_parser = subparsers.add_parser(
+        "launch",
+        help="Launch a specific version of Blender. If not file or version is specified, Quick launch is chosen.",
+        add_help=False,
+    )
+    add_help(launch_parser)
+    grp = launch_parser.add_mutually_exclusive_group()
+    grp.add_argument("-f", "--file", type=Path, help="Path to a specific Blender file to launch.")
+    grp.add_argument(
+        "-ol", "--open-last", action="store_true", help="Open the last file in the specified blender build"
+    )
+
+    launch_parser.add_argument("-v", "--version", help=f"Version to launch. {VERSION_SEARCH_SYNTAX}")
+    launch_parser.add_argument(
+        "-c",
+        "--cli",
+        action="store_true",
+        help="Launch Blender from CLI. does not open any QT frontend. WARNING: LIKELY DOES NOT WORK IN WINDOWS BUNDLED EXECUTABLE",
+    )
+
+    # This could be used better
+    launch_target_parser = subparsers.add_parser(
+        "__launch_target",
+        help="This is a target for launching the program from a shortcut.",
+        add_help=False,
+    )
+    launch_target_parser.add_argument("file", nargs="?", type=Path, help="Path to a specific Blender file to launch.")
+
+    if sys.platform == "win32":
+        subparsers.add_parser(
+            "register",
+            help="Registers the program to read .blend builds. Adds Blender Launcher to the Open With window. (WIN ONLY)",
+        )
+        subparsers.add_parser("unregister", help="Undoes the changes that `register` makes. (WIN ONLY)")
 
     args, argv = parser.parse_known_args()
     if argv:
@@ -98,7 +134,7 @@ def main():
 
     # Custom help is necessary for frozen Windows builds
     if args.help:
-        ap.show_help(parser, update_parser, args)
+        ap.show_help(parser, update_parser, launch_parser, args)
         sys.exit(0)
 
     if args.debug:
@@ -118,8 +154,15 @@ def main():
     if args.command == "update":
         start_update(app, args.instanced, args.version)
 
-    # if args.command == "launch":
-    #     ...
+    if args.command == "launch":
+        start_launch(app, args.file, args.version, args.open_last, cli=args.cli)
+    if args.command == "__launch_target" and args.file:
+        start_launch(app, args.file, None, False)
+
+    if args.command == "register":
+        start_register(args.instanced)
+    if args.command == "unregister":
+        start_unregister(args.instanced)
 
     if not args.instanced:
         check_for_instance()
@@ -173,6 +216,56 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
             os.chmod(blu_exe, 0o744)
             _popen(f'nohup "{blu_exe}" --instanced update')
         sys.exit(0)
+
+
+def start_launch(
+    app: QApplication,
+    file: Path | None = None,
+    version_query: str | None = None,
+    open_last: bool = False,
+    cli: bool = False,
+) -> NoReturn:
+    from modules.version_matcher import VALID_QUERIES, VersionSearchQuery
+    from windows.launching_window import LaunchingWindow
+
+    # convert version_query to VersionSearchQuery
+    if version_query is not None:
+        try:
+            query = VersionSearchQuery.parse(version_query)
+        except Exception:
+            print("Failed to parse query")
+            print(VERSION_SEARCH_SYNTAX)
+            print("Valid version queries include: ")
+            print(VALID_FULL_QUERIES)
+            sys.exit(1)
+    else:
+        query = None
+
+    # remove quotes around file path if they exist
+    if file is not None:
+        file = Path(str(file).strip('"'))
+
+    if cli:
+        cli_launch(file=file, version_query=query, open_last=open_last)
+        sys.exit(1)
+    else:
+        LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
+        sys.exit(app.exec())
+
+
+def start_register(instanced: bool):
+    import sys
+
+    register_windows_filetypes()
+
+    sys.exit(0)
+
+
+def start_unregister(instanced: bool):
+    import sys
+
+    unregister_windows_filetypes()
+    sys.exit(0)
 
 
 def check_for_instance():

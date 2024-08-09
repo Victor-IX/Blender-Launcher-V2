@@ -15,6 +15,7 @@ dependencies = [
     "pywin32==303; sys_platform == \"win32\"",
     "distro>=1.8.0",
     "semver>=3.0.2",
+    "zstandard>=0.23.0",
 ]
 requires-python = ">=3.9, <3.11"
 readme = "README.md"

@@ -237,6 +237,16 @@ class BuildInfo:
             json.dump(data, file)
         return data
 
+    def __lt__(self, other: BuildInfo):
+        sv, osv = self.semversion.finalize_version(), other.semversion.finalize_version()
+        if sv == osv:
+            # sort by commit time if possible
+            try:
+                return self.commit_time < other.commit_time
+            except Exception:  # Sometimes commit times are built without timezone information
+                return self.full_semversion < other.full_semversion
+        return sv < osv
+
 
 def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetime, str, str, str]:
     set_locale()
@@ -428,7 +438,7 @@ class LaunchWithBlendFile(LaunchMode):
 class LaunchOpenLast(LaunchMode): ...
 
 
-def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
+def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, linux_nohup=True) -> list[str] | str:
     platform = get_platform()
     library_folder = get_library_folder()
     blender_args = get_blender_startup_arguments()
@@ -462,7 +472,8 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
 
         if bash_args != "":
             bash_args += " "
-        bash_args += "nohup"
+        if linux_nohup:
+            bash_args += "nohup"
 
         cexe = info.custom_executable
         if cexe:
@@ -488,5 +499,10 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
             else:
                 args += " --open-last"
 
+    return args
+
+
+def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
+    args = get_args(info, exe, launch_mode)
     logger.debug(f"Running build with args {args!s}")
     return _popen(args)
