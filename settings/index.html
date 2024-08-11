@@ -902,6 +902,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../file_association/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File Association
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../troubleshooting/" class="md-nav__link">
         
   
@@ -1522,7 +1542,8 @@
 <p><img alt="General page of Settings" src="../imgs/settings_window_general.png" /></p>
 <h3 id="library-folder">Library Folder<a class="headerlink" href="#library-folder" title="Permanent link">&para;</a></h3>
 <dl>
-<dd><strong>Library Folder</strong> - a directory on the hard drive where all downloaded builds are stored. For detailed information, check the <a href="../library_folder/">Library Folder</a> page.</dd>
+<dd><strong>Library Folder</strong> - a directory on the hard drive where all downloaded builds are stored.</dd>
+<dd>For detailed information, check the <a href="../library_folder/">Library Folder</a> page.</dd>
 </dl>
 <h3 id="launch-when-system-starts">Launch When System Starts<a class="headerlink" href="#launch-when-system-starts" title="Permanent link">&para;</a></h3>
 <div class="admonition info">
@@ -1546,30 +1567,35 @@ If this option is enabled, to completely close the <strong>Blender Launcher</str
 <dd>Sets the maximal number of <strong>CPU Thread Blender</strong> Launcher can use.</dd>
 </dl>
 <h3 id="file-association">File Association<a class="headerlink" href="#file-association" title="Permanent link">&para;</a></h3>
+<dl>
+<dd>Use the Blender Launcher as Default program to launch <code>.blend</code> files with the desired version</dd>
+<dd>For detail information, check the <a href="../file_association/">File Association</a> page.</dd>
+</dl>
 <h4 id="create-shortcut">Create Shortcut<a class="headerlink" href="#create-shortcut" title="Permanent link">&para;</a></h4>
 <dl>
 <dd>TODO</dd>
 </dl>
 <h4 id="register-file-association">Register File Association<a class="headerlink" href="#register-file-association" title="Permanent link">&para;</a></h4>
 <dl>
-<dd>Add Blender Launcher as the Default program to open .blend and .blend1 files</dd>
+<dd>Add Blender Launcher as the Default program to open <code>.blend</code> and <code>.blend1</code> files</dd>
 </dl>
 <h4 id="unregister-file-association">Unregister File Association<a class="headerlink" href="#unregister-file-association" title="Permanent link">&para;</a></h4>
 <dl>
-<dd>Remove the Blender Launcher as the Default program to open .blend and .blend1 files</dd>
+<dd>Remove the Blender Launcher as the Default program to open <code>.blend</code> and <code>.blend1</code> files</dd>
 </dl>
 <h4 id="launch-time-duration">Launch Time Duration<a class="headerlink" href="#launch-time-duration" title="Permanent link">&para;</a></h4>
 <dl>
-<dd>Set the time to automatically lunch a .blend file with the corresponding version</dd>
-</dl>
+<dd>
+<p>Set the time to automatically lunch a <code>.blend</code> file with the corresponding version</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>Blend files will be automatically lunch after this timer if the correspond Blender version exist in the <a href="../library_folder/">Blender Launcher Library</a></p>
 </div>
-<dl>
-<dd><code>-1 -&gt; No Timer (Require the user to click on launch)
-0 -&gt; instant (Only if matching version exist)
-3 -&gt; 3 Seconde (Will lunch after 3s if matching version exist)</code></dd>
+<div class="highlight"><pre><span></span><code>-1 -&gt; No Timer (Require the user to click on launch)
+ 0 -&gt; instant (Only if matching version exist)
+ 3 -&gt; 3 Seconde (Will lunch after 3s if matching version exist)
+</code></pre></div>
+</dd>
 </dl>
 <h2 id="appearance">Appearance<a class="headerlink" href="#appearance" title="Permanent link">&para;</a></h2>
 <p><img alt="Appearance page of Settings" src="../imgs/settings_window_appearance.png" /></p>
