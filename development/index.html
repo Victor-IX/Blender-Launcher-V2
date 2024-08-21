@@ -497,22 +497,13 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-pdm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using Pdm
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using Pdm">
+    <nav class="md-nav" aria-label="Requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#preparing-virtual-environment" class="md-nav__link">
+  <a href="#preparing-the-virtual-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Preparing virtual environment
+      Preparing the virtual environment
     </span>
   </a>
   
@@ -533,9 +524,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#building-blender-launcher-exe" class="md-nav__link">
+  <a href="#building-blender-launcherexe" class="md-nav__link">
     <span class="md-ellipsis">
-      Building Blender Launcher .exe
+      Building Blender Launcher.exe
     </span>
   </a>
   
@@ -624,22 +615,13 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-pdm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using Pdm
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using Pdm">
+    <nav class="md-nav" aria-label="Requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#preparing-virtual-environment" class="md-nav__link">
+  <a href="#preparing-the-virtual-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Preparing virtual environment
+      Preparing the virtual environment
     </span>
   </a>
   
@@ -660,9 +642,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#building-blender-launcher-exe" class="md-nav__link">
+  <a href="#building-blender-launcherexe" class="md-nav__link">
     <span class="md-ellipsis">
-      Building Blender Launcher .exe
+      Building Blender Launcher.exe
     </span>
   </a>
   
@@ -731,46 +713,46 @@
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Linux or Windows x64</li>
-<li>Python 3.9</li>
-<li>pdm</li>
+<li>Python &gt;=3.9, &lt;3.11</li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>To use different Python version, run <code>pdm use</code> to select the correct python interpreter</p>
-</div>
-<h2 id="using-pdm">Using Pdm<a class="headerlink" href="#using-pdm" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p>All actions should be performed under repository root folder i.e. <code>/Blender-Launcher-V2</code>!</p>
 </div>
-<h3 id="preparing-virtual-environment">Preparing virtual environment<a class="headerlink" href="#preparing-virtual-environment" title="Permanent link">&para;</a></h3>
+<h3 id="preparing-the-virtual-environment">Preparing the virtual environment<a class="headerlink" href="#preparing-the-virtual-environment" title="Permanent link">&para;</a></h3>
 <ol>
-<li>
-<p>Install pdm package</p>
-<div class="highlight"><pre><span></span><code>pip install pdm
-</code></pre></div>
-</li>
 <li>
 <p>Create the virtual environment</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
 python<span class="w"> </span>-m<span class="w"> </span>virtualenv<span class="w"> </span>--clear<span class="w"> </span>--download<span class="w"> </span>.venv
-python<span class="w"> </span>-m<span class="w"> </span>ensurepip
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pdm
-<span class="c1"># Enter the virtual Environment</span>
-pdm<span class="w"> </span>venv<span class="w"> </span>activate
-<span class="c1"># ^ Execute the command this returns with!</span>
 </code></pre></div>
-</li>
-<li>
-<p>Install dependencies</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Minimum set of packages for building executable</label><label for="__tabbed_1_2">All set of packages including development tools</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input checked="checked" id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Windows (Powershell)</label><label for="__tabbed_1_2">Windows (Cmd)</label><label for="__tabbed_1_3">Linux</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pip install -e .
+<div class="highlight"><pre><span></span><code><span class="p">.\.</span><span class="n">venv</span><span class="p">\</span><span class="n">Scripts</span><span class="p">\</span><span class="n">activate</span><span class="p">.</span><span class="n">ps1</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pdm install
+<div class="highlight"><pre><span></span><code>.\.venv\Scripts\activate
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</code></pre></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Install dependencies</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input checked="checked" id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Minimum set of packages for building executable</label><label for="__tabbed_2_2">All packages including development tools</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[docs,ruff]&quot;</span>
 </code></pre></div>
 </div>
 </div>
@@ -784,22 +766,22 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </div>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>source/main.py
 </code></pre></div>
-<h2 id="building-blender-launcher-exe">Building Blender Launcher .exe<a class="headerlink" href="#building-blender-launcher-exe" title="Permanent link">&para;</a></h2>
+<h2 id="building-blender-launcherexe">Building Blender Launcher.exe<a class="headerlink" href="#building-blender-launcherexe" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Executables made in Pyinstaller must be built inside the target platform! You cannot build for a different platform other than your own.</p>
 </div>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows</label><label for="__tabbed_2_2">Linux</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Windows</label><label for="__tabbed_3_2">Linux</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <ol>
 <li>
 <p>Run batch file</p>
-<div class="highlight"><pre><span></span><code>.\build_win.bat
+<div class="highlight"><pre><span></span><code>.\scripts\build_win.bat
 </code></pre></div>
 </li>
 <li>
-<p>Look for bundled app under <code>Blender-Launcher-V2\dist\release</code> folder</p>
+<p>Look for bundled app under the <code>Blender-Launcher-V2\dist\release</code> folder</p>
 </li>
 </ol>
 </div>
@@ -807,11 +789,11 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 <ol>
 <li>
 <p>Run shell script file</p>
-<div class="highlight"><pre><span></span><code>sh build_linux.sh
+<div class="highlight"><pre><span></span><code>sh scripts/build_linux.sh
 </code></pre></div>
 </li>
 <li>
-<p>Look for bundled app under <code>Blender-Launcher-V2/dist/release</code> folder</p>
+<p>Look for bundled app under the <code>Blender-Launcher-V2/dist/release</code> folder</p>
 </li>
 </ol>
 </div>
@@ -819,25 +801,30 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <h3 id="preview-the-documentation">Preview the Documentation<a class="headerlink" href="#preview-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Windows</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block"></div>
-</div>
-</div>
-<ol>
-<li>Run the batch file
-        <div class="highlight"><pre><span></span><code>.\script\mkdocs_serve.bat
-</code></pre></div></li>
-<li><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</li>
-</ol>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Linux</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Windows</label><label for="__tabbed_4_2">Linux</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <ol>
-<li>Run the shell script file
-    <div class="highlight"><pre><span></span><code>sh .\script\mkdocs_serve.sh
-</code></pre></div></li>
-<li><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</li>
+<li>
+<p>Run the batch file</p>
+<div class="highlight"><pre><span></span><code>.\scripts\mkdocs_serve.bat
+</code></pre></div>
+</li>
+<li>
+<p><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</p>
+</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>
+<p>Run the shell script file</p>
+<div class="highlight"><pre><span></span><code>sh<span class="w"> </span>./scripts/mkdocs_serve.sh
+</code></pre></div>
+</li>
+<li>
+<p><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</p>
+</li>
 </ol>
 </div>
 </div>
@@ -849,24 +836,20 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </div>
 <p>Make the desired modifications in the .md files.</p>
 <h3 id="publish-the-documentation">Publish the Documentation<a class="headerlink" href="#publish-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Windows</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block"></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These scripts will only work if you have write access to the Blender-Launcher-V2 repo.</p>
 </div>
-</div>
-<ol>
-<li>Run the batch file
-        <div class="highlight"><pre><span></span><code>.\script\mkdocs_publish.bat
-</code></pre></div></li>
-</ol>
-<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Linux</label></div>
+<p>Run the script</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Windows</label><label for="__tabbed_5_2">Linux</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<ol>
-<li>Run the shell script file
-    <div class="highlight"><pre><span></span><code>sh .\script\mkdocs_publish.sh
-</code></pre></div></li>
-</ol>
+<div class="highlight"><pre><span></span><code>.\scripts\mkdocs_publish.bat
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>sh<span class="w"> </span>./script/mkdocs_publish.sh
+</code></pre></div>
 </div>
 </div>
 </div>
@@ -920,7 +903,7 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../assets/javascripts/bundle.471ce7a9.min.js"></script>
