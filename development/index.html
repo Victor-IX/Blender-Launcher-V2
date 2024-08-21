@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../icons/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.31">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.32">
     
     
       
@@ -763,13 +763,16 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </li>
 <li>
 <p>Install dependencies</p>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Minimum set of packages for building executable</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Minimum set of packages for building executable</label><label for="__tabbed_1_2">All set of packages including development tools</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>pip install -e .
 </code></pre></div>
 </div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">All set of packages including development tools</label><div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>pdm install
 </code></pre></div>
+</div>
 </div>
 </div>
 </li>
@@ -786,7 +789,9 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 <p class="admonition-title">Warning</p>
 <p>Executables made in Pyinstaller must be built inside the target platform! You cannot build for a different platform other than your own.</p>
 </div>
-<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Windows</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows</label><label for="__tabbed_2_2">Linux</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <ol>
 <li>
 <p>Run batch file</p>
@@ -798,7 +803,7 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </li>
 </ol>
 </div>
-<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Linux</label><div class="tabbed-content">
+<div class="tabbed-block">
 <ol>
 <li>
 <p>Run shell script file</p>
@@ -811,9 +816,13 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </ol>
 </div>
 </div>
+</div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <h3 id="preview-the-documentation">Preview the Documentation<a class="headerlink" href="#preview-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Windows</label><div class="tabbed-content"></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block"></div>
+</div>
 </div>
 <ol>
 <li>Run the batch file
@@ -821,13 +830,16 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </code></pre></div></li>
 <li><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</li>
 </ol>
-<div class="tabbed-set" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Linux</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Linux</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <ol>
 <li>Run the shell script file
     <div class="highlight"><pre><span></span><code>sh .\script\mkdocs_serve.sh
 </code></pre></div></li>
 <li><a href="http://127.0.0.1:8000/">Open the Documentation</a> in a web browser.</li>
 </ol>
+</div>
 </div>
 </div>
 <h3 id="update-the-documentation">Update the Documentation<a class="headerlink" href="#update-the-documentation" title="Permanent link">&para;</a></h3>
@@ -837,19 +849,25 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
 </div>
 <p>Make the desired modifications in the .md files.</p>
 <h3 id="publish-the-documentation">Publish the Documentation<a class="headerlink" href="#publish-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Windows</label><div class="tabbed-content"></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block"></div>
+</div>
 </div>
 <ol>
 <li>Run the batch file
         <div class="highlight"><pre><span></span><code>.\script\mkdocs_publish.bat
 </code></pre></div></li>
 </ol>
-<div class="tabbed-set" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><label for="__tabbed_6_1">Linux</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Linux</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <ol>
 <li>Run the shell script file
     <div class="highlight"><pre><span></span><code>sh .\script\mkdocs_publish.sh
 </code></pre></div></li>
 </ol>
+</div>
 </div>
 </div>
 
@@ -905,7 +923,7 @@ pdm<span class="w"> </span>venv<span class="w"> </span>activate
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      <script src="../assets/javascripts/bundle.471ce7a9.min.js"></script>
       
     
   </body>
