@@ -1,20 +1,25 @@
 from __future__ import annotations
 
 from datetime import timezone
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from PyQt5.QtWidgets import QListWidgetItem
 
 if TYPE_CHECKING:
     from semver import Version
     from widgets.base_list_widget import BaseListWidget
+    from widgets.download_widget import DownloadWidget
+    from widgets.foreign_build_widget import UnrecoBuildWidget
+    from widgets.library_widget import LibraryWidget
 
 
 class BaseListWidgetItem(QListWidgetItem):
     def __init__(self, date=None):
         super().__init__()
         self.date = date
-        self.listWidget: Callable[[], BaseListWidget | None]
+
+    def listWidget(self) -> BaseListWidget[LibraryWidget | UnrecoBuildWidget | DownloadWidget] | None:
+        return super().listWidget()
 
     def __lt__(self, other):
         soring_type = self.listWidget().parent.sorting_type

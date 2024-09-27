@@ -1,24 +1,26 @@
+from typing import Generic
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QTabWidget
-from widgets.base_list_widget import BaseListWidget
+from widgets.base_list_widget import BaseListWidget, W
 from widgets.base_page_widget import BasePageWidget
 
 
-class BaseToolBoxWidget(QTabWidget):
+class BaseToolBoxWidget(QTabWidget, Generic[W]):
     tab_changed = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.pages = []
         self.parent = parent
-        self.list_widgets = set()
+        self.list_widgets: set[BaseListWidget[W]] = set()
 
         self.setContentsMargins(0, 0, 0, 0)
         self.setTabPosition(QTabWidget.TabPosition.West)
         self.setProperty("West", True)
         self.currentChanged.connect(self.current_changed)
 
-    def add_page_widget(self, page_widget: BasePageWidget, page_name) -> BaseListWidget:
+    def add_page_widget(self, page_widget: BasePageWidget[W], page_name) -> BaseListWidget[W]:
         self.pages.append(page_widget)
         self.addTab(page_widget, page_name)
         self.list_widgets.add(page_widget.list_widget)

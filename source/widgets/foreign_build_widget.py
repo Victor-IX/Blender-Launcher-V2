@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -6,17 +8,17 @@ from modules.build_info import BuildInfo
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 from widgets.base_build_widget import BaseBuildWidget
+from widgets.base_list_widget import BaseListWidget
 from widgets.elided_text_label import ElidedTextLabel
+from widgets.library_widget import LibraryWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-
-from .base_list_widget import BaseListWidget
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
 
 
 class UnrecoBuildWidget(BaseBuildWidget):
-    def __init__(self, parent: "BlenderLauncher", path: Path, list_widget: BaseListWidget, item):
+    def __init__(self, parent: "BlenderLauncher", path: Path, list_widget: BaseListWidget[UnrecoBuildWidget | LibraryWidget], item):
         super().__init__(parent=parent)
         self.parent: BlenderLauncher = parent
         self.path = path

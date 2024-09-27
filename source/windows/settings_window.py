@@ -8,9 +8,9 @@ from modules.settings import (
     get_proxy_port,
     get_proxy_type,
     get_proxy_user,
-    get_user_id,
     get_quick_launch_key_seq,
     get_use_custom_tls_certificates,
+    get_user_id,
     get_worker_thread_count,
     proxy_types,
 )

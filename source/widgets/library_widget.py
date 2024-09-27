@@ -5,21 +5,23 @@ import logging
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_platform
+from modules._platform import _call, get_platform, get_user_config_path
 from modules.build_info import (
     BuildInfo,
-    LaunchMode,
-    LaunchOpenLast,
-    LaunchWithBlendFile,
     ReadBuildTask,
     WriteBuildTask,
     launch_build,
 )
+from modules.build_info import (
+    LaunchArgs as LA,
+)
 from modules.settings import (
+    get_blender_preferences_management,
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
@@ -34,7 +36,7 @@ from PyQt5.QtGui import (
     QDropEvent,
     QHoverEvent,
 )
-from PyQt5.QtWidgets import QAction, QApplication, QHBoxLayout, QLabel, QWidget
+from PyQt5.QtWidgets import QAction, QApplication, QComboBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 from threads.observer import Observer
 from threads.register import Register
 from threads.remover import RemovalTask
@@ -47,9 +49,10 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.dialog_window import DialogWindow
+from windows.dialog_window import DialogIcon, DialogWindow
 
 if TYPE_CHECKING:
+    from modules.prefs_info import PreferenceInfo
     from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
@@ -146,7 +149,7 @@ class LibraryWidget(BaseBuildWidget):
         self._launch_icon = None
 
         self.subversionLabel = QLabel(self.build_info.display_version)
-        self.subversionLabel.setFixedWidth(85)
+        self.subversionLabel.setFixedWidth(100)
         self.subversionLabel.setIndent(20)
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
         self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
@@ -154,9 +157,31 @@ class LibraryWidget(BaseBuildWidget):
 
         self.build_state_widget = BuildStateWidget(self.parent)
 
+        if get_blender_preferences_management():
+            self.dropdownMenu = QComboBox(self)
+            self.dropdownMenu.setFixedWidth(100)
+            self.dropdownMenu.addItems(["Default"])
+            self.dropdownMenu.currentIndexChanged.connect(self.prefs_choice_changed)
+
+            # {"<version>: <name>" -> PreferenceInfo} format
+            self.available_prefs: dict[str, PreferenceInfo] = {}
+
+            self.dropdownMenuSaveButton = QPushButton(self)
+            self.dropdownMenuSaveButton.setIcon(self.parent.icons.favorite)
+            self.dropdownMenuSaveButton.setToolTip("Save this preference choice in the future")
+            self.dropdownMenuSaveButton.clicked.connect(self.save_preference_selection)
+            self.dropdownMenuSaveButton.hide()
+
         self.layout.addWidget(self.launchButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
+
+        if get_blender_preferences_management():
+            layout = QHBoxLayout()
+            layout.addWidget(self.dropdownMenu)
+            layout.addWidget(self.dropdownMenuSaveButton)
+            layout.addStretch()
+            self.layout.addLayout(layout, stretch=1)
 
         if self.parent_widget is not None:
             self.lineEdit = BaseLineEdit(self)
@@ -166,7 +191,6 @@ class LibraryWidget(BaseBuildWidget):
             self.lineEdit.returnPressed.connect(self.rename_branch_accepted)
             self.layout.addWidget(self.lineEdit, stretch=1)
             self.lineEdit.hide()
-
         self.layout.addWidget(self.commitTimeLabel)
         self.layout.addWidget(self.build_state_widget)
 
@@ -229,9 +253,13 @@ class LibraryWidget(BaseBuildWidget):
         self.createShortcutAction = QAction("Create Shortcut")
         self.createShortcutAction.triggered.connect(self.create_shortcut)
 
-        self.showFolderAction = QAction("Show Folder")
+        self.showFolderAction = QAction("Show Version Folder")
         self.showFolderAction.setIcon(self.parent.icons.folder)
         self.showFolderAction.triggered.connect(self.show_folder)
+
+        self.showPreferencesFolderAction = QAction("Show Preferences Folder")
+        self.showPreferencesFolderAction.setIcon(self.parent.icons.folder)
+        self.showPreferencesFolderAction.triggered.connect(lambda _: self.show_preferences_folder())
 
         self.createSymlinkAction = QAction("Create Symlink")
         self.createSymlinkAction.triggered.connect(self.create_symlink)
@@ -289,6 +317,7 @@ class LibraryWidget(BaseBuildWidget):
                 self.menu.addAction(self.showReleaseNotesAction)
 
         self.menu.addAction(self.showFolderAction)
+        self.menu.addAction(self.showPreferencesFolderAction)
         self.menu.addAction(self.editAction)
         self.menu.addAction(self.deleteAction)
 
@@ -440,7 +469,7 @@ class LibraryWidget(BaseBuildWidget):
         self.deleteAction.setEnabled(True)
         self.installTemplateAction.setEnabled(True)
 
-    def launch(self, update_selection=False, exe=None, launch_mode: LaunchMode | None = None):
+    def launch(self, update_selection=False, exe=None, launch_mode: LA.LaunchMode | None = None):
         assert self.build_info is not None
         if update_selection is True:
             self.list_widget.clearSelection()
@@ -454,7 +483,12 @@ class LibraryWidget(BaseBuildWidget):
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
 
-        proc = launch_build(self.build_info, exe, launch_mode=launch_mode)
+        if (target := self.pref_target()) is not None:
+            preference_mode = LA.CustomPreferences(self.available_prefs[target])
+        else:
+            preference_mode = LA.DefaultPreferences()
+
+        proc = launch_build(self.build_info, exe, launch_mode=launch_mode, preference_mode=preference_mode)
 
         assert proc is not None
         if self.observer is None:
@@ -487,6 +521,64 @@ class LibraryWidget(BaseBuildWidget):
 
         if self.child_widget is not None:
             self.child_widget.observer_finished()
+
+    def pref_target(self) -> str | None:
+        if self.dropdownMenu.currentIndex() == 0:
+            target = None
+        else:
+            target = self.dropdownMenu.currentText().split(": ")[1]
+
+        return target
+
+    @QtCore.pyqtSlot()
+    def prefs_choice_changed(self):
+        if self.dropdownMenu.count() == 0:
+            return
+
+        if (
+            self.build_info is not None
+            and self.build_info.target_preferences != self.pref_target()  # the target config has changed
+        ):
+            self.dropdownMenuSaveButton.show()
+        else:
+            self.dropdownMenuSaveButton.hide()
+
+    def save_preference_selection(self):
+        if self.build_info is not None:
+            # update the build in the info file
+            self.build_info.target_preferences = self.pref_target()
+            task = WriteBuildTask(Path(self.build_info.link), self.build_info)
+            task.written.connect(self.dropdownMenuSaveButton.hide)
+            self.parent.task_queue.append(task)
+
+    def update_available_prefs(self, available: dict[str, PreferenceInfo]):
+        self.dropdownMenu.clear()
+        self.available_prefs = available
+
+        # prioritize builds in available that match self build info
+        if self.build_info is not None:
+            matched = []
+            unmatched = []
+            for item, pref in available.items():
+                if (
+                    pref.target_version is not None
+                    and pref.target_version.major == self.build_info.semversion.major
+                    and pref.target_version.minor == self.build_info.semversion.minor
+                ):
+                    matched.append(f"{pref.target_version}: {item}")
+                else:
+                    unmatched.append(f"{pref.target_version}: {item}")
+            items = ["Default", *matched, *unmatched]
+        else:
+            items = ["Default", *available.keys()]
+
+        self.dropdownMenu.addItems(items)
+
+        for pref in available.values():
+            if (
+                self.build_info is not None and pref.name == self.build_info.target_preferences
+            ):  # Set it as the dropdown position
+                self.dropdownMenu.setCurrentText(f"{pref.target_version}: {pref.name}")
 
     @QtCore.pyqtSlot()
     def rename_branch(self):
@@ -524,6 +616,18 @@ class LibraryWidget(BaseBuildWidget):
 
     def build_info_writer_finished(self):
         self.build_info_writer = None
+
+    @QtCore.pyqtSlot()
+    def info_no_preferences_folder(self):
+        self.item.setSelected(True)
+        self.dlg = DialogWindow(
+            icon=DialogIcon.INFO,
+            parent=self.parent,
+            title="Info",
+            text="No preferences folder found for this build",
+            accept_text="Ok",
+            cancel_text=None,
+        )
 
     @QtCore.pyqtSlot()
     def ask_remove_from_drive(self):
@@ -734,8 +838,56 @@ class LibraryWidget(BaseBuildWidget):
 
         if platform == "Windows":
             os.startfile(folder.as_posix())
+        elif platform == "macOS":
+            subprocess.call(["open", folder.as_posix()])
         elif platform == "Linux":
             subprocess.call(["xdg-open", folder.as_posix()])
+
+    def get_default_preferences_folder(self) -> Path:
+        assert self.build_info is not None
+        version = self.build_info.semversion
+        v = f"{version.major}.{version.minor}"
+        config_path = get_user_config_path()
+        folder: Path | None = None
+        if sys.platform == "win32":
+            folder = config_path / "Blender Foundation" / "Blender" / v
+        elif sys.platform == "darwin":
+            folder = config_path / "Blender" / v
+        else:
+            folder = config_path / "blender" / v
+
+        return folder
+
+    def get_custom_preferences_folder(self) -> Path | None:
+        assert self.build_info is not None
+        target = self.pref_target()
+        if target in self.available_prefs:
+            pinfo = self.available_prefs[target]
+            return pinfo.directory
+        return None
+
+    @pyqtSlot(Path)
+    def show_preferences_folder(self, target: Path | None = None):
+        if (
+            get_blender_preferences_management() and target is None and (target := self.get_custom_preferences_folder()) is not None
+        ):  # check the custom preferences folder
+            self.show_preferences_folder(target)
+
+        if target is None:
+            target = self.get_default_preferences_folder()
+
+        if not target.exists() and (parent := target.parent).exists():
+            target = parent
+
+        if target.exists():
+            if sys.platform == "win32":
+                os.startfile(target)
+            elif sys.platform == "darwin":
+                subprocess.call(["open", target])
+            else:
+                subprocess.call(["xdg-open", target])
+        else:
+            self.info_no_preferences_folder()
 
     def list_widget_deleted(self):
         self.list_widget = None
