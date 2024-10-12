@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import contextlib
 import os
 import shutil
@@ -124,6 +125,14 @@ def get_favorite_path():
 
 def set_favorite_path(path):
     get_settings().setValue("Internal/favorite_path", path)
+
+
+def get_dont_show_resource_warning():
+    return get_settings().value("Internal/dont_show_resource_err_again", type=bool, defaultValue=False)
+
+
+def set_dont_show_resource_warning(b: bool = True):
+    get_settings().setValue("Internal/dont_show_resource_err_again", b)
 
 
 def get_last_time_checked_utc():

@@ -25,6 +25,7 @@ from modules.settings import (
     get_default_downloads_page,
     get_default_library_page,
     get_default_tab,
+    get_dont_show_resource_warning,
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
@@ -43,6 +44,7 @@ from modules.settings import (
     get_use_system_titlebar,
     get_worker_thread_count,
     is_library_folder_valid,
+    set_dont_show_resource_warning,
     set_last_time_checked_utc,
     set_library_folder,
     set_tray_icon_notified,
@@ -63,6 +65,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 from semver import Version
+from modules._resources_rc import RESOURCES_AVAILABLE
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper
@@ -175,6 +178,17 @@ class BlenderLauncher(BaseWindow):
         # Vesrion Update
         self.pre_release_build = get_use_pre_release_builds
 
+        if not RESOURCES_AVAILABLE and not get_dont_show_resource_warning():
+            dlg = DialogWindow(
+                parent=self,
+                title="Error",
+                text="Resources failed to load! The launcher will still work,<br> \
+                but the style will be broken.",
+                accept_text="OK",
+                cancel_text="Don't Show Again",
+            )
+            dlg.cancelled.connect(self.__dont_show_resources_warning_again)
+
         # Check library folder
         if is_library_folder_valid() is False:
             self.dlg = DialogWindow(
@@ -189,6 +203,11 @@ class BlenderLauncher(BaseWindow):
         else:
             create_library_folders(get_library_folder())
             self.draw()
+
+    def __dont_show_resources_warning_again(self):
+        set_dont_show_resource_warning(True)
+
+
 
     def prompt_library_folder(self):
         library_folder = get_cwd().as_posix()
