@@ -270,8 +270,7 @@ def start_launch(
         file = Path(str(file).strip('"'))
 
     if cli:
-        cli_launch(file=file, version_query=query, open_last=open_last)
-        sys.exit(1)
+        sys.exit(cli_launch(file=file, version_query=query, open_last=open_last))
     else:
         LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
         sys.exit(app.exec())

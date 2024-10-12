@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QAbstractItemView, QListWidget
+from PyQt5.QtWidgets import QAbstractItemView, QListWidget, QListWidgetItem, QWidget
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -12,12 +12,15 @@ if TYPE_CHECKING:
     from widgets.base_page_widget import BasePageWidget
 
 
-class BaseListWidget(QListWidget):
+W = TypeVar("W", bound=QWidget)
+
+
+class BaseListWidget(QListWidget, Generic[W]):
     def __init__(self, parent: BasePageWidget | None = None, extended_selection=False):
         super().__init__(parent)
         self.parent: BasePageWidget | None = parent
 
-        self.widgets = set()
+        self.widgets: set[W] = set()
         self.metrics = QFontMetrics(self.font())
 
         self.setFrameShape(QListWidget.NoFrame)
@@ -29,7 +32,11 @@ class BaseListWidget(QListWidget):
         if extended_selection is True:
             self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
-    def add_item(self, item, widget):
+    # Override for typing
+    def itemWidget(self, item: QListWidgetItem) -> W | None:
+        return super().itemWidget(item)
+
+    def add_item(self, item, widget: W):
         item.setSizeHint(widget.sizeHint())
         self.addItem(item)
         self.setItemWidget(item, widget)
@@ -44,10 +51,12 @@ class BaseListWidget(QListWidget):
         self.widgets.add(widget)
 
     def remove_item(self, item):
-        self.widgets.remove(self.itemWidget(item))
-        row = self.row(item)
-        self.takeItem(row)
-        self.count_changed()
+        widget = self.itemWidget(item)
+        if widget is not None:
+            self.widgets.remove(widget)
+            row = self.row(item)
+            self.takeItem(row)
+            self.count_changed()
 
     def count_changed(self):
         if self.count() > 0:

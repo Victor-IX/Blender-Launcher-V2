@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from functools import cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from modules._platform import _check_output, _popen, get_platform, reset_locale, set_locale
 from modules.bl_api_manager import lts_blender_version
@@ -20,6 +21,9 @@ from modules.settings import (
 from modules.task import Task
 from PyQt5.QtCore import pyqtSignal
 from semver import Version
+
+if TYPE_CHECKING:
+    from modules.prefs_info import PreferenceInfo
 
 logger = logging.getLogger()
 
@@ -119,6 +123,7 @@ class BuildInfo:
     custom_name: str = ""
     is_favorite: bool = False
     custom_executable: str | None = None
+    target_preferences: str | None = None
 
     def __post_init__(self):
         if self.branch == "stable" and self.subversion.startswith(self.lts_tags):
@@ -212,7 +217,8 @@ class BuildInfo:
             blinfo["branch"],
             blinfo["custom_name"],
             blinfo["is_favorite"],
-            blinfo.get("custom_executable", ""),
+            blinfo.get("custom_executable"),
+            blinfo.get("target_preferences"),
         )
 
     def to_dict(self):
@@ -227,6 +233,7 @@ class BuildInfo:
                     "custom_name": self.custom_name,
                     "is_favorite": self.is_favorite,
                     "custom_executable": self.custom_executable,
+                    "target_preferences": self.target_preferences,
                 }
             ],
         }
@@ -428,18 +435,32 @@ class ReadBuildTask(Task):
         return f"Read build at {self.path}"
 
 
-class LaunchMode: ...
+class LaunchArgs:
+    class LaunchMode: ...
+
+    @dataclass(frozen=True)
+    class LaunchWithBlendFile(LaunchMode):
+        blendfile: Path
+
+    class LaunchOpenLast(LaunchMode): ...
+
+    class PrefsMode: ...
+
+    class DefaultPreferences(PrefsMode): ...
+
+    default_preferences = DefaultPreferences()
+
+    @dataclass(frozen=True)
+    class CustomPreferences(PrefsMode):
+        info: PreferenceInfo
 
 
-@dataclass(frozen=True)
-class LaunchWithBlendFile(LaunchMode):
-    blendfile: Path
-
-
-class LaunchOpenLast(LaunchMode): ...
-
-
-def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, linux_nohup=True) -> list[str] | str:
+def get_args(
+    info: BuildInfo,
+    exe=None,
+    launch_mode: LaunchArgs.LaunchMode | None = None,
+    linux_nohup=True,
+) -> list[str] | str:
     platform = get_platform()
     library_folder = get_library_folder()
     blender_args = get_blender_startup_arguments()
@@ -482,19 +503,19 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         else:
             b3d_exe = library_folder / info.link / "blender"
 
-        args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
+        args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'.strip()
 
     elif platform == "macOS":
         b3d_exe = Path(info.link) / "Blender" / "Blender.app"
         args = f"open -W -n {b3d_exe.as_posix()} --args"
 
     if launch_mode is not None:
-        if isinstance(launch_mode, LaunchWithBlendFile):
+        if isinstance(launch_mode, LaunchArgs.LaunchWithBlendFile):
             if isinstance(args, list):
                 args.append(launch_mode.blendfile.as_posix())
             else:
                 args += f' "{launch_mode.blendfile.as_posix()}"'
-        elif isinstance(launch_mode, LaunchOpenLast):
+        elif isinstance(launch_mode, LaunchArgs.LaunchOpenLast):
             if isinstance(args, list):
                 args.append("--open-last")
             else:
@@ -503,7 +524,20 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
     return args
 
 
-def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
+def launch_build(
+    info: BuildInfo,
+    exe=None,
+    launch_mode: LaunchArgs.LaunchMode | None = None,
+    preference_mode: LaunchArgs.PrefsMode = LaunchArgs.default_preferences,
+):
     args = get_args(info, exe, launch_mode)
-    logger.debug(f"Running build with args {args!s}")
-    return _popen(args)
+
+    env = None
+    if isinstance(preference_mode, LaunchArgs.CustomPreferences):
+        env = preference_mode.info.get_env(info.semversion)
+
+    logger.debug(f"Running build {info}")
+    logger.debug(f"With args {args!s}")
+    logger.debug(f"With env {env}")
+
+    return _popen(args, env=env)

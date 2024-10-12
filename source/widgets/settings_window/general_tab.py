@@ -6,6 +6,7 @@ from pathlib import Path
 
 from modules.settings import (
     get_actual_library_folder,
+    get_blender_preferences_management,
     get_config_file,
     get_cwd,
     get_launch_minimized_to_tray,
@@ -17,6 +18,7 @@ from modules.settings import (
     get_use_pre_release_builds,
     get_worker_thread_count,
     migrate_config,
+    set_blender_preferences_management,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
     set_launch_when_system_starts,
@@ -141,7 +143,22 @@ class GeneralTabWidget(SettingsFormWidget):
         self.application_layout.addWidget(self.PreReleaseBuildsCheckBox, 6, 0, 1, 1)
         self.application_settings.setLayout(self.application_layout)
 
+        # Advance Options Settings
+        self.advanced_settings = SettingsGroup("Advanced", parent=self)
+
+        # Show Preference Menu
+        self.BlenderPreferencesMenuCheckBox = QCheckBox()
+        self.BlenderPreferencesMenuCheckBox.setText("Show Blender Preference Menu")
+        self.BlenderPreferencesMenuCheckBox.setChecked(get_blender_preferences_management())
+        self.BlenderPreferencesMenuCheckBox.clicked.connect(self.toggle_blender_preferences_management)
+
+        # Layout
+        self.advanced_layout = QGridLayout()
+        self.advanced_layout.addWidget(self.BlenderPreferencesMenuCheckBox, 0, 0, 1, 1)
+        self.advanced_settings.setLayout(self.advanced_layout)
+
         self.addRow(self.application_settings)
+        self.addRow(self.advanced_settings)
 
         if get_config_file() != user_config():
             self.migrate_button = QPushButton("Migrate local settings to user settings", self)
@@ -258,6 +275,9 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def toggle_use_pre_release_builds(self, is_checked):
         set_use_pre_release_builds(is_checked)
+
+    def toggle_blender_preferences_management(self, is_checked):
+        set_blender_preferences_management(is_checked)
 
     def migrate_confirmation(self):
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"

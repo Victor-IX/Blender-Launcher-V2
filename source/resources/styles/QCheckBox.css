@@ -9,3 +9,7 @@ QCheckBox::indicator:checked {
 QCheckBox::indicator:unchecked {
     image: url(:resources/icons/box_unchecked.svg);
 }
+
+QCheckBox:disabled {
+    color: #828282;
+}
