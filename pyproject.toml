@@ -17,6 +17,7 @@ dependencies = [
     "semver>=3.0.2",
     "zstandard>=0.23.0",
     "send2trash>=1.8.3",
+    "dateparser>=1.2.0",
 ]
 requires-python = ">=3.9, <3.11"
 readme = "README.md"

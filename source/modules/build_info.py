@@ -9,7 +9,8 @@ from datetime import datetime
 from functools import cache
 from pathlib import Path
 
-from modules._platform import _check_output, _popen, get_platform, reset_locale, set_locale
+import dateparser
+from modules._platform import _check_output, _popen, get_platform
 from modules.bl_api_manager import lts_blender_version
 from modules.settings import (
     get_bash_arguments,
@@ -203,7 +204,10 @@ class BuildInfo:
         try:
             dt = datetime.fromisoformat(blinfo["commit_time"])
         except ValueError:  # old file version compatibility
-            dt = datetime.strptime(blinfo["commit_time"], "%d-%b-%y-%H:%M").astimezone()
+            try:
+                dt = datetime.strptime(blinfo["commit_time"], "%d-%b-%y-%H:%M").astimezone()
+            except Exception:
+                dt = dateparser.parse(blinfo["commit_time"]).astimezone()
         return cls(
             link,
             blinfo["subversion"],
@@ -250,7 +254,7 @@ class BuildInfo:
 
 
 def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetime, str, str, str]:
-    set_locale()
+
     version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
     build_hash = ""
     subversion = ""
@@ -267,7 +271,7 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
                     "%Y-%m-%d %H:%M",
                 ).astimezone()
             except Exception:
-                strptime = datetime.now().astimezone()
+                strptime = dateparser.parse(f"{cdate[1].rstrip()} {ctime[1].rstrip()}")
         else:
             strptime = datetime.now().astimezone()
     else:
@@ -284,7 +288,6 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
         s = version.splitlines()[0].strip()
         custom_name, subversion = s.rsplit(" ", 1)
 
-    reset_locale()
 
     return (
         strptime,

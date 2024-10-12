@@ -11,9 +11,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
+import dateparser
 import distro
 from bs4 import BeautifulSoup, SoupStrainer
-from modules._platform import get_architecture, get_platform, reset_locale, set_locale, stable_cache_path
+from modules._platform import get_architecture, get_platform, stable_cache_path
 from modules.bl_api_manager import (
     dropdown_blender_version,
     lts_blender_version,
@@ -217,7 +218,6 @@ class Scraper(QThread):
         self.manager.manager.clear()
 
     def get_download_links(self):
-        set_locale()
 
         scrapers = []
         if self.scrape_stable:
@@ -227,7 +227,6 @@ class Scraper(QThread):
         for build in chain(*scrapers):
             self.links.emit(build)
 
-        reset_locale()
 
     def scrape_automated_releases(self):
         base_fmt = "https://builder.blender.org/download/{}/?format=json&v=1"
@@ -362,8 +361,7 @@ class Scraper(QThread):
                 branch = "daily"
                 subversion = subversion.replace(prerelease=build_var)
 
-        commit_time = datetime.strptime(info["last-modified"], "%a, %d %b %Y %H:%M:%S %Z").astimezone()
-
+        commit_time = dateparser.parse(info["last-modified"]).astimezone()
         r.release_conn()
         r.close()
         return BuildInfo(link, str(subversion), build_hash, commit_time, branch)
@@ -409,7 +407,7 @@ class Scraper(QThread):
                 if date_sibling:
                     date_str = " ".join(date_sibling.strip().split()[:2])
                     with contextlib.suppress(ValueError):
-                        modified_date = datetime.strptime(date_str, "%d-%b-%Y %H:%M").astimezone(tz=timezone.utc)
+                        modified_date = dateparser.parse(date_str).astimezone(tz=timezone.utc)
                         if ver not in self.cache:
                             logger.debug(f"Creating new folder for version {ver}")
                             folder = self.cache.new_build(ver)

@@ -3,7 +3,6 @@ import os
 import platform
 import sys
 from functools import cache
-from locale import LC_ALL, getdefaultlocale, setlocale
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT, Popen, call, check_call, check_output
 from tempfile import NamedTemporaryFile
@@ -42,21 +41,6 @@ def get_launcher_name():
 def get_platform_full():
     return f"{get_platform()}-{platform.release()}"
 
-
-def set_locale():
-    platform = get_platform()
-
-    if platform == "Windows":
-        setlocale(LC_ALL, "eng_usa")
-    elif platform in {"Linux", "macOS"}:
-        setlocale(LC_ALL, "en_US.UTF-8")
-
-
-default_locale = getdefaultlocale(("LC_ALL",))[0]
-
-
-def reset_locale():
-    setlocale(LC_ALL, default_locale)
 
 
 def show_windows_help(parser: argparse.ArgumentParser):
