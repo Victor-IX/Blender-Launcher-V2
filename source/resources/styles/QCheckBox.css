@@ -9,3 +9,19 @@ QCheckBox::indicator:checked {
 QCheckBox::indicator:unchecked {
     image: url(:resources/icons/box_unchecked.svg);
 }
+
+QCheckBox[Visibility=true]::indicator:checked {
+    image: url(:resources/icons/visibility_on.svg);
+}
+
+QCheckBox[Visibility=true]::indicator:unchecked {
+    image: url(:resources/icons/visibility_off.svg);
+}
+
+QCheckBox[Download=true]::indicator:checked {
+    image: url(:resources/icons/download_on.svg);
+}
+
+QCheckBox[Download=true]::indicator:unchecked {
+    image: url(:resources/icons/download_off.svg);
+}
