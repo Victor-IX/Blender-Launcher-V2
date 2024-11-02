@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     from semver import Version
     from windows.main_window import BlenderLauncher
 
+
 class OnboardingWindow(BaseWindow):
     accepted = pyqtSignal()
     cancelled = pyqtSignal()
@@ -39,6 +40,7 @@ class OnboardingWindow(BaseWindow):
         self.setMinimumHeight(512)
 
         self.wizard = QWizard(self)
+        self.wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
         self.wizard.setPixmap(QWizard.WizardPixmap.LogoPixmap, parent.icons.taskbar.pixmap(64, 64))
         self.wizard.button(QWizard.WizardButton.NextButton).setProperty("CreateButton", True)  # type: ignore
         self.wizard.button(QWizard.WizardButton.BackButton).setProperty("CreateButton", True)  # type: ignore
