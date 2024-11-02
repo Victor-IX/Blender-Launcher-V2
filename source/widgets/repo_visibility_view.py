@@ -22,7 +22,7 @@ class RepoUserView(QWidget):
         name: str,
         description: str = "",
         library: bool | None = True,  # bool if used, None if disabled
-        download: bool | None = True, # bool if used, None if disabled
+        download: bool | None = True,  # bool if used, None if disabled
         parent=None,
     ):
         super().__init__(parent)
@@ -31,7 +31,7 @@ class RepoUserView(QWidget):
         self.title_label = QLabel(name, self)
         self.title_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         font = QFont(self.title_label.font())
-        font.setPointSize(12)
+        font.setPointSize(11)
         self.title_label.setFont(font)
         if description:
             self.title_label.setToolTip(description)
@@ -87,6 +87,3 @@ class RepoUserView(QWidget):
     @property
     def library(self):
         return self.library_enable_button.isChecked()
-
-
-

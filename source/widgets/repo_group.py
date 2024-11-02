@@ -1,4 +1,3 @@
-
 from modules.settings import (
     get_scrape_automated_builds,
     get_scrape_bfa_builds,

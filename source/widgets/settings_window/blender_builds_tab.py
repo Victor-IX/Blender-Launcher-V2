@@ -13,16 +13,9 @@ from modules.settings import (
     get_minimum_blender_stable_version,
     get_new_builds_check_frequency,
     get_quick_launch_key_seq,
-    get_scrape_automated_builds,
-    get_scrape_bfa_builds,
-    get_scrape_stable_builds,
-    get_show_bfa_builds,
     get_show_daily_archive_builds,
-    get_show_daily_builds,
-    get_show_experimental_and_patch_builds,
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
-    get_show_stable_builds,
     set_bash_arguments,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
@@ -48,7 +41,6 @@ from modules.settings import (
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QButtonGroup,
     QCheckBox,
     QComboBox,
     QFormLayout,
@@ -56,11 +48,10 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QListWidget,
-    QListWidgetItem,
     QSpinBox,
+    QVBoxLayout,
 )
 from widgets.repo_group import RepoGroup
-from widgets.repo_visibility_view import RepoUserView
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 
@@ -68,6 +59,27 @@ from widgets.settings_window.settings_group import SettingsGroup
 class BlenderBuildsTabWidget(SettingsFormWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+        # Repo visibility and downloading settings
+        self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)
+
+        self.repo_group = RepoGroup(self)
+        self.repo_group.setMinimumHeight(self.repo_group.total_height() + 2)
+        self.repo_group.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.repo_group.setVerticalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
+
+        self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
+        self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
+        self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
+        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_automated_builds)
+        self.repo_group.experimental_repo.library_changed.connect(lambda b: set_show_experimental_and_patch_builds(b))
+        self.repo_group.bforartists_repo.library_changed.connect(lambda b: set_show_bfa_builds(b))
+        self.repo_group.bforartists_repo.download_changed.connect(self.toggle_scrape_bfa_builds)
+
+        qvl = QVBoxLayout()
+        # qvl.setContentsMargins(0, 0, 0, 0)
+        qvl.addWidget(self.repo_group)
+        self.repo_settings.setLayout(qvl)
 
         # Checking for builds settings
         self.buildcheck_settings = SettingsGroup("Checking For Builds", parent=self)
@@ -117,18 +129,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             \nDEFAULT: On"
         )
 
-        self.repo_group = RepoGroup(self)
-        self.repo_group.setMinimumHeight(self.repo_group.total_height())
-        self.repo_group.setVerticalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
-
-        self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
-        self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
-        self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
-        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_automated_builds)
-        self.repo_group.experimental_repo.library_changed.connect(lambda b: set_show_experimental_and_patch_builds(b))
-        self.repo_group.bforartists_repo.library_changed.connect(lambda b: set_show_bfa_builds(b))
-        self.repo_group.bforartists_repo.download_changed.connect(self.toggle_scrape_bfa_builds)
-
         # Show Archive Builds
         self.show_daily_archive_builds = QCheckBox(self)
         self.show_daily_archive_builds.setText("Show Daily Archived Builds")
@@ -162,10 +162,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.scraping_builds_layout.addWidget(self.CheckForNewBuildsOnStartup, 1, 0, 1, 2)
         self.scraping_builds_layout.addWidget(QLabel("Minimum stable build to scrape", self), 2, 0, 1, 1)
         self.scraping_builds_layout.addWidget(self.MinStableBlenderVer, 2, 1, 1, 1)
-        self.scraping_builds_layout.addWidget(self.repo_group, 3, 0, 1, 2)
-        self.scraping_builds_layout.addWidget(self.show_daily_archive_builds, 4, 0, 1, 2)
-        self.scraping_builds_layout.addWidget(self.show_experimental_archive_builds, 5, 0, 1, 2)
-        self.scraping_builds_layout.addWidget(self.show_patch_archive_builds, 6, 0, 1, 2)
+        self.scraping_builds_layout.addWidget(self.show_daily_archive_builds, 3, 0, 1, 2)
+        self.scraping_builds_layout.addWidget(self.show_experimental_archive_builds, 4, 0, 1, 2)
+        self.scraping_builds_layout.addWidget(self.show_patch_archive_builds, 5, 0, 1, 2)
         self.buildcheck_settings.setLayout(self.scraping_builds_layout)
 
         # Downloading builds settings
@@ -275,10 +274,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.launching_settings.setLayout(self.launching_layout)
 
         # Layout
+        self.addRow(self.repo_settings)
         self.addRow(self.buildcheck_settings)
         self.addRow(self.download_settings)
         self.addRow(self.launching_settings)
-
 
     def change_mark_as_favorite(self, page):
         set_mark_as_favorite(page)

@@ -36,7 +36,7 @@ class SettingsWindow(BaseWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QSize(480, 735))
+        self.setMinimumSize(QSize(480, 777))
         self.CentralWidget = QWidget(self)
         self.CentralLayout = QVBoxLayout(self.CentralWidget)
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
