@@ -118,7 +118,8 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         )
 
         self.repo_group = RepoGroup(self)
-        self.repo_group.setMinimumHeight(self.repo_group.total_height() - 2)
+        self.repo_group.setMinimumHeight(self.repo_group.total_height())
+        self.repo_group.setVerticalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
 
         self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
         self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
@@ -277,6 +278,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.addRow(self.buildcheck_settings)
         self.addRow(self.download_settings)
         self.addRow(self.launching_settings)
+
 
     def change_mark_as_favorite(self, page):
         set_mark_as_favorite(page)

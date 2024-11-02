@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QButtonGroup,
@@ -20,7 +20,7 @@ class RepoUserView(QWidget):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: str = "",
         library: bool | None = True,  # bool if used, None if disabled
         download: bool | None = True, # bool if used, None if disabled
         parent=None,
@@ -29,12 +29,12 @@ class RepoUserView(QWidget):
         self.name = name
 
         self.title_label = QLabel(name, self)
+        self.title_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         font = QFont(self.title_label.font())
         font.setPointSize(12)
-        font.setBold(True)
         self.title_label.setFont(font)
-        self.description = QLabel(description, self)
-        self.description.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        if description:
+            self.title_label.setToolTip(description)
 
         self.library_enable_button = QCheckBox(self)
         self.library_enable_button.setProperty("Visibility", True)
@@ -58,10 +58,11 @@ class RepoUserView(QWidget):
         self.layout_.setContentsMargins(5, 5, 5, 5)
         self.layout_.setSpacing(5)
         self.layout_.setSizeConstraint(QVBoxLayout.SizeConstraint.SetMinimumSize)
+        self.layout_.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
         self.layout_.addWidget(self.title_label, 0, 0, 1, 1)
-        self.layout_.addWidget(self.description, 1, 0, 1, 1)
-        self.layout_.addWidget(self.library_enable_button, 0, 1, 2, 1)
-        self.layout_.addWidget(self.download_enable_button, 0, 2, 2, 1)
+        self.layout_.addWidget(self.library_enable_button, 0, 1, 1, 1)
+        self.layout_.addWidget(self.download_enable_button, 0, 2, 1, 1)
 
     def add_library_to_group(self, grp: QButtonGroup):
         grp.addButton(self.library_enable_button)
