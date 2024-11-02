@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-import contextlib
 import sys
 from abc import abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_cwd, get_platform
+from modules._platform import get_platform
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
     get_enable_high_dpi_scaling,
-    get_scrape_automated_builds,
-    get_scrape_stable_builds,
     get_show_tray_icon,
     get_use_system_titlebar,
     set_enable_high_dpi_scaling,
@@ -20,31 +17,24 @@ from modules.settings import (
     set_scrape_automated_builds,
     set_scrape_bfa_builds,
     set_scrape_stable_builds,
+    set_show_bfa_builds,
+    set_show_daily_builds,
+    set_show_experimental_and_patch_builds,
+    set_show_stable_builds,
     set_show_tray_icon,
     set_use_system_titlebar,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, register_windows_filetypes
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
-    QButtonGroup,
     QCheckBox,
-    QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QListWidget,
-    QListWidgetItem,
-    QPushButton,
-    QSizePolicy,
     QTextEdit,
     QVBoxLayout,
-    QWidget,
     QWizardPage,
 )
-from windows.dialog_window import DialogWindow
-from windows.file_dialog_window import FileDialogWindow
+from widgets.folder_select import FolderSelector
+from widgets.repo_group import RepoGroup
 
 if TYPE_CHECKING:
     from semver import Version
@@ -78,116 +68,6 @@ class WelcomePage(BasicOnboardingPage):
     def evaluate(self): ...
 
 
-class FolderSelectGroup(QWidget):
-    validity_changed = pyqtSignal()
-
-    def __init__(
-        self,
-        launcher: BlenderLauncher,
-        *,
-        default_folder: Path | None = None,
-        default_choose_dir_folder: Path | None = None,
-        check_relatives=True,
-        parent=None,
-    ):
-        super().__init__(parent)
-        self.launcher = launcher
-        self.line_edit = QLineEdit()
-        self.default_folder = default_folder
-        self.default_choose_dir = default_choose_dir_folder or self.default_folder or Path(".")
-        self.check_relatives = check_relatives
-
-        if default_folder is not None:
-            self.line_edit.setText(str(default_folder))
-        self.line_edit.setReadOnly(True)
-        self.line_edit.textChanged.connect(self.check_write_permission)
-        self.button = QPushButton(launcher.icons.folder, "")
-        self.button.setFixedWidth(25)
-        self.button.clicked.connect(self.prompt_folder)
-        self.__is_valid = False
-        self.check_write_permission()
-
-        self.layout_ = QHBoxLayout(self)
-        self.layout_.setContentsMargins(0, 0, 0, 0)
-        self.layout_.setSpacing(0)
-        self.layout_.addWidget(self.line_edit)
-        self.layout_.addWidget(self.button)
-
-    def prompt_folder(self):
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Folder", str(self.default_choose_dir))
-        if not new_library_folder:
-            return
-        if self.check_relatives:
-            self.set_folder(Path(new_library_folder))
-        else:
-            self.line_edit.setText(new_library_folder)
-            self.check_write_permission()
-
-    def set_folder(self, folder: Path, relative: bool | None = None):
-        if folder.is_relative_to(get_cwd()):
-            if relative is None:
-                self.dlg = DialogWindow(
-                    parent=self.launcher,
-                    title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
-                        Would you like to save it as relative?<br>\
-                        This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
-                )
-                self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
-                self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))
-                return
-
-            if relative:
-                folder = folder.relative_to(get_cwd())
-
-        self.line_edit.setText(str(folder))
-        self.check_write_permission()
-
-    def check_write_permission(self):
-        if not self.line_edit.text():
-            return
-
-        path = Path(self.line_edit.text())
-        if not path.exists():
-            for parent in path.parents:
-                if parent.exists():
-                    path = parent
-                    break
-
-        # check if the folder can be written to
-        can_write = False
-        with contextlib.suppress(OSError):
-            tempfile = path / "tempfile_checking_write_perms"
-            with tempfile.open("w") as f:
-                f.write("check,check,check")
-            tempfile.unlink()
-            can_write = True
-
-        # warn the user by changing the highlight color of the line edit
-        old_valid = self.__is_valid
-        self.__is_valid = can_write
-        if can_write:
-            self.line_edit.setStyleSheet("border-color:")
-            self.line_edit.setToolTip("")
-        else:
-            self.line_edit.setStyleSheet("border-color: red")
-            self.line_edit.setToolTip("The requested location has no write permissions!")
-        if old_valid != can_write:
-            self.validity_changed.emit()
-
-    @property
-    def is_valid(self) -> bool:
-        return self.__is_valid
-
-    @property
-    def path(self):
-        if t := self.line_edit.text():
-            return Path(t)
-        return None
-
-
 class ChooseLibraryPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
@@ -196,7 +76,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
             "Make sure that this folder has enough storage to download and store all the builds you want. This can be changed in the future."
         )
 
-        self.lf = FolderSelectGroup(
+        self.lf = FolderSelector(
             parent,
             default_folder=get_actual_library_folder_no_fallback() or None,
             default_choose_dir_folder=get_actual_library_folder(),
@@ -215,77 +95,6 @@ class ChooseLibraryPage(BasicOnboardingPage):
         set_library_folder(str(Path(self.lf.line_edit.text())))
 
 
-class RepoItem(QGroupBox):
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        default_library: bool = True,
-        library: bool = True,
-        default_download: bool = True,
-        download: bool = True,
-        parent: BlenderLauncher | None = None,
-    ):
-        super().__init__(parent)
-        self.name = name
-
-        self.title_label = QLabel(name, self)
-        font = QFont(self.title_label.font())
-        font.setPointSize(12)
-        font.setBold(True)
-        self.title_label.setFont(font)
-        self.description = QLabel(description, self)
-        self.description.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-        self.library_enable_button = QCheckBox(self)
-        self.library_enable_button.setProperty("Visibility", True)
-        self.library_enable_button.setChecked(default_library)
-        self.library_enable_button.setText(None)
-        if not library:
-            self.library_enable_button.setEnabled(False)
-
-        self.download_enable_button = QCheckBox(self)
-        self.download_enable_button.setProperty("Download", True)
-        self.download_enable_button.setChecked(default_download)
-        self.download_enable_button.setText(None)
-
-        if not download:
-            self.download_enable_button.setEnabled(False)
-
-        self.layout_ = QGridLayout(self)
-        self.layout_.setContentsMargins(0, 0, 0, 0)
-        self.layout_.setSpacing(0)
-        self.layout_.setSizeConstraint(QVBoxLayout.SizeConstraint.SetMinimumSize)
-        self.layout_.addWidget(self.title_label, 0, 0, 1, 1)
-        self.layout_.addWidget(self.description, 1, 0, 1, 1)
-        self.layout_.addWidget(self.library_enable_button, 0, 1, 2, 1)
-        self.layout_.addWidget(self.download_enable_button, 0, 2, 2, 1)
-
-    def add_library_to_group(self, grp: QButtonGroup):
-        grp.addButton(self.library_enable_button)
-        grp.buttonToggled.connect(self.library_toggled)
-
-    def add_downloads_to_group(self, grp: QButtonGroup):
-        grp.addButton(self.download_enable_button)
-        grp.buttonToggled.connect(self.download_toggled)
-
-    def library_toggled(self, btn: QCheckBox, checked: bool):
-        if btn is not self and checked != self.library_enable_button.isChecked():
-            self.library_enable_button.setChecked(checked)
-
-    def download_toggled(self, btn: QCheckBox, checked: bool):
-        if btn is not self and checked != self.download_enable_button.isChecked():
-            self.download_enable_button.setChecked(checked)
-
-    @property
-    def download(self):
-        return self.download_enable_button.isChecked()
-
-    @property
-    def library(self):
-        return self.library_enable_button.isChecked()
-
-
 class RepoSelectPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
@@ -295,78 +104,17 @@ class RepoSelectPage(BasicOnboardingPage):
         )
         self.layout_ = QVBoxLayout(self)
 
-        self.item_list = QListWidget(self)
-        self.item_list.setAlternatingRowColors(True)
-        self.layout_.addWidget(self.item_list)
-
-        self.stable_repo = RepoItem(
-            "stable",
-            "The builds that come from the stable build",
-            default_library=True,
-            default_download=get_scrape_stable_builds(),
-            parent=parent,
-        )
-        self.daily_repo = RepoItem(
-            "daily",
-            "Builds created every day. They the latest features and bug fixes, but they can be unstable",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.experimental_repo = RepoItem(
-            "experimental",
-            "These have new features that may end up in official Blender releases. They can be unstable.",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.patch_repo = RepoItem(
-            "patch",
-            "Patch based builds",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.bforartists_repo = RepoItem(
-            "bforartists",
-            "A popular fork of Blender with the goal of improving the UI.",
-            default_library=True,
-            default_download=get_scrape_stable_builds(),
-            parent=parent,
-        )
-
-        self.exp_and_patch_groups = QButtonGroup()
-        self.exp_and_patch_groups.setExclusive(False)
-        self.experimental_repo.add_library_to_group(self.exp_and_patch_groups)
-        self.patch_repo.add_library_to_group(self.exp_and_patch_groups)
-
-        self.automated_groups = QButtonGroup()
-        self.automated_groups.setExclusive(False)
-        self.daily_repo.add_downloads_to_group(self.automated_groups)
-        self.experimental_repo.add_downloads_to_group(self.automated_groups)
-        self.patch_repo.add_downloads_to_group(self.automated_groups)
-
-        item_list_items = [
-            self.stable_repo,
-            self.daily_repo,
-            self.experimental_repo,
-            self.patch_repo,
-            self.bforartists_repo,
-        ]
-
-        for widget in item_list_items:
-            item = QListWidgetItem()
-            item.setSizeHint(widget.sizeHint())
-            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # type: ignore
-            self.item_list.addItem(item)
-            self.item_list.setItemWidget(item, widget)
+        self.repo_group = RepoGroup(self)
+        self.layout_.addWidget(self.repo_group)
 
     def evaluate(self):
-        set_scrape_stable_builds(self.stable_repo.download)
-        set_scrape_automated_builds(self.daily_repo.download)
-        set_scrape_bfa_builds(self.bforartists_repo.download)
-
-        # TODO implement the visibility options
+        set_show_stable_builds(self.repo_group.stable_repo.library)
+        set_show_daily_builds(self.repo_group.daily_repo.library)
+        set_show_experimental_and_patch_builds(self.repo_group.experimental_repo.library)
+        set_show_bfa_builds(self.repo_group.bforartists_repo.library)
+        set_scrape_stable_builds(self.repo_group.stable_repo.download)
+        set_scrape_automated_builds(self.repo_group.daily_repo.download)
+        set_scrape_bfa_builds(self.repo_group.bforartists_repo.download)
 
 
 class FileAssociationPage(BasicOnboardingPage):
@@ -406,9 +154,9 @@ The default location is typically searched by desktop environments for user prog
         self.use_file_associations = QCheckBox("Register for file associations", parent=self)
         self.layout_.addWidget(self.use_file_associations)
 
-        self.select: FolderSelectGroup | None = None
+        self.select: FolderSelector | None = None
         if platform == "Linux":
-            self.select = FolderSelectGroup(
+            self.select = FolderSelector(
                 parent,
                 default_folder=get_default_shortcut_destination().parent,
                 check_relatives=False,
