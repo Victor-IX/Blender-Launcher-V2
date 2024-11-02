@@ -996,10 +996,10 @@ class BlenderLauncher(BaseWindow):
         list_widget.insert_item(item, widget)
 
     def update_visible_lists(self):
-        self.LibraryToolBox.setTabEnabled(0, get_show_stable_builds())
-        self.LibraryToolBox.setTabEnabled(1, get_show_daily_builds())
-        self.LibraryToolBox.setTabEnabled(2, get_show_experimental_and_patch_builds())
-        self.LibraryToolBox.setTabEnabled(3, get_show_bfa_builds())
+        self.LibraryToolBox.setTabVisible(0, get_show_stable_builds())
+        self.LibraryToolBox.setTabVisible(1, get_show_daily_builds())
+        self.LibraryToolBox.setTabVisible(2, get_show_experimental_and_patch_builds())
+        self.LibraryToolBox.setTabVisible(3, get_show_bfa_builds())
 
     def focus_widget(self, widget: BaseBuildWidget):
         tab: QWidget | None = None
