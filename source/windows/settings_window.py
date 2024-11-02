@@ -36,7 +36,7 @@ class SettingsWindow(BaseWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QSize(480, 100))
+        self.setMinimumSize(QSize(750, 100))
         self.CentralWidget = QWidget(self)
         self.CentralLayout = QVBoxLayout(self.CentralWidget)
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
@@ -215,4 +215,5 @@ class SettingsWindow(BaseWindow):
             event.ignore()
         else:
             self.parent.settings_window = None
+            self.parent.update_visible_lists()
             event.accept()
