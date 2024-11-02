@@ -29,6 +29,7 @@ from modules.settings import (
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QCheckBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSpinBox, QWidget
+from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 from windows.dialog_window import DialogWindow
@@ -44,23 +45,11 @@ class GeneralTabWidget(SettingsFormWidget):
         self.application_settings = SettingsGroup("Application", parent=self)
 
         # Library Folder
-        self.LibraryFolderLayoutLabel = QLabel()
-        self.LibraryFolderLayoutLabel.setText("Library Folder:")
-        self.LibraryFolderLineEdit = QLineEdit()
-        self.LibraryFolderLineEdit.setText(str(get_actual_library_folder()))
-        self.LibraryFolderLineEdit.setToolTip("The folder where the app will store Blender builds.")
-        self.LibraryFolderLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.LibraryFolderLineEdit.setReadOnly(True)
-        self.LibraryFolderLineEdit.setCursorPosition(0)
-        self.SetLibraryFolderButton = QPushButton(self.parent.icons.folder, "")
-        self.SetLibraryFolderButton.setFixedWidth(25)
-        self.SetLibraryFolderButton.clicked.connect(self.prompt_library_folder)
-        self.SetLibraryFolderButton.clicked.connect(self.prompt_library_folder)
-
-        self.LibraryFolderLayout = QHBoxLayout()
-        self.LibraryFolderLayout.setSpacing(0)
-        self.LibraryFolderLayout.addWidget(self.LibraryFolderLineEdit)
-        self.LibraryFolderLayout.addWidget(self.SetLibraryFolderButton)
+        self.LibraryFolderLabel = QLabel()
+        self.LibraryFolderLabel.setText("Library Folder:")
+        self.LibraryFolder = FolderSelector(parent, default_folder=get_actual_library_folder())
+        self.LibraryFolder.validity_changed.connect(self.library_folder_validity_changed)
+        self.LibraryFolder.folder_changed.connect(self.set_library_folder_)
 
         # Launch When System Starts
         self.LaunchWhenSystemStartsCheckBox = QCheckBox()
@@ -130,8 +119,8 @@ class GeneralTabWidget(SettingsFormWidget):
 
         # Layout
         self.application_layout = QGridLayout()
-        self.application_layout.addWidget(self.LibraryFolderLayoutLabel, 0, 0, 1, 1)
-        self.application_layout.addLayout(self.LibraryFolderLayout, 1, 0, 1, 3)
+        self.application_layout.addWidget(self.LibraryFolderLabel, 0, 0, 1, 1)
+        self.application_layout.addWidget(self.LibraryFolder, 1, 0, 1, 3)
         if get_platform() == "Windows":
             self.application_layout.addWidget(self.LaunchWhenSystemStartsCheckBox, 2, 0, 1, 1)
         self.application_layout.addWidget(self.ShowTrayIconCheckBox, 3, 0, 1, 1)
@@ -201,29 +190,12 @@ class GeneralTabWidget(SettingsFormWidget):
         if new_library_folder and (library_folder != new_library_folder):
             self.set_library_folder(Path(new_library_folder))
 
-    def set_library_folder(self, folder: Path, relative: bool | None = None):
-        if folder.is_relative_to(get_cwd()):
-            if relative is None:
-                self.dlg = DialogWindow(
-                    parent=self.parent,
-                    title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
-                        Would you like to save it as relative?<br>\
-                        This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
-                )
-                self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
-                self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
-                return
+    def set_library_folder_(self, p: Path):
+        print("SETTTE", p)
+        set_library_folder(str(p))
 
-            if relative:
-                folder = folder.relative_to(get_cwd())
-
-        if set_library_folder(str(folder)) is True:
-            self.LibraryFolderLineEdit.setText(str(get_actual_library_folder()))
-            self.parent.draw_library(clear=True)
-        else:
+    def library_folder_validity_changed(self, v: bool):
+        if not v:
             self.dlg = DialogWindow(
                 parent=self.parent,
                 title="Warning",
@@ -231,7 +203,7 @@ class GeneralTabWidget(SettingsFormWidget):
                 accept_text="Retry",
                 cancel_text=None,
             )
-            self.dlg.accepted.connect(self.prompt_library_folder)
+            self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
     def toggle_launch_when_system_starts(self, is_checked):
         set_launch_when_system_starts(is_checked)
