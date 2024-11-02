@@ -85,7 +85,6 @@ def get_actual_library_folder():
     library_folder = settings.value("library_folder")
     if not is_library_folder_valid(library_folder):
         library_folder = get_cwd()
-        settings.setValue("library_folder", library_folder)
 
     return Path(library_folder)
 

@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING
 
 from modules._platform import get_cwd, get_platform
 from modules.settings import (
+    get_actual_library_folder,
     get_actual_library_folder_no_fallback,
     get_enable_high_dpi_scaling,
-    get_library_folder,
     get_scrape_automated_builds,
     get_scrape_stable_builds,
     get_show_tray_icon,
@@ -197,7 +197,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.lf = FolderSelectGroup(
             parent,
             default_folder=get_actual_library_folder_no_fallback() or None,
-            default_choose_dir_folder=get_library_folder(),
+            default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
         self.layout_ = QVBoxLayout(self)
