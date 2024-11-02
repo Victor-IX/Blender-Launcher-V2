@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import sys
 import traceback
 from abc import ABCMeta, abstractmethod
@@ -19,6 +20,7 @@ from modules.settings import (
     get_default_tab,
     get_dont_show_resource_warning,
     get_enable_download_notifications,
+    get_enable_high_dpi_scaling,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
     get_last_time_checked_utc,
@@ -38,13 +40,16 @@ from modules.settings import (
     get_worker_thread_count,
     is_library_folder_valid,
     set_dont_show_resource_warning,
+    set_enable_high_dpi_scaling,
     set_first_time_setup_seen,
     set_last_time_checked_utc,
     set_library_folder,
     set_scrape_automated_builds,
     set_scrape_bfa_builds,
     set_scrape_stable_builds,
+    set_show_tray_icon,
     set_tray_icon_notified,
+    set_use_system_titlebar,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, register_windows_filetypes
 from modules.tasks import Task, TaskQueue, TaskWorker
@@ -59,6 +64,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
+    QFormLayout,
     QFrame,
     QGridLayout,
     QGroupBox,
@@ -106,10 +112,14 @@ class WelcomePage(BasicOnboardingPage):
         self.layout_ = QHBoxLayout(self)
 
         self.label = QLabel(
-            "This is first-time setup.<br>\
-                            In this, we will walk through the most common settings you will likely want to configure.<br>\
+            "In this First-Time Setup, we will walk through the most common settings you will likely want to configure.<br>\
                             you only have to do this once and never again."
         )
+        self.label.setWordWrap(True)
+        font = self.label.font()
+        font.setPointSize(14)
+        self.label.setFont(font)
+
         self.layout_.addWidget(self.label)
 
     def evaluate(self): ...
@@ -275,11 +285,14 @@ class RepoItem(QGroupBox):
         self.library_enable_button = QCheckBox(self)
         self.library_enable_button.setProperty("Visibility", True)
         self.library_enable_button.setChecked(default_library)
+        self.library_enable_button.setText(None)
         if not library:
             self.library_enable_button.setEnabled(False)
+
         self.download_enable_button = QCheckBox(self)
         self.download_enable_button.setProperty("Download", True)
         self.download_enable_button.setChecked(default_download)
+        self.download_enable_button.setText(None)
 
         if not download:
             self.download_enable_button.setEnabled(False)
@@ -318,7 +331,6 @@ class RepoItem(QGroupBox):
         return self.library_enable_button.isChecked()
 
 
-# TODO
 class RepoSelectPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
@@ -402,32 +414,37 @@ class RepoSelectPage(BasicOnboardingPage):
         # TODO implement the visibility options
 
 
-# TODO
 class FileAssociationPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
-        self.setTitle("Launching Blendfiles (.blend(1, ...)) from BLV2 directly")
-        subtitle = 'This will allow you to automatically launch the correct version for a file<br>\
-                    using the "Open With.." functionality on your desktop environment. This process is fully reversible.'
+        self.setTitle("Launching Blendfiles (.blend, .blend1) from BLV2 directly")
+        subtitle = 'This will allow you to automatically launch the correct version for a file\
+ using the "Open With.." functionality on your desktop environment. This process is fully reversible.'
         self.setSubTitle(subtitle)
 
         self.layout_ = QVBoxLayout(self)
         explanation = ""
         platform = get_platform()
-        if platform == "win32":  # Give a subtitle relating to the registry
-            explanation = """
-In order to do this on Windows, we will update a single key the registry to connect the Launcher to the .blend extension.
-To reverse this after installation: There is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
+        self.explanation_label = QLabel(self)
+        if platform == "Windows":  # Give a subtitle relating to the registry
+            explanation = """In order to do this on Windows, we will update the registry to relate the launcher to the .blend extension.
+To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
+
+Hover over this text to see which registry keys will be changed, and for what reason.
 """
+            self.explanation_label.setToolTip(r"""The Following keys will be changed:
+CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
+UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With.." list
+UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With.." list
+CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when BLV2 is the default application
+These will be deleted/downgraded when you unregister the launcher""")
         if platform == "Linux":
-            explanation = """
-In order to do this on Linux, we will generate a .desktop file at the requested location.\
+            explanation = """In order to do this on Linux, we will generate a .desktop file at the requested location.\
  It contains mimetype data which tells the environment what files the program expects to handle.
 
 The default location is typically searched by desktop environments for user program entries.
 """
-
-        self.explanation_label = QLabel(explanation, self)
+        self.explanation_label.setText(explanation)
         self.explanation_label.setWordWrap(True)
         self.layout_.addWidget(self.explanation_label)
 
@@ -462,39 +479,61 @@ The default location is typically searched by desktop environments for user prog
             register_windows_filetypes()
 
 
-# TODO
 class AppearancePage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
         self.setTitle("BLV2 appearance")
+        self.setSubTitle("Configure how BLV2 Looks")
         self.layout_ = QVBoxLayout(self)
 
+        self.titlebar = QCheckBox("Use System Titlebar", self)
+        self.titlebar.setChecked(get_use_system_titlebar())
+        titlebar_label = QLabel(
+            """This disables the custom title bar and uses the OS's default titlebar.
+
+In Linux Wayland environments, this is recommended because you will be
+able to use the title for moving and resizing the windows.
+Our main method of moving and resizing works best on X11.""",
+            self,
+        )
+        self.highdpiscaling = QCheckBox("High DPI Scaling")
+        self.highdpiscaling.setChecked(get_enable_high_dpi_scaling())
+        highdpiscaling_label = QLabel(
+            """
+
+
+This enables high DPI scaling for the program.
+automatically scales the user interface based on the monitor's pixel density."""
+        )
+
+        self.layout_.addWidget(titlebar_label)
+        self.layout_.addWidget(self.titlebar)
+        self.layout_.addWidget(highdpiscaling_label)
+        self.layout_.addWidget(self.highdpiscaling)
+
     def evaluate(self):
-        raise NotImplementedError
+        set_use_system_titlebar(self.titlebar.isChecked())
+        set_enable_high_dpi_scaling(self.highdpiscaling.isChecked())
 
 
-# TODO
 class BackgroundRunningPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
         self.setTitle("Running BLV2 in the background")
+        self.setSubTitle("""BLV2 can be kept alive in the background with a system tray icon.\
+ This can be useful for reading efficiency and other features, but it is not totally necessary.""")
         self.layout_ = QVBoxLayout(self)
 
+        self.enable_btn = QCheckBox("Run BLV2 in the background (Minimise to tray)")
+        self.enable_btn.setChecked(get_show_tray_icon())
+        self.layout_.addWidget(self.enable_btn)
+
     def evaluate(self):
-        raise NotImplementedError
-
-
-class OnboardingPageState(Enum):
-    WELCOME = 0  # DONE
-    LIBRARY_FOLDER = 1  # DONE
-    REPO_SELECT = 2  # which builds to show/scrape
-    FILE_ASSOCIATIONS = 3
-    APPEARANCE = 4  # use system title bar, notifications
-    BACKGROUND_RUNNING = 5
+        set_show_tray_icon(self.enable_btn.isChecked())
 
 
 class ErrorOccurredPage(QWizardPage):
-    def __init__(self, text: str, parent: BlenderLauncher):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
         # self.setTitle("An Error occured")
         self.layout_ = QVBoxLayout(self)
@@ -532,7 +571,7 @@ class OnboardingWindow(BaseWindow):
         self.error_wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)  # type: ignore
         self.error_wizard.setButtonText(QWizard.WizardButton.FinishButton, "OK")
 
-        self.error_page = ErrorOccurredPage("", parent)
+        self.error_page = ErrorOccurredPage(parent)
         self.error_wizard.addPage(self.error_page)
         self.error_wizard.hide()
 
@@ -574,8 +613,9 @@ class OnboardingWindow(BaseWindow):
                 finished_pages += f"Finished page {page.title()}\n"
         except Exception:
             # show the exception
-
-            text = f"{finished_pages}\nERR OCCURRED DURING PAGE {page.title()}!\n{traceback.format_exc()}"
+            exc = traceback.format_exc()
+            text = f'{finished_pages}\nERR OCCURRED DURING PAGE "{page.title()}"!\n{exc}'
+            logging.error(exc)
             self.error_page.output.setText(text)
             self.error_wizard.show()
             return
