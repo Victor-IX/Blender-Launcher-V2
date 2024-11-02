@@ -55,7 +55,7 @@ class RepoUserView(QWidget):
             self.download_enable_button.setEnabled(False)
 
         self.layout_ = QGridLayout(self)
-        self.layout_.setContentsMargins(5, 5, 5, 5)
+        self.layout_.setContentsMargins(5, 5, 0, 5)
         self.layout_.setSpacing(5)
         self.layout_.setSizeConstraint(QVBoxLayout.SizeConstraint.SetMinimumSize)
         self.layout_.setAlignment(Qt.AlignmentFlag.AlignVCenter)
