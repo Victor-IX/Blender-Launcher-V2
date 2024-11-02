@@ -39,6 +39,10 @@ from modules.settings import (
     get_scrape_automated_builds,
     get_scrape_bfa_builds,
     get_scrape_stable_builds,
+    get_show_bfa_builds,
+    get_show_daily_builds,
+    get_show_experimental_and_patch_builds,
+    get_show_stable_builds,
     get_show_tray_icon,
     get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
@@ -423,6 +427,8 @@ class BlenderLauncher(BaseWindow):
         self.TabWidget.setCurrentIndex(get_default_tab())
         self.LibraryToolBox.setCurrentIndex(get_default_library_page())
         self.DownloadsToolBox.setCurrentIndex(get_default_downloads_page())
+
+        self.update_visible_lists()
 
         # Status bar
         self.status_bar = QStatusBar(self)
@@ -979,6 +985,12 @@ class BlenderLauncher(BaseWindow):
         widget = UnrecoBuildWidget(self, path, list_widget, item)
 
         list_widget.insert_item(item, widget)
+
+    def update_visible_lists(self):
+        self.LibraryToolBox.setTabEnabled(0, get_show_stable_builds())
+        self.LibraryToolBox.setTabEnabled(1, get_show_daily_builds())
+        self.LibraryToolBox.setTabEnabled(2, get_show_experimental_and_patch_builds())
+        self.LibraryToolBox.setTabEnabled(3, get_show_bfa_builds())
 
     def focus_widget(self, widget: BaseBuildWidget):
         tab: QWidget | None = None
