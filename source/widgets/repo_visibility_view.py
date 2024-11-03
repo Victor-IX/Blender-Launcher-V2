@@ -23,6 +23,7 @@ class RepoUserView(QWidget):
         description: str = "",
         library: bool | None = True,  # bool if used, None if disabled
         download: bool | None = True,  # bool if used, None if disabled
+        bind_download_to_library: bool = True,
         parent=None,
     ):
         super().__init__(parent)
@@ -39,8 +40,7 @@ class RepoUserView(QWidget):
         self.library_enable_button = QCheckBox(self)
         self.library_enable_button.setProperty("Visibility", True)
         self.library_enable_button.setChecked(library or False)
-        self.library_enable_button.setText(None)
-        self.library_enable_button.toggled.connect(self.library_changed)
+        self.library_enable_button.toggled.connect(self.__library_button_toggled)
 
         if library is None:
             self.library_enable_button.setEnabled(False)
@@ -48,11 +48,13 @@ class RepoUserView(QWidget):
         self.download_enable_button = QCheckBox(self)
         self.download_enable_button.setProperty("Download", True)
         self.download_enable_button.setChecked(download or False)
-        self.download_enable_button.setText(None)
         self.download_enable_button.toggled.connect(self.download_changed)
+        self.previous_download = download or False
 
         if download is None:
             self.download_enable_button.setEnabled(False)
+
+        self.bind_download_to_library = bind_download_to_library
 
         self.layout_ = QGridLayout(self)
         self.layout_.setContentsMargins(5, 5, 0, 5)
@@ -72,6 +74,20 @@ class RepoUserView(QWidget):
         grp.addButton(self.download_enable_button)
         grp.buttonToggled.connect(self.__download_toggled)
 
+    def __library_button_toggled(self, checked: bool):
+        self.title_label.setEnabled(checked)
+        if self.bind_download_to_library:
+            self.__library_bound_toggle(checked)
+        self.library_changed.emit(checked)
+
+    def __library_bound_toggle(self, b: bool):
+        if not b:
+            self.previous_download = self.download_enable_button.isChecked()
+            self.download_enable_button.setChecked(False)
+        else:
+            self.download_enable_button.setChecked(self.previous_download)
+        self.download_enable_button.setEnabled(b)
+
     def __library_toggled(self, btn: QCheckBox, checked: bool):
         if btn is not self and checked != self.library_enable_button.isChecked():
             self.library_enable_button.setChecked(checked)
@@ -83,6 +99,10 @@ class RepoUserView(QWidget):
     @property
     def download(self):
         return self.download_enable_button.isChecked()
+
+    @download.setter
+    def download(self, v: bool):
+        self.download_enable_button.setChecked(v)
 
     @property
     def library(self):
