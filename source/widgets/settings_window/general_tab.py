@@ -7,7 +7,6 @@ from pathlib import Path
 from modules.settings import (
     get_actual_library_folder,
     get_config_file,
-    get_cwd,
     get_launch_minimized_to_tray,
     get_launch_timer_duration,
     get_launch_when_system_starts,
@@ -16,7 +15,9 @@ from modules.settings import (
     get_show_tray_icon,
     get_use_pre_release_builds,
     get_worker_thread_count,
+    get_default_delete_action,
     migrate_config,
+    delete_action,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
     set_launch_when_system_starts,
@@ -24,11 +25,22 @@ from modules.settings import (
     set_show_tray_icon,
     set_use_pre_release_builds,
     set_worker_thread_count,
+    set_default_delete_action,
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSpinBox, QWidget
+from PyQt5.QtWidgets import (
+    QCheckBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+    QWidget,
+    QComboBox,
+)
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
@@ -139,6 +151,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
             self.addRow(self.migrate_button)
 
+        # File Association
         self.file_association_group = SettingsGroup("File association", parent=self)
         layout = QGridLayout()
         self.create_shortcut_button = QPushButton(f"Create {get_shortcut_type()}", parent=self.file_association_group)
@@ -183,6 +196,23 @@ class GeneralTabWidget(SettingsFormWidget):
 
         self.file_association_group.setLayout(layout)
         self.addRow(self.file_association_group)
+
+        self.advanced_settings = SettingsGroup("Advanced", parent=self)
+        self.default_delete_action = QComboBox()
+        self.default_delete_action.addItems(delete_action.keys())
+        self.default_delete_action.setToolTip(
+            "Set the default action available in the right click menu for deleting a build\
+            \nThe other option is available when holding the shift key\
+            \nDEFAULT: Move to Trash"
+        )
+        self.default_delete_action.setCurrentIndex(get_default_delete_action())
+        self.default_delete_action.activated[str].connect(self.change_default_delete_action)
+
+        self.advanced_layout = QGridLayout()
+        self.advanced_layout.addWidget(QLabel("Default Delete Action"), 0, 0, 1, 1)
+        self.advanced_layout.addWidget(self.default_delete_action, 0, 1, 1, 1)
+        self.advanced_settings.setLayout(self.advanced_layout)
+        self.addRow(self.advanced_settings)
 
     def prompt_library_folder(self):
         library_folder = str(get_library_folder())
@@ -260,3 +290,6 @@ class GeneralTabWidget(SettingsFormWidget):
         else:
             self.register_file_association_button.setEnabled(True)
             self.unregister_file_association_button.setEnabled(False)
+
+    def change_default_delete_action(self, action: str):
+        set_default_delete_action(action)

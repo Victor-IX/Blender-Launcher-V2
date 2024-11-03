@@ -64,6 +64,11 @@ proxy_types = {
     "SOCKS5": 4,
 }
 
+delete_action = {
+    "Move to Trash": 0,
+    "Delete Permanently": 1,
+}
+
 
 def get_settings():
     file = get_config_file()
@@ -573,6 +578,14 @@ def get_launch_timer_duration() -> int:
 def set_launch_timer_duration(duration: int):
     """Sets the launch timer duration, in seconds"""
     get_settings().setValue("launch_timer", duration)
+
+
+def get_default_delete_action() -> int:
+    return get_settings().value("default_delete_action", defaultValue=0, type=int)
+
+
+def set_default_delete_action(action):
+    get_settings().setValue("default_delete_action", delete_action[action])
 
 
 def migrate_config(force=False):
