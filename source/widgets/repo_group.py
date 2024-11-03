@@ -24,14 +24,14 @@ class RepoGroup(QListWidget):
 
         self.stable_repo = RepoUserView(
             "Stable",
-            "The builds that come from the stable build",
+            "Production-ready builds.",
             library=get_show_stable_builds(),
             download=get_scrape_stable_builds(),
             parent=self,
         )
         self.daily_repo = RepoUserView(
             "Daily",
-            "Builds created every day. They the latest features and bug fixes, but they can be unstable",
+            "Builds created every day. They have the latest features and bug fixes, but they can be unstable.",
             library=get_show_daily_builds(),
             download=get_scrape_automated_builds(),
             bind_download_to_library=False,
