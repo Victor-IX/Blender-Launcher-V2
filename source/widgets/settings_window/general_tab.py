@@ -203,7 +203,7 @@ class GeneralTabWidget(SettingsFormWidget):
         self.default_delete_action.setToolTip(
             "Set the default action available in the right click menu for deleting a build\
             \nThe other option is available when holding the shift key\
-            \nDEFAULT: Move to Trash"
+            \nDEFAULT: Send to Trash"
         )
         self.default_delete_action.setCurrentIndex(get_default_delete_action())
         self.default_delete_action.activated[str].connect(self.change_default_delete_action)

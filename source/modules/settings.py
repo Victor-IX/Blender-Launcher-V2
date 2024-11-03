@@ -65,7 +65,7 @@ proxy_types = {
 }
 
 delete_action = {
-    "Move to Trash": 0,
+    "Send to Trash": 0,
     "Delete Permanently": 1,
 }
 

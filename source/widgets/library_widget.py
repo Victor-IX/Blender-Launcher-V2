@@ -24,6 +24,7 @@ from modules.settings import (
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
+    get_default_delete_action,
     set_favorite_path,
 )
 from modules.shortcut import create_shortcut
@@ -342,7 +343,14 @@ class LibraryWidget(BaseBuildWidget):
 
     @pyqtSlot(bool)
     def update_delete_action(self, shifting: bool):
-        if shifting:
+        reverted_behavior = False
+
+        if get_default_delete_action() == 1:
+            reverted_behavior = True
+
+        delete_from_drive = not reverted_behavior if shifting else reverted_behavior
+
+        if delete_from_drive:
             self.deleteAction.setText("Delete from Drive")
         else:
             self.deleteAction.setText("Send to Trash")
