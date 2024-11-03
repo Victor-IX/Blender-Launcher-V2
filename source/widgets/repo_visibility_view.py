@@ -40,6 +40,11 @@ class RepoUserView(QWidget):
         self.library_enable_button = QCheckBox(self)
         self.library_enable_button.setProperty("Visibility", True)
         self.library_enable_button.setChecked(library or False)
+        self.library_enable_button.setToolTip(
+            "Make this repository visible / hidden in the launcher view.<br>\
+            If disabled, then it will automatically disable fetching,<br>\
+            unless another repository shares the fetching behavior."
+        )
         self.library_enable_button.toggled.connect(self.__library_button_toggled)
 
         if library is None:
@@ -48,6 +53,11 @@ class RepoUserView(QWidget):
         self.download_enable_button = QCheckBox(self)
         self.download_enable_button.setProperty("Download", True)
         self.download_enable_button.setChecked(download or False)
+        self.download_enable_button.setToolTip(
+            'Enable / Disable fetching this repository.<br>\
+            If you force-check by holding SHIFT while pressing the "Check" button,<br>\
+            Then all visible categories will download regardless of fetching settings.'
+        )
         self.download_enable_button.toggled.connect(self.download_changed)
         self.previous_download = download or False
 
