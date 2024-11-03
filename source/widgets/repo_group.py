@@ -61,6 +61,8 @@ class RepoGroup(QListWidget):
         self.daily_repo.add_downloads_to_group(self.automated_groups)
         self.experimental_repo.add_downloads_to_group(self.automated_groups)
 
+        self.check_if_both_automated_are_disabled()
+
         self.repos = [
             self.stable_repo,
             self.daily_repo,
@@ -77,11 +79,12 @@ class RepoGroup(QListWidget):
 
     @pyqtSlot()
     def check_if_both_automated_are_disabled(self):
-        if (not self.daily_repo.library) and (not self.experimental_repo.library) and self.daily_repo.download:
+        if (not self.daily_repo.library) and (not self.experimental_repo.library):
             self.daily_repo.download = False # Will also set experimental_repo
             self.daily_repo.download_enable_button.setEnabled(False)
             self.experimental_repo.download_enable_button.setEnabled(False)
-        if (self.daily_repo.library or self.experimental_repo) and not self.daily_repo.download:
+            return
+        if (self.daily_repo.library or self.experimental_repo.library) and not self.daily_repo.download:
             self.daily_repo.download_enable_button.setEnabled(True)
             self.experimental_repo.download_enable_button.setEnabled(True)
 
