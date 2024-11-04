@@ -805,13 +805,17 @@ class BlenderLauncher(BaseWindow):
 
     def force_check(self):
         if QApplication.queryKeyboardModifiers() & Qt.Modifier.SHIFT:  # Shift held while pressing check
-            # Ignore scrape_stable, scrape_automated and scrape_bfa settings
-            self.start_scraper(True, True, True)
+            # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
+            show_stable = get_show_stable_builds()
+            show_daily = get_show_daily_builds()
+            show_expatch = get_show_experimental_and_patch_builds()
+            show_bfa = get_show_bfa_builds()
+            self.start_scraper(show_stable, show_daily or show_expatch, show_bfa)
             self.update_visible_lists(
-                force_s_stable=True,
-                force_s_daily=get_show_daily_builds(),
-                force_s_expatch=get_show_experimental_and_patch_builds(),
-                force_s_bfa=True,
+                force_s_stable=show_stable,
+                force_s_daily=show_daily,
+                force_s_expatch=show_expatch,
+                force_s_bfa=show_bfa,
             )
         else:
             # Use settings
