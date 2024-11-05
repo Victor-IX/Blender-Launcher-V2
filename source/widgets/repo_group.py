@@ -7,20 +7,22 @@ from modules.settings import (
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
 )
-from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (
     QButtonGroup,
-    QListWidget,
-    QListWidgetItem,
+    QFrame,
+    QSizePolicy,
+    QVBoxLayout,
 )
 from widgets.repo_visibility_view import RepoUserView
 
 
-class RepoGroup(QListWidget):
+class RepoGroup(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setAlternatingRowColors(True)
+        self.setProperty("SettingsGroup", True)
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
 
         self.stable_repo = RepoUserView(
             "Stable",
@@ -70,17 +72,16 @@ class RepoGroup(QListWidget):
             self.bforartists_repo,
         ]
 
+        self.layout_ = QVBoxLayout(self)
+        self.layout_.setContentsMargins(0, 0, 0, 5)
+
         for widget in self.repos:
-            item = QListWidgetItem()
-            item.setSizeHint(widget.sizeHint())
-            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # type: ignore
-            self.addItem(item)
-            self.setItemWidget(item, widget)
+            self.layout_.addWidget(widget)
 
     @pyqtSlot()
     def check_if_both_automated_are_disabled(self):
         if (not self.daily_repo.library) and (not self.experimental_repo.library):
-            self.daily_repo.download = False # Will also set experimental_repo
+            self.daily_repo.download = False  # Will also set experimental_repo
             self.daily_repo.download_enable_button.setEnabled(False)
             self.experimental_repo.download_enable_button.setEnabled(False)
             return

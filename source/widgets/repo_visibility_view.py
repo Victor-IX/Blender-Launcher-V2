@@ -27,6 +27,7 @@ class RepoUserView(QWidget):
         parent=None,
     ):
         super().__init__(parent)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.name = name
 
         self.title_label = QLabel(name, self)
@@ -58,7 +59,7 @@ class RepoUserView(QWidget):
             If you force-check by holding SHIFT while pressing the "Check" button,<br>\
             Then all visible categories will download regardless of fetching settings.'
         )
-        self.download_enable_button.toggled.connect(self.download_changed)
+        self.download_enable_button.toggled.connect(self.__download_button_toggled)
         self.previous_download = download or False
 
         if download is None:
@@ -90,13 +91,18 @@ class RepoUserView(QWidget):
             self.__library_bound_toggle(checked)
         self.library_changed.emit(checked)
 
+    def __download_button_toggled(self, checked: bool):
+        if not self.library_enable_button.isChecked() and checked:
+            self.library_enable_button.setChecked(True)
+        self.download_enable_button.setChecked(checked)
+        self.download_changed.emit(checked)
+
     def __library_bound_toggle(self, b: bool):
         if not b:
             self.previous_download = self.download_enable_button.isChecked()
             self.download_enable_button.setChecked(False)
         else:
             self.download_enable_button.setChecked(self.previous_download)
-        self.download_enable_button.setEnabled(b)
 
     def __library_toggled(self, btn: QCheckBox, checked: bool):
         if btn is not self and checked != self.library_enable_button.isChecked():

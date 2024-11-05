@@ -47,7 +47,6 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
     QLineEdit,
-    QListWidget,
     QSpinBox,
     QVBoxLayout,
 )
@@ -64,10 +63,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)
 
         self.repo_group = RepoGroup(self)
-        self.repo_group.setMinimumHeight(self.repo_group.total_height() + 2)
-        self.repo_group.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.repo_group.setVerticalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
-
         self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
         self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
         self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
