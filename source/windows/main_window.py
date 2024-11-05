@@ -39,6 +39,10 @@ from modules.settings import (
     get_scrape_automated_builds,
     get_scrape_bfa_builds,
     get_scrape_stable_builds,
+    get_show_bfa_builds,
+    get_show_daily_builds,
+    get_show_experimental_and_patch_builds,
+    get_show_stable_builds,
     get_show_tray_icon,
     get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
@@ -424,6 +428,8 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox.setCurrentIndex(get_default_library_page())
         self.DownloadsToolBox.setCurrentIndex(get_default_downloads_page())
 
+        self.update_visible_lists()
+
         # Status bar
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
@@ -799,11 +805,22 @@ class BlenderLauncher(BaseWindow):
 
     def force_check(self):
         if QApplication.queryKeyboardModifiers() & Qt.Modifier.SHIFT:  # Shift held while pressing check
-            # Ignore scrape_stable, scrape_automated and scrape_bfa settings
-            self.start_scraper(True, True, True)
+            # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
+            show_stable = get_show_stable_builds()
+            show_daily = get_show_daily_builds()
+            show_expatch = get_show_experimental_and_patch_builds()
+            show_bfa = get_show_bfa_builds()
+            self.start_scraper(show_stable, show_daily or show_expatch, show_bfa)
+            self.update_visible_lists(
+                force_s_stable=show_stable,
+                force_s_daily=show_daily,
+                force_s_expatch=show_expatch,
+                force_s_bfa=show_bfa,
+            )
         else:
             # Use settings
             self.start_scraper()
+            self.update_visible_lists()
 
     def start_scraper(self, scrape_stable=None, scrape_automated=None, scrape_bfa=None):
         self.set_status("Checking for new builds", False)
@@ -979,6 +996,43 @@ class BlenderLauncher(BaseWindow):
         widget = UnrecoBuildWidget(self, path, list_widget, item)
 
         list_widget.insert_item(item, widget)
+
+    def update_visible_lists(
+        self,
+        force_l_stable=False,  # Force the library visibility of these
+        force_l_daily=False,
+        force_l_expatch=False,
+        force_l_bfa=False,
+        force_s_stable=False,  # Force the scraper visibility of these
+        force_s_daily=False,
+        force_s_expatch=False,
+        force_s_bfa=False,
+    ):
+        show_stable = force_l_stable or get_show_stable_builds()
+        show_daily = force_l_daily or get_show_daily_builds()
+        show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
+        show_bfa = force_l_bfa or get_show_bfa_builds()
+        scrape_stable = force_s_stable or get_scrape_stable_builds()
+        scrape_daily = force_s_daily or (get_scrape_automated_builds() and get_show_daily_builds())
+        scrape_expatch = force_s_expatch or (get_scrape_automated_builds() and get_show_experimental_and_patch_builds())
+        scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
+
+        self.LibraryToolBox.setTabVisible(0, show_stable)
+        self.LibraryToolBox.setTabEnabled(0, show_stable)
+        self.LibraryToolBox.setTabVisible(1, show_daily)
+        self.LibraryToolBox.setTabEnabled(1, show_daily)
+        self.LibraryToolBox.setTabVisible(2, show_expatch)
+        self.LibraryToolBox.setTabEnabled(2, show_expatch)
+        self.LibraryToolBox.setTabVisible(3, show_bfa)
+        self.LibraryToolBox.setTabEnabled(3, show_bfa)
+        self.DownloadsToolBox.setTabVisible(0, scrape_stable)
+        self.DownloadsToolBox.setTabEnabled(0, scrape_stable)
+        self.DownloadsToolBox.setTabVisible(1, scrape_daily)
+        self.DownloadsToolBox.setTabEnabled(1, scrape_daily)
+        self.DownloadsToolBox.setTabVisible(2, scrape_expatch)
+        self.DownloadsToolBox.setTabEnabled(2, scrape_expatch)
+        self.DownloadsToolBox.setTabVisible(3, scrape_bfa)
+        self.DownloadsToolBox.setTabEnabled(3, scrape_bfa)
 
     def focus_widget(self, widget: BaseBuildWidget):
         tab: QWidget | None = None

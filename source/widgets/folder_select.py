@@ -93,7 +93,6 @@ class FolderSelector(QWidget):
         if (self.check_perms and self.check_write_permission()) or not self.check_perms:
             self.folder_changed.emit(folder)
 
-
     def check_write_permission(self) -> bool:
         path = Path(self.line_edit.text())
         if not path.exists():

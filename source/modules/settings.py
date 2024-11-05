@@ -481,6 +481,38 @@ def set_scrape_bfa_builds(b: bool):
     get_settings().setValue("scrape_bfa_builds", b)
 
 
+def get_show_stable_builds() -> bool:
+    return get_settings().value("show_stable_builds", defaultValue=True, type=bool)
+
+
+def set_show_stable_builds(b: bool):
+    get_settings().setValue("show_stable_builds", b)
+
+
+def get_show_daily_builds() -> bool:
+    return get_settings().value("show_daily_builds", defaultValue=True, type=bool)
+
+
+def set_show_daily_builds(b: bool):
+    get_settings().setValue("show_daily_builds", b)
+
+
+def get_show_experimental_and_patch_builds() -> bool:
+    return get_settings().value("show_experimental_and_patch_builds", defaultValue=True, type=bool)
+
+
+def set_show_experimental_and_patch_builds(b: bool):
+    get_settings().setValue("show_experimental_and_patch_builds", b)
+
+
+def get_show_bfa_builds() -> bool:
+    return get_settings().value("show_bfa_builds", defaultValue=True, type=bool)
+
+
+def set_show_bfa_builds(b: bool):
+    get_settings().setValue("show_bfa_builds", b)
+
+
 def get_show_daily_archive_builds() -> bool:
     return get_settings().value("show_daily_archive_builds", defaultValue=False, type=bool)
 
