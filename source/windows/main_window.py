@@ -85,6 +85,7 @@ from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.dialog_window import DialogIcon, DialogWindow
 from windows.file_dialog_window import FileDialogWindow
+from windows.onboarding_window import OnboardingWindow
 from windows.settings_window import SettingsWindow
 
 try:
@@ -194,6 +195,11 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
+        self.onboarding_window = OnboardingWindow(version, self)
+        self.onboarding_window.accepted.connect(lambda: self.draw(True))
+        self.onboarding_window.cancelled.connect(self.app.quit)
+        self.onboarding_window.show()
+        return
         # Check library folder
         if is_library_folder_valid() is False:
             self.dlg = DialogWindow(
@@ -208,6 +214,7 @@ class BlenderLauncher(BaseWindow):
         else:
             create_library_folders(get_library_folder())
             self.draw()
+
 
     def __dont_show_resources_warning_again(self):
         set_dont_show_resource_warning(True)
