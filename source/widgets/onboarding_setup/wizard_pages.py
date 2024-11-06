@@ -20,6 +20,10 @@ from modules.settings import (
     set_scrape_automated_builds,
     set_scrape_bfa_builds,
     set_scrape_stable_builds,
+    set_show_bfa_builds,
+    set_show_daily_builds,
+    set_show_experimental_and_patch_builds,
+    set_show_stable_builds,
     set_show_tray_icon,
     set_use_system_titlebar,
 )
@@ -45,6 +49,8 @@ from PyQt5.QtWidgets import (
 )
 from windows.dialog_window import DialogWindow
 from windows.file_dialog_window import FileDialogWindow
+
+from ..repo_group import RepoGroup
 
 if TYPE_CHECKING:
     from semver import Version
@@ -215,77 +221,6 @@ class ChooseLibraryPage(BasicOnboardingPage):
         set_library_folder(str(Path(self.lf.line_edit.text())))
 
 
-class RepoItem(QGroupBox):
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        default_library: bool = True,
-        library: bool = True,
-        default_download: bool = True,
-        download: bool = True,
-        parent: BlenderLauncher | None = None,
-    ):
-        super().__init__(parent)
-        self.name = name
-
-        self.title_label = QLabel(name, self)
-        font = QFont(self.title_label.font())
-        font.setPointSize(12)
-        font.setBold(True)
-        self.title_label.setFont(font)
-        self.description = QLabel(description, self)
-        self.description.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-        self.library_enable_button = QCheckBox(self)
-        self.library_enable_button.setProperty("Visibility", True)
-        self.library_enable_button.setChecked(default_library)
-        self.library_enable_button.setText(None)
-        if not library:
-            self.library_enable_button.setEnabled(False)
-
-        self.download_enable_button = QCheckBox(self)
-        self.download_enable_button.setProperty("Download", True)
-        self.download_enable_button.setChecked(default_download)
-        self.download_enable_button.setText(None)
-
-        if not download:
-            self.download_enable_button.setEnabled(False)
-
-        self.layout_ = QGridLayout(self)
-        self.layout_.setContentsMargins(0, 0, 0, 0)
-        self.layout_.setSpacing(0)
-        self.layout_.setSizeConstraint(QVBoxLayout.SizeConstraint.SetMinimumSize)
-        self.layout_.addWidget(self.title_label, 0, 0, 1, 1)
-        self.layout_.addWidget(self.description, 1, 0, 1, 1)
-        self.layout_.addWidget(self.library_enable_button, 0, 1, 2, 1)
-        self.layout_.addWidget(self.download_enable_button, 0, 2, 2, 1)
-
-    def add_library_to_group(self, grp: QButtonGroup):
-        grp.addButton(self.library_enable_button)
-        grp.buttonToggled.connect(self.library_toggled)
-
-    def add_downloads_to_group(self, grp: QButtonGroup):
-        grp.addButton(self.download_enable_button)
-        grp.buttonToggled.connect(self.download_toggled)
-
-    def library_toggled(self, btn: QCheckBox, checked: bool):
-        if btn is not self and checked != self.library_enable_button.isChecked():
-            self.library_enable_button.setChecked(checked)
-
-    def download_toggled(self, btn: QCheckBox, checked: bool):
-        if btn is not self and checked != self.download_enable_button.isChecked():
-            self.download_enable_button.setChecked(checked)
-
-    @property
-    def download(self):
-        return self.download_enable_button.isChecked()
-
-    @property
-    def library(self):
-        return self.library_enable_button.isChecked()
-
-
 class RepoSelectPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
@@ -295,78 +230,18 @@ class RepoSelectPage(BasicOnboardingPage):
         )
         self.layout_ = QVBoxLayout(self)
 
-        self.item_list = QListWidget(self)
-        self.item_list.setAlternatingRowColors(True)
-        self.layout_.addWidget(self.item_list)
-
-        self.stable_repo = RepoItem(
-            "stable",
-            "The builds that come from the stable build",
-            default_library=True,
-            default_download=get_scrape_stable_builds(),
-            parent=parent,
-        )
-        self.daily_repo = RepoItem(
-            "daily",
-            "Builds created every day. They the latest features and bug fixes, but they can be unstable",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.experimental_repo = RepoItem(
-            "experimental",
-            "These have new features that may end up in official Blender releases. They can be unstable.",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.patch_repo = RepoItem(
-            "patch",
-            "Patch based builds",
-            default_library=True,
-            default_download=get_scrape_automated_builds(),
-            parent=parent,
-        )
-        self.bforartists_repo = RepoItem(
-            "bforartists",
-            "A popular fork of Blender with the goal of improving the UI.",
-            default_library=True,
-            default_download=get_scrape_stable_builds(),
-            parent=parent,
-        )
-
-        self.exp_and_patch_groups = QButtonGroup()
-        self.exp_and_patch_groups.setExclusive(False)
-        self.experimental_repo.add_library_to_group(self.exp_and_patch_groups)
-        self.patch_repo.add_library_to_group(self.exp_and_patch_groups)
-
-        self.automated_groups = QButtonGroup()
-        self.automated_groups.setExclusive(False)
-        self.daily_repo.add_downloads_to_group(self.automated_groups)
-        self.experimental_repo.add_downloads_to_group(self.automated_groups)
-        self.patch_repo.add_downloads_to_group(self.automated_groups)
-
-        item_list_items = [
-            self.stable_repo,
-            self.daily_repo,
-            self.experimental_repo,
-            self.patch_repo,
-            self.bforartists_repo,
-        ]
-
-        for widget in item_list_items:
-            item = QListWidgetItem()
-            item.setSizeHint(widget.sizeHint())
-            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # type: ignore
-            self.item_list.addItem(item)
-            self.item_list.setItemWidget(item, widget)
+        self.group = RepoGroup(self)
+        self.layout_.addWidget(self.group)
 
     def evaluate(self):
-        set_scrape_stable_builds(self.stable_repo.download)
-        set_scrape_automated_builds(self.daily_repo.download)
-        set_scrape_bfa_builds(self.bforartists_repo.download)
+        set_show_stable_builds(self.group.stable_repo.library)
+        set_show_daily_builds(self.group.daily_repo.library)
+        set_show_experimental_and_patch_builds(self.group.experimental_repo.library)
+        set_show_bfa_builds(self.group.bforartists_repo.library)
 
-        # TODO implement the visibility options
+        set_scrape_stable_builds(self.group.stable_repo.download)
+        set_scrape_automated_builds(self.group.daily_repo.download)
+        set_scrape_bfa_builds(self.group.bforartists_repo.download)
 
 
 class FileAssociationPage(BasicOnboardingPage):
