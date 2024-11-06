@@ -343,11 +343,7 @@ class LibraryWidget(BaseBuildWidget):
 
     @pyqtSlot(bool)
     def update_delete_action(self, shifting: bool):
-        reverted_behavior = False
-
-        if get_default_delete_action() == 1:
-            reverted_behavior = True
-
+        reverted_behavior = get_default_delete_action() == 1
         delete_from_drive = not reverted_behavior if shifting else reverted_behavior
 
         if delete_from_drive:
@@ -540,9 +536,12 @@ class LibraryWidget(BaseBuildWidget):
 
     @QtCore.pyqtSlot()
     def ask_remove_from_drive(self):
-        # if not shift clicked, ask to send to trash instead of deleting
+        reverted_behavior = get_default_delete_action() == 1
         mod = QApplication.keyboardModifiers()
-        if mod not in (Qt.KeyboardModifier.ShiftModifier, Qt.KeyboardModifier.ControlModifier):
+        is_shift_pressed = mod == Qt.KeyboardModifier.ShiftModifier
+
+        # if not shift clicked (or reversed action), ask to send to trash instead of deleting
+        if (not is_shift_pressed and not reverted_behavior) or (is_shift_pressed and reverted_behavior):
             self.ask_send_to_trash()
             return
 
