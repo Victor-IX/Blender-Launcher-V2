@@ -30,6 +30,7 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
+    get_first_time_setup_seen,
     get_last_time_checked_utc,
     get_launch_minimized_to_tray,
     get_library_folder,
@@ -195,6 +196,7 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
+        # if get_first_time_setup_seen():
         self.onboarding_window = OnboardingWindow(version, self)
         self.onboarding_window.accepted.connect(lambda: self.draw(True))
         self.onboarding_window.cancelled.connect(self.app.quit)
