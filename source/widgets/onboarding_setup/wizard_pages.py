@@ -115,6 +115,8 @@ class FolderSelectGroup(QWidget):
 
     def prompt_folder(self):
         new_library_folder = FileDialogWindow().get_directory(self, "Select Folder", str(self.default_choose_dir))
+        if not new_library_folder:
+            return
         if self.check_relatives:
             self.set_folder(Path(new_library_folder))
         else:
@@ -411,6 +413,9 @@ The default location is typically searched by desktop environments for user prog
                 default_folder=get_default_shortcut_destination().parent,
                 check_relatives=False,
             )
+            self.select.setEnabled(False)
+            # self.select.setEnabled(self.use_file_associations.isChecked())
+            self.use_file_associations.toggled.connect(self.select.setEnabled)
             self.layout_.addWidget(self.select)
 
     def evaluate(self):
