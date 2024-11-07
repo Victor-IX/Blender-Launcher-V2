@@ -270,9 +270,9 @@ CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon w
 These will be deleted/downgraded when you unregister the launcher""")
         if platform == "Linux":
             explanation = """In order to do this on Linux, we will generate a .desktop file at the requested location.\
- It contains mimetype data which tells the environment what files the program expects to handle.
+ It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
-The default location is typically searched by desktop environments for user program entries.
+Our default location is typically searched by DEs for application entries.
 """
         self.explanation_label.setText(explanation)
         self.explanation_label.setWordWrap(True)
@@ -365,17 +365,18 @@ class BackgroundRunningPage(BasicOnboardingPage):
         set_show_tray_icon(self.enable_btn.isChecked())
 
 
+class CommittingPage(QWizardPage):
+    def __init__(self, parent: BlenderLauncher):
+        super().__init__(parent=parent)
+        self.setTitle("Committing settings changes...")
+        self.setSubTitle("This should take less than a second.")
+
+
 class ErrorOccurredPage(QWizardPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
-        # self.setTitle("An Error occured")
+        self.setTitle("An Error occured during setup!")
         self.layout_ = QVBoxLayout(self)
-        label = QLabel("An error occured during setup!", self)
-        f = label.font()
-        f.setPointSize(20)
-        label.setFont(f)
-
-        self.layout_.addWidget(label)
         self.output = QTextEdit(self)
         self.output.setReadOnly(True)
         self.layout_.addWidget(self.output)
