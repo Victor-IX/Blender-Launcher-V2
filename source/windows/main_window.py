@@ -196,26 +196,31 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
-        # if get_first_time_setup_seen():
-        self.onboarding_window = OnboardingWindow(version, self)
-        self.onboarding_window.accepted.connect(lambda: self.draw(True))
-        self.onboarding_window.cancelled.connect(self.app.quit)
-        self.onboarding_window.show()
-        return
-        # Check library folder
+        if not get_first_time_setup_seen():
+            self.onboarding_window = OnboardingWindow(version, self)
+            self.onboarding_window.accepted.connect(lambda: self.draw(True))
+            self.onboarding_window.cancelled.connect(self.app.quit)
+            self.onboarding_window.show()
+            return
+
+        # Double-check library folder
+        # This is necessary because sometimes the user can move/update the library_folder
+        # into an unknown state without them realizing. If we show the program without a
+        # valid library folder, then many things will break.
         if is_library_folder_valid() is False:
             self.dlg = DialogWindow(
                 parent=self,
                 title="Setup",
-                text="First, choose where Blender<br>builds will be stored",
+                text="Choose where Blender<br>builds will be stored",
                 accept_text="Continue",
                 cancel_text=None,
                 icon=DialogIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
-        else:
-            create_library_folders(get_library_folder())
-            self.draw()
+            return
+
+        create_library_folders(get_library_folder())
+        self.draw()
 
 
     def __dont_show_resources_warning_again(self):
