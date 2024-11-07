@@ -622,7 +622,7 @@ def get_first_time_setup_seen():
 
 
 def set_first_time_setup_seen(b: bool):
-    get_settings().setValue("first_time_setup_seen", b)'
+    get_settings().setValue("first_time_setup_seen", b)
 
 
 def get_default_delete_action() -> int:
