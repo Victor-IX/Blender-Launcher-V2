@@ -24,6 +24,7 @@ from modules.settings import (
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
+    get_default_delete_action,
     set_favorite_path,
 )
 from modules.shortcut import create_shortcut
@@ -342,7 +343,10 @@ class LibraryWidget(BaseBuildWidget):
 
     @pyqtSlot(bool)
     def update_delete_action(self, shifting: bool):
-        if shifting:
+        reverted_behavior = get_default_delete_action() == 1
+        delete_from_drive = not reverted_behavior if shifting else reverted_behavior
+
+        if delete_from_drive:
             self.deleteAction.setText("Delete from Drive")
         else:
             self.deleteAction.setText("Send to Trash")
@@ -532,9 +536,12 @@ class LibraryWidget(BaseBuildWidget):
 
     @QtCore.pyqtSlot()
     def ask_remove_from_drive(self):
-        # if not shift clicked, ask to send to trash instead of deleting
+        reverted_behavior = get_default_delete_action() == 1
         mod = QApplication.keyboardModifiers()
-        if mod not in (Qt.KeyboardModifier.ShiftModifier, Qt.KeyboardModifier.ControlModifier):
+        is_shift_pressed = mod == Qt.KeyboardModifier.ShiftModifier
+
+        # if not shift clicked (or reversed action), ask to send to trash instead of deleting
+        if (not is_shift_pressed and not reverted_behavior) or (is_shift_pressed and reverted_behavior):
             self.ask_send_to_trash()
             return
 
