@@ -10,29 +10,31 @@
 
 ![General page of Settings](imgs/settings_window_general.png)
 
-### Library Folder
+### Application
+
+#### Library Folder
 
 :   **Library Folder** - a directory on the hard drive where all downloaded builds are stored.
     
 :    For detailed information, check the [Library Folder](library_folder.md) page.
 
-### Launch When System Starts
+#### Launch When System Starts
 
 !!! info
     This only works on Windows.
 
 :   Determines if **Blender Launcher** will run when the system starts.
 
-### Show Tray Icon
+#### Show Tray Icon
 
 :   Toggles the visibility of the tray icon. If the option is disabled, **Blender Launcher** will shut down after closing its **Main Window**.
 If this option is enabled, to completely close the **Blender Launcher** you need to close it through its **tray icon** on the bottom right. The icon may be hidden under the arrow icon located to the left of the tray icon.
 
-### Launch Minimized To Tray
+#### Launch Minimized To Tray
 
 :   Determines if the **Main Window** will pop up when the user executes **Blender Launcher**, or only the tray icon will be shown.
 
-### Worker Thread Count
+#### Worker Thread Count
 
 :   Sets the maximal number of **CPU Thread Blender** Launcher can use.
 
@@ -64,6 +66,16 @@ If this option is enabled, to completely close the **Blender Launcher** you need
      0 -> instant (Only if matching version exist)
      3 -> 3 Seconde (Will lunch after 3s if matching version exist)
     ```
+
+### Advanced
+
+#### Default Delete Action
+
+: Define the default action for removing a build in the right-click menu.  
+Default value: `Send to Trash`.
+
+!!! info
+    You can reverse the behavior of the button by pressing Shift in the right-click menu.
 
 ## Appearance
 
@@ -138,6 +150,21 @@ If this option is enabled, to completely close the **Blender Launcher** you need
 ## Blender Builds
 
 ![Blender Builds page of Settings](imgs/settings_window_blenderbuilds.png)
+
+### Visibility and Downloading
+
+: Choose the visibility and build downloading for different Blender branches and repositories.
+
+#### Eye
+
+- Show / Hide Library tab (Also removes the link download tab)
+
+#### Download
+
+- Enable / Disable the scraping of builds. 
+  
+    !!! Info
+        This helps reduce the number of requests the Blender Launcher creates on the Blender server for builds the user doesn't use.
 
 ### Checking For Builds
 
