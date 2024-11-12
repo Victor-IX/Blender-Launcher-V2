@@ -222,7 +222,6 @@ class BlenderLauncher(BaseWindow):
         create_library_folders(get_library_folder())
         self.draw()
 
-
     def __dont_show_resources_warning_again(self):
         set_dont_show_resource_warning(True)
 

@@ -47,10 +47,10 @@ from PyQt5.QtWidgets import (
     QWidget,
     QWizardPage,
 )
+from widgets.folder_select import FolderSelector
+from widgets.repo_group import RepoGroup
 from windows.dialog_window import DialogWindow
 from windows.file_dialog_window import FileDialogWindow
-
-from ..repo_group import RepoGroup
 
 if TYPE_CHECKING:
     from semver import Version
@@ -72,7 +72,8 @@ class WelcomePage(BasicOnboardingPage):
 
         self.label = QLabel(
             "In this First-Time Setup, we will walk through the most common settings you will likely want to configure.<br>\
-                            you only have to do this once and never again."
+                you only have to do this once and never again.<br>\
+                All of these settings can be changed in the future."
         )
         self.label.setWordWrap(True)
         font = self.label.font()
@@ -84,132 +85,20 @@ class WelcomePage(BasicOnboardingPage):
     def evaluate(self): ...
 
 
-class FolderSelectGroup(QWidget):
-    validity_changed = pyqtSignal()
-
-    def __init__(
-        self,
-        launcher: BlenderLauncher,
-        *,
-        default_folder: Path | None = None,
-        default_choose_dir_folder: Path | None = None,
-        check_relatives=True,
-        parent=None,
-    ):
-        super().__init__(parent)
-        self.launcher = launcher
-        self.line_edit = QLineEdit()
-        self.default_folder = default_folder
-        self.default_choose_dir = default_choose_dir_folder or self.default_folder or Path(".")
-        self.check_relatives = check_relatives
-
-        if default_folder is not None:
-            self.line_edit.setText(str(default_folder))
-        self.line_edit.setReadOnly(True)
-        self.line_edit.textChanged.connect(self.check_write_permission)
-        self.button = QPushButton(launcher.icons.folder, "")
-        self.button.setFixedWidth(25)
-        self.button.clicked.connect(self.prompt_folder)
-        self.__is_valid = False
-        self.check_write_permission()
-
-        self.layout_ = QHBoxLayout(self)
-        self.layout_.setContentsMargins(0, 0, 0, 0)
-        self.layout_.setSpacing(0)
-        self.layout_.addWidget(self.line_edit)
-        self.layout_.addWidget(self.button)
-
-    def prompt_folder(self):
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Folder", str(self.default_choose_dir))
-        if not new_library_folder:
-            return
-        if self.check_relatives:
-            self.set_folder(Path(new_library_folder))
-        else:
-            self.line_edit.setText(new_library_folder)
-            self.check_write_permission()
-
-    def set_folder(self, folder: Path, relative: bool | None = None):
-        if folder.is_relative_to(get_cwd()):
-            if relative is None:
-                self.dlg = DialogWindow(
-                    parent=self.launcher,
-                    title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
-                        Would you like to save it as relative?<br>\
-                        This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
-                )
-                self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
-                self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))
-                return
-
-            if relative:
-                folder = folder.relative_to(get_cwd())
-
-        self.line_edit.setText(str(folder))
-        self.check_write_permission()
-
-    def check_write_permission(self):
-        if not self.line_edit.text():
-            return
-
-        path = Path(self.line_edit.text())
-        if not path.exists():
-            for parent in path.parents:
-                if parent.exists():
-                    path = parent
-                    break
-
-        # check if the folder can be written to
-        can_write = False
-        with contextlib.suppress(OSError):
-            tempfile = path / "tempfile_checking_write_perms"
-            with tempfile.open("w") as f:
-                f.write("check,check,check")
-            tempfile.unlink()
-            can_write = True
-
-        # warn the user by changing the highlight color of the line edit
-        old_valid = self.__is_valid
-        self.__is_valid = can_write
-        if can_write:
-            self.line_edit.setStyleSheet("border-color:")
-            self.line_edit.setToolTip("")
-        else:
-            self.line_edit.setStyleSheet("border-color: red")
-            self.line_edit.setToolTip("The requested location has no write permissions!")
-        if old_valid != can_write:
-            self.validity_changed.emit()
-
-    @property
-    def is_valid(self) -> bool:
-        return self.__is_valid
-
-    @property
-    def path(self):
-        if t := self.line_edit.text():
-            return Path(t)
-        return None
-
-
 class ChooseLibraryPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
         self.setTitle("First, choose where Blender builds will be stored")
-        self.setSubTitle(
-            "Make sure that this folder has enough storage to download and store all the builds you want. This can be changed in the future."
-        )
+        self.setSubTitle("Make sure that this folder has enough storage to download and store all the builds you want.")
 
-        self.lf = FolderSelectGroup(
+        self.lf = FolderSelector(
             parent,
             default_folder=get_actual_library_folder_no_fallback() or None,
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
         self.layout_ = QVBoxLayout(self)
-        self.layout_.addWidget(QLabel("Library location: ", self))
+        self.layout_.addWidget(QLabel("Library location:", self))
         self.layout_.addWidget(self.lf)
 
         self.lf.validity_changed.connect(self.completeChanged)
@@ -225,9 +114,7 @@ class RepoSelectPage(BasicOnboardingPage):
     def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
         self.setTitle("Choose which repositories you want enabled")
-        self.setSubTitle(
-            "This will enable/disable certain builds of blender to be visible / scraped. This can be changed in the future."
-        )
+        self.setSubTitle("This will enable/disable certain builds of blender to be visible / scraped.")
         self.layout_ = QVBoxLayout(self)
 
         self.group = RepoGroup(self)
@@ -249,7 +136,7 @@ class FileAssociationPage(BasicOnboardingPage):
         super().__init__(parent=parent)
         self.setTitle("Launching Blendfiles (.blend, .blend1) from BLV2 directly")
         subtitle = 'This will allow you to automatically launch the correct version for a file\
- using the "Open With.." functionality on your desktop environment. This process is fully reversible.'
+ using the "Open With.." functionality on your desktop.'
         self.setSubTitle(subtitle)
 
         self.layout_ = QVBoxLayout(self)
@@ -281,15 +168,14 @@ Our default location is typically searched by DEs for application entries.
         self.use_file_associations = QCheckBox("Register for file associations", parent=self)
         self.layout_.addWidget(self.use_file_associations)
 
-        self.select: FolderSelectGroup | None = None
+        self.select: FolderSelector | None = None
         if platform == "Linux":
-            self.select = FolderSelectGroup(
+            self.select = FolderSelector(
                 parent,
                 default_folder=get_default_shortcut_destination().parent,
                 check_relatives=False,
             )
             self.select.setEnabled(False)
-            # self.select.setEnabled(self.use_file_associations.isChecked())
             self.use_file_associations.toggled.connect(self.select.setEnabled)
             self.layout_.addWidget(self.select)
 
