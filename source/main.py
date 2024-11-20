@@ -36,10 +36,7 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{message}{RESET_COLOR}"
 
 
-version = Version(
-    2,
-    3,
-    0,
+version = Version(2, 3, 1,
     # prerelease="rc.2",
 )
 
