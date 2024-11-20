@@ -1,11 +1,11 @@
-name: Manual Linux Release
+name: Manual Windows Release
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,15 +16,15 @@ jobs:
       - name: Build
         run: |
           echo "Venv setup"
-          python3 -m venv .venv
-          source ./.venv/bin/activate
+          python -m venv .venv
+          .venv\Scripts\activate
           echo "Installing dependencies"
           pip install -e ./
           echo "Building style"
           python build_style.py
-          echo "Building Linux"
-          cd ./scripts/
-          sh ./build_linux.sh
+          echo "Building"
+          cd .\scripts\
+          .\build_win.bat
       - name: Get Latest Tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,11 +33,10 @@ jobs:
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
       - name: Zipping
         run: |
-          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_Ubuntu_x64.zip"
-          cd ./dist/release/
-          zip Blender_Launcher_${{ env.LATEST_TAG }}_Ubuntu_x64.zip "./Blender Launcher"
+          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_Windows_x64.zip"
+          Compress-Archive -Path ".\dist\release\Blender Launcher.exe" -DestinationPath Blender_Launcher_${{ env.LATEST_TAG }}_Windows_x64.zip
       - name: Upload to Latest Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "${{ env.LATEST_TAG }}" ./dist/release/Blender_Launcher_"${{ env.LATEST_TAG }}"_Ubuntu_x64.zip
+          gh release upload "${{ env.LATEST_TAG }}" ./Blender_Launcher_"${{ env.LATEST_TAG }}"_Windows_x64.zip
