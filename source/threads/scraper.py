@@ -251,7 +251,9 @@ class Scraper(QThread):
                 if self.architecture == "arm64" and "arm64" in build.link:
                     self.links.emit(build)
                     continue
-                elif self.architecture == "amd64" and ("x64" in build.link or "amd64" in build.link):
+                elif self.architecture == "amd64" and (
+                    "x64" in build.link or "amd64" in build.link or "bforartists" in build.link.lower()
+                ):
                     self.links.emit(build)
                     continue
                 else:
