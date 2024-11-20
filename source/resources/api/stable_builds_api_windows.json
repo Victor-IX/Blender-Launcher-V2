@@ -452,7 +452,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.0",
                                 "build_hash": null,
-                                "commit_time": "2023-06-27T09:53:57-04:00",
+                                "commit_time": "2023-06-27T05:53:57-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -469,7 +469,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.1",
                                 "build_hash": null,
-                                "commit_time": "2023-07-18T08:42:19-04:00",
+                                "commit_time": "2023-07-18T04:42:19-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -486,7 +486,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.10",
                                 "build_hash": null,
-                                "commit_time": "2024-03-19T08:14:57-04:00",
+                                "commit_time": "2024-03-19T04:14:57-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -503,7 +503,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.11",
                                 "build_hash": null,
-                                "commit_time": "2024-04-16T08:07:19-04:00",
+                                "commit_time": "2024-04-16T04:07:19-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -520,7 +520,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.12",
                                 "build_hash": null,
-                                "commit_time": "2024-05-21T10:48:11-04:00",
+                                "commit_time": "2024-05-21T06:48:11-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -537,7 +537,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.13",
                                 "build_hash": null,
-                                "commit_time": "2024-06-25T10:12:52-04:00",
+                                "commit_time": "2024-06-25T06:12:52-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -554,7 +554,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.14",
                                 "build_hash": null,
-                                "commit_time": "2024-07-16T07:41:18-04:00",
+                                "commit_time": "2024-07-16T03:41:18-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -571,7 +571,58 @@
                                 "branch": "lts",
                                 "subversion": "3.6.15",
                                 "build_hash": null,
-                                "commit_time": "2024-08-20T07:37:56-04:00",
+                                "commit_time": "2024-08-20T03:37:56-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender3.6/blender-3.6.16-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "3.6.16",
+                                "build_hash": null,
+                                "commit_time": "2024-09-24T04:01:49-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender3.6/blender-3.6.17-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "3.6.17",
+                                "build_hash": null,
+                                "commit_time": "2024-10-15T04:13:19-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender3.6/blender-3.6.18-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "3.6.18",
+                                "build_hash": null,
+                                "commit_time": "2024-11-19T04:16:03-05:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -588,7 +639,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.2",
                                 "build_hash": null,
-                                "commit_time": "2023-08-17T07:51:06-04:00",
+                                "commit_time": "2023-08-17T03:51:06-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -605,7 +656,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.3",
                                 "build_hash": null,
-                                "commit_time": "2023-09-21T08:54:54-04:00",
+                                "commit_time": "2023-09-21T04:54:54-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -622,7 +673,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.4",
                                 "build_hash": null,
-                                "commit_time": "2023-09-26T08:47:17-04:00",
+                                "commit_time": "2023-09-26T04:47:17-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -639,7 +690,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.5",
                                 "build_hash": null,
-                                "commit_time": "2023-10-19T09:59:59-04:00",
+                                "commit_time": "2023-10-19T05:59:59-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -656,7 +707,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.7",
                                 "build_hash": null,
-                                "commit_time": "2023-12-12T12:31:08-05:00",
+                                "commit_time": "2023-12-12T07:31:08-05:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -673,7 +724,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.8",
                                 "build_hash": null,
-                                "commit_time": "2024-01-16T09:29:23-05:00",
+                                "commit_time": "2024-01-16T04:29:23-05:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -690,7 +741,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.9",
                                 "build_hash": null,
-                                "commit_time": "2024-02-20T09:37:18-05:00",
+                                "commit_time": "2024-02-20T04:37:18-05:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -699,7 +750,7 @@
                     }
                 ]
             ],
-            "modified_date": "2024-08-20T11:37:00+00:00"
+            "modified_date": "2024-11-19T14:16:00+00:00"
         },
         "4.0.0": {
             "assets": [
@@ -807,7 +858,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.0",
                                 "build_hash": null,
-                                "commit_time": "2024-07-16T08:53:20-04:00",
+                                "commit_time": "2024-07-16T04:53:20-04:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -824,7 +875,58 @@
                                 "branch": "lts",
                                 "subversion": "4.2.1",
                                 "build_hash": null,
-                                "commit_time": "2024-08-20T07:37:57-04:00",
+                                "commit_time": "2024-08-20T03:37:57-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.2-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.2",
+                                "build_hash": null,
+                                "commit_time": "2024-09-24T04:04:57-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.3-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.3",
+                                "build_hash": null,
+                                "commit_time": "2024-10-15T04:16:35-04:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.4-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.4",
+                                "build_hash": null,
+                                "commit_time": "2024-11-19T04:17:00-05:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -833,7 +935,7 @@
                     }
                 ]
             ],
-            "modified_date": "2024-08-20T11:38:00+00:00"
+            "modified_date": "2024-11-19T16:00:00+00:00"
         },
         "2.79.0": {
             "assets": [
@@ -1965,6 +2067,45 @@
                 ]
             ],
             "modified_date": "2022-08-03T12:58:00+00:00"
+        },
+        "4.3.0": {
+            "assets": [
+                [
+                    "https://download.blender.org/release/Blender4.3/blender-4.3.0-windows-arm64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "4.3.0",
+                                "build_hash": null,
+                                "commit_time": "2024-11-19T08:48:03-05:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.3/blender-4.3.0-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "4.3.0",
+                                "build_hash": null,
+                                "commit_time": "2024-11-19T08:47:42-05:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "modified_date": "2024-11-19T18:48:00+00:00"
         }
     }
 }
