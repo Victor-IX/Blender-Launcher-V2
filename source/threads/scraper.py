@@ -393,6 +393,15 @@ class Scraper(QThread):
                 branch = "daily"
                 subversion = subversion.replace(prerelease=build_var)
 
+        if self.platform == "macOS":
+            # Skip Intel builds on Apple Silicon
+            if self.architecture == "arm64" and "arm64" not in link:
+                return None
+
+            # Skip Apple Silicon builds on Intel
+            if self.architecture == "x64" and "x64" not in link:
+                return None
+
         commit_time = dateparser.parse(info["last-modified"]).astimezone()
         r.release_conn()
         r.close()
