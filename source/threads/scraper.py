@@ -174,6 +174,7 @@ class Scraper(QThread):
         QThread.__init__(self)
         self.parent = parent
         self.manager = man
+
         self.platform = get_platform()
         self.architecture = get_architecture()
 
@@ -245,7 +246,19 @@ class Scraper(QThread):
         if self.scrape_bfa:
             scrapers.append(self.scrape_bfa_releases())
         for build in chain(*scrapers):
-            self.links.emit(build)
+            # Filter out builds that don't match the current platform for Windows
+            if self.platform.lower() == "windows":
+                if self.architecture == "arm64" and "arm64" in build.link:
+                    self.links.emit(build)
+                    continue
+                elif self.architecture == "amd64" and "x64" in build.link:
+                    self.links.emit(build)
+                    continue
+                else:
+                    logger.debug(f"Skipping {build.link} as it doesn't match the current platform")
+            else:
+                self.links.emit(build)
+                continue
 
     def scrape_automated_releases(self):
         base_fmt = "https://builder.blender.org/download/{}/?format=json&v=1"
@@ -277,7 +290,7 @@ class Scraper(QThread):
             for build in data:
                 if (
                     build["platform"] == self.json_platform
-                    and build["architecture"].lower() == self.architecture.lower()
+                    and build["architecture"].lower() == self.architecture
                     and self.b3d_link.match(build["file_name"])
                 ):
                     architecture_specific_build = True
@@ -404,7 +417,7 @@ class Scraper(QThread):
             self.stable_error.emit("No releases were scraped from the site!<br>check -debug logs for more details.")
             return
 
-        # Convert string to Verison
+        # Convert string to Version
         minimum_version_str = get_minimum_blender_stable_version()
         if minimum_version_str == "None":
             minimum_smver_version = Version(0, 0, 0)
