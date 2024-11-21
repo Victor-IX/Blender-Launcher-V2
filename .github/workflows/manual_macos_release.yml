@@ -1,0 +1,53 @@
+name: Manual MacOS Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Get Latest Tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+
+      - name: Setup + Build + Zip
+        run: |
+          # replace the pyqt requirements in pyproject.toml
+          sed -i '' 's/pyqt5-qt5==/pyqt5-qt5>=/' pyproject.toml
+
+          echo "Venv setup"
+          python -m venv .venv
+          source ./.venv/bin/activate
+
+          echo "Installing dependencies"
+          pip install -e ./
+
+          echo "Building style"
+          python build_style.py
+
+          echo "Building application"
+          cd scripts
+          bash build_mac.sh
+
+          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip"
+          cd ../dist/release
+          # this zips just like the one in finder
+          ditto -c -k --sequesterRsrc --keepParent "Blender Launcher.app" "Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip"
+          mv "Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip" ../..
+          cd ../..
+
+      - name: Upload to Latest Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ env.LATEST_TAG }}" ./Blender_Launcher_"${{ env.LATEST_TAG }}"_macos_arm64.zip
