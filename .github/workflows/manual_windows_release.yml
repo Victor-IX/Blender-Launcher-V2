@@ -29,8 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          $latestTag = gh release list --limit 1 --json tagName --jq ".[0].tagName"
+          echo "LATEST_TAG=$latestTag" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Zipping
         run: |
           echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_Windows_x64.zip"
