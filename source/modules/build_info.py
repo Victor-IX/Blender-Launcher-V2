@@ -462,7 +462,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
             else:
                 if (
                     get_launch_blender_no_console()
-                    and (launcher := (library_folder / info.link / "blender_launcher.exe")).exists()
+                    and (launcher := (library_folder / info.link / "blender-launcher.exe")).exists()
                 ):
                     b3d_exe = launcher
                 else:
