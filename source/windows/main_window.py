@@ -121,7 +121,7 @@ class BlenderLauncher(BaseWindow):
     quit_signal = pyqtSignal()
     quick_launch_fail_signal = pyqtSignal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False):
+    def __init__(self, app: QApplication, version: Version, offline: bool = False, force_first_time=False):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -196,7 +196,7 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
-        if not get_first_time_setup_seen():
+        if (not get_first_time_setup_seen()) or force_first_time:
             self.onboarding_window = OnboardingWindow(version, self)
             self.onboarding_window.accepted.connect(lambda: self.draw(True))
             self.onboarding_window.cancelled.connect(self.app.quit)
