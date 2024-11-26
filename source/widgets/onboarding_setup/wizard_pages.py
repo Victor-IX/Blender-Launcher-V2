@@ -93,7 +93,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
 
         self.lf = FolderSelector(
             parent,
-            default_folder=get_actual_library_folder_no_fallback() or None,
+            default_folder=get_actual_library_folder_no_fallback() or Path("~/Documents/BlenderBuilds").expanduser(),
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
