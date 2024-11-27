@@ -1179,9 +1179,9 @@ class BlenderLauncher(BaseWindow):
     def dropEvent(self, e):
         print(e.mimeData().text())
 
-    def restart_app(self):
+    def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
-        cwd = get_cwd()
+        cwd = cwd or get_cwd()
 
         if self.platform == "Windows":
             exe = (cwd / "Blender Launcher.exe").as_posix()

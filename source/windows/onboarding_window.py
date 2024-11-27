@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import traceback
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -19,8 +20,9 @@ from widgets.onboarding_setup.wizard_pages import (
     ChooseLibraryPage,
     CommittingPage,
     ErrorOccurredPage,
-    FileAssociationPage,
+    PropogatedSettings,
     RepoSelectPage,
+    ShortcutsPage,
     WelcomePage,
 )
 from windows.base_window import BaseWindow
@@ -39,7 +41,7 @@ class Committer(QThread):
         super().__init__()
 
     finished = pyqtSignal()
-    err = pyqtSignal(object)
+    err = pyqtSignal(tuple)
 
     def run(self):
         finished_pages = ""
@@ -86,13 +88,15 @@ class OnboardingWindow(BaseWindow):
         self.error_wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)  # type: ignore
         self.error_wizard.setButtonText(QWizard.WizardButton.FinishButton, "OK")
 
+        self.prop_settings = PropogatedSettings()
+
         self.pages: list[BasicOnboardingPage] = [
             WelcomePage(version, parent),
-            ChooseLibraryPage(parent),
-            RepoSelectPage(parent),
-            FileAssociationPage(parent),
-            AppearancePage(parent),
-            BackgroundRunningPage(parent),
+            ChooseLibraryPage(self.prop_settings, parent),
+            RepoSelectPage(self.prop_settings, parent),
+            ShortcutsPage(self.prop_settings, parent),
+            AppearancePage(self.prop_settings, parent),
+            BackgroundRunningPage(self.prop_settings, parent),
         ]
 
         for page in self.pages:
@@ -135,6 +139,8 @@ class OnboardingWindow(BaseWindow):
         self.accepted.emit()
         self._accepted = True
         set_first_time_setup_seen(True)
+        if self.prop_settings.exe_changed:
+            self.parent_.restart_app(self.prop_settings.exe_location.parent)
         self.close()
 
     def __commiter_errored(self, exc_str):

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import contextlib
+import shutil
 import sys
 from abc import abstractmethod
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_cwd, get_platform
+from modules._platform import get_cwd, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
@@ -57,7 +59,16 @@ if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
 
 
+@dataclass
+class PropogatedSettings:
+    exe_location: Path = field(default=Path(sys.executable))
+    exe_changed: bool = False
+
 class BasicOnboardingPage(QWizardPage):
+    def __init__(self, prop_settings: PropogatedSettings, parent=None):
+        super().__init__(parent=parent)
+        self.prop_settings = prop_settings
+
     @abstractmethod
     def evaluate(self):
         """Runs the settings and make sure everything is set up correctly before BLV2 init"""
@@ -65,8 +76,8 @@ class BasicOnboardingPage(QWizardPage):
 
 
 class WelcomePage(BasicOnboardingPage):
-    def __init__(self, v: Version, parent=None):
-        super().__init__(parent=parent)
+    def __init__(self, v: Version, prop_settings: PropogatedSettings, parent=None):
+        super().__init__(prop_settings, parent=parent)
         self.setTitle(f"Welcome to Blender Launcher v{v}!")
         self.layout_ = QHBoxLayout(self)
 
@@ -86,8 +97,8 @@ class WelcomePage(BasicOnboardingPage):
 
 
 class ChooseLibraryPage(BasicOnboardingPage):
-    def __init__(self, parent: BlenderLauncher):
-        super().__init__(parent=parent)
+    def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
+        super().__init__(prop_settings, parent=parent)
         self.setTitle("First, choose where Blender builds will be stored")
         self.setSubTitle("Make sure that this folder has enough storage to download and store all the builds you want.")
 
@@ -97,9 +108,17 @@ class ChooseLibraryPage(BasicOnboardingPage):
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
+        self.move_exe = QCheckBox("Move exe to library", parent=self)
+        self.move_exe.setToolTip(
+            "Moves the program's exe to the specified location. Once first-time-setup is complete, you'll have to refer to this location in subsequent runs."
+        )
+        self.move_exe.setChecked(True)
+        self.move_exe.setVisible(is_frozen())  # hide when exe is not frozen
+
         self.layout_ = QVBoxLayout(self)
         self.layout_.addWidget(QLabel("Library location:", self))
         self.layout_.addWidget(self.lf)
+        self.layout_.addWidget(self.move_exe)
 
         self.lf.validity_changed.connect(self.completeChanged)
 
@@ -107,12 +126,22 @@ class ChooseLibraryPage(BasicOnboardingPage):
         return self.lf.is_valid
 
     def evaluate(self):
-        set_library_folder(str(Path(self.lf.line_edit.text())))
+        pth = Path(self.lf.line_edit.text())
+
+        set_library_folder(str(pth))
+
+        if is_frozen() and self.move_exe.isChecked():  # move the executable to the library location
+            exe = pth / self.prop_settings.exe_location.name
+            self.prop_settings.exe_location = exe
+            self.prop_settings.exe_changed = True
+            exe.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(sys.executable, exe)
+            Path(sys.executable).unlink()
 
 
 class RepoSelectPage(BasicOnboardingPage):
-    def __init__(self, parent: BlenderLauncher):
-        super().__init__(parent=parent)
+    def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
+        super().__init__(prop_settings, parent=parent)
         self.setTitle("Choose which repositories you want enabled")
         self.setSubTitle("This will enable/disable certain builds of blender to be visible / scraped.")
         self.layout_ = QVBoxLayout(self)
@@ -131,19 +160,19 @@ class RepoSelectPage(BasicOnboardingPage):
         set_scrape_bfa_builds(self.group.bforartists_repo.download)
 
 
-class FileAssociationPage(BasicOnboardingPage):
-    def __init__(self, parent: BlenderLauncher):
-        super().__init__(parent=parent)
-        self.setTitle("Launching Blendfiles (.blend, .blend1) from BLV2 directly")
+class ShortcutsPage(BasicOnboardingPage):
+    def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
+        super().__init__(prop_settings, parent=parent)
+        self.setTitle("Shortcuts / Launching Blendfiles (.blend, .blend1)")
         subtitle = 'This will allow you to automatically launch the correct version for a file\
  using the "Open With.." functionality on your desktop.'
         self.setSubTitle(subtitle)
 
         self.layout_ = QVBoxLayout(self)
         explanation = ""
-        platform = get_platform()
+        self.platform = get_platform()
         self.explanation_label = QLabel(self)
-        if platform == "Windows":  # Give a subtitle relating to the registry
+        if self.platform == "Windows":  # Give a subtitle relating to the registry
             explanation = """In order to do this on Windows, we will update the registry to relate the launcher to the .blend extension.
 To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
 
@@ -155,7 +184,7 @@ UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .bl
 UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With.." list
 CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when BLV2 is the default application
 These will be deleted/downgraded when you unregister the launcher""")
-        if platform == "Linux":
+        if self.platform == "Linux":
             explanation = """In order to do this on Linux, we will generate a .desktop file at the requested location.\
  It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
@@ -169,7 +198,7 @@ Our default location is typically searched by DEs for application entries.
         self.layout_.addWidget(self.use_file_associations)
 
         self.select: FolderSelector | None = None
-        if platform == "Linux":
+        if self.platform == "Linux":
             self.select = FolderSelector(
                 parent,
                 default_folder=get_default_shortcut_destination().parent,
@@ -178,29 +207,46 @@ Our default location is typically searched by DEs for application entries.
             self.select.setEnabled(False)
             self.use_file_associations.toggled.connect(self.select.setEnabled)
             self.layout_.addWidget(self.select)
+        elif self.platform == "Windows":
+            self.layout_.addSpacerItem(None)
+            self.addtostart = QCheckBox("Add to Start Menu", parent=self)
+            self.addtostart.setChecked(False)
+            self.addtodesk = QCheckBox("Add to Desktop", parent=self)
+            self.addtodesk.setChecked(False)
+
+            self.layout_.addWidget(self.addtostart)
+            self.layout_.addWidget(self.addtodesk)
 
     def evaluate(self):
-        if not self.use_file_associations.isChecked():
-            return
+        if self.use_file_associations.isChecked():
+            if self.select is not None:  # then we should make a desktop file
+                assert self.select.path is not None
 
-        if self.select is not None:  # then we should make a desktop file
-            assert self.select.path is not None
+                if self.select.path.is_dir():
+                    pth = self.select.path / get_default_shortcut_destination().name
+                else:
+                    pth = self.select.path
 
-            if self.select.path.is_dir():
-                pth = self.select.path / get_default_shortcut_destination().name
-            else:
-                pth = self.select.path
+                generate_program_shortcut(pth, exe=str(self.prop_settings.exe_location))
+                return
 
-            generate_program_shortcut(pth)
-            return
+            if self.platform == "Windows":
+                register_windows_filetypes(exe=str(self.prop_settings.exe_location))
 
-        if sys.platform == "win32":
-            register_windows_filetypes()
+        elif self.platform == "Windows":
+            if self.addtostart.isChecked():
+                generate_program_shortcut(
+                    get_default_shortcut_destination(), exe=str(self.prop_settings.exe_location)
+                )
+            if self.addtodesk.isChecked():
+                generate_program_shortcut(
+                    Path("~/Desktop/Blender Launcher V2").expanduser(), exe=str(self.prop_settings.exe_location)
+                )
 
 
 class AppearancePage(BasicOnboardingPage):
-    def __init__(self, parent: BlenderLauncher):
-        super().__init__(parent=parent)
+    def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
+        super().__init__(prop_settings, parent=parent)
         self.setTitle("BLV2 appearance")
         self.setSubTitle("Configure how BLV2 Looks")
         self.layout_ = QVBoxLayout(self)
@@ -236,8 +282,8 @@ automatically scales the user interface based on the monitor's pixel density."""
 
 
 class BackgroundRunningPage(BasicOnboardingPage):
-    def __init__(self, parent: BlenderLauncher):
-        super().__init__(parent=parent)
+    def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
+        super().__init__(prop_settings, parent=parent)
         self.setTitle("Running BLV2 in the background")
         self.setSubTitle("""BLV2 can be kept alive in the background with a system tray icon.\
  This can be useful for reading efficiency and other features, but it is not totally necessary.""")

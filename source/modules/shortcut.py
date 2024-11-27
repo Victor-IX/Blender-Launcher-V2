@@ -87,7 +87,7 @@ def association_is_registered() -> bool:
     return False
 
 
-def register_windows_filetypes():
+def register_windows_filetypes(exe=sys.executable):
     assert sys.platform == "win32"
 
     import winreg
@@ -98,9 +98,9 @@ def register_windows_filetypes():
         r"Software\Classes\blenderlauncherv2.blend\shell\open\command",
     ) as command_key:
         if is_frozen():
-            pth = f'"{Path(sys.executable).resolve()}"'
+            pth = f'"{Path(exe).resolve()}"'
         else:
-            pth = f'"{Path(sys.executable).resolve()}" "{Path(sys.argv[0]).resolve()}"'
+            pth = f'"{Path(exe).resolve()}" "{Path(sys.argv[0]).resolve()}"'
 
         winreg.SetValueEx(command_key, "", 0, winreg.REG_SZ, f'{pth} "%1"')
         logging.debug("Registered blenderlauncherv2.blend")
@@ -201,7 +201,7 @@ def get_default_shortcut_destination():
     }.get(get_platform(), Path.home() / "BLV2.desktop")
 
 
-def generate_program_shortcut(destination: Path):
+def generate_program_shortcut(destination: Path, exe=sys.executable):
     """Generates a shortcut for this program. Also sets up filetype associations in Linux."""
     platform = get_platform()
 
@@ -212,8 +212,6 @@ def generate_program_shortcut(destination: Path):
         # create the shortcut
         _WSHELL = win32com.client.Dispatch("Wscript.Shell")
         wscript = _WSHELL.CreateShortcut(str(dest))
-
-        exe = sys.executable
 
         wscript.Targetpath = exe
         args = ""
@@ -237,20 +235,17 @@ def generate_program_shortcut(destination: Path):
         import shlex
 
         if is_frozen():
-            bl_exe, _ = get_launcher_name()
-            cwd = get_cwd()
-            source = shlex.quote(str(cwd / bl_exe))
+            source = shlex.quote(exe)
         else:
-            exe = Path(sys.executable)
+            exe = Path(exe)
             source = f"{shlex.quote(str(exe))} {shlex.quote(str(Path(sys.argv[0]).resolve()))}"
 
-        _exec = source
         text = "\n".join(
             [
                 "[Desktop Entry]",
                 "Name=Blender Launcher V2",
                 "GenericName=Launcher",
-                f"Exec={_exec}",
+                f"Exec={source}",
                 "MimeType=application/x-blender;",
                 "Icon=blender-icon",
                 "Terminal=false",
