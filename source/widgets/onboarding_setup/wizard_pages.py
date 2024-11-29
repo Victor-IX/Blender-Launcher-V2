@@ -77,17 +77,20 @@ class BasicOnboardingPage(QWizardPage):
         raise NotImplementedError
 
 
+WELCOME_TEXT = """
+In this First-Time Setup, we will walk through the most common settings you will likely want to configure.
+you only have to do this once and never again.
+All of these settings can be changed in the future.
+"""
+
+
 class WelcomePage(BasicOnboardingPage):
     def __init__(self, v: Version, prop_settings: PropogatedSettings, parent=None):
         super().__init__(prop_settings, parent=parent)
         self.setTitle(f"Welcome to Blender Launcher v{v}!")
         self.layout_ = QHBoxLayout(self)
 
-        self.label = QLabel(
-            "In this First-Time Setup, we will walk through the most common settings you will likely want to configure.<br>\
-                you only have to do this once and never again.<br>\
-                All of these settings can be changed in the future."
-        )
+        self.label = QLabel(WELCOME_TEXT)
         self.label.setWordWrap(True)
         font = self.label.font()
         font.setPointSize(14)
@@ -163,13 +166,13 @@ class RepoSelectPage(BasicOnboardingPage):
 
 
 ASSOC_WINDOWS_EXPLAIN = """In order to launch blendfiles with BLV2 on Windows, we will update the registry to relate the launcher to the .blend extension. \
- To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
+To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
 
 Hover over this text to see which registry keys will be changed and for what reason.
 """
 
-ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with BLV2 on Linux, we will generate a .desktop file at the requested location.\
- It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
+ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with BLV2 on Linux, we will generate a .desktop file at the requested location. \
+It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
 Our default location is typically searched by DEs for application entries.
 """
@@ -246,11 +249,25 @@ class ShortcutsPage(BasicOnboardingPage):
 
         elif self.platform == "Windows":
             if self.addtostart.isChecked():
-                generate_program_shortcut(get_default_shortcut_destination(), exe=str(self.prop_settings.exe_location))
+                generate_program_shortcut(
+                    get_default_shortcut_destination(),
+                    exe=str(self.prop_settings.exe_location),
+                )
             if self.addtodesk.isChecked():
                 generate_program_shortcut(
-                    Path("~/Desktop/Blender Launcher V2").expanduser(), exe=str(self.prop_settings.exe_location)
+                    Path("~/Desktop/Blender Launcher V2").expanduser(),
+                    exe=str(self.prop_settings.exe_location),
                 )
+
+
+TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar.
+
+In Linux Wayland environments, this is recommended because you will be
+able to use the title for moving and resizing the windows.
+Our main method of moving and resizing works best on X11."""
+
+HIGH_DPI_TEXT = """This enables high DPI scaling for the program.
+automatically scales the user interface based on the monitor's pixel density."""
 
 
 class AppearancePage(BasicOnboardingPage):
@@ -262,23 +279,10 @@ class AppearancePage(BasicOnboardingPage):
 
         self.titlebar = QCheckBox("Use System Titlebar", self)
         self.titlebar.setChecked(get_use_system_titlebar())
-        titlebar_label = QLabel(
-            """This disables the custom title bar and uses the OS's default titlebar.
-
-In Linux Wayland environments, this is recommended because you will be
-able to use the title for moving and resizing the windows.
-Our main method of moving and resizing works best on X11.""",
-            self,
-        )
+        titlebar_label = QLabel(TITLEBAR_LABEL_TEXT, self)
         self.highdpiscaling = QCheckBox("High DPI Scaling")
         self.highdpiscaling.setChecked(get_enable_high_dpi_scaling())
-        highdpiscaling_label = QLabel(
-            """
-
-
-This enables high DPI scaling for the program.
-automatically scales the user interface based on the monitor's pixel density."""
-        )
+        highdpiscaling_label = QLabel(HIGH_DPI_TEXT)
 
         self.layout_.addWidget(titlebar_label)
         self.layout_.addWidget(self.titlebar)
@@ -290,12 +294,14 @@ automatically scales the user interface based on the monitor's pixel density."""
         set_enable_high_dpi_scaling(self.highdpiscaling.isChecked())
 
 
+BACKGROUND_SUBTITLE = """BLV2 can be kept alive in the background with a system tray icon.\
+ This can be useful for reading efficiency and other features, but it is not totally necessary."""
+
 class BackgroundRunningPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
         self.setTitle("Running BLV2 in the background")
-        self.setSubTitle("""BLV2 can be kept alive in the background with a system tray icon.\
- This can be useful for reading efficiency and other features, but it is not totally necessary.""")
+        self.setSubTitle(BACKGROUND_SUBTITLE)
         self.layout_ = QVBoxLayout(self)
 
         self.enable_btn = QCheckBox("Run BLV2 in the background (Minimise to tray)")
