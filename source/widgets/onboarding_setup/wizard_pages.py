@@ -44,6 +44,7 @@ from PyQt5.QtWidgets import (
     QListWidgetItem,
     QPushButton,
     QSizePolicy,
+    QSpacerItem,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -63,6 +64,7 @@ if TYPE_CHECKING:
 class PropogatedSettings:
     exe_location: Path = field(default=Path(sys.executable))
     exe_changed: bool = False
+
 
 class BasicOnboardingPage(QWizardPage):
     def __init__(self, prop_settings: PropogatedSettings, parent=None):
@@ -160,6 +162,27 @@ class RepoSelectPage(BasicOnboardingPage):
         set_scrape_bfa_builds(self.group.bforartists_repo.download)
 
 
+ASSOC_WINDOWS_EXPLAIN = """In order to launch blendfiles with BLV2 on Windows, we will update the registry to relate the launcher to the .blend extension. \
+ To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
+
+Hover over this text to see which registry keys will be changed and for what reason.
+"""
+
+ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with BLV2 on Linux, we will generate a .desktop file at the requested location.\
+ It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
+
+Our default location is typically searched by DEs for application entries.
+"""
+
+
+REGISTRY_KEY_EXPLAIN = r"""The Following keys will be changed:
+CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
+UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With..." list
+UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With..." list
+CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when BLV2 is the default application
+These will be deleted/downgraded when you unregister the launcher"""
+
+
 class ShortcutsPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
@@ -168,34 +191,8 @@ class ShortcutsPage(BasicOnboardingPage):
  using the "Open With.." functionality on your desktop.'
         self.setSubTitle(subtitle)
 
-        self.layout_ = QVBoxLayout(self)
-        explanation = ""
         self.platform = get_platform()
-        self.explanation_label = QLabel(self)
-        if self.platform == "Windows":  # Give a subtitle relating to the registry
-            explanation = """In order to do this on Windows, we will update the registry to relate the launcher to the .blend extension.
-To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
-
-Hover over this text to see which registry keys will be changed, and for what reason.
-"""
-            self.explanation_label.setToolTip(r"""The Following keys will be changed:
-CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
-UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With.." list
-UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With.." list
-CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when BLV2 is the default application
-These will be deleted/downgraded when you unregister the launcher""")
-        if self.platform == "Linux":
-            explanation = """In order to do this on Linux, we will generate a .desktop file at the requested location.\
- It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
-
-Our default location is typically searched by DEs for application entries.
-"""
-        self.explanation_label.setText(explanation)
-        self.explanation_label.setWordWrap(True)
-        self.layout_.addWidget(self.explanation_label)
-
-        self.use_file_associations = QCheckBox("Register for file associations", parent=self)
-        self.layout_.addWidget(self.use_file_associations)
+        self.layout_ = QVBoxLayout(self)
 
         self.select: FolderSelector | None = None
         if self.platform == "Linux":
@@ -208,14 +205,28 @@ Our default location is typically searched by DEs for application entries.
             self.use_file_associations.toggled.connect(self.select.setEnabled)
             self.layout_.addWidget(self.select)
         elif self.platform == "Windows":
-            self.layout_.addSpacerItem(None)
             self.addtostart = QCheckBox("Add to Start Menu", parent=self)
             self.addtostart.setChecked(False)
             self.addtodesk = QCheckBox("Add to Desktop", parent=self)
             self.addtodesk.setChecked(False)
 
-            self.layout_.addWidget(self.addtostart)
-            self.layout_.addWidget(self.addtodesk)
+            self.layout_.insertWidget(0, self.addtostart)
+            self.layout_.insertWidget(1, self.addtodesk)
+            self.layout_.insertSpacing(2, 40)
+
+        explanation = ""
+        self.explanation_label = QLabel(self)
+        if self.platform == "Windows":  # Give a subtitle relating to the registry
+            explanation = ASSOC_WINDOWS_EXPLAIN
+            self.explanation_label.setToolTip(REGISTRY_KEY_EXPLAIN)
+        if self.platform == "Linux":
+            explanation = ASSOC_LINUX_EXPLAIN
+        self.explanation_label.setText(explanation)
+        self.explanation_label.setWordWrap(True)
+
+        self.use_file_associations = QCheckBox("Register for file associations", parent=self)
+        self.layout_.addWidget(self.use_file_associations)
+        self.layout_.addWidget(self.explanation_label)
 
     def evaluate(self):
         if self.use_file_associations.isChecked():
@@ -235,9 +246,7 @@ Our default location is typically searched by DEs for application entries.
 
         elif self.platform == "Windows":
             if self.addtostart.isChecked():
-                generate_program_shortcut(
-                    get_default_shortcut_destination(), exe=str(self.prop_settings.exe_location)
-                )
+                generate_program_shortcut(get_default_shortcut_destination(), exe=str(self.prop_settings.exe_location))
             if self.addtodesk.isChecked():
                 generate_program_shortcut(
                     Path("~/Desktop/Blender Launcher V2").expanduser(), exe=str(self.prop_settings.exe_location)
