@@ -30,6 +30,7 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
+    get_first_time_setup_seen,
     get_last_time_checked_utc,
     get_launch_minimized_to_tray,
     get_library_folder,
@@ -85,6 +86,7 @@ from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.dialog_window import DialogIcon, DialogWindow
 from windows.file_dialog_window import FileDialogWindow
+from windows.onboarding_window import OnboardingWindow
 from windows.settings_window import SettingsWindow
 
 try:
@@ -119,7 +121,7 @@ class BlenderLauncher(BaseWindow):
     quit_signal = pyqtSignal()
     quick_launch_fail_signal = pyqtSignal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False):
+    def __init__(self, app: QApplication, version: Version, offline: bool = False, force_first_time=False):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -194,20 +196,31 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
-        # Check library folder
+        if (not get_first_time_setup_seen()) or force_first_time:
+            self.onboarding_window = OnboardingWindow(version, self)
+            self.onboarding_window.accepted.connect(lambda: self.draw(True))
+            self.onboarding_window.cancelled.connect(self.app.quit)
+            self.onboarding_window.show()
+            return
+
+        # Double-check library folder
+        # This is necessary because sometimes the user can move/update the library_folder
+        # into an unknown state without them realizing. If we show the program without a
+        # valid library folder, then many things will break.
         if is_library_folder_valid() is False:
             self.dlg = DialogWindow(
                 parent=self,
                 title="Setup",
-                text="First, choose where Blender<br>builds will be stored",
+                text="Choose where Blender<br>builds will be stored",
                 accept_text="Continue",
                 cancel_text=None,
                 icon=DialogIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
-        else:
-            create_library_folders(get_library_folder())
-            self.draw()
+            return
+
+        create_library_folders(get_library_folder())
+        self.draw()
 
     def __dont_show_resources_warning_again(self):
         set_dont_show_resource_warning(True)
@@ -1166,9 +1179,9 @@ class BlenderLauncher(BaseWindow):
     def dropEvent(self, e):
         print(e.mimeData().text())
 
-    def restart_app(self):
+    def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
-        cwd = get_cwd()
+        cwd = cwd or get_cwd()
 
         if self.platform == "Windows":
             exe = (cwd / "Blender Launcher.exe").as_posix()
