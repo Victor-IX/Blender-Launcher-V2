@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidg
 from windows.base_window import BaseWindow
 
 
-class DialogIcon(Enum):
+class PopupIcon(Enum):
     WARNING = 1
     INFO = 2
     NONE = 3
@@ -24,7 +24,7 @@ class PopupWindow(BaseWindow):
         message: str,
         title: Optional[str] = "Info",
         info_popup: Optional[bool] = False,
-        icon=DialogIcon.INFO,
+        icon=PopupIcon.INFO,
         buttons: Optional[List[str]] = None,
         parent=None,
         app=None,
@@ -37,8 +37,8 @@ class PopupWindow(BaseWindow):
         :param buttons: Optional. A list of tuples with the button label and the button role.
                         If not provided, the popup will have an OK and a Cancel button.
         :param info_popup: Optional. If True, the popup will be an information popup with only an OK button.
-        :param icon: Optional. The icon to display in the popup. Can be `DialogIcon.INFO` for an info icon
-                     or `DialogIcon.WARNING` for a warning icon. Defaults to `DialogIcon.INFO`.
+        :param icon: Optional. The icon to display in the popup. Can be `PopupIcon.INFO` for an info icon
+                     or `PopupIcon.WARNING` for a warning icon. Defaults to `PopupIcon.INFO`.
         :param parent: The parent widget. Optional.
         """
         super().__init__(parent=parent, app=app)
@@ -61,9 +61,9 @@ class PopupWindow(BaseWindow):
         self.IconLabel.setScaledContents(True)
         self.IconLabel.setFixedSize(24, 24)
 
-        if icon == DialogIcon.WARNING:
+        if icon == PopupIcon.WARNING:
             self.IconLabel.setPixmap(QPixmap(":resources/icons/exclamation.svg"))
-        elif icon == DialogIcon.INFO:
+        elif icon == PopupIcon.INFO:
             self.IconLabel.setPixmap(QPixmap(":resources/icons/info.svg"))
         else:
             self.IconLabel.hide()
