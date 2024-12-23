@@ -9,8 +9,8 @@ from modules._platform import is_frozen, show_windows_help
 
 def error(parser: ArgumentParser, msg: str):
     if is_frozen() and sys.platform == "win32":
-        from PySide6.QtWidgets import QApplication
-        from windows.popup_window import PopupWindow, DialogIcon
+       	from PySide6.QtWidgets import QApplication
+        from windows.popup_window import PopupWindow, PopupIcon
 
         app = QApplication([])
         PopupWindow(

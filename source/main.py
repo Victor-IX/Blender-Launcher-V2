@@ -16,7 +16,7 @@ from modules.shortcut import register_windows_filetypes, unregister_windows_file
 from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
 from PySide6.QtWidgets import QApplication
 from semver import Version
-from windows.popup_window import PopupWindow, DialogIcon
+from windows.popup_window import PopupWindow, PopupIcon
 
 LOG_COLORS = {
     "DEBUG": "\033[36m",  # Cyan

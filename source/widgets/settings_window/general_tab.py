@@ -42,7 +42,7 @@ from PySide6.QtWidgets import (
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
-from windows.popup_window import PopupWindow, DialogIcon
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 
 
@@ -262,12 +262,12 @@ class GeneralTabWidget(SettingsFormWidget):
         title = "Info"
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
         button = "Migrate, Cancel"
-        icon = DialogIcon.NONE
+        icon = PopupIcon.NONE
         if user_config().exists():
             title = "Warning"
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
             button = "Overwrite, Cancel"
-            icon = DialogIcon.WARNING
+            icon = PopupIcon.WARNING
         dlg = PopupWindow(title=title, text=text, button=button, icon=icon, parent=self.parent)
         dlg.accepted.connect(self.migrate)
 

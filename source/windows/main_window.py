@@ -85,7 +85,7 @@ from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
-from windows.popup_window import PopupWindow, DialogIcon
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 from windows.settings_window import SettingsWindow
 
