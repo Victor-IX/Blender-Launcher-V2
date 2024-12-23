@@ -50,7 +50,7 @@ class PopupWindow(BaseWindow):
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(self.title)
-        self.setFixedSize(200, 100)
+        self.setMinimumSize(200, 100)
 
         self.PopupWidget = QWidget(self)
         self.PopupLayout = QVBoxLayout(self.PopupWidget)
@@ -82,6 +82,7 @@ class PopupWindow(BaseWindow):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinimizeButtonHint & ~Qt.WindowMaximizeButtonHint)
         self._add_buttons()
         self.show()
+        self.setFixedSize(self.size())
 
     def _add_buttons(self):
         if self.buttons:
