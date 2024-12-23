@@ -1,8 +1,10 @@
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 from enum import Enum
-from PyQt5.QtCore import Qt, pyqtSignal
+from typing import List, Optional
+
 from PyQt5.QtGui import QPixmap
-from typing import List, Tuple, Optional
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
+
 from windows.base_window import BaseWindow
 
 
@@ -93,15 +95,15 @@ class PopupWidget(BaseWindow):
         elif self.info_popup:
             ok_button = QPushButton("Ok")
             ok_button.setProperty("Popup", True)
-            ok_button.clicked.connect(self.accept)
+            ok_button.clicked.connect(self._accept)
             self.PopupLayout.addWidget(ok_button)
         else:
             ok_button = QPushButton("Ok")
             ok_button.setProperty("Popup", True)
-            ok_button.clicked.connect(self.accept)
+            ok_button.clicked.connect(self._accept)
             cancel_button = QPushButton("Cancel")
             cancel_button.setProperty("Popup", True)
-            cancel_button.clicked.connect(self.cancel)
+            cancel_button.clicked.connect(self._cancel)
 
             button_layout = QHBoxLayout()
             button_layout.addWidget(ok_button)
@@ -112,10 +114,10 @@ class PopupWidget(BaseWindow):
         self.custom_signal.emit(label)
         self.close()
 
-    def accept(self):
+    def _accept(self):
         self.accepted.emit()
         self.close()
 
-    def cancel(self):
+    def _cancel(self):
         self.cancelled.emit()
         self.close()
