@@ -85,33 +85,48 @@ class PopupWindow(BaseWindow):
 
     def _add_buttons(self):
         if self.buttons:
-            button_layout = QHBoxLayout()
-
-            for label in self.buttons:
-                button = QPushButton(label)
-                button.setProperty("Popup", True)
-                button.clicked.connect(lambda _, lbl=label: self._custom_signal(lbl))
-                button_layout.addWidget(button)
-
-            self.PopupLayout.addLayout(button_layout)
-
+            self._add_custom_buttons()
         elif self.info_popup:
-            ok_button = QPushButton("Ok")
-            ok_button.setProperty("Popup", True)
-            ok_button.clicked.connect(self._accept)
-            self.PopupLayout.addWidget(ok_button)
+            self._add_info_button()
         else:
-            ok_button = QPushButton("Ok")
-            ok_button.setProperty("Popup", True)
-            ok_button.clicked.connect(self._accept)
-            cancel_button = QPushButton("Cancel")
-            cancel_button.setProperty("Popup", True)
-            cancel_button.clicked.connect(self._cancel)
+            self._add_default_buttons()
 
-            button_layout = QHBoxLayout()
+    def _add_custom_buttons(self):
+        button_layout = QHBoxLayout()
+
+        if len(self.buttons) > 2:
+            for label in self.buttons:
+                button = self._create_button(label, self._custom_signal)
+                button_layout.addWidget(button)
+        elif len(self.buttons) == 2:
+            ok_button = self._create_button(self.buttons[0], self._accept)
+            cancel_button = self._create_button(self.buttons[1], self._cancel)
             button_layout.addWidget(ok_button)
             button_layout.addWidget(cancel_button)
-            self.PopupLayout.addLayout(button_layout)
+        else:
+            ok_button = self._create_button(self.buttons[0], self._accept)
+            button_layout.addWidget(ok_button)
+
+        self.PopupLayout.addLayout(button_layout)
+
+    def _add_info_button(self):
+        ok_button = self._create_button("Ok", self._accept)
+        self.PopupLayout.addWidget(ok_button)
+
+    def _add_default_buttons(self):
+        ok_button = self._create_button("Ok", self._accept)
+        cancel_button = self._create_button("Cancel", self._cancel)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(ok_button)
+        button_layout.addWidget(cancel_button)
+        self.PopupLayout.addLayout(button_layout)
+
+    def _create_button(self, label, callback):
+        button = QPushButton(label)
+        button.setProperty("Popup", True)
+        button.clicked.connect(lambda _, lbl=label: callback(lbl) if callback == self._custom_signal else callback())
+        return button
 
     def _custom_signal(self, label: str):
         self.custom_signal.emit(label)
