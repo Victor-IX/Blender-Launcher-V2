@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import List, Optional
 
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QPixmap, QKeyEvent
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
 from windows.base_window import BaseWindow
@@ -13,15 +13,15 @@ class DialogIcon(Enum):
     INFO = 2
 
 
-class PopupWidget(BaseWindow):
+class PopupWindow(BaseWindow):
     accepted = pyqtSignal()
     cancelled = pyqtSignal()
     custom_signal = pyqtSignal(str)
 
     def __init__(
         self,
-        title: str,
         message: str,
+        title: Optional[str] = "Info",
         info_popup: Optional[bool] = False,
         icon=DialogIcon.INFO,
         buttons: Optional[List[str]] = None,
@@ -121,3 +121,9 @@ class PopupWidget(BaseWindow):
     def _cancel(self):
         self.cancelled.emit()
         self.close()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Escape and not self.CancelButton.isHidden():
+            self.cancel()
+        if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
+            self.accept()
