@@ -11,6 +11,7 @@ from windows.base_window import BaseWindow
 class DialogIcon(Enum):
     WARNING = 1
     INFO = 2
+    NONE = 3
 
 
 class PopupWindow(BaseWindow):
@@ -64,6 +65,8 @@ class PopupWindow(BaseWindow):
             self.IconLabel.setPixmap(QPixmap(":resources/icons/exclamation.svg"))
         elif icon == DialogIcon.INFO:
             self.IconLabel.setPixmap(QPixmap(":resources/icons/info.svg"))
+        else:
+            self.IconLabel.hide()
 
         message_label = QLabel(message)
         message_label.setWordWrap(True)
