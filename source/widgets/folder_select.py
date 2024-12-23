@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QWidget,
 )
-from windows.popup_window import PopupWindow, DialogIcon
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
