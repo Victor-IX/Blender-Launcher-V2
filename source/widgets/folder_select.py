@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QWidget,
 )
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, DialogIcon
 from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
@@ -72,14 +72,14 @@ class FolderSelector(QWidget):
     def set_folder(self, folder: Path, relative: bool | None = None):
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self.launcher,
                     title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
+                    message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
+                    icon=DialogIcon.NONE,
+                    buttons=["Yes", "No"],
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))

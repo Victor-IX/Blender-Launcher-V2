@@ -50,7 +50,7 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, DialogIcon
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -547,13 +547,13 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.item.setSelected(True)
-        self.dlg = DialogWindow(
+        self.dlg = PopupWindow(
             parent=self.parent,
             title="Warning",
-            text="Are you sure you want to<br> \
+            message="Are you sure you want to<br> \
                   delete selected builds?",
-            accept_text="Yes",
-            cancel_text="No",
+            icon=DialogIcon.NONE,
+            buttons=["Yes", "No"],
         )
 
         if len(self.list_widget.selectedItems()) > 1:
@@ -581,13 +581,13 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def ask_send_to_trash(self):
         self.item.setSelected(True)
-        self.dlg = DialogWindow(
+        self.dlg = PopupWindow(
             parent=self.parent,
             title="Warning",
-            text="Are you sure you want to<br> \
+            message="Are you sure you want to<br> \
                   send selected builds to trash?",
-            accept_text="Yes",
-            cancel_text="No",
+            icon=DialogIcon.NONE,
+            buttons=["Yes", "No"],
         )
 
         if len(self.list_widget.selectedItems()) > 1:
