@@ -22,18 +22,20 @@ class PopupWidget(BaseWindow):
         message: str,
         info_popup: Optional[bool] = False,
         icon=DialogIcon.INFO,
-        buttons: Optional[List[Tuple[str, str]]] = None,
+        buttons: Optional[List[str]] = None,
         parent=None,
         app=None,
     ):
         """
         Popup class.
 
-        :param title:   The title of the popup (only visible when system title bare is enable).
+        :param title:   The title of the popup (only visible when system title bar is enabled).
         :param message: The message to display in the popup.
         :param buttons: Optional. A list of tuples with the button label and the button role.
                         If not provided, the popup will have an OK and a Cancel button.
-        :param info_popup: Optional. If True, the popup will be an information popup with only a Ok button.
+        :param info_popup: Optional. If True, the popup will be an information popup with only an OK button.
+        :param icon: Optional. The icon to display in the popup. Can be `DialogIcon.INFO` for an info icon
+                     or `DialogIcon.WARNING` for a warning icon. Defaults to `DialogIcon.INFO`.
         :param parent: The parent widget. Optional.
         """
         super().__init__(parent=parent, app=app)
@@ -78,11 +80,16 @@ class PopupWidget(BaseWindow):
 
     def _add_buttons(self):
         if self.buttons:
-            for label, role in self.buttons:
+            button_layout = QHBoxLayout()
+
+            for label in self.buttons:
                 button = QPushButton(label)
                 button.setProperty("Popup", True)
-                button.clicked.connect(lambda _, r=role: self.done(r))
-                self.PopupLayout.addWidget(button)
+                button.clicked.connect(lambda _, lbl=label: self._custom_signal(lbl))
+                button_layout.addWidget(button)
+
+            self.PopupLayout.addLayout(button_layout)
+
         elif self.info_popup:
             ok_button = QPushButton("Ok")
             ok_button.setProperty("Popup", True)
@@ -101,8 +108,8 @@ class PopupWidget(BaseWindow):
             button_layout.addWidget(cancel_button)
             self.PopupLayout.addLayout(button_layout)
 
-    def _custom_signal(self, role):
-        self.custom_signal.emit(role)
+    def _custom_signal(self, label: str):
+        self.custom_signal.emit(label)
         self.close()
 
     def accept(self):
