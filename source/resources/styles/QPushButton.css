@@ -17,6 +17,20 @@ QPushButton:disabled {
     border: none;
 }
 
+QPushButton[Popup=true] {
+    color: #E6E6E6;
+    background-color: #313131;
+    border: none;
+    padding: 4px;
+}
+
+QPushButton[Popup=true]:hover {
+    color: #FFFFFF;
+    background-color: #414141;
+    border: none;
+}
+
+
 QPushButton[TextOnly=true] {
     background-color: transparent;
 }
