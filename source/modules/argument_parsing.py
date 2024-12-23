@@ -10,17 +10,16 @@ from modules._platform import is_frozen, show_windows_help
 def error(parser: ArgumentParser, msg: str):
     if is_frozen() and sys.platform == "win32":
         from PySide6.QtWidgets import QApplication
-        from windows.dialog_window import DialogWindow
+        from windows.popup_window import PopupWindow, DialogIcon
 
         app = QApplication([])
-        dlg = DialogWindow(
+        PopupWindow(
             title="Error",
-            text="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
-            accept_text="Quit",
-            cancel_text=None,
+            message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
+            icon=DialogIcon.WARNING,
+            button="Quit",
             app=app,
-        )
-        dlg.show()
+        ).show()
         sys.exit(app.exec())
     else:
         parser.error(msg)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
+from turtle import title
 
 from modules.settings import (
     get_actual_library_folder,
@@ -33,18 +34,15 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QGridLayout,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
     QSpinBox,
-    QWidget,
     QComboBox,
 )
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, DialogIcon
 from windows.file_dialog_window import FileDialogWindow
 
 
@@ -226,12 +224,11 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def library_folder_validity_changed(self, v: bool):
         if not v:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self.parent,
                 title="Warning",
-                text="Selected folder doesn't have write permissions!",
-                accept_text="Retry",
-                cancel_text=None,
+                message="Selected folder doesn't have write permissions!",
+                button="Quit",
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -262,10 +259,16 @@ class GeneralTabWidget(SettingsFormWidget):
         set_use_pre_release_builds(is_checked)
 
     def migrate_confirmation(self):
+        title = "Info"
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
+        button = "Migrate, Cancel"
+        icon = DialogIcon.NONE
         if user_config().exists():
+            title = "Warning"
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
-        dlg = DialogWindow(text=text, parent=self.parent)
+            button = "Overwrite, Cancel"
+            icon = DialogIcon.WARNING
+        dlg = PopupWindow(title=title, text=text, button=button, icon=icon, parent=self.parent)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
