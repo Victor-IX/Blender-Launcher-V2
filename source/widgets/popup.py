@@ -29,7 +29,7 @@ class PopupWidget(BaseWindow):
         """
         Popup class.
 
-        :param title:   The title of the popup.
+        :param title:   The title of the popup (only visible when system title bare is enable).
         :param message: The message to display in the popup.
         :param buttons: Optional. A list of tuples with the button label and the button role.
                         If not provided, the popup will have an OK and a Cancel button.
@@ -45,7 +45,7 @@ class PopupWidget(BaseWindow):
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(self.title)
-        self.setFixedSize(200, 70)
+        self.setFixedSize(200, 100)
 
         self.PopupWidget = QWidget(self)
         self.PopupLayout = QVBoxLayout(self.PopupWidget)
@@ -63,12 +63,17 @@ class PopupWidget(BaseWindow):
 
         message_label = QLabel(message)
         message_label.setWordWrap(True)
-        self.PopupLayout.addWidget(message_label)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.TextLayout = QHBoxLayout()
+        self.TextLayout.setContentsMargins(4, 4, 6, 0)
+        self.TextLayout.addWidget(self.IconLabel)
+        self.TextLayout.addSpacing(5)
+        self.TextLayout.addWidget(message_label)
 
+        self.PopupLayout.addLayout(self.TextLayout)
+
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinimizeButtonHint & ~Qt.WindowMaximizeButtonHint)
         self._add_buttons()
-
         self.show()
 
     def _add_buttons(self):
