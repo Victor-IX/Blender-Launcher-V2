@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
 
 
-class DialogIcon(Enum):
+classPopupIcon(Enum):
     WARNING = 1
     INFO = 2
 

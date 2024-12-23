@@ -50,7 +50,7 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.popup_window import PopupWindow, DialogIcon
+from windows.popup_window import PopupWindow, PopupIcon
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
