@@ -625,6 +625,7 @@ class BlenderLauncher(BaseWindow):
         self.set_status()
         self.show_signal.emit()
 
+        # TODO: Reimplement custom button on the window taskbar app preview previewer (Launch and Quit)
         # Add custom toolbar icons
         # if self.platform == "Windows":
         #     self.thumbnail_toolbar = QWinThumbnailToolBar(self)
