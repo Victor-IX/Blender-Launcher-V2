@@ -1,7 +1,7 @@
 import time
 
-from PyQt5.QtCore import QEasingCurve, QPropertyAnimation, QRect, QSize
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRect, QSize
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QWidget
 
 
 class BuildStateWidget(QWidget):

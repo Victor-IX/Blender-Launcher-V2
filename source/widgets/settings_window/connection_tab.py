@@ -15,9 +15,9 @@ from modules.settings import (
     set_use_custom_tls_certificates,
     set_user_id,
 )
-from PyQt5 import QtGui
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtWidgets import QCheckBox, QComboBox, QFormLayout, QGridLayout, QHBoxLayout, QLabel, QLineEdit
+from PySide6 import QtGui
+from PySide6.QtCore import QRegularExpression, Qt
+from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QGridLayout, QHBoxLayout, QLabel, QLineEdit
 from widgets.settings_form_widget import SettingsFormWidget
 
 from .settings_group import SettingsGroup
@@ -48,7 +48,7 @@ class ConnectionTabWidget(SettingsFormWidget):
             \nDEFAULT: None"
         )
         self.ProxyTypeComboBox.setCurrentIndex(get_proxy_type())
-        self.ProxyTypeComboBox.activated[str].connect(self.change_proxy_type)
+        self.ProxyTypeComboBox.activated[int].connect(self.change_proxy_type)
 
         # Proxy URL
         # Host
@@ -60,11 +60,11 @@ class ConnectionTabWidget(SettingsFormWidget):
         )
         self.ProxyHostLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
-        rx = QRegExp(
+        rx = QRegularExpression(
             r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
         )
 
-        self.host_validator = QtGui.QRegExpValidator(rx, self)
+        self.host_validator = QtGui.QRegularExpressionValidator(rx, self)
         self.ProxyHostLineEdit.setValidator(self.host_validator)
         self.ProxyHostLineEdit.editingFinished.connect(self.update_proxy_host)
 
@@ -77,9 +77,9 @@ class ConnectionTabWidget(SettingsFormWidget):
         )
         self.ProxyPortLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
-        rx = QRegExp(r"\d{2,5}")
+        rx = QRegularExpression(r"\d{2,5}")
 
-        self.port_validator = QtGui.QRegExpValidator(rx, self)
+        self.port_validator = QtGui.QRegularExpressionValidator(rx, self)
         self.ProxyPortLineEdit.setValidator(self.port_validator)
         self.ProxyPortLineEdit.editingFinished.connect(self.update_proxy_port)
 
@@ -112,9 +112,9 @@ class ConnectionTabWidget(SettingsFormWidget):
             \nFORMAT: 8-64 characters (a-z, A-Z, 0-9, -)"
         )
 
-        rx = QRegExp(r"^[a-zA-Z0-9-]{8,64}$")
+        rx = QRegularExpression(r"^[a-zA-Z0-9-]{8,64}$")
 
-        self.user_id_validator = QtGui.QRegExpValidator(rx, self)
+        self.user_id_validator = QtGui.QRegularExpressionValidator(rx, self)
         self.UserIDLineEdit.setValidator(self.user_id_validator)
         self.UserIDLineEdit.editingFinished.connect(self.update_user_id)
 
@@ -143,7 +143,8 @@ class ConnectionTabWidget(SettingsFormWidget):
     def toggle_use_custom_tls_certificates(self, is_checked):
         set_use_custom_tls_certificates(is_checked)
 
-    def change_proxy_type(self, proxy_type):
+    def change_proxy_type(self, index: int):
+        proxy_type = self.ProxyTypeComboBox.itemText(index)
         set_proxy_type(proxy_type)
 
     def update_proxy_host(self):

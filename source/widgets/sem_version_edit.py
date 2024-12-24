@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QHBoxLayout, QSpinBox, QWidget
+from PySide6.QtCore import Signal, Slot
+from PySide6.QtWidgets import QHBoxLayout, QSpinBox, QWidget
 from semver import Version
 
 
 class SemVersionEdit(QWidget):
-    major_changed = pyqtSignal(int)
-    minor_changed = pyqtSignal(int)
-    patch_changed = pyqtSignal(int)
-    version_changed = pyqtSignal(Version)
+    major_changed = Signal(int)
+    minor_changed = Signal(int)
+    patch_changed = Signal(int)
+    version_changed = Signal(Version)
 
     def __init__(self, v: Version | None = None, parent=None, use_patch=True):
         super().__init__(parent)
@@ -42,7 +42,7 @@ class SemVersionEdit(QWidget):
         self.minor_changed.connect(self._update_version)
         self.patch_changed.connect(self._update_version)
 
-    @pyqtSlot()
+    @Slot()
     def _update_version(self):
         self.version = Version(
             self.major.value(),

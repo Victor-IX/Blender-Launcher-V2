@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from enum import Enum
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QPixmap
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QKeyEvent, QPixmap
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QWidget
 from windows.base_window import BaseWindow
 
 
@@ -14,8 +14,8 @@ class DialogIcon(Enum):
 
 
 class DialogWindow(BaseWindow):
-    accepted = pyqtSignal()
-    cancelled = pyqtSignal()
+    accepted = Signal()
+    cancelled = Signal()
 
     def __init__(
         self,

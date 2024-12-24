@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt5.QtWidgets import QListWidgetItem
+from PySide6.QtWidgets import QListWidgetItem
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
-    from PyQt5.QtGui import QFont
+    from PySide6.QtGui import QFont
 
 
 class EnablableListWidgetItem(QListWidgetItem):

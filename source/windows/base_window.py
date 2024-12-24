@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 from modules.connection_manager import ConnectionManager
 from modules.icons import Icons
 from modules.settings import get_enable_high_dpi_scaling, get_use_system_titlebar
-from PyQt5.QtCore import QFile, QPoint, Qt, QTextStream
-from PyQt5.QtGui import QFont, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QFile, QPoint, Qt, QTextStream
+from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtWidgets import QApplication, QMainWindow
 
 if TYPE_CHECKING:
     from semver import Version
@@ -132,5 +132,5 @@ class BaseWindow(QMainWindow):
             event.accept()
 
     def _destroyed(self):
-        if self.parent is not None:
+        if self.parent is not None and self in self.parent.windows:
             self.parent.windows.remove(self)
