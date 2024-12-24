@@ -18,9 +18,9 @@ from modules.settings import (
 from modules.tasks import TaskQueue
 from modules.version_matcher import VALID_QUERIES, BInfoMatcher, VersionSearchQuery
 from modules.version_matcher import BasicBuildInfo as BBI
-from PyQt5.QtCore import Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QFont, QFontMetricsF, QKeyEvent
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt, QTimer, Slot
+from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
+from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
     QGridLayout,
@@ -173,7 +173,7 @@ class LaunchingWindow(BaseWindow):
         self.__disabled_font.setItalic(True)
         self.__disabled_font.setWeight(QFont.Weight.Light)
 
-    @pyqtSlot()
+    @Slot()
     def update_query_from_edits(self, update_actual_query=True):
         self.ready = False
         txt = self.version_query_edit.text()
@@ -247,7 +247,7 @@ class LaunchingWindow(BaseWindow):
             self.update_query_from_edits()
             self.update_search()
 
-    @pyqtSlot(Path)
+    @Slot(Path)
     def _build_found(self, pth: Path):
         # read the build info file and add it to the list
         if (blinfo := pth / ".blinfo").exists():
@@ -307,7 +307,7 @@ class LaunchingWindow(BaseWindow):
         target_v_len = 0
         target_b_len = 0
         target_dtime = 0
-        metrics = QFontMetricsF(self.__disabled_font)
+        metrics = QFontMetrics(self.__disabled_font)
 
         def sizeof(s):
             return metrics.size(Qt.TextFlag.TextSingleLine, s).width()
@@ -341,7 +341,7 @@ class LaunchingWindow(BaseWindow):
             self.builds[new_text] = build
             self.label_elements[basic_info] = (p, v, b, dtime)
 
-    @pyqtSlot()
+    @Slot()
     def search_finished(self):
         self.status_label.setText(f"Found {len(self.builds)} builds")
 
@@ -428,7 +428,7 @@ class LaunchingWindow(BaseWindow):
 
         return matches, enabled_builds
 
-    @pyqtSlot()
+    @Slot()
     def save_current_query(self):
         """Saves the current query for the given header version to the settings."""
         if self.saved_header is not None and self.version_query is not None:
@@ -463,7 +463,7 @@ class LaunchingWindow(BaseWindow):
         self.launch_timer.start()
         self.target_build = build
 
-    @pyqtSlot()
+    @Slot()
     def timer_tick(self):
         """Called by the launch timer waiting to start the build."""
         self.remaining_time = self.remaining_time - 1
@@ -473,7 +473,7 @@ class LaunchingWindow(BaseWindow):
         else:
             self.actually_launch(self.target_build)
 
-    @pyqtSlot()
+    @Slot()
     def cancel_timer(self):
         """Stops the launch timer."""
         self.timer_label.setText("")
@@ -500,7 +500,7 @@ class LaunchingWindow(BaseWindow):
         self.close()
         self.app.exit()
 
-    @pyqtSlot()
+    @Slot()
     def close_(self):
         """Close slot for cancel button"""
         self.close()

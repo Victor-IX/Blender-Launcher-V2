@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
 from modules.enums import MessageType
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 
 
 class Task(QObject):
-    message = pyqtSignal(str, MessageType)
+    message = Signal(str, MessageType)
 
     def __post_init__(self):
         super().__init__()

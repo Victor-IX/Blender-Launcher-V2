@@ -7,8 +7,8 @@ from modules.settings import (
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
 )
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import (
     QButtonGroup,
     QFrame,
     QSizePolicy,
@@ -78,7 +78,7 @@ class RepoGroup(QFrame):
         for widget in self.repos:
             self.layout_.addWidget(widget)
 
-    @pyqtSlot()
+    @Slot()
     def check_if_both_automated_are_disabled(self):
         if (not self.daily_repo.library) and (not self.experimental_repo.library):
             self.daily_repo.download = False  # Will also set experimental_repo

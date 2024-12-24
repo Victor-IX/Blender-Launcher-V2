@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 
 
 @dataclass(frozen=True)
@@ -10,8 +10,8 @@ class RenameTask(Task):
     src: Path
     dst_name: str
 
-    finished = pyqtSignal(Path)
-    failure = pyqtSignal()
+    finished = Signal(Path)
+    failure = Signal()
 
     def run(self):
         try:

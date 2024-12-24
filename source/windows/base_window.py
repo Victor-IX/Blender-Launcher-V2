@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 from modules.connection_manager import ConnectionManager
 from modules.icons import Icons
 from modules.settings import get_enable_high_dpi_scaling, get_use_system_titlebar
-from PyQt5.QtCore import QFile, QPoint, Qt, QTextStream
-from PyQt5.QtGui import QFont, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QFile, QPoint, Qt, QTextStream
+from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtWidgets import QApplication, QMainWindow
 
 if TYPE_CHECKING:
     from semver import Version
@@ -57,7 +57,7 @@ class BaseWindow(QMainWindow):
 
         self.destroyed.connect(lambda: self._destroyed())
 
-    def set_system_titlebar(self, b: bool):
+    def set_system_titlebar(self, use_system_bar: bool):
         """
         Changes window flags so frameless is enabled (custom headers) or disabled (system).
 
@@ -66,18 +66,17 @@ class BaseWindow(QMainWindow):
         Arguments:
             b -- bool
         """
-        if not b:
-            self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-            if self.using_system_bar:
-                self.hide()
-                self.show()
-            self.using_system_bar = False
-        else:
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.FramelessWindowHint)  # type: ignore
-            if not self.using_system_bar:
-                self.hide()
-                self.show()
-            self.using_system_bar = True
+        if use_system_bar != self.using_system_bar:
+            self.using_system_bar = use_system_bar
+
+            if use_system_bar:
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.FramelessWindowHint)
+            else:
+                self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+            # Ensure changes are applied
+            self.hide()
+            self.show()
 
     def update_system_titlebar(self, b: bool):
         """
@@ -132,5 +131,5 @@ class BaseWindow(QMainWindow):
             event.accept()
 
     def _destroyed(self):
-        if self.parent is not None:
+        if self.parent is not None and self in self.parent.windows:
             self.parent.windows.remove(self)

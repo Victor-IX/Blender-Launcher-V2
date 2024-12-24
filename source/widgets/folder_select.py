@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from modules._platform import get_cwd
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QLineEdit,
     QPushButton,
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
 
 class FolderSelector(QWidget):
-    validity_changed = pyqtSignal(bool)
-    folder_changed = pyqtSignal(Path)
+    validity_changed = Signal(bool)
+    folder_changed = Signal(Path)
 
     def __init__(
         self,

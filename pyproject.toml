@@ -4,30 +4,28 @@ version = "2.3.2"
 description = ""
 authors = []
 dependencies = [
-    "pyinstaller==6.5.0",
-    "beautifulsoup4==4.11.1",
-    "pyqt5-qt5==5.15.2",                       # MacOS users must switch this to >=
-    "pyqt5",
-    "urllib3[socks]==1.26.11",
-    "pynput==1.7.6",
+    "pyinstaller>=6.5.0",
+    "beautifulsoup4>=4.11.1",
+    "urllib3[socks]>=1.26.11",
+    "pynput==1.7.7",
     "lxml",
     "python-xlib",
-    "pywin32==303; sys_platform == \"win32\"",
+    "pywin32>=303; sys_platform == \"win32\"",
     "distro>=1.8.0",
     "semver>=3.0.2",
     "zstandard>=0.23.0",
     "send2trash>=1.8.3",
     "webdav4==0.10.0",
     "dateparser>=1.2.0",
+    "pyside6==6.8.1",
 ]
-requires-python = ">=3.9, <3.11"
+requires-python = "<3.14,>=3.10"
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "GPL3" }
 
 [project.optional-dependencies]
 docs = ["mkdocs", "mkdocs-material>=9.5.10"]
 ruff = ["ruff>=0.3.5"]
-
 
 [build-system]
 build-backend = "pdm.backend"
@@ -41,7 +39,7 @@ name = "pypi"
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py312"
 
 [tool.ruff.lint]
 extend-ignore = [
