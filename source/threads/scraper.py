@@ -38,7 +38,7 @@ from modules.settings import (
     get_show_patch_archive_builds,
     get_use_pre_release_builds,
 )
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 from semver import Version
 from webdav4.client import Client
 
@@ -165,10 +165,10 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> str | None
 
 
 class Scraper(QThread):
-    links = pyqtSignal(BuildInfo)
-    new_bl_version = pyqtSignal(str)
-    error = pyqtSignal()
-    stable_error = pyqtSignal(str)
+    links = Signal(BuildInfo)
+    new_bl_version = Signal(str)
+    error = Signal()
+    stable_error = Signal(str)
 
     def __init__(self, parent, man: ConnectionManager, build_cache=False):
         QThread.__init__(self)

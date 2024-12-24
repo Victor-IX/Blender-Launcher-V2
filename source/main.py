@@ -14,7 +14,7 @@ from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 from semver import Version
 from windows.dialog_window import DialogWindow
 
@@ -298,8 +298,8 @@ def start_unregister():
 
 
 def check_for_instance():
-    from PyQt5.QtCore import QByteArray
-    from PyQt5.QtNetwork import QLocalSocket
+    from PySide6.QtCore import QByteArray
+    from PySide6.QtNetwork import QLocalSocket
 
     socket = QLocalSocket()
     socket.connectToServer("blender-launcher-server")

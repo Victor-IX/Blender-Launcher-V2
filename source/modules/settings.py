@@ -11,7 +11,7 @@ from pathlib import Path
 from modules._platform import get_config_file, get_config_path, get_cwd, get_platform, local_config, user_config
 from modules.bl_api_manager import dropdown_blender_version
 from modules.version_matcher import VersionSearchQuery
-from PyQt5.QtCore import QSettings
+from PySide6.QtCore import QSettings
 from semver import Version
 
 EPOCH = datetime.fromtimestamp(0, tz=timezone.utc)
@@ -33,14 +33,12 @@ library_pages = {
     "Custom": 4,
 }
 
-
 downloads_pages = {
     "Stable Releases": 0,
     "Daily Builds": 1,
     "Experimental Branches": 2,
     "Bforartists": 3,
 }
-
 
 favorite_pages = {
     "Disable": 0,
@@ -49,7 +47,6 @@ favorite_pages = {
     "Experimental Branches": 3,
 }
 
-
 library_subfolders = [
     "custom",
     "stable",
@@ -57,7 +54,6 @@ library_subfolders = [
     "experimental",
     "template",
 ]
-
 
 proxy_types = {
     "None": 0,

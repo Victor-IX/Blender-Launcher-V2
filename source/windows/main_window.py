@@ -56,10 +56,10 @@ from modules.settings import (
     set_tray_icon_notified,
 )
 from modules.tasks import Task, TaskQueue, TaskWorker
-from PyQt5.QtCore import QSize, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtNetwork import QLocalServer
-from PyQt5.QtWidgets import (
-    QAction,
+from PySide6.QtCore import QSize, Qt, Signal, Slot
+from PySide6.QtNetwork import QLocalServer
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
@@ -98,12 +98,12 @@ except Exception as e:
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
-    from PyQt5.QtGui import QDragEnterEvent, QDragMoveEvent
+    from PySide6.QtGui import QDragEnterEvent, QDragMoveEvent
     from widgets.base_build_widget import BaseBuildWidget
     from widgets.base_list_widget import BaseListWidget
 
-if get_platform() == "Windows":
-    from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+# if get_platform() == "Windows":
+#     from PySide6.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 logger = logging.getLogger()
 
@@ -114,10 +114,10 @@ class AppState(Enum):
 
 
 class BlenderLauncher(BaseWindow):
-    show_signal = pyqtSignal()
-    close_signal = pyqtSignal()
-    quit_signal = pyqtSignal()
-    quick_launch_fail_signal = pyqtSignal()
+    show_signal = Signal()
+    close_signal = Signal()
+    quit_signal = Signal()
+    quick_launch_fail_signal = Signal()
 
     def __init__(self, app: QApplication, version: Version, offline: bool = False, build_cache: bool = False):
         super().__init__(app=app, version=version)
@@ -632,21 +632,21 @@ class BlenderLauncher(BaseWindow):
         self.show_signal.emit()
 
         # Add custom toolbar icons
-        if self.platform == "Windows":
-            self.thumbnail_toolbar = QWinThumbnailToolBar(self)
-            self.thumbnail_toolbar.setWindow(self.windowHandle())
+        # if self.platform == "Windows":
+        #     self.thumbnail_toolbar = QWinThumbnailToolBar(self)
+        #     self.thumbnail_toolbar.setWindow(self.windowHandle())
 
-            self.toolbar_quick_launch_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
-            self.toolbar_quick_launch_btn.setIcon(self.icons.quick_launch)
-            self.toolbar_quick_launch_btn.setToolTip("Quick Launch")
-            self.toolbar_quick_launch_btn.clicked.connect(self.quick_launch)
-            self.thumbnail_toolbar.addButton(self.toolbar_quick_launch_btn)
+        #     self.toolbar_quick_launch_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
+        #     self.toolbar_quick_launch_btn.setIcon(self.icons.quick_launch)
+        #     self.toolbar_quick_launch_btn.setToolTip("Quick Launch")
+        #     self.toolbar_quick_launch_btn.clicked.connect(self.quick_launch)
+        #     self.thumbnail_toolbar.addButton(self.toolbar_quick_launch_btn)
 
-            self.toolbar_quit_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
-            self.toolbar_quit_btn.setIcon(self.icons.close)
-            self.toolbar_quit_btn.setToolTip("Quit")
-            self.toolbar_quit_btn.clicked.connect(self.quit_)
-            self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
+        #     self.toolbar_quit_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
+        #     self.toolbar_quit_btn.setIcon(self.icons.close)
+        #     self.toolbar_quit_btn.setToolTip("Quit")
+        #     self.toolbar_quit_btn.clicked.connect(self.quit_)
+        #     self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
 
     def show_message(self, message, value=None, message_type=None):
         if (
@@ -669,7 +669,7 @@ class BlenderLauncher(BaseWindow):
         logger.debug(f"{w} ({message_type}): {message}")
         self.show_message(f"{w}: {message}", message_type)
 
-    @pyqtSlot(TaskWorker)
+    @Slot(TaskWorker)
     def on_worker_creation(self, w: TaskWorker):
         w.error.connect(self.message_from_error)
         w.message.connect(partial(self.message_from_worker, w))
@@ -796,12 +796,12 @@ class BlenderLauncher(BaseWindow):
         #         get_new_builds_check_frequency(), self.draw_downloads)
         #     self.timer.start()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def scraper_error(self, s: str):
         self.DownloadsStablePageWidget.set_info_label_text(s)
 
     def force_check(self):
-        if QApplication.queryKeyboardModifiers() & Qt.Modifier.SHIFT:  # Shift held while pressing check
+        if QApplication.keyboardModifiers() & Qt.ShiftModifier:  # Shift held while pressing check
             # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
             show_stable = get_show_stable_builds()
             show_daily = get_show_daily_builds()
@@ -978,10 +978,8 @@ class BlenderLauncher(BaseWindow):
 
         if branch in ("stable", "lts"):
             list_widget = self.LibraryStableListWidget
-        elif branch == "daily":
+        elif branch in ("daily", "experimental"):
             list_widget = self.LibraryDailyListWidget
-        elif branch == "experimental":
-            list_widget = self.LibraryExperimentalListWidget
         elif branch == "bforartists":
             list_widget = self.LibraryBFAListWidget
         elif branch == "custom":
@@ -1110,7 +1108,7 @@ class BlenderLauncher(BaseWindow):
 
         self.destroy()
 
-    @pyqtSlot()
+    @Slot()
     def attempt_close(self):
         self.close()
 

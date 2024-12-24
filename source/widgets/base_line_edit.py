@@ -1,10 +1,10 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QLineEdit
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QLineEdit
 
 
 class BaseLineEdit(QLineEdit):
-    returnPressed = pyqtSignal()
-    escapePressed = pyqtSignal()
+    returnPressed = Signal()
+    escapePressed = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)

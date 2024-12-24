@@ -5,7 +5,7 @@ from shutil import copytree
 
 from modules.settings import get_library_folder
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 
 
 def install_template(dist: Path):
@@ -28,7 +28,7 @@ def install_template(dist: Path):
 class TemplateTask(Task):
     destination: Path
 
-    finished = pyqtSignal()
+    finished = Signal()
 
     def run(self):
         install_template(self.destination)

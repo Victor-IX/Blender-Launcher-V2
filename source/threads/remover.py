@@ -3,7 +3,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 from send2trash import send2trash
 
 
@@ -11,7 +11,7 @@ from send2trash import send2trash
 class RemovalTask(Task):
     path: Path
     trash: bool = True
-    finished = pyqtSignal(bool)
+    finished = Signal(bool)
 
     def run(self):
         try:

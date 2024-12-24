@@ -1,17 +1,17 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QCursor, QKeyEvent
-from PyQt5.QtWidgets import QDesktopWidget, QMenu
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QCursor, QKeyEvent
+from PySide6.QtWidgets import QApplication, QMenu
 
 
 class BaseMenuWidget(QMenu):
     action_height = 30
-    holding_shift = pyqtSignal(bool)
+    holding_shift = Signal(bool)
 
     def __init__(self, title="", parent=None):
         super().__init__(title=title, parent=parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.NoDropShadowWindowHint)
         self.action_height = BaseMenuWidget.action_height
-        self.screen_size = QDesktopWidget().screenGeometry()
+        self.screen_size = QApplication.primaryScreen().geometry()
         self.setToolTipsVisible(True)
 
     def trigger(self):

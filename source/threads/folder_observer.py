@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt5.QtCore import QThread
+from PySide6.QtCore import QThread
 
 
 class FolderObserver(QThread):

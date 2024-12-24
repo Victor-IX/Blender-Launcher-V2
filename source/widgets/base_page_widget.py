@@ -1,9 +1,9 @@
 from enum import Enum
 
 from modules.settings import get_list_sorting_type, set_list_sorting_type
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
@@ -117,7 +117,7 @@ class BasePageWidget(QWidget):
         self.layout.addWidget(self.list_widget)
 
         self.sorting_type = SortingType(get_list_sorting_type(self.name))
-        self.sorting_order = Qt.DescendingOrder
+        self.sorting_order = Qt.SortOrder.DescendingOrder
         self.set_sorting_type(self.sorting_type)
 
     def set_info_label_text(self, text):
@@ -125,9 +125,13 @@ class BasePageWidget(QWidget):
 
     def set_sorting_type(self, sorting_type):
         if sorting_type == self.sorting_type:
-            self.sorting_order = Qt.DescendingOrder if self.sorting_order == Qt.AscendingOrder else Qt.AscendingOrder
+            self.sorting_order = (
+                Qt.SortOrder.DescendingOrder
+                if self.sorting_order == Qt.SortOrder.AscendingOrder
+                else Qt.SortOrder.AscendingOrder
+            )
         else:
-            self.sorting_order = Qt.AscendingOrder
+            self.sorting_order = Qt.SortOrder.AscendingOrder
 
         self.sorting_type = sorting_type
         self.list_widget.sortItems(self.sorting_order)

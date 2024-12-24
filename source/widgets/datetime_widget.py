@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import QEvent, Qt
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -31,7 +31,9 @@ class DateTimeWidget(QPushButton):
         self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.font_metrics = self.datetimeLabel.fontMetrics()
 
-        self.setMinimumWidth(self.font_metrics.width(f"{self.left_arrow}{self.datetimeStr}{self.right_arrow}"))
+        self.setMinimumWidth(
+            self.font_metrics.horizontalAdvance(f"{self.left_arrow}{self.datetimeStr}{self.right_arrow}")
+        )
 
         if self.build_hash is not None:
             self.LeftArrowLabel = QLabel(self.left_arrow)

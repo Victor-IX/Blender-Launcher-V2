@@ -19,7 +19,7 @@ from modules.settings import (
     get_library_folder,
 )
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 from semver import Version
 
 logger = logging.getLogger()
@@ -358,8 +358,8 @@ def read_blender_version(
 
 @dataclass(frozen=True)
 class WriteBuildTask(Task):
-    written = pyqtSignal()
-    error = pyqtSignal()
+    written = Signal()
+    error = Signal()
 
     path: Path
     build_info: BuildInfo
@@ -417,8 +417,8 @@ class ReadBuildTask(Task):
     archive_name: str | None = None
     auto_write: bool = True
 
-    finished = pyqtSignal(BuildInfo)
-    failure = pyqtSignal(Exception)
+    finished = Signal(BuildInfo)
+    failure = Signal(Exception)
 
     def run(self):
         try:

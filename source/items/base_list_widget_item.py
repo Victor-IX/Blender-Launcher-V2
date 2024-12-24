@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import TYPE_CHECKING, Callable
 
-from PyQt5.QtWidgets import QListWidgetItem
+from PySide6.QtWidgets import QListWidgetItem
 
 if TYPE_CHECKING:
     from semver import Version

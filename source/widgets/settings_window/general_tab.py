@@ -29,8 +29,8 @@ from modules.settings import (
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QCheckBox,
     QGridLayout,
     QHBoxLayout,
@@ -206,7 +206,7 @@ class GeneralTabWidget(SettingsFormWidget):
             \nDEFAULT: Send to Trash"
         )
         self.default_delete_action.setCurrentIndex(get_default_delete_action())
-        self.default_delete_action.activated[str].connect(self.change_default_delete_action)
+        self.default_delete_action.activated[int].connect(self.change_default_delete_action)
 
         self.advanced_layout = QGridLayout()
         self.advanced_layout.addWidget(QLabel("Default Delete Action"), 0, 0, 1, 1)
@@ -291,5 +291,6 @@ class GeneralTabWidget(SettingsFormWidget):
             self.register_file_association_button.setEnabled(True)
             self.unregister_file_association_button.setEnabled(False)
 
-    def change_default_delete_action(self, action: str):
+    def change_default_delete_action(self, index: int):
+        action = self.default_delete_action.itemText(index)
         set_default_delete_action(action)
