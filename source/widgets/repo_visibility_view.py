@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
     QGridLayout,
@@ -14,8 +14,8 @@ from PyQt5.QtWidgets import (
 
 
 class RepoUserView(QWidget):
-    library_changed = pyqtSignal(bool)
-    download_changed = pyqtSignal(bool)
+    library_changed = Signal(bool)
+    download_changed = Signal(bool)
 
     def __init__(
         self,

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from modules.icons import Icons
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Signal, Slot
+from PySide6.QtWidgets import (
     QCheckBox,
     QFrame,
     QGridLayout,
@@ -14,8 +14,8 @@ from PyQt5.QtWidgets import (
 
 
 class SettingsGroup(QFrame):
-    collapsed = pyqtSignal(bool)
-    checked = pyqtSignal(bool)
+    collapsed = Signal(bool)
+    checked = Signal(bool)
 
     def __init__(self, label: str, *, checkable=False, icons: Icons | None = None, parent=None):
         super().__init__(parent)
@@ -57,7 +57,7 @@ class SettingsGroup(QFrame):
         self._widget = None
         self._collapsed = False
 
-    @pyqtSlot(QWidget)
+    @Slot(QWidget)
     def setWidget(self, w: QWidget):
         if self._widget == w:
             return
@@ -67,7 +67,7 @@ class SettingsGroup(QFrame):
         self._widget = w
         self._layout.addWidget(self._widget, 1, 0, 1, 2)
 
-    @pyqtSlot(QLayout)
+    @Slot(QLayout)
     def setLayout(self, layout: QLayout):
         if self._widget is not None:
             self._layout.removeWidget(self._widget)
@@ -75,7 +75,7 @@ class SettingsGroup(QFrame):
         self._widget.setLayout(layout)
         self._layout.addWidget(self._widget, 1, 0, 1, 2)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def set_collapsed(self, b: bool):
         if b and not self._collapsed:
             self.collapse()
@@ -84,11 +84,11 @@ class SettingsGroup(QFrame):
             self.uncollapse()
             self._collapsed = False
 
-    @pyqtSlot()
+    @Slot()
     def toggle(self):
         self.set_collapsed(not self._collapsed)
 
-    @pyqtSlot()
+    @Slot()
     def collapse(self):
         assert self._widget is not None
         self._widget.hide()
@@ -96,7 +96,7 @@ class SettingsGroup(QFrame):
         self._collapsed = True
         self.collapsed.emit(True)
 
-    @pyqtSlot()
+    @Slot()
     def uncollapse(self):
         assert self._widget is not None
         self._widget.show()

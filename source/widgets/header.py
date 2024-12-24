@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import QSize, Qt, pyqtSignal
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
@@ -24,8 +24,8 @@ class WHeaderButton(QPushButton):
 
 
 class WindowHeader(QWidget):
-    minimize_signal = pyqtSignal()
-    close_signal = pyqtSignal()
+    minimize_signal = Signal()
+    close_signal = Signal()
 
     def __init__(
         self,

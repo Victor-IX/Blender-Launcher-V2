@@ -38,9 +38,9 @@ from modules.settings import (
     set_show_patch_archive_builds,
     set_show_stable_builds,
 )
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFormLayout,
@@ -89,7 +89,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             \nDEFAULT: 3.2"
         )
         self.MinStableBlenderVer.setCurrentText(get_minimum_blender_stable_version())
-        self.MinStableBlenderVer.activated[str].connect(self.change_minimum_blender_stable_version)
+        self.MinStableBlenderVer.activated[int].connect(self.change_minimum_blender_stable_version)
 
         # Whether to check for new builds based on a timer
         self.CheckForNewBuildsAutomatically = QCheckBox()
@@ -103,7 +103,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         # How often to check for new builds if ^^ enabled
         self.NewBuildsCheckFrequency = QSpinBox()
         self.NewBuildsCheckFrequency.setEnabled(get_check_for_new_builds_automatically())
-        self.NewBuildsCheckFrequency.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.NewBuildsCheckFrequency.setContextMenuPolicy(Qt.NoContextMenu)
         self.NewBuildsCheckFrequency.setToolTip(
             "Time in hours between new Blender builds check\
             \nDEFAULT: 12h"
@@ -181,7 +181,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             \nDEFAULT: Stable Releases"
         )
         self.MarkAsFavorite.setCurrentIndex(max(get_mark_as_favorite() - 1, 0))
-        self.MarkAsFavorite.activated[str].connect(self.change_mark_as_favorite)
+        self.MarkAsFavorite.activated[int].connect(self.change_mark_as_favorite)
         self.MarkAsFavorite.setEnabled(self.EnableMarkAsFavorite.isChecked())
 
         # Install Template
@@ -220,7 +220,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             "Global shortcut to quickly launch Blender\
             \nDEFAULT: ctrl + f11"
         )
-        self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.NoContextMenu)
         self.QuickLaunchKeySeq.setCursorPosition(0)
         self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
         # Run Blender using blender-launcher.exe
@@ -240,7 +240,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             \nDEFAULT: None\
             \nExample: --background"
         )
-        self.BlenderStartupArguments.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.BlenderStartupArguments.setContextMenuPolicy(Qt.NoContextMenu)
         self.BlenderStartupArguments.setCursorPosition(0)
         self.BlenderStartupArguments.editingFinished.connect(self.update_blender_startup_arguments)
         # Command Line Arguments
@@ -251,7 +251,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             \nDEFAULT: None\
             \nExample: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup"
         )
-        self.BashArguments.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.BashArguments.setContextMenuPolicy(Qt.NoContextMenu)
         self.BashArguments.setCursorPosition(0)
         self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
@@ -274,10 +274,12 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.addRow(self.download_settings)
         self.addRow(self.launching_settings)
 
-    def change_mark_as_favorite(self, page):
+    def change_mark_as_favorite(self, index: int):
+        page = self.MarkAsFavorite.itemText(index)
         set_mark_as_favorite(page)
 
-    def change_minimum_blender_stable_version(self, minimum):
+    def change_minimum_blender_stable_version(self, index: int):
+        minimum = self.MinStableBlenderVer.itemText(index)
         set_minimum_blender_stable_version(minimum)
 
     def update_blender_startup_arguments(self):
@@ -310,7 +312,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.QuickLaunchKeySeq.setEnabled(is_checked)
 
     def _keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
-        MOD_MASK = Qt.Modifier.CTRL | Qt.Modifier.ALT | Qt.Modifier.SHIFT
+        MOD_MASK = Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier
         key_name = ""
         key = e.key()
         modifiers = int(e.modifiers())
@@ -319,10 +321,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             modifiers
             and modifiers & MOD_MASK == modifiers
             and key > 0
-            and key not in {Qt.Key.Key_Shift, Qt.Key.Key_Alt, Qt.Key.Key_Control, Qt.Key.Key_Meta}
+            and key not in {Qt.Key_Shift, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Meta}
         ):
             key_name = QtGui.QKeySequence(modifiers + key).toString()
-        elif not modifiers and (key != Qt.Key.Key_Meta):
+        elif not modifiers and (key != Qt.Key_Meta):
             key_name = QtGui.QKeySequence(key).toString()
 
         if key_name != "":

@@ -20,7 +20,7 @@ from modules.settings import (
     set_use_system_titlebar,
     tabs,
 )
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFormLayout,
@@ -109,7 +109,7 @@ class AppearanceTabWidget(SettingsFormWidget):
             \nDEFAULT: Library"
         )
         self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
-        self.DefaultTabComboBox.activated[str].connect(self.change_default_tab)
+        self.DefaultTabComboBox.activated[int].connect(self.change_default_tab)
         # Sync Library and Downloads pages
         self.SyncLibraryAndDownloadsPages = QCheckBox()
         self.SyncLibraryAndDownloadsPages.setText("Sync Library && Downloads Pages")
@@ -127,7 +127,7 @@ class AppearanceTabWidget(SettingsFormWidget):
             \nDEFAULT: Stable Releases"
         )
         self.DefaultLibraryPageComboBox.setCurrentIndex(get_default_library_page())
-        self.DefaultLibraryPageComboBox.activated[str].connect(self.change_default_library_page)
+        self.DefaultLibraryPageComboBox.activated[int].connect(self.change_default_library_page)
         # Default Downloads Page
         self.DefaultDownloadsPageComboBox = QComboBox()
         self.DefaultDownloadsPageComboBox.addItems(downloads_pages.keys())
@@ -136,7 +136,7 @@ class AppearanceTabWidget(SettingsFormWidget):
             \nDEFAULT: Stable Releases"
         )
         self.DefaultDownloadsPageComboBox.setCurrentIndex(get_default_downloads_page())
-        self.DefaultDownloadsPageComboBox.activated[str].connect(self.change_default_downloads_page)
+        self.DefaultDownloadsPageComboBox.activated[int].connect(self.change_default_downloads_page)
 
         self.tabs_layout = QFormLayout()
         self.tabs_layout.addRow(QLabel("Default Tab", self), self.DefaultTabComboBox)
@@ -157,7 +157,8 @@ class AppearanceTabWidget(SettingsFormWidget):
     def toggle_enable_high_dpi_scaling(self, is_checked):
         set_enable_high_dpi_scaling(is_checked)
 
-    def change_default_tab(self, tab):
+    def change_default_tab(self, index: int):
+        tab = self.DefaultTabComboBox.itemText(index)
         set_default_tab(tab)
 
     def toggle_sync_library_and_downloads_pages(self, is_checked):
@@ -170,19 +171,19 @@ class AppearanceTabWidget(SettingsFormWidget):
             text = self.DefaultLibraryPageComboBox.currentText()
             set_default_downloads_page(text)
 
-    def change_default_library_page(self, page):
+    def change_default_library_page(self, index: int):
+        page = self.DefaultLibraryPageComboBox.itemText(index)
         set_default_library_page(page)
 
         if get_sync_library_and_downloads_pages():
-            index = self.DefaultLibraryPageComboBox.currentIndex()
             self.DefaultDownloadsPageComboBox.setCurrentIndex(index)
             set_default_downloads_page(page)
 
-    def change_default_downloads_page(self, page):
+    def change_default_downloads_page(self, index: int):
+        page = self.DefaultDownloadsPageComboBox.itemText(index)
         set_default_downloads_page(page)
 
         if get_sync_library_and_downloads_pages():
-            index = self.DefaultDownloadsPageComboBox.currentIndex()
             self.DefaultLibraryPageComboBox.setCurrentIndex(index)
             set_default_library_page(page)
 

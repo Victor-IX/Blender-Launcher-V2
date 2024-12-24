@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.elided_text_label import ElidedTextLabel
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
@@ -58,7 +58,7 @@ class UnrecoBuildWidget(BaseBuildWidget):
         dlg = CustomBuildDialogWindow(self.parent, self.path)
         dlg.accepted.connect(self.new_build)
 
-    @pyqtSlot(BuildInfo)
+    @Slot(BuildInfo)
     def new_build(self, binfo: BuildInfo):
         binfo.write_to(self.path)
         self.parent.draw_to_library(self.path, True)

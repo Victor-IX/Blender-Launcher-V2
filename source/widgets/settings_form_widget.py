@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFormLayout, QLabel, QWidget
+from PySide6.QtWidgets import QFormLayout, QLabel, QWidget
 
 
 class SettingsFormWidgetRow:

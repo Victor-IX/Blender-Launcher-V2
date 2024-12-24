@@ -1,11 +1,11 @@
 from subprocess import Popen
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 
 
 class Observer(QThread):
-    count_changed = pyqtSignal(int)
-    append_proc = pyqtSignal(Popen)
+    count_changed = Signal(int)
+    append_proc = Signal(Popen)
 
     def __init__(self, parent):
         QThread.__init__(self)
