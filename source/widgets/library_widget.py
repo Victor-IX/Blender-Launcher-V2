@@ -399,7 +399,7 @@ class LibraryWidget(BaseBuildWidget):
     def eventFilter(self, obj, event):
         # For detecting SHIFT
         if isinstance(event, QHoverEvent):
-            if self._hovered and event.modifiers() & Qt.Modifier.SHIFT:
+            if self._hovered and event.modifiers() & Qt.ShiftModifier:
                 self.hovering_and_shifting = True
             else:
                 self.hovering_and_shifting = False
