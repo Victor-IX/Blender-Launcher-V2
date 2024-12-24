@@ -619,14 +619,8 @@ class BlenderLauncher(BaseWindow):
         if self.isMinimized():
             self.showNormal()
 
-        if self.platform == "Windows":
-            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            self.show()
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            self.show()
-        elif self.platform in {"Linux", "macOS"}:
-            self.show()
-            self.activateWindow()
+        self.show()
+        self.activateWindow()
 
         self.set_status()
         self.show_signal.emit()
