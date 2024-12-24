@@ -57,7 +57,7 @@ class BaseWindow(QMainWindow):
 
         self.destroyed.connect(lambda: self._destroyed())
 
-    def set_system_titlebar(self, b: bool):
+    def set_system_titlebar(self, use_system_bar: bool):
         """
         Changes window flags so frameless is enabled (custom headers) or disabled (system).
 
@@ -66,18 +66,17 @@ class BaseWindow(QMainWindow):
         Arguments:
             b -- bool
         """
-        if not b:
-            self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-            if self.using_system_bar:
-                self.hide()
-                self.show()
-            self.using_system_bar = False
-        else:
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.FramelessWindowHint)  # type: ignore
-            if not self.using_system_bar:
-                self.hide()
-                self.show()
-            self.using_system_bar = True
+        if use_system_bar != self.using_system_bar:
+            self.using_system_bar = use_system_bar
+
+            if use_system_bar:
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.FramelessWindowHint)
+            else:
+                self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+            # Ensure changes are applied
+            self.hide()
+            self.show()
 
     def update_system_titlebar(self, b: bool):
         """
