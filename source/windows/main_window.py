@@ -1064,8 +1064,16 @@ class BlenderLauncher(BaseWindow):
         if latest > current:
             self.NewVersionButton.setText(f"Update to version {latest_tag.replace('v', '')}")
             self.NewVersionButton.show()
-            self.show_message("New version of Blender Launcher is available!", value=latest_tag)
             self.latest_tag = latest_tag
+            popup = PopupWindow(
+                title="New version available",
+                message="New version of Blender Launcher is available!",
+                buttons=["Update"],
+                icon=PopupIcon.NONE,
+                parent=self,
+            )
+            popup.accepted.connect(self.show_update_window)
+
         else:
             self.NewVersionButton.hide()
 
