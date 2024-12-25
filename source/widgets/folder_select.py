@@ -78,7 +78,7 @@ class FolderSelector(QWidget):
                     message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    icon=DialogIcon.NONE,
+                    icon=PopupIcon.NONE,
                     buttons=["Yes", "No"],
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
