@@ -552,7 +552,7 @@ class LibraryWidget(BaseBuildWidget):
             title="Warning",
             message="Are you sure you want to<br> \
                   delete selected builds?",
-            icon=DialogIcon.NONE,
+            icon=PopupIcon.NONE,
             buttons=["Yes", "No"],
         )
 
@@ -586,7 +586,7 @@ class LibraryWidget(BaseBuildWidget):
             title="Warning",
             message="Are you sure you want to<br> \
                   send selected builds to trash?",
-            icon=DialogIcon.NONE,
+            icon=PopupIcon.NONE,
             buttons=["Yes", "No"],
         )
 

@@ -192,7 +192,7 @@ class BlenderLauncher(BaseWindow):
                 title="Error",
                 message="Resources failed to load! The launcher will still work,<br> \
                 but the style will be broken.",
-                icon=DialogIcon.WARNING,
+                icon=PopupIcon.WARNING,
                 buttons=["OK", "Don't Show Again"],
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
@@ -204,7 +204,7 @@ class BlenderLauncher(BaseWindow):
                 title="Setup",
                 message="First, choose where Blender<br>builds will be stored",
                 buttons=["Continue"],
-                icon=DialogIcon.INFO,
+                icon=PopupIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
         else:
@@ -239,7 +239,7 @@ class BlenderLauncher(BaseWindow):
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
                     buttons=["Yes", "No"],
-                    icon=DialogIcon.NONE,
+                    icon=PopupIcon.NONE,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -540,7 +540,7 @@ class BlenderLauncher(BaseWindow):
                     parent=self,
                     title="Warning",
                     message="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
-                    icon=DialogIcon.WARNING,
+                    icon=PopupIcon.WARNING,
                     info_popup=True,
                 )
                 return
@@ -589,7 +589,7 @@ class BlenderLauncher(BaseWindow):
                 title="Warning",
                 message="In order to update Blender Launcher<br> \
                         complete all active downloads!",
-                icon=DialogIcon.WARNING,
+                icon=PopupIcon.WARNING,
                 info_popup=True,
             )
 
@@ -1093,7 +1093,7 @@ class BlenderLauncher(BaseWindow):
                     + "Are you sure you want to quit?"
                 ),
                 buttons=["Yes", "No"],
-                icon=DialogIcon.WARNING,
+                icon=PopupIcon.WARNING,
             )
 
             self.dlg.accepted.connect(self.destroy)
@@ -1138,7 +1138,7 @@ class BlenderLauncher(BaseWindow):
                       Please, terminate currently running<br>\
                       version to proceed this action!",
                 info_popup=True,
-                icon=DialogIcon.WARNING,
+                icon=PopupIcon.WARNING,
             )
 
     def open_docs(self):

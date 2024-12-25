@@ -214,7 +214,7 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
         PopupWindow(
             title="Warning",
             message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
-            icon=DialogIcon.WARNING,
+            icon=PopupIcon.WARNING,
             button="Quit",
             app=app,
         ).show()
