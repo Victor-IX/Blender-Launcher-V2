@@ -164,6 +164,28 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> str | None
         return None
 
 
+def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> str | None:
+    if latest_tag is None:
+        logger.error("Failed to get the latest release tag.")
+        return None
+
+    url = f"https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases/tags/{latest_tag}"
+    r = connection_manager.request("GET", url)
+
+    if r is None:
+        logger.error(f"Failed to fetch release notes for tag: {latest_tag}")
+        return None
+
+    try:
+        release_data = json.loads(r.data)
+        patch_note = release_data.get("body", "No patch notes available.")
+        logger.info(f"Latest patch note found")
+        return patch_note
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse release notes JSON data: {e}")
+        return None
+
+
 class Scraper(QThread):
     links = Signal(BuildInfo)
     new_bl_version = Signal(str)
@@ -217,14 +239,20 @@ class Scraper(QThread):
     def run(self):
         self.get_api_data_manager()
         self.get_download_links()
-        self.get_release_tag_manager()
+        self.get_new_release_manager()
 
-    def get_release_tag_manager(self):
+    def get_cached_release_tag(self) -> str | None:
+        if self._latest_tag_cache is None:
+            self._latest_tag_cache = get_release_tag(self.manager)
+        return self._latest_tag_cache
+
+    def get_new_release_manager(self):
         assert self.manager.manager is not None
-        latest_tag = get_release_tag(self.manager)
+        latest_tag = self.get_cached_release_tag()
 
         if latest_tag is not None:
-            self.new_bl_version.emit(latest_tag)
+            patch_note = get_latest_patch_note(self.manager, latest_tag)
+            self.new_bl_version.emit(latest_tag, patch_note)
         self.manager.manager.clear()
 
     def get_api_data_manager(self):

@@ -22,6 +22,7 @@ from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, 
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
+from modules.string_utils import patch_note_cleaner
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_on_startup,
@@ -1048,7 +1049,7 @@ class BlenderLauncher(BaseWindow):
         self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
         self.statusbarLabel.setText(self.status)
 
-    def set_version(self, latest_tag):
+    def set_version(self, latest_tag, path_note):
         if self.version.build is not None and "dev" in self.version.build:
             return
         latest = Version.parse(latest_tag[1:])
@@ -1065,10 +1066,12 @@ class BlenderLauncher(BaseWindow):
             self.NewVersionButton.setText(f"Update to version {latest_tag.replace('v', '')}")
             self.NewVersionButton.show()
             self.latest_tag = latest_tag
+            if path_note is not None:
+                path_note_text = patch_note_cleaner(path_note)
             popup = PopupWindow(
                 title="New version available",
-                message="New version of Blender Launcher is available!",
-                buttons=["Update"],
+                message=path_note_text,
+                buttons=["Update", "Later"],
                 icon=PopupIcon.NONE,
                 parent=self,
             )
