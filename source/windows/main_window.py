@@ -15,11 +15,14 @@ from platform import version
 from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
+from distro import info
+
 from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
+from modules.string_utils import patch_note_cleaner
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_on_startup,
@@ -83,7 +86,7 @@ from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
-from windows.dialog_window import DialogIcon, DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 from windows.settings_window import SettingsWindow
 
@@ -184,25 +187,24 @@ class BlenderLauncher(BaseWindow):
         self.pre_release_build = get_use_pre_release_builds
 
         if not RESOURCES_AVAILABLE and not get_dont_show_resource_warning():
-            dlg = DialogWindow(
+            dlg = PopupWindow(
                 parent=self,
                 title="Error",
-                text="Resources failed to load! The launcher will still work,<br> \
+                message="Resources failed to load! The launcher will still work,<br> \
                 but the style will be broken.",
-                accept_text="OK",
-                cancel_text="Don't Show Again",
+                icon=PopupIcon.WARNING,
+                buttons=["OK", "Don't Show Again"],
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
         # Check library folder
         if is_library_folder_valid() is False:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Setup",
-                text="First, choose where Blender<br>builds will be stored",
-                accept_text="Continue",
-                cancel_text=None,
-                icon=DialogIcon.INFO,
+                message="First, choose where Blender<br>builds will be stored",
+                buttons=["Continue"],
+                icon=PopupIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
         else:
@@ -230,14 +232,14 @@ class BlenderLauncher(BaseWindow):
 
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self,
                     title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
+                    message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
+                    buttons=["Yes", "No"],
+                    icon=PopupIcon.NONE,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -249,13 +251,12 @@ class BlenderLauncher(BaseWindow):
         if set_library_folder(str(folder)) is True:
             self.draw(True)
         else:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="Selected folder is not valid or<br>\
+                message="Selected folder is not valid or<br>\
                 doesn't have write permissions!",
-                accept_text="Retry",
-                cancel_text=None,
+                buttons=["Retry"],
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
@@ -535,12 +536,12 @@ class BlenderLauncher(BaseWindow):
             try:
                 self.hk_listener = keyboard.GlobalHotKeys({key_seq: self.on_activate_quick_launch})
             except Exception:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self,
                     title="Warning",
-                    text="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
-                    accept_text="OK",
-                    cancel_text=None,
+                    message="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
+                    icon=PopupIcon.WARNING,
+                    info_popup=True,
                 )
                 return
 
@@ -587,13 +588,13 @@ class BlenderLauncher(BaseWindow):
 
     def show_update_window(self):
         if not self.is_downloading_idle():
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="In order to update Blender Launcher<br> \
+                message="In order to update Blender Launcher<br> \
                         complete all active downloads!",
-                accept_text="OK",
-                cancel_text=None,
+                icon=PopupIcon.WARNING,
+                info_popup=True,
             )
 
             return
@@ -690,13 +691,11 @@ class BlenderLauncher(BaseWindow):
             self.quick_launch_fail_signal.emit()
 
     def quick_launch_fail(self):
-        self.dlg = DialogWindow(
+        self.dlg = PopupWindow(
             parent=self,
-            text="Add build to Quick Launch via<br>\
+            message="Add build to Quick Launch via<br>\
                         context menu to run it from tray",
-            accept_text="OK",
-            cancel_text=None,
-            icon=DialogIcon.INFO,
+            info_popup=True,
         )
 
     def tray_icon_activated(self, reason):
@@ -1060,7 +1059,7 @@ class BlenderLauncher(BaseWindow):
         self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
         self.statusbarLabel.setText(self.status)
 
-    def set_version(self, latest_tag):
+    def set_version(self, latest_tag, path_note):
         if self.version.build is not None and "dev" in self.version.build:
             return
         latest = Version.parse(latest_tag[1:])
@@ -1076,8 +1075,18 @@ class BlenderLauncher(BaseWindow):
         if latest > current:
             self.NewVersionButton.setText(f"Update to version {latest_tag.replace('v', '')}")
             self.NewVersionButton.show()
-            self.show_message("New version of Blender Launcher is available!", value=latest_tag)
             self.latest_tag = latest_tag
+            if path_note is not None:
+                path_note_text = patch_note_cleaner(path_note)
+            popup = PopupWindow(
+                title="New version available",
+                message=path_note_text,
+                buttons=["Update", "Later"],
+                icon=PopupIcon.NONE,
+                parent=self,
+            )
+            popup.accepted.connect(self.show_update_window)
+
         else:
             self.NewVersionButton.hide()
 
@@ -1096,16 +1105,16 @@ class BlenderLauncher(BaseWindow):
     def quit_(self):
         busy = self.task_queue.get_busy_threads()
         if any(busy):
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text=(
+                message=(
                     "Some tasks are still in progress!<br>"
                     + "\n".join([f" - {item}<br>" for worker, item in busy.items()])
                     + "Are you sure you want to quit?"
                 ),
-                accept_text="Yes",
-                cancel_text="No",
+                buttons=["Yes", "No"],
+                icon=PopupIcon.WARNING,
             )
 
             self.dlg.accepted.connect(self.destroy)
@@ -1142,16 +1151,15 @@ class BlenderLauncher(BaseWindow):
         data = self.socket.readAll()
 
         if str(data, encoding="ascii") != str(self.version):
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="An attempt to launch a different version<br>\
+                message="An attempt to launch a different version<br>\
                       of Blender Launcher was detected!<br>\
                       Please, terminate currently running<br>\
                       version to proceed this action!",
-                accept_text="OK",
-                cancel_text=None,
-                icon=DialogIcon.WARNING,
+                info_popup=True,
+                icon=PopupIcon.WARNING,
             )
 
     def open_docs(self):

@@ -16,7 +16,7 @@ from modules.shortcut import register_windows_filetypes, unregister_windows_file
 from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
 from PyQt5.QtWidgets import QApplication
 from semver import Version
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 
 LOG_COLORS = {
     "DEBUG": "\033[36m",  # Cyan
@@ -36,7 +36,10 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{message}{RESET_COLOR}"
 
 
-version = Version(2, 3, 2,
+version = Version(
+    2,
+    3,
+    2,
     # prerelease="rc.2",
 )
 
@@ -203,14 +206,13 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
         logging.info(f"Library folder set to {lib_folder!s}")
     else:
         logging.error("Failed to set library folder")
-        dlg = DialogWindow(
+        PopupWindow(
             title="Warning",
-            text="Passed path is not a valid folder or<br>it doesn't have write permissions!",
-            accept_text="Quit",
-            cancel_text=None,
+            message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
+            icon=PopupIcon.WARNING,
+            button="Quit",
             app=app,
-        )
-        dlg.show()
+        ).show()
         sys.exit(app.exec())
 
 
