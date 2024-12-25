@@ -193,7 +193,7 @@ class SettingsWindow(BaseWindow):
             message=f"Restart Blender Launcher in<br> \
                   order to apply following settings:{pending_to_restart}",
             buttons=["Restart Now", "Ignore"],
-            icon=DialogIcon.WARNING,
+            icon=PopupIcon.WARNING,
         )
         self.dlg.accepted.connect(self.restart_app)
         self.dlg.cancelled.connect(self.attempt_close)
