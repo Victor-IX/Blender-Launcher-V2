@@ -752,7 +752,15 @@ class LibraryWidget(BaseBuildWidget):
         if platform == "Windows":
             os.startfile(folder_path.as_posix())
         elif platform == "Linux":
-            subprocess.call(["xdg-open", folder_path.as_posix()])
+            # Use specific file managers known to be common in Linux
+            try:
+                subprocess.call(["xdg-open", folder_path.as_posix()])
+            except FileNotFoundError:
+                # Try known file managers if xdg-open fails
+                for fm in ["nautilus", "dolphin", "thunar", "pcmanfm", "nemo"]:
+                    if subprocess.call([fm, folder_path.as_posix()]) == 0:
+                        return
+                logger.error("No file manager found to open the folder.")
 
     def show_build_folder(self):
         library_folder = Path(get_library_folder())
