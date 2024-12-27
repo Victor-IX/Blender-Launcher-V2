@@ -331,7 +331,7 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox = BaseToolBoxWidget(self)
         self.UserToolBox = BaseToolBoxWidget(self)
 
-        self.toggle_sync_library_and_downloads_pages(get_sync_library_and_downloads_pages())
+        self.toggle_library_and_downloads_pages()
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
@@ -554,16 +554,12 @@ class BlenderLauncher(BaseWindow):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
         webbrowser.open(url)
 
-    def toggle_sync_library_and_downloads_pages(self, is_sync):
-        if is_sync:
-            self.LibraryToolBox.tab_changed.connect(self.DownloadsToolBox.setCurrentIndex)
-            self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
-        else:
-            if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
-                self.LibraryToolBox.tab_changed.disconnect()
+    def toggle_library_and_downloads_pages(self):
+        if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
+            self.LibraryToolBox.tab_changed.disconnect()
 
-            if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
-                self.DownloadsToolBox.tab_changed.disconnect()
+        if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
+            self.DownloadsToolBox.tab_changed.disconnect()
 
     def isSignalConnected(self, obj, name):
         index = obj.metaObject().indexOfMethod(name)
