@@ -22,13 +22,15 @@ ISO_EPOCH = EPOCH.isoformat()
 tabs = {
     "Library": 0,
     "Downloads": 1,
-    "User": 2,
+    "Favorites": 2,
 }
 
 library_pages = {
     "Stable Releases": 0,
     "Daily Builds": 1,
     "Experimental Branches": 2,
+    "Bforartists": 3,
+    "Custom": 4,
 }
 
 
@@ -36,6 +38,7 @@ downloads_pages = {
     "Stable Releases": 0,
     "Daily Builds": 1,
     "Experimental Branches": 2,
+    "Bforartists": 3,
 }
 
 
