@@ -3,7 +3,7 @@ if ($args -contains "-debug") {
     & ./.venv/Scripts/python.exe ./source/main.py -debug
 } 
 if ($args -contains "-rc") {
-    & ./.venv/Scripts/python.exe ./source/main.py --rebuild-cache
+    & ./.venv/Scripts/python.exe ./source/main.py --build-cache
 }
 else {
     & ./.venv/Scripts/python.exe ./source/main.py

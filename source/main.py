@@ -107,7 +107,7 @@ def main():
         action="store_true",
     )
     parser.add_argument(
-        "--rebuild-cache",
+        "--build-cache",
         help="Launch the app and cache all the available builds.",
         action="store_true",
     )
