@@ -119,7 +119,7 @@ class BlenderLauncher(BaseWindow):
     quit_signal = pyqtSignal()
     quick_launch_fail_signal = pyqtSignal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False):
+    def __init__(self, app: QApplication, version: Version, offline: bool = False, build_cache: bool = False):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -149,6 +149,7 @@ class BlenderLauncher(BaseWindow):
         self.app = app
         self.version: Version = version
         self.offline = offline
+        self.build_cache = build_cache
         self.favorite: BaseBuildWidget | None = None
         self.status = "Unknown"
         self.is_force_check_on = False
@@ -173,7 +174,7 @@ class BlenderLauncher(BaseWindow):
         self.app.setWindowIcon(self.icons.taskbar)
 
         # Setup scraper
-        self.scraper = Scraper(self, self.cm)
+        self.scraper = Scraper(self, self.cm, self.build_cache)
         self.scraper.links.connect(self.draw_to_downloads)
         self.scraper.error.connect(self.connection_error)
         self.scraper.stable_error.connect(self.scraper_error)
