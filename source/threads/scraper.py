@@ -477,7 +477,7 @@ class Scraper(QThread):
                 if date_sibling:
                     date_str = " ".join(date_sibling.strip().split()[:2])
                     with contextlib.suppress(ValueError):
-                        modified_date = dateparser.parse(date_str).astimezone(tz=timezone.utc)
+                        modified_date = dateparser.parse(date_str)
                         if ver not in self.cache:
                             logger.debug(f"Creating new folder for version {ver}")
                             folder = self.cache.new_build(ver)
