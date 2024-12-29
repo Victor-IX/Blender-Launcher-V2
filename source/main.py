@@ -36,7 +36,10 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{message}{RESET_COLOR}"
 
 
-version = Version(2, 3, 2,
+version = Version(
+    2,
+    3,
+    2,
     # prerelease="rc.2",
 )
 
@@ -101,6 +104,11 @@ def main():
         "--offline",
         "-offline",
         help="Run the application offline. (Disables scraper threads and update checks)",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--rebuild-cache",
+        help="Launch the app and cache all the available builds.",
         action="store_true",
     )
     parser.add_argument(
@@ -192,7 +200,7 @@ def main():
 
     app.setQuitOnLastWindowClosed(False)
 
-    BlenderLauncher(app=app, version=version, offline=args.offline)
+    BlenderLauncher(app=app, version=version, offline=args.offline, build_cache=args.build_cache)
     sys.exit(app.exec())
 
 
