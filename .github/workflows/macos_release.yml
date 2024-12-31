@@ -14,10 +14,10 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-          
+          python-version: "3.12"
+
       - name: GitHub Tag
-        run: | 
+        run: |
           echo "Tag name from github.ref_name: ${{  github.ref_name }}"
 
       - name: Setup + Build + Zip
@@ -28,17 +28,17 @@ jobs:
           echo "Venv setup"
           python -m venv .venv
           source ./.venv/bin/activate
-          
+
           echo "Installing dependencies"
           pip install -e ./
-          
+
           echo "Building style"
           python build_style.py
-          
+
           echo "Building application"
           cd scripts
           bash build_mac.sh
-          
+
           echo "Zipping to Blender_Launcher_${{ github.ref_name }}_macos_arm64.zip"
           cd ../dist/release
           # this zips just like the one in finder
