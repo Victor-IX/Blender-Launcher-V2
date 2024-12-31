@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QKeyEvent
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QPixmap, QKeyEvent
+from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
 from windows.base_window import BaseWindow
 
@@ -15,9 +15,9 @@ class PopupIcon(Enum):
 
 
 class PopupWindow(BaseWindow):
-    accepted = pyqtSignal()
-    cancelled = pyqtSignal()
-    custom_signal = pyqtSignal(str)
+    accepted = Signal()
+    cancelled = Signal()
+    custom_signal = Signal(str)
 
     def __init__(
         self,
@@ -48,7 +48,7 @@ class PopupWindow(BaseWindow):
         self.info_popup = info_popup
         self.buttons = buttons
 
-        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle(self.title)
         self.setMinimumSize(200, 100)
 
@@ -142,7 +142,7 @@ class PopupWindow(BaseWindow):
         self.close()
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key.Key_Escape and not self.CancelButton.isHidden():
+        if event.key() == Qt.Key_Escape and not self.CancelButton.isHidden():
             self.cancel()
-        if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
+        if event.key() in {Qt.Key_Return, Qt.Key_Enter}:
             self.accept()
