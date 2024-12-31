@@ -38,9 +38,9 @@ class ColoredFormatter(logging.Formatter):
 
 version = Version(
     2,
-    3,
-    2,
-    # prerelease="rc.2",
+    4,
+    0,
+    prerelease="rc.1",
 )
 
 _ = gettext.gettext
