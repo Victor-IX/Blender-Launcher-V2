@@ -76,12 +76,12 @@ class BaseWindow(QMainWindow):
 
             self.hide()
             self.show()
-
-        if use_system_bar == False and self.using_system_bar == False:
+        elif not use_system_bar:
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-            self.hide()
-            self.show()
+            if self.using_system_bar:
+                self.hide()
+                self.show()
+            self.using_system_bar = False
 
     def update_system_titlebar(self, b: bool):
         """
