@@ -18,6 +18,7 @@ dependencies = [
     "webdav4==0.10.0",
     "dateparser>=1.2.0",
     "pyside6==6.8.1",
+    "markdown>=3.7",
 ]
 requires-python = "<3.14,>=3.10"
 readme = "README.md"
