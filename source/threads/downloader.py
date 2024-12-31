@@ -11,7 +11,7 @@ from PySide6.QtCore import Signal
 from urllib3.exceptions import MaxRetryError
 
 
-@dataclass(frozen=True)
+@dataclass
 class DownloadTask(Task):
     manager: REQUEST_MANAGER
     link: str
