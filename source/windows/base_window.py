@@ -74,7 +74,12 @@ class BaseWindow(QMainWindow):
             else:
                 self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
-            # Ensure changes are applied
+            self.hide()
+            self.show()
+
+        if use_system_bar == False and self.using_system_bar == False:
+            self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
             self.hide()
             self.show()
 
