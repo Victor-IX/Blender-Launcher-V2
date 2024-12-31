@@ -188,7 +188,7 @@ def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> 
 
 class Scraper(QThread):
     links = Signal(BuildInfo)
-    new_bl_version = Signal(str)
+    new_bl_version = Signal(str, str)
     error = Signal()
     stable_error = Signal(str)
 
@@ -221,6 +221,8 @@ class Scraper(QThread):
         self.scrape_stable = get_scrape_stable_builds()
         self.scrape_automated = get_scrape_automated_builds()
         self.scrape_bfa = get_scrape_bfa_builds()
+
+        self._latest_tag_cache = None
 
     def regex_filter(self):
         if self.platform == "Windows":
