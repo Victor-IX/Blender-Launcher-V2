@@ -30,9 +30,9 @@ from modules.settings import (
     set_use_system_titlebar,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, register_windows_filetypes
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
     QGridLayout,
@@ -52,8 +52,6 @@ from PyQt5.QtWidgets import (
 )
 from widgets.folder_select import FolderSelector
 from widgets.repo_group import RepoGroup
-from windows.dialog_window import DialogWindow
-from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
     from semver import Version
@@ -106,7 +104,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         super().__init__(prop_settings, parent=parent)
         self.setTitle("First, choose where Blender builds will be stored")
         self.setSubTitle("Make sure that this folder has enough storage to download and store all the builds you want.")
-
+        self.launcher = parent
         self.lf = FolderSelector(
             parent,
             default_folder=get_actual_library_folder_no_fallback() or Path("~/Documents/BlenderBuilds").expanduser(),
@@ -141,7 +139,10 @@ class ChooseLibraryPage(BasicOnboardingPage):
             self.prop_settings.exe_changed = True
             exe.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(sys.executable, exe)
-            Path(sys.executable).unlink()
+            if get_platform() == "Windows": # delete the exe when closed
+                self.launcher.delete_exe_on_reboot = True
+            else: # delete the executable directly
+                Path(sys.executable).unlink()
 
 
 class RepoSelectPage(BasicOnboardingPage):

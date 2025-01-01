@@ -16,13 +16,11 @@ from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
 from distro import info
-
 from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
-from modules.string_utils import patch_note_cleaner
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_on_startup,
@@ -59,10 +57,11 @@ from modules.settings import (
     set_library_folder,
     set_tray_icon_notified,
 )
+from modules.string_utils import patch_note_cleaner
 from modules.tasks import Task, TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, Signal, Slot
-from PySide6.QtNetwork import QLocalServer
 from PySide6.QtGui import QAction
+from PySide6.QtNetwork import QLocalServer
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -87,9 +86,9 @@ from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
-from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
+from windows.popup_window import PopupIcon, PopupWindow
 from windows.settings_window import SettingsWindow
 
 try:
@@ -124,7 +123,14 @@ class BlenderLauncher(BaseWindow):
     quit_signal = Signal()
     quick_launch_fail_signal = Signal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False, build_cache: bool = False, force_first_time: bool =False):
+    def __init__(
+        self,
+        app: QApplication,
+        version: Version,
+        offline: bool = False,
+        build_cache: bool = False,
+        force_first_time: bool = False,
+    ):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -200,9 +206,10 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
+        self.delete_exe_on_reboot = False
         if (not get_first_time_setup_seen()) or force_first_time:
             self.onboarding_window = OnboardingWindow(version, self)
-            self.onboarding_window.accepted.connect(lambda: self.draw(True))
+            self.onboarding_window.accepted.connect(lambda: self.draw())
             self.onboarding_window.cancelled.connect(self.app.quit)
             self.onboarding_window.show()
             return
@@ -1125,6 +1132,24 @@ class BlenderLauncher(BaseWindow):
 
         self.destroy()
 
+    def delete_with_timeout(self, pth: Path):
+        """Creates a batch script that deletes the path"""
+        assert self.platform == "Windows", "There is no reason to call BlenderLauncher.delete_with_timeout on Linux/Mac"
+        # create the batch script
+        temploc = os.environ["TEMP"]
+        batpth = os.path.join(temploc, "blv2-cleanup.bat")
+        with open(batpth, "w") as file:
+            file.write(
+                "\n".join(
+                    [
+                        "timeout /t 2",
+                        f'DEL /F "{pth}"',
+                        f'DEL /F "{batpth}"',
+                    ]
+                )
+            )
+            os.startfile(batpth)
+
     @Slot()
     def attempt_close(self):
         self.close()
@@ -1192,5 +1217,8 @@ class BlenderLauncher(BaseWindow):
             # sys.executable should be something like /.../Blender Launcher.app/Contents/MacOS/Blender Launcher
             app = Path(sys.executable).parent.parent.parent
             _popen(f"open -n {shlex.quote(str(app))}")
+
+        if self.delete_exe_on_reboot:
+            self.delete_with_timeout(self.onboarding_window.prop_settings.exe_location)
 
         self.destroy()

@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from modules.settings import set_first_time_setup_seen
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import QThread, Signal
+from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QWizard,
@@ -28,7 +28,7 @@ from widgets.onboarding_setup.wizard_pages import (
 from windows.base_window import BaseWindow
 
 if TYPE_CHECKING:
-    from PyQt5.QtGui import QCloseEvent
+    from PySide6.QtGui import QCloseEvent
     from semver import Version
     from windows.main_window import BlenderLauncher
 
@@ -40,8 +40,8 @@ class Committer(QThread):
     def __post_init__(self):
         super().__init__()
 
-    finished = pyqtSignal()
-    err = pyqtSignal(tuple)
+    finished = Signal()
+    err = Signal(tuple)
 
     def run(self):
         finished_pages = ""
@@ -59,8 +59,8 @@ class Committer(QThread):
 
 
 class OnboardingWindow(BaseWindow):
-    accepted = pyqtSignal()
-    cancelled = pyqtSignal()
+    accepted = Signal()
+    cancelled = Signal()
 
     def __init__(self, version: Version, parent: BlenderLauncher):
         super().__init__(parent=parent, version=version)
@@ -68,7 +68,6 @@ class OnboardingWindow(BaseWindow):
         self.setMinimumWidth(768)
         self.setMinimumHeight(512)
         self.parent_ = parent
-
         # A wizard showing the settings being configured
         self.wizard = QWizard(self)
         self.wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
@@ -91,7 +90,7 @@ class OnboardingWindow(BaseWindow):
         self.prop_settings = PropogatedSettings()
 
         self.pages: list[BasicOnboardingPage] = [
-            WelcomePage(version, parent),
+            WelcomePage(version, self.prop_settings, parent),
             ChooseLibraryPage(self.prop_settings, parent),
             RepoSelectPage(self.prop_settings, parent),
             ShortcutsPage(self.prop_settings, parent),
@@ -107,11 +106,8 @@ class OnboardingWindow(BaseWindow):
         self.committer.err.connect(self.__commiter_errored)
         self.committing_page = CommittingPage(parent)
         self.commit_wizard.addPage(self.committing_page)
-        self.commit_wizard.hide()
-
         self.error_page = ErrorOccurredPage(parent)
         self.error_wizard.addPage(self.error_page)
-        self.error_wizard.hide()
 
         widget = QWidget(self)
         self.central_layout = QVBoxLayout(widget)
@@ -128,6 +124,8 @@ class OnboardingWindow(BaseWindow):
         self.error_wizard.rejected.connect(self.__rejected)
         self._rejected = False
         self._accepted = False
+        self.commit_wizard.hide()
+        self.error_wizard.hide()
 
     def __accepted(self):
         # Run all of the page evaluation
