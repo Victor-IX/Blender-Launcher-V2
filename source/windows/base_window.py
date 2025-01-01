@@ -52,7 +52,6 @@ class BaseWindow(QMainWindow):
         self.set_system_titlebar(self.using_system_bar)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        self.pos = self.pos()
         self.pressing = False
 
         self.destroyed.connect(lambda: self._destroyed())
@@ -93,23 +92,12 @@ class BaseWindow(QMainWindow):
         """
 
     def mousePressEvent(self, event):
-        self.pos = event.globalPos()
         self.pressing = True
         self.setCursor(Qt.CursorShape.ClosedHandCursor)
 
     def mouseMoveEvent(self, event):
         if self.pressing:
-            delta = QPoint(event.globalPos() - self.pos)
-            self.moveWindow(delta, True)
-            self.pos = event.globalPos()
-
-    def moveWindow(self, delta, chain=False):
-        self.move(self.x() + delta.x(), self.y() + delta.y())
-
-        if chain and self.parent is not None:
-            for window in self.parent.windows:
-                if window is not self:
-                    window.moveWindow(delta)
+            self.windowHandle().startSystemMove()
 
     def mouseReleaseEvent(self, _event):
         self.pressing = False
