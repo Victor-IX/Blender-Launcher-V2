@@ -15,7 +15,7 @@ from modules.settings import (
     get_use_custom_tls_certificates,
     get_user_id,
 )
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 from urllib3 import PoolManager, ProxyManager, make_headers
 from urllib3.contrib.socks import SOCKSProxyManager
 
@@ -40,7 +40,7 @@ REQUEST_MANAGER = Union[PoolManager, ProxyManager, SOCKSProxyManager]
 
 
 class ConnectionManager(QObject):
-    error = pyqtSignal()
+    error = Signal()
 
     def __init__(self, version: Version, proxy_type=None) -> None:
         super().__init__()

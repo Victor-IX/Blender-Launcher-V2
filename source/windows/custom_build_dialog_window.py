@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 from modules._platform import get_platform
 from modules.build_info import BuildInfo, ReadBuildTask
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
     QCheckBox,
     QCompleter,
     QDateTimeEdit,
@@ -31,14 +31,14 @@ if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
 
 
-class DialogIcon(Enum):
+class PopupIcon(Enum):
     WARNING = 1
     INFO = 2
 
 
 class CustomBuildDialogWindow(BaseWindow):
-    accepted = pyqtSignal(BuildInfo)
-    cancelled = pyqtSignal()
+    accepted = Signal(BuildInfo)
+    cancelled = Signal()
 
     def __init__(
         self,

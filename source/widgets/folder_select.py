@@ -5,14 +5,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from modules._platform import get_cwd
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QLineEdit,
     QPushButton,
     QWidget,
 )
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
 
 class FolderSelector(QWidget):
-    validity_changed = pyqtSignal(bool)
-    folder_changed = pyqtSignal(Path)
+    validity_changed = Signal(bool)
+    folder_changed = Signal(Path)
 
     def __init__(
         self,
@@ -72,14 +72,14 @@ class FolderSelector(QWidget):
     def set_folder(self, folder: Path, relative: bool | None = None):
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self.launcher,
                     title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
+                    message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
+                    icon=PopupIcon.NONE,
+                    buttons=["Yes", "No"],
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))

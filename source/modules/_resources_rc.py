@@ -3,10 +3,10 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# resources_rc needs to be imported after PyQt5 because
-# if there are any errors importing PyQt5
+# resources_rc needs to be imported after PySide6 because
+# if there are any errors importing PySide6
 # it would be registered as an issue fetching the resources instead
-import PyQt5
+import PySide6
 from modules._platform import is_frozen
 
 try:

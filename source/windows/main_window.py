@@ -15,11 +15,14 @@ from platform import version
 from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
+from distro import info
+
 from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
+from modules.string_utils import patch_note_cleaner
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_on_startup,
@@ -57,10 +60,10 @@ from modules.settings import (
     set_tray_icon_notified,
 )
 from modules.tasks import Task, TaskQueue, TaskWorker
-from PyQt5.QtCore import QSize, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtNetwork import QLocalServer
-from PyQt5.QtWidgets import (
-    QAction,
+from PySide6.QtCore import QSize, Qt, Signal, Slot
+from PySide6.QtNetwork import QLocalServer
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
@@ -84,7 +87,7 @@ from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
-from windows.dialog_window import DialogIcon, DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
 from windows.settings_window import SettingsWindow
@@ -100,12 +103,12 @@ except Exception as e:
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
-    from PyQt5.QtGui import QDragEnterEvent, QDragMoveEvent
+    from PySide6.QtGui import QDragEnterEvent, QDragMoveEvent
     from widgets.base_build_widget import BaseBuildWidget
     from widgets.base_list_widget import BaseListWidget
 
-if get_platform() == "Windows":
-    from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+# if get_platform() == "Windows":
+#     from PySide6.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 logger = logging.getLogger()
 
@@ -116,12 +119,12 @@ class AppState(Enum):
 
 
 class BlenderLauncher(BaseWindow):
-    show_signal = pyqtSignal()
-    close_signal = pyqtSignal()
-    quit_signal = pyqtSignal()
-    quick_launch_fail_signal = pyqtSignal()
+    show_signal = Signal()
+    close_signal = Signal()
+    quit_signal = Signal()
+    quick_launch_fail_signal = Signal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False, force_first_time=False):
+    def __init__(self, app: QApplication, version: Version, offline: bool = False, build_cache: bool = False, force_first_time: bool =False):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -151,6 +154,7 @@ class BlenderLauncher(BaseWindow):
         self.app = app
         self.version: Version = version
         self.offline = offline
+        self.build_cache = build_cache
         self.favorite: BaseBuildWidget | None = None
         self.status = "Unknown"
         self.is_force_check_on = False
@@ -175,7 +179,7 @@ class BlenderLauncher(BaseWindow):
         self.app.setWindowIcon(self.icons.taskbar)
 
         # Setup scraper
-        self.scraper = Scraper(self, self.cm)
+        self.scraper = Scraper(self, self.cm, self.build_cache)
         self.scraper.links.connect(self.draw_to_downloads)
         self.scraper.error.connect(self.connection_error)
         self.scraper.stable_error.connect(self.scraper_error)
@@ -186,13 +190,13 @@ class BlenderLauncher(BaseWindow):
         self.pre_release_build = get_use_pre_release_builds
 
         if not RESOURCES_AVAILABLE and not get_dont_show_resource_warning():
-            dlg = DialogWindow(
+            dlg = PopupWindow(
                 parent=self,
                 title="Error",
-                text="Resources failed to load! The launcher will still work,<br> \
+                message="Resources failed to load! The launcher will still work,<br> \
                 but the style will be broken.",
-                accept_text="OK",
-                cancel_text="Don't Show Again",
+                icon=PopupIcon.WARNING,
+                buttons=["OK", "Don't Show Again"],
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
@@ -208,13 +212,12 @@ class BlenderLauncher(BaseWindow):
         # into an unknown state without them realizing. If we show the program without a
         # valid library folder, then many things will break.
         if is_library_folder_valid() is False:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Setup",
-                text="Choose where Blender<br>builds will be stored",
-                accept_text="Continue",
-                cancel_text=None,
-                icon=DialogIcon.INFO,
+                message="Choose where Blender<br>builds will be stored",
+                buttons=["Continue"],
+                icon=PopupIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
             return
@@ -243,14 +246,14 @@ class BlenderLauncher(BaseWindow):
 
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self,
                     title="Setup",
-                    text="The selected path is relative to the executable's path.<br>\
+                    message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    accept_text="Yes",
-                    cancel_text="No",
+                    buttons=["Yes", "No"],
+                    icon=PopupIcon.NONE,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -262,13 +265,12 @@ class BlenderLauncher(BaseWindow):
         if set_library_folder(str(folder)) is True:
             self.draw(True)
         else:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="Selected folder is not valid or<br>\
+                message="Selected folder is not valid or<br>\
                 doesn't have write permissions!",
-                accept_text="Retry",
-                cancel_text=None,
+                buttons=["Retry"],
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
@@ -344,7 +346,7 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox = BaseToolBoxWidget(self)
         self.UserToolBox = BaseToolBoxWidget(self)
 
-        self.toggle_sync_library_and_downloads_pages(get_sync_library_and_downloads_pages())
+        self.toggle_library_and_downloads_pages()
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
@@ -548,12 +550,12 @@ class BlenderLauncher(BaseWindow):
             try:
                 self.hk_listener = keyboard.GlobalHotKeys({key_seq: self.on_activate_quick_launch})
             except Exception:
-                self.dlg = DialogWindow(
+                self.dlg = PopupWindow(
                     parent=self,
                     title="Warning",
-                    text="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
-                    accept_text="OK",
-                    cancel_text=None,
+                    message="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
+                    icon=PopupIcon.WARNING,
+                    info_popup=True,
                 )
                 return
 
@@ -567,16 +569,12 @@ class BlenderLauncher(BaseWindow):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
         webbrowser.open(url)
 
-    def toggle_sync_library_and_downloads_pages(self, is_sync):
-        if is_sync:
-            self.LibraryToolBox.tab_changed.connect(self.DownloadsToolBox.setCurrentIndex)
-            self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
-        else:
-            if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
-                self.LibraryToolBox.tab_changed.disconnect()
+    def toggle_library_and_downloads_pages(self):
+        if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
+            self.LibraryToolBox.tab_changed.disconnect()
 
-            if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
-                self.DownloadsToolBox.tab_changed.disconnect()
+        if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
+            self.DownloadsToolBox.tab_changed.disconnect()
 
     def isSignalConnected(self, obj, name):
         index = obj.metaObject().indexOfMethod(name)
@@ -600,13 +598,13 @@ class BlenderLauncher(BaseWindow):
 
     def show_update_window(self):
         if not self.is_downloading_idle():
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="In order to update Blender Launcher<br> \
+                message="In order to update Blender Launcher<br> \
                         complete all active downloads!",
-                accept_text="OK",
-                cancel_text=None,
+                icon=PopupIcon.WARNING,
+                info_popup=True,
             )
 
             return
@@ -635,34 +633,29 @@ class BlenderLauncher(BaseWindow):
         if self.isMinimized():
             self.showNormal()
 
-        if self.platform == "Windows":
-            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            self.show()
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            self.show()
-        elif self.platform in {"Linux", "macOS"}:
-            self.show()
-            self.activateWindow()
+        self.show()
+        self.activateWindow()
 
         self.set_status()
         self.show_signal.emit()
 
+        # TODO: Reimplement custom button on the window taskbar app preview previewer (Launch and Quit)
         # Add custom toolbar icons
-        if self.platform == "Windows":
-            self.thumbnail_toolbar = QWinThumbnailToolBar(self)
-            self.thumbnail_toolbar.setWindow(self.windowHandle())
+        # if self.platform == "Windows":
+        #     self.thumbnail_toolbar = QWinThumbnailToolBar(self)
+        #     self.thumbnail_toolbar.setWindow(self.windowHandle())
 
-            self.toolbar_quick_launch_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
-            self.toolbar_quick_launch_btn.setIcon(self.icons.quick_launch)
-            self.toolbar_quick_launch_btn.setToolTip("Quick Launch")
-            self.toolbar_quick_launch_btn.clicked.connect(self.quick_launch)
-            self.thumbnail_toolbar.addButton(self.toolbar_quick_launch_btn)
+        #     self.toolbar_quick_launch_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
+        #     self.toolbar_quick_launch_btn.setIcon(self.icons.quick_launch)
+        #     self.toolbar_quick_launch_btn.setToolTip("Quick Launch")
+        #     self.toolbar_quick_launch_btn.clicked.connect(self.quick_launch)
+        #     self.thumbnail_toolbar.addButton(self.toolbar_quick_launch_btn)
 
-            self.toolbar_quit_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
-            self.toolbar_quit_btn.setIcon(self.icons.close)
-            self.toolbar_quit_btn.setToolTip("Quit")
-            self.toolbar_quit_btn.clicked.connect(self.quit_)
-            self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
+        #     self.toolbar_quit_btn = QWinThumbnailToolButton(self.thumbnail_toolbar)
+        #     self.toolbar_quit_btn.setIcon(self.icons.close)
+        #     self.toolbar_quit_btn.setToolTip("Quit")
+        #     self.toolbar_quit_btn.clicked.connect(self.quit_)
+        #     self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
 
     def show_message(self, message, value=None, message_type=None):
         if (
@@ -685,7 +678,7 @@ class BlenderLauncher(BaseWindow):
         logger.debug(f"{w} ({message_type}): {message}")
         self.show_message(f"{w}: {message}", message_type)
 
-    @pyqtSlot(TaskWorker)
+    @Slot(TaskWorker)
     def on_worker_creation(self, w: TaskWorker):
         w.error.connect(self.message_from_error)
         w.message.connect(partial(self.message_from_worker, w))
@@ -703,13 +696,11 @@ class BlenderLauncher(BaseWindow):
             self.quick_launch_fail_signal.emit()
 
     def quick_launch_fail(self):
-        self.dlg = DialogWindow(
+        self.dlg = PopupWindow(
             parent=self,
-            text="Add build to Quick Launch via<br>\
+            message="Add build to Quick Launch via<br>\
                         context menu to run it from tray",
-            accept_text="OK",
-            cancel_text=None,
-            icon=DialogIcon.INFO,
+            info_popup=True,
         )
 
     def tray_icon_activated(self, reason):
@@ -812,12 +803,12 @@ class BlenderLauncher(BaseWindow):
         #         get_new_builds_check_frequency(), self.draw_downloads)
         #     self.timer.start()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def scraper_error(self, s: str):
         self.DownloadsStablePageWidget.set_info_label_text(s)
 
     def force_check(self):
-        if QApplication.queryKeyboardModifiers() & Qt.Modifier.SHIFT:  # Shift held while pressing check
+        if QApplication.keyboardModifiers() & Qt.ShiftModifier:  # Shift held while pressing check
             # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
             show_stable = get_show_stable_builds()
             show_daily = get_show_daily_builds()
@@ -994,10 +985,8 @@ class BlenderLauncher(BaseWindow):
 
         if branch in ("stable", "lts"):
             list_widget = self.LibraryStableListWidget
-        elif branch == "daily":
+        elif branch in ("daily", "experimental"):
             list_widget = self.LibraryDailyListWidget
-        elif branch == "experimental":
-            list_widget = self.LibraryExperimentalListWidget
         elif branch == "bforartists":
             list_widget = self.LibraryBFAListWidget
         elif branch == "custom":
@@ -1073,7 +1062,7 @@ class BlenderLauncher(BaseWindow):
         self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
         self.statusbarLabel.setText(self.status)
 
-    def set_version(self, latest_tag):
+    def set_version(self, latest_tag, path_note):
         if self.version.build is not None and "dev" in self.version.build:
             return
         latest = Version.parse(latest_tag[1:])
@@ -1089,8 +1078,18 @@ class BlenderLauncher(BaseWindow):
         if latest > current:
             self.NewVersionButton.setText(f"Update to version {latest_tag.replace('v', '')}")
             self.NewVersionButton.show()
-            self.show_message("New version of Blender Launcher is available!", value=latest_tag)
             self.latest_tag = latest_tag
+            if path_note is not None:
+                path_note_text = patch_note_cleaner(path_note)
+            popup = PopupWindow(
+                title="New version available",
+                message=path_note_text,
+                buttons=["Update", "Later"],
+                icon=PopupIcon.NONE,
+                parent=self,
+            )
+            popup.accepted.connect(self.show_update_window)
+
         else:
             self.NewVersionButton.hide()
 
@@ -1109,16 +1108,16 @@ class BlenderLauncher(BaseWindow):
     def quit_(self):
         busy = self.task_queue.get_busy_threads()
         if any(busy):
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text=(
+                message=(
                     "Some tasks are still in progress!<br>"
                     + "\n".join([f" - {item}<br>" for worker, item in busy.items()])
                     + "Are you sure you want to quit?"
                 ),
-                accept_text="Yes",
-                cancel_text="No",
+                buttons=["Yes", "No"],
+                icon=PopupIcon.WARNING,
             )
 
             self.dlg.accepted.connect(self.destroy)
@@ -1126,7 +1125,7 @@ class BlenderLauncher(BaseWindow):
 
         self.destroy()
 
-    @pyqtSlot()
+    @Slot()
     def attempt_close(self):
         self.close()
 
@@ -1155,16 +1154,15 @@ class BlenderLauncher(BaseWindow):
         data = self.socket.readAll()
 
         if str(data, encoding="ascii") != str(self.version):
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self,
                 title="Warning",
-                text="An attempt to launch a different version<br>\
+                message="An attempt to launch a different version<br>\
                       of Blender Launcher was detected!<br>\
                       Please, terminate currently running<br>\
                       version to proceed this action!",
-                accept_text="OK",
-                cancel_text=None,
-                icon=DialogIcon.WARNING,
+                info_popup=True,
+                icon=PopupIcon.WARNING,
             )
 
     def open_docs(self):

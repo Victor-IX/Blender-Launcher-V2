@@ -1,9 +1,7 @@
-name: MacOS Release
+name: Manual MacOS Release
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,9 +14,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: GitHub Tag
+      - name: Get Latest Tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Setup + Build + Zip
         run: |
@@ -39,15 +40,15 @@ jobs:
           cd scripts
           bash build_mac.sh
 
-          echo "Zipping to Blender_Launcher_${{ github.ref_name }}_macos_arm64.zip"
+          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip"
           cd ../dist/release
           # this zips just like the one in finder
-          ditto -c -k --sequesterRsrc --keepParent "Blender Launcher.app" "Blender_Launcher_${{ github.ref_name }}_macos_arm64.zip"
-          mv "Blender_Launcher_${{ github.ref_name }}_macos_arm64.zip" ../..
+          ditto -c -k --sequesterRsrc --keepParent "Blender Launcher.app" "Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip"
+          mv "Blender_Launcher_${{ env.LATEST_TAG }}_macos_arm64.zip" ../..
           cd ../..
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ./Blender_Launcher_${{  github.ref_name }}_macos_arm64.zip
+      - name: Upload to Latest Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ env.LATEST_TAG }}" ./Blender_Launcher_"${{ env.LATEST_TAG }}"_macos_arm64.zip

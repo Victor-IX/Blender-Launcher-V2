@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from functools import cache
 
-from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PySide6.QtGui import QColor, QIcon, QPixmap
 
 base_path = ":resources/icons/"
 
 WHITE = QColor(255, 255, 255, 255)
 
 
-@dataclass(frozen=True)
+@dataclass
 class Icons:
     settings: QIcon
     wiki: QIcon

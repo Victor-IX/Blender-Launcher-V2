@@ -26,7 +26,7 @@ def get_platform():
 
 @cache
 def get_architecture():
-    return platform.machine()
+    return platform.machine().lower()
 
 
 @cache

@@ -3,9 +3,10 @@ import re
 import webbrowser
 from pathlib import PurePosixPath
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QAction, QWidget
+from PySide6 import QtCore
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QWidget
 from threads.scraper import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, get_bfa_nc_https_download_url
 from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
@@ -29,7 +30,7 @@ class BaseBuildWidget(QWidget):
     def context_menu(self):
         pass
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def show_release_notes(self):
         if self.build_info.branch == "stable":
             # TODO Check format for Blender 3 release

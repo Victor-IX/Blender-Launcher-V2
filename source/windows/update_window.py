@@ -7,8 +7,8 @@ from typing import TypedDict
 import distro
 from modules._platform import _popen, get_cwd, get_platform
 from modules.tasks import TaskQueue
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from threads.downloader import DownloadTask
 from threads.extractor import ExtractTask
 from threads.scraper import get_release_tag

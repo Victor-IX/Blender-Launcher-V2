@@ -29,22 +29,19 @@ from modules.settings import (
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QCheckBox,
     QGridLayout,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
     QSpinBox,
-    QWidget,
     QComboBox,
 )
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
 
 
@@ -206,7 +203,7 @@ class GeneralTabWidget(SettingsFormWidget):
             \nDEFAULT: Send to Trash"
         )
         self.default_delete_action.setCurrentIndex(get_default_delete_action())
-        self.default_delete_action.activated[str].connect(self.change_default_delete_action)
+        self.default_delete_action.activated[int].connect(self.change_default_delete_action)
 
         self.advanced_layout = QGridLayout()
         self.advanced_layout.addWidget(QLabel("Default Delete Action"), 0, 0, 1, 1)
@@ -226,12 +223,11 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def library_folder_validity_changed(self, v: bool):
         if not v:
-            self.dlg = DialogWindow(
+            self.dlg = PopupWindow(
                 parent=self.parent,
                 title="Warning",
-                text="Selected folder doesn't have write permissions!",
-                accept_text="Retry",
-                cancel_text=None,
+                message="Selected folder doesn't have write permissions!",
+                button="Quit",
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -262,10 +258,16 @@ class GeneralTabWidget(SettingsFormWidget):
         set_use_pre_release_builds(is_checked)
 
     def migrate_confirmation(self):
+        title = "Info"
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
+        button = "Migrate, Cancel"
+        icon = PopupIcon.NONE
         if user_config().exists():
+            title = "Warning"
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
-        dlg = DialogWindow(text=text, parent=self.parent)
+            button = "Overwrite, Cancel"
+            icon = PopupIcon.WARNING
+        dlg = PopupWindow(title=title, text=text, button=button, icon=icon, parent=self.parent)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
@@ -291,5 +293,6 @@ class GeneralTabWidget(SettingsFormWidget):
             self.register_file_association_button.setEnabled(True)
             self.unregister_file_association_button.setEnabled(False)
 
-    def change_default_delete_action(self, action: str):
+    def change_default_delete_action(self, index: int):
+        action = self.default_delete_action.itemText(index)
         set_default_delete_action(action)

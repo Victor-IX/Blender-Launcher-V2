@@ -1,11 +1,11 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QTabWidget
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QTabWidget
 from widgets.base_list_widget import BaseListWidget
 from widgets.base_page_widget import BasePageWidget
 
 
 class BaseToolBoxWidget(QTabWidget):
-    tab_changed = pyqtSignal(int)
+    tab_changed = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)

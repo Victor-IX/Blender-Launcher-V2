@@ -14,9 +14,9 @@ from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 from semver import Version
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 
 LOG_COLORS = {
     "DEBUG": "\033[36m",  # Cyan
@@ -38,7 +38,7 @@ class ColoredFormatter(logging.Formatter):
 
 version = Version(
     2,
-    3,
+    4,
     0,
     prerelease="rc.2",
 )
@@ -108,6 +108,11 @@ def main():
         action="store_true",
     )
     parser.add_argument(
+        "--build-cache",
+        help="Launch the app and cache all the available builds.",
+        action="store_true",
+    )
+    parser.add_argument(
         "--instanced",
         "-instanced",
         help="Do not check for existing instance.",
@@ -170,7 +175,8 @@ def main():
     logger.info(f"Blender Launcher Version: {version}")
 
     # Create an instance of application and set its core properties
-    app = QApplication([])
+    app = QApplication(["blender-launcher-v2"])
+    app.setApplicationName("blender-launcher-v2")
     app.setStyle("Fusion")
     app.setApplicationVersion(str(version))
 
@@ -196,7 +202,7 @@ def main():
 
     app.setQuitOnLastWindowClosed(False)
 
-    BlenderLauncher(app=app, version=version, offline=args.offline, force_first_time=args.force_first_time)
+    BlenderLauncher(app=app, version=version, offline=args.offline, build_cache=args.build_cache, force_first_time=args.force_first_time)
     sys.exit(app.exec())
 
 
@@ -207,14 +213,13 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
         logging.info(f"Library folder set to {lib_folder!s}")
     else:
         logging.error("Failed to set library folder")
-        dlg = DialogWindow(
+        PopupWindow(
             title="Warning",
-            text="Passed path is not a valid folder or<br>it doesn't have write permissions!",
-            accept_text="Quit",
-            cancel_text=None,
+            message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
+            icon=PopupIcon.WARNING,
+            button="Quit",
             app=app,
-        )
-        dlg.show()
+        ).show()
         sys.exit(app.exec())
 
 
@@ -294,8 +299,8 @@ def start_unregister():
 
 
 def check_for_instance():
-    from PyQt5.QtCore import QByteArray
-    from PyQt5.QtNetwork import QLocalSocket
+    from PySide6.QtCore import QByteArray
+    from PySide6.QtNetwork import QLocalSocket
 
     socket = QLocalSocket()
     socket.connectToServer("blender-launcher-server")

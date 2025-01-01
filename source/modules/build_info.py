@@ -19,7 +19,7 @@ from modules.settings import (
     get_library_folder,
 )
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 from semver import Version
 
 logger = logging.getLogger()
@@ -356,10 +356,10 @@ def read_blender_version(
     )
 
 
-@dataclass(frozen=True)
+@dataclass
 class WriteBuildTask(Task):
-    written = pyqtSignal()
-    error = pyqtSignal()
+    written = Signal()
+    error = Signal()
 
     path: Path
     build_info: BuildInfo
@@ -410,15 +410,15 @@ def fill_build_info(
     return build_info
 
 
-@dataclass(frozen=True)
+@dataclass
 class ReadBuildTask(Task):
     path: Path
     info: BuildInfo | None = None
     archive_name: str | None = None
     auto_write: bool = True
 
-    finished = pyqtSignal(BuildInfo)
-    failure = pyqtSignal(Exception)
+    finished = Signal(BuildInfo)
+    failure = Signal(Exception)
 
     def run(self):
         try:
@@ -436,7 +436,7 @@ class ReadBuildTask(Task):
 class LaunchMode: ...
 
 
-@dataclass(frozen=True)
+@dataclass
 class LaunchWithBlendFile(LaunchMode):
     blendfile: Path
 
@@ -462,7 +462,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
             else:
                 if (
                     get_launch_blender_no_console()
-                    and (launcher := (library_folder / info.link / "blender_launcher.exe")).exists()
+                    and (launcher := (library_folder / info.link / "blender-launcher.exe")).exists()
                 ):
                     b3d_exe = launcher
                 else:

@@ -1,0 +1,42 @@
+name: Manual Windows Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5.0.0
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: |
+          echo "Venv setup"
+          python -m venv .venv
+          .venv\Scripts\activate
+          echo "Installing dependencies"
+          pip install -e ./
+          echo "Building style"
+          python build_style.py
+          echo "Building"
+          cd .\scripts\
+          .\build_win.bat
+      - name: Get Latest Tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $latestTag = gh release list --limit 1 --json tagName --jq ".[0].tagName"
+          echo "LATEST_TAG=$latestTag" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Zipping
+        run: |
+          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_Windows_x64.zip"
+          Compress-Archive -Path ".\dist\release\Blender Launcher.exe" -DestinationPath Blender_Launcher_${{ env.LATEST_TAG }}_Windows_x64.zip
+      - name: Upload to Latest Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ env.LATEST_TAG }}" ./Blender_Launcher_"${{ env.LATEST_TAG }}"_Windows_x64.zip

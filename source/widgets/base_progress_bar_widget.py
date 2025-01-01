@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QProgressBar
+from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtWidgets import QProgressBar
 
 
 class BaseProgressBarWidget(QProgressBar):
-    progress_updated = pyqtSignal(int, int)
+    progress_updated = Signal(int, int)
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -19,7 +19,7 @@ class BaseProgressBarWidget(QProgressBar):
         self.title = title
         self.setFormat(f"{self.title}: {self.last_progress[0]:.1f} of {self.last_progress[1]:.1f} MB")
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def set_progress(self, obtained: int | float, total: int | float, title: str | None = None):
         if title is not None and title != self.title:
             self.title = title

@@ -38,7 +38,7 @@ from modules.settings import (
     get_show_patch_archive_builds,
     get_use_pre_release_builds,
 )
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 from semver import Version
 from webdav4.client import Client
 
@@ -164,16 +164,40 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> str | None
         return None
 
 
-class Scraper(QThread):
-    links = pyqtSignal(BuildInfo)
-    new_bl_version = pyqtSignal(str)
-    error = pyqtSignal()
-    stable_error = pyqtSignal(str)
+def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> str | None:
+    if latest_tag is None:
+        logger.error("Failed to get the latest release tag.")
+        return None
 
-    def __init__(self, parent, man: ConnectionManager):
+    url = f"https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases/tags/{latest_tag}"
+    r = connection_manager.request("GET", url)
+
+    if r is None:
+        logger.error(f"Failed to fetch release notes for tag: {latest_tag}")
+        return None
+
+    try:
+        release_data = json.loads(r.data)
+        patch_note = release_data.get("body", "No patch notes available.")
+        logger.info(f"Latest patch note found")
+        return patch_note
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse release notes JSON data: {e}")
+        return None
+
+
+class Scraper(QThread):
+    links = Signal(BuildInfo)
+    new_bl_version = Signal(str, str)
+    error = Signal()
+    stable_error = Signal(str)
+
+    def __init__(self, parent, man: ConnectionManager, build_cache=False):
         QThread.__init__(self)
         self.parent = parent
         self.manager = man
+        self.build_cache = build_cache
+
         self.platform = get_platform()
         self.architecture = get_architecture()
 
@@ -189,6 +213,18 @@ class Scraper(QThread):
             "macOS": "darwin",
         }.get(self.platform, self.platform)
 
+        self.regex_filter()
+
+        self.hash = re.compile(r"\w{12}")
+        self.subversion = re.compile(r"-\d\.[a-zA-Z0-9.]+-")
+
+        self.scrape_stable = get_scrape_stable_builds()
+        self.scrape_automated = get_scrape_automated_builds()
+        self.scrape_bfa = get_scrape_bfa_builds()
+
+        self._latest_tag_cache = None
+
+    def regex_filter(self):
         if self.platform == "Windows":
             regex_filter = r"blender-.+win.+64.+zip$"
             bfa_regex_filter = r"Bforartists-.+Windows.+zip"
@@ -200,25 +236,25 @@ class Scraper(QThread):
             bfa_regex_filter = r"Bforartists-.+tar.xz$"
 
         self.b3d_link = re.compile(regex_filter, re.IGNORECASE)
-        self.hash = re.compile(r"\w{12}")
-        self.subversion = re.compile(r"-\d\.[a-zA-Z0-9.]+-")
         self.bfa_package_file_name_regex = re.compile(bfa_regex_filter, re.IGNORECASE)
-
-        self.scrape_stable = get_scrape_stable_builds()
-        self.scrape_automated = get_scrape_automated_builds()
-        self.scrape_bfa = get_scrape_bfa_builds()
 
     def run(self):
         self.get_api_data_manager()
         self.get_download_links()
-        self.get_release_tag_manager()
+        self.get_new_release_manager()
 
-    def get_release_tag_manager(self):
+    def get_cached_release_tag(self) -> str | None:
+        if self._latest_tag_cache is None:
+            self._latest_tag_cache = get_release_tag(self.manager)
+        return self._latest_tag_cache
+
+    def get_new_release_manager(self):
         assert self.manager.manager is not None
-        latest_tag = get_release_tag(self.manager)
+        latest_tag = self.get_cached_release_tag()
 
         if latest_tag is not None:
-            self.new_bl_version.emit(latest_tag)
+            patch_note = get_latest_patch_note(self.manager, latest_tag)
+            self.new_bl_version.emit(latest_tag, patch_note)
         self.manager.manager.clear()
 
     def get_api_data_manager(self):
@@ -244,8 +280,29 @@ class Scraper(QThread):
             scrapers.append(self.scrape_automated_releases())
         if self.scrape_bfa:
             scrapers.append(self.scrape_bfa_releases())
+        if self.build_cache:
+            platforms = ["Windows", "linux", "macOS"]
+            for platform in platforms:
+                scrapers.append(self.scrap_stable_releases(platform))
+
         for build in chain(*scrapers):
-            self.links.emit(build)
+            # Filter out builds that don't match the current platform for Windows
+            if self.platform.lower() == "windows":
+                if self.architecture == "arm64" and "arm64" in build.link:
+                    self.links.emit(build)
+                    continue
+                elif self.architecture == "amd64" and (
+                    ("x64" in build.link or "windows64" in build.link)
+                    or "amd64" in build.link
+                    or "bforartists" in build.link.lower()
+                ):
+                    self.links.emit(build)
+                    continue
+                else:
+                    logger.debug(f"Skipping {build.link} as it doesn't match the current platform")
+            else:
+                self.links.emit(build)
+                continue
 
     def scrape_automated_releases(self):
         base_fmt = "https://builder.blender.org/download/{}/?format=json&v=1"
@@ -277,7 +334,7 @@ class Scraper(QThread):
             for build in data:
                 if (
                     build["platform"] == self.json_platform
-                    and build["architecture"].lower() == self.architecture.lower()
+                    and build["architecture"].lower() == self.architecture
                     and self.b3d_link.match(build["file_name"])
                 ):
                     architecture_specific_build = True
@@ -331,6 +388,10 @@ class Scraper(QThread):
         soup_stainer = SoupStrainer("a", href=True)
         soup = BeautifulSoup(content, "lxml", parse_only=soup_stainer)
 
+        # Update regex filter with corresponding platform
+        if self.build_cache:
+            self.regex_filter()
+
         for tag in soup.find_all(limit=_limit, href=self.b3d_link):
             build_info = self.new_blender_build(tag, url, branch_type)
 
@@ -380,12 +441,27 @@ class Scraper(QThread):
                 branch = "daily"
                 subversion = subversion.replace(prerelease=build_var)
 
+        if self.platform == "macOS":
+            # Skip Intel builds on Apple Silicon
+            if self.architecture == "arm64" and "arm64" not in link:
+                return None
+
+            # Skip Apple Silicon builds on Intel
+            if self.architecture == "x64" and "x64" not in link:
+                return None
+
         commit_time = dateparser.parse(info["last-modified"]).astimezone()
         r.release_conn()
         r.close()
         return BuildInfo(link, str(subversion), build_hash, commit_time, branch)
 
-    def scrap_stable_releases(self):
+    def scrap_stable_releases(self, platform=None):
+        if self.build_cache and platform is not None:
+            self.platform = platform
+            self.cache_path = stable_cache_path().with_name(f"stable_builds_{platform}.json")
+            self.cache = ScraperCache.from_file_or_default(self.cache_path)
+            print(f"Scraping stable releases for {platform}")
+
         url = "https://download.blender.org/release/"
         r = self.manager.request("GET", url)
 
@@ -399,18 +475,23 @@ class Scraper(QThread):
 
         releases = soup.find_all(href=b3d_link)
         if not any(releases):
-            logger.info("Failed to gather stable releases")
+            logger.info(f"Failed to gather stable releases for {platform}")
             logger.info(content)
-            self.stable_error.emit("No releases were scraped from the site!<br>check -debug logs for more details.")
+            self.stable_error.emit(
+                f"No releases were scraped from the site for {platform}!<br>check -debug logs for more details."
+            )
             return
 
-        # Convert string to Verison
-        minimum_version_str = get_minimum_blender_stable_version()
-        if minimum_version_str == "None":
-            minimum_smver_version = Version(0, 0, 0)
+        # Convert string to Version
+        if not self.build_cache:
+            minimum_version_str = get_minimum_blender_stable_version()
+            if minimum_version_str == "None":
+                minimum_smver_version = Version(2, 48, 0)
+            else:
+                major, minor = minimum_version_str.split(".")
+                minimum_smver_version = Version(int(major), int(minor), 0)
         else:
-            major, minor = minimum_version_str.split(".")
-            minimum_smver_version = Version(int(major), int(minor), 0)
+            minimum_smver_version = Version(2, 48, 0)
 
         cache_modified = False
         for release in releases:
@@ -426,7 +507,7 @@ class Scraper(QThread):
                 if date_sibling:
                     date_str = " ".join(date_sibling.strip().split()[:2])
                     with contextlib.suppress(ValueError):
-                        modified_date = dateparser.parse(date_str).astimezone(tz=timezone.utc)
+                        modified_date = dateparser.parse(date_str)
                         if ver not in self.cache:
                             logger.debug(f"Creating new folder for version {ver}")
                             folder = self.cache.new_build(ver)
@@ -439,21 +520,27 @@ class Scraper(QThread):
                                 folder.assets.append(build)
                                 yield build
 
-                            logger.debug(f"Caching {href}: {modified_date} (previous was {folder.modified_date})")
+                            logger.debug(
+                                f"Caching {href}: {modified_date} (previous was {folder.modified_date}) for platform {platform}"
+                            )
                             folder.modified_date = modified_date
                             cache_modified = True
                         else:
-                            logger.debug(f"Skipping {href}: {modified_date}")
+                            logger.debug(f"Skipping {href}: {modified_date} for platform {platform}")
+
                         builds = self.cache[ver].assets
-                        yield from builds
+
+                        if not self.build_cache:
+                            yield from builds
                         continue
 
                 yield from self.scrap_download_links(urljoin(url, href), "stable")
 
         if cache_modified:
-            with self.cache_path.open("w", encoding="utf-8") as f:
+            cache_path = self.cache_path
+            with cache_path.open("w", encoding="utf-8") as f:
                 json.dump(self.cache.to_dict(), f)
-                logging.debug(f"Saved cache to {self.cache_path}")
+                logging.debug(f"Saved cache to {cache_path}")
 
         r.release_conn()
         r.close()

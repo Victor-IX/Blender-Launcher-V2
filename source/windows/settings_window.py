@@ -14,13 +14,13 @@ from modules.settings import (
     get_worker_thread_count,
     proxy_types,
 )
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QSizePolicy, QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QSizePolicy, QTabWidget, QVBoxLayout, QWidget
 from widgets.header import WindowHeader
 from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget
 from windows.base_window import BaseWindow
-from windows.dialog_window import DialogWindow
+from windows.popup_window import PopupWindow, PopupIcon
 
 
 class SettingsWindow(BaseWindow):
@@ -187,13 +187,13 @@ class SettingsWindow(BaseWindow):
         for s in pending:
             pending_to_restart += "<br>- " + s
 
-        self.dlg = DialogWindow(
+        self.dlg = PopupWindow(
             parent=self.parent,
             title="Warning",
-            text=f"Restart Blender Launcher in<br> \
+            message=f"Restart Blender Launcher in<br> \
                   order to apply following settings:{pending_to_restart}",
-            accept_text="Restart Now",
-            cancel_text="Ignore",
+            buttons=["Restart Now", "Ignore"],
+            icon=PopupIcon.WARNING,
         )
         self.dlg.accepted.connect(self.restart_app)
         self.dlg.cancelled.connect(self.attempt_close)

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from modules._platform import get_platform
 from modules.settings import get_library_folder
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -47,12 +47,12 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
                     )
 
 
-@dataclass(frozen=True)
+@dataclass
 class DrawLibraryTask(Task):
     folders: Iterable[str | Path] = ("stable", "daily", "experimental", "bforartists", "custom")
-    found = pyqtSignal(Path)
-    unrecognized = pyqtSignal(Path)
-    finished = pyqtSignal()
+    found = Signal(Path)
+    unrecognized = Signal(Path)
+    finished = Signal()
 
     def run(self):
         for build, recognized in get_blender_builds(folders=self.folders):

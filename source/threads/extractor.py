@@ -6,7 +6,7 @@ from pathlib import Path
 
 from modules._platform import _check_call
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 
 
 def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]):
@@ -59,13 +59,13 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     return None
 
 
-@dataclass(frozen=True)
+@dataclass
 class ExtractTask(Task):
     file: Path
     destination: Path
 
-    progress = pyqtSignal(int, int)
-    finished = pyqtSignal(Path)
+    progress = Signal(int, int)
+    finished = Signal(Path)
 
     def run(self):
         result = extract(self.file, self.destination, self.progress.emit)

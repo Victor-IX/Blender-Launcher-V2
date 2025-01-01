@@ -7,16 +7,16 @@ from modules.connection_manager import REQUEST_MANAGER
 from modules.enums import MessageType
 from modules.settings import get_library_folder
 from modules.task import Task
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 from urllib3.exceptions import MaxRetryError
 
 
-@dataclass(frozen=True)
+@dataclass
 class DownloadTask(Task):
     manager: REQUEST_MANAGER
     link: str
-    progress = pyqtSignal(int, int)
-    finished = pyqtSignal(Path)
+    progress = Signal(int, int)
+    finished = Signal(Path)
 
     def run(self):
         self.progress.emit(0, 0)
