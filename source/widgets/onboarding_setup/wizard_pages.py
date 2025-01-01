@@ -255,6 +255,7 @@ class ShortcutsPage(BasicOnboardingPage):
                     exe=str(self.prop_settings.exe_location),
                 )
             if self.addtodesk.isChecked():
+                # TODO: Consider using platformdirs to find the exact path
                 typical_paths = [
                     Path("~/Desktop/Blender Launcher V2").expanduser(),
                     Path("~/OneDrive/Desktop/Blender Launcher V2").expanduser(),
