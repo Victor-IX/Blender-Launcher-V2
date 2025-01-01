@@ -255,11 +255,22 @@ class ShortcutsPage(BasicOnboardingPage):
                     exe=str(self.prop_settings.exe_location),
                 )
             if self.addtodesk.isChecked():
-                generate_program_shortcut(
+                typical_paths = [
                     Path("~/Desktop/Blender Launcher V2").expanduser(),
-                    exe=str(self.prop_settings.exe_location),
-                )
-
+                    Path("~/OneDrive/Desktop/Blender Launcher V2").expanduser(),
+                ]
+                exceptions = []
+                for pth in typical_paths:
+                    try:
+                        generate_program_shortcut(
+                            pth,
+                            exe=str(self.prop_settings.exe_location),
+                        )
+                        break
+                    except Exception as e:
+                        exceptions.append(e)
+                if len(exceptions) == len(typical_paths): # all paths failed to generate
+                    raise Exception("Exceptions raised while generating desktop shortcuts: {exceptions}")
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar.
 

@@ -207,10 +207,11 @@ def generate_program_shortcut(destination: Path, exe=sys.executable):
 
     if sys.platform == "win32":
         import win32com.client
+        import pythoncom
 
         dest = destination.with_suffix(".lnk").as_posix()
         # create the shortcut
-        _WSHELL = win32com.client.Dispatch("Wscript.Shell")
+        _WSHELL = win32com.client.Dispatch("Wscript.Shell", pythoncom.CoInitialize())
         wscript = _WSHELL.CreateShortcut(str(dest))
 
         wscript.Targetpath = exe
