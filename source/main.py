@@ -174,7 +174,8 @@ def main():
     logger.info(f"Blender Launcher Version: {version}")
 
     # Create an instance of application and set its core properties
-    app = QApplication([])
+    app = QApplication(["blender-launcher-v2"])
+    app.setApplicationName("blender-launcher-v2")
     app.setStyle("Fusion")
     app.setApplicationVersion(str(version))
 

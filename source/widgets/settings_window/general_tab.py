@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-from turtle import title
 
 from modules.settings import (
     get_actual_library_folder,
