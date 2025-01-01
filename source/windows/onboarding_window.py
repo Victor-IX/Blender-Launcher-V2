@@ -40,7 +40,7 @@ class Committer(QThread):
     def __post_init__(self):
         super().__init__()
 
-    finished = Signal()
+    completed = Signal()
     err = Signal(tuple)
 
     def run(self):
@@ -48,13 +48,14 @@ class Committer(QThread):
         try:
             for page in self.pages:
                 page.evaluate()
-                finished_pages += f"Finished page {page.title()}\n"
-            self.finished.emit()
+                txt = f'Finished page "{page.title()}"'
+                logging.info(txt)
+                finished_pages += txt + "\n"
+            self.completed.emit()
         except Exception:
             # show the exception
             exc = traceback.format_exc()
             text = f'{finished_pages}\nERR OCCURRED DURING PAGE "{page.title()}"!\n{exc}'
-            logging.error(exc)
             self.err.emit((exc, text))
 
 
@@ -79,12 +80,14 @@ class OnboardingWindow(BaseWindow):
 
         # A wizard shown during the execution stage
         self.commit_wizard = QWizard(self)
+        self.commit_wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
         self.commit_wizard.setButtonLayout([])
 
         # A wizard shown when an error occurs
         self.error_wizard = QWizard(self)
-        self.error_wizard.button(QWizard.WizardButton.CancelButton).setProperty("CancelButton", True)  # type: ignore
-        self.error_wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)  # type: ignore
+        self.error_wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
+        self.error_wizard.button(QWizard.WizardButton.CancelButton).setProperty("CancelButton", True)
+        self.error_wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)
         self.error_wizard.setButtonText(QWizard.WizardButton.FinishButton, "OK")
 
         self.prop_settings = PropogatedSettings()
@@ -102,7 +105,7 @@ class OnboardingWindow(BaseWindow):
             self.wizard.addPage(page)
 
         self.committer = Committer(self.pages)
-        self.committer.finished.connect(self.__commiter_finished)
+        self.committer.completed.connect(self.__commiter_completed)
         self.committer.err.connect(self.__commiter_errored)
         self.committing_page = CommittingPage(parent)
         self.commit_wizard.addPage(self.committing_page)
@@ -133,7 +136,7 @@ class OnboardingWindow(BaseWindow):
         self.commit_wizard.show()
         self.committer.start()
 
-    def __commiter_finished(self):
+    def __commiter_completed(self):
         self.accepted.emit()
         self._accepted = True
         set_first_time_setup_seen(True)
