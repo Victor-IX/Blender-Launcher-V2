@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 import traceback
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING
 
+from modules._platform import get_platform
 from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import (
@@ -141,6 +144,9 @@ class OnboardingWindow(BaseWindow):
         self._accepted = True
         set_first_time_setup_seen(True)
         if self.prop_settings.exe_changed:
+            logging.info(f"Deleting {sys.executable} after restarting")
+            if get_platform() == "Windows":
+                self.delete_with_timeout(Path(sys.executable))
             self.parent_.restart_app(self.prop_settings.exe_location.parent)
         self.close()
 
@@ -170,3 +176,21 @@ class OnboardingWindow(BaseWindow):
         if not self._rejected:
             event.ignore()
             self.__rejected()
+
+    def delete_with_timeout(self, pth: Path):
+        """Creates a batch script that deletes the path"""
+        assert get_platform() == "Windows", "There is no reason to call OnboardingWindow.delete_with_timeout on Linux/Mac"
+        # create the batch script
+        temploc = os.environ["TEMP"]
+        batpth = os.path.join(temploc, "blv2-cleanup.bat")
+        with open(batpth, "w") as file:
+            file.write(
+                "\n".join(
+                    [
+                        "timeout /t 2",
+                        f'DEL /F "{pth}"',
+                        f'DEL /F "{batpth}"',
+                    ]
+                )
+            )
+        os.startfile(batpth, show_cmd=0)

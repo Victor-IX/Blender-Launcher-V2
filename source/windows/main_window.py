@@ -206,7 +206,6 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
-        self.delete_exe_on_reboot = False
         if (not get_first_time_setup_seen()) or force_first_time:
             self.onboarding_window = OnboardingWindow(version, self)
             self.onboarding_window.accepted.connect(lambda: self.draw())
@@ -1132,24 +1131,6 @@ class BlenderLauncher(BaseWindow):
 
         self.destroy()
 
-    def delete_with_timeout(self, pth: Path):
-        """Creates a batch script that deletes the path"""
-        assert self.platform == "Windows", "There is no reason to call BlenderLauncher.delete_with_timeout on Linux/Mac"
-        # create the batch script
-        temploc = os.environ["TEMP"]
-        batpth = os.path.join(temploc, "blv2-cleanup.bat")
-        with open(batpth, "w") as file:
-            file.write(
-                "\n".join(
-                    [
-                        "timeout /t 2",
-                        f'DEL /F "{pth}"',
-                        f'DEL /F "{batpth}"',
-                    ]
-                )
-            )
-            os.startfile(batpth)
-
     @Slot()
     def attempt_close(self):
         self.close()
@@ -1217,8 +1198,5 @@ class BlenderLauncher(BaseWindow):
             # sys.executable should be something like /.../Blender Launcher.app/Contents/MacOS/Blender Launcher
             app = Path(sys.executable).parent.parent.parent
             _popen(f"open -n {shlex.quote(str(app))}")
-
-        if self.delete_exe_on_reboot:
-            self.delete_with_timeout(self.onboarding_window.prop_settings.exe_location)
 
         self.destroy()

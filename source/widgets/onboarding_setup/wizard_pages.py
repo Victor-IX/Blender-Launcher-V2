@@ -139,9 +139,9 @@ class ChooseLibraryPage(BasicOnboardingPage):
             self.prop_settings.exe_changed = True
             exe.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(sys.executable, exe)
-            if get_platform() == "Windows": # delete the exe when closed
+            if get_platform() == "Windows":  # delete the exe when closed
                 self.launcher.delete_exe_on_reboot = True
-            else: # delete the executable directly
+            else:  # delete the executable directly
                 Path(sys.executable).unlink()
 
 
@@ -270,8 +270,9 @@ class ShortcutsPage(BasicOnboardingPage):
                         break
                     except Exception as e:
                         exceptions.append(e)
-                if len(exceptions) == len(typical_paths): # all paths failed to generate
+                if len(exceptions) == len(typical_paths):  # all paths failed to generate
                     raise Exception("Exceptions raised while generating desktop shortcuts: {exceptions}")
+
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar.
 
@@ -309,6 +310,7 @@ class AppearancePage(BasicOnboardingPage):
 
 BACKGROUND_SUBTITLE = """BLV2 can be kept alive in the background with a system tray icon.\
  This can be useful for reading efficiency and other features, but it is not totally necessary."""
+
 
 class BackgroundRunningPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
