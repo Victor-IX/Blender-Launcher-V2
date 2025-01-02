@@ -32,12 +32,14 @@ class BaseBuildWidget(QWidget):
 
     @QtCore.Slot()
     def show_release_notes(self):
-        if self.build_info.branch == "stable":
+        branch = self.build_info.branch
+
+        if branch in {"stable", "daily"}:
             # TODO Check format for Blender 3 release
             # Extract X.X format version
             ver = self.build_info.semversion
             webbrowser.open(f"https://wiki.blender.org/wiki/Reference/Release_Notes/{ver.major}.{ver.minor}")
-        elif self.build_info.branch == "lts":
+        elif branch == "lts":
             # Raw numbers from version
             v = re.sub(r"\D", "", str(self.build_info.semversion.finalize_version()))
 
@@ -57,6 +59,6 @@ class BaseBuildWidget(QWidget):
                 pass
         else:  # Open for builds with D12345 name pattern
             # Extract only D12345 substring
-            m = re.search(r"D\d{5}", self.build_info.branch)
+            m = re.search(r"D\d{5}", branch)
 
             webbrowser.open(f"https://developer.blender.org/{m.group(0)}")

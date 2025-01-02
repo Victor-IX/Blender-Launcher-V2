@@ -138,5 +138,4 @@ class BlenderLauncherUpdater(BaseWindow):
 
     def closeEvent(self, event):
         self.queue.fullstop()
-        event.ignore()
-        self.showMinimized()
+        event.accept()

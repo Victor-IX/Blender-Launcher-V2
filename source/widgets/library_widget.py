@@ -246,6 +246,12 @@ class LibraryWidget(BaseBuildWidget):
         self.installTemplateAction = QAction("Install Template")
         self.installTemplateAction.triggered.connect(self.install_template)
 
+        self.makePortableAction = QAction("Make Portable")
+        version = self.build_info.subversion.rsplit(".", 1)[0]
+        config_path = Path(self.link) / version / "config"
+        self.makePortableAction = QAction("Unmake Portable" if config_path.is_dir() else "Make Portable")
+        self.makePortableAction.triggered.connect(self.make_portable)
+
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
@@ -284,9 +290,10 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.createShortcutAction)
         self.menu.addAction(self.createSymlinkAction)
         self.menu.addAction(self.installTemplateAction)
+        self.menu.addAction(self.makePortableAction)
         self.menu.addSeparator()
 
-        if self.branch in ("stable", "lts", "bforartists"):
+        if self.branch in {"stable", "lts", "bforartists", "daily"}:
             self.menu.addAction(self.showReleaseNotesAction)
         else:
             regexp = re.compile(r"D\d{5}")
@@ -497,6 +504,28 @@ class LibraryWidget(BaseBuildWidget):
 
         if self.child_widget is not None:
             self.child_widget.observer_finished()
+
+    @Slot()
+    def make_portable(self):
+        version = self.build_info.subversion.rsplit(".", 1)[0]
+
+        if version >= "4.2":
+            folder_name = "portable"
+            config_path = Path(self.link) / folder_name
+        else:
+            folder_name = "config"
+            config_path = Path(self.link) / version / folder_name
+
+        _config_path = config_path.parent / ("_" + folder_name)
+        if config_path.is_dir():
+            config_path.rename(_config_path)
+            self.makePortableAction.setText("Make Portable")
+        else:
+            if _config_path.is_dir():
+                _config_path.rename(config_path)
+            else:
+                config_path.mkdir(parents=False, exist_ok=True)
+            self.makePortableAction.setText("Unmake Portable")
 
     @Slot()
     def rename_branch(self):

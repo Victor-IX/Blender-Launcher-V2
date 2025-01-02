@@ -40,7 +40,7 @@ version = Version(
     2,
     4,
     0,
-    prerelease="rc.2",
+    prerelease="rc.3",
 )
 
 _ = gettext.gettext
