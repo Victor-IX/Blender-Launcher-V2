@@ -34,12 +34,7 @@ jobs:
           python scripts/update_cache_api.py
       - name: Commit Changes
         run: |
-          git fetch origin main
           git checkout -b api-bot/update-cache
-          git stash push -m "Pre-rebase stash"
-          git rebase origin/main 
-          git push
-          git stash pop
           git config user.name "Blender Launcher[bot]"
           git config user.email "Blender-Launcher[bot]@users.noreply.github.com"
           git add .
