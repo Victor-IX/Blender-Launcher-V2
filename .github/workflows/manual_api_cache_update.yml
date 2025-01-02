@@ -29,7 +29,7 @@ jobs:
           python scripts/set_default_settings.py
           echo "Building Cache"
           python source/main.py --build-cache &
-          $MAIN_PID = $($pid = Get-Process python | Select-Object -First 1).Id
+          $MAIN_PID = $($pid = Get-Process -Name "Blender Launcher" | Select-Object -First 1).Id
           sleep 240
           echo "Killing main.py"
           Stop-Process -Id $MAIN_PID
