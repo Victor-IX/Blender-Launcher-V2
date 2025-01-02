@@ -22,16 +22,15 @@ jobs:
           pip install -e ./
       - name: Run Blender Launcher Caching
         run: |
-          set -e
           echo "Building style"
           python build_style.py
           echo "Set Settings"
-          python ./scripts/set_default_settings.py
+          python scripts/set_default_settings.py
           echo "Building Cache"
-          python ./source/main.py --build-cache
+          python source/main.py --build-cache
           sleep 120
           echo "Updating Cache API files"
-          python ./scripts/update_cache_api.py
+          python scripts/update_cache_api.py
       - name: Commit Changes
         run: |
           git config user.name "Blender Launcher[bot]"

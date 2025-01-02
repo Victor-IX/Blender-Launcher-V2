@@ -10,14 +10,13 @@ else:
     raise OSError("Unsupported operating system")
 
 source_file = "./extras/Blender Launcher.ini"
+destination_file_path = os.path.join(destination_dir, "Blender Launcher.ini")
 
 if not os.path.exists(destination_dir):
     os.makedirs(destination_dir)
 else:
-    destination_file_path = os.path.join(destination_dir, "Blender Launcher.ini")
     if os.path.exists(destination_file_path):
         os.remove(destination_file_path)
-
 
 if os.path.exists(source_file):
     shutil.copy2(source_file, destination_file_path)
