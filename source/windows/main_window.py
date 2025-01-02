@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import shlex
 import shutil
 import sys
@@ -14,8 +13,6 @@ from pathlib import Path
 from platform import version
 from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
-
-from distro import info
 
 from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
@@ -47,7 +44,6 @@ from modules.settings import (
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
     get_show_tray_icon,
-    get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
     get_use_pre_release_builds,
     get_use_system_titlebar,

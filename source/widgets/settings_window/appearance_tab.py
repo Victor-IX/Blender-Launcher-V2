@@ -15,7 +15,6 @@ from modules.settings import (
     set_enable_high_dpi_scaling,
     set_enable_new_builds_notifications,
     set_make_error_notifications,
-    set_sync_library_and_downloads_pages,
     set_use_system_titlebar,
     tabs,
 )
@@ -155,18 +154,9 @@ class AppearanceTabWidget(SettingsFormWidget):
         page = self.DefaultLibraryPageComboBox.itemText(index)
         set_default_library_page(page)
 
-        if get_sync_library_and_downloads_pages():
-            self.DefaultDownloadsPageComboBox.setCurrentIndex(index)
-            set_default_downloads_page(page)
-
     def change_default_downloads_page(self, index: int):
         page = self.DefaultDownloadsPageComboBox.itemText(index)
         set_default_downloads_page(page)
-
-        if get_sync_library_and_downloads_pages():
-            self.DefaultLibraryPageComboBox.setCurrentIndex(index)
-            set_default_library_page(page)
-
 
     def toggle_enable_download_notifications(self, is_checked):
         set_enable_download_notifications(is_checked)
