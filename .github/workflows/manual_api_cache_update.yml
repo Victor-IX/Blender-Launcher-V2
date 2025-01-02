@@ -22,6 +22,7 @@ jobs:
           pip install -e ./
       - name: Run Blender Launcher Caching
         run: |
+          source ./.venv/bin/activate
           echo "Building style"
           python build_style.py
           echo "Set Settings"
