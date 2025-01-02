@@ -41,4 +41,4 @@ jobs:
           git commit -m "Update cache files" || echo "No changes to commit"
       - name: Push Changes
         run: |
-          git push --set-upstream origin main/update-cache || echo "Push failed"
+          git push --set-upstream origin main || echo "Push failed"
