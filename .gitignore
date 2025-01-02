@@ -123,3 +123,4 @@ Blender Launcher.ini
 log_file.txt
 nohup.out
 stable_builds.json
+docker-output
