@@ -47,6 +47,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           branch: api-bot/update-cache
+          base: main
           title: "[Bot] Automated cache update"
           body: |
             Automated API cache update
