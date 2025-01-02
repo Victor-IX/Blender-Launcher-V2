@@ -189,6 +189,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.enable_shifting()
         self.menu_extended.enable_shifting()
         self.menu.holding_shift.connect(self.update_delete_action)
+        self.menu.holding_shift.connect(self.update_config_action)
         self.menu_extended.holding_shift.connect(self.update_delete_action)
 
         self.deleteAction = QAction("Delete From Drive", self)
@@ -236,7 +237,11 @@ class LibraryWidget(BaseBuildWidget):
         self.showBuildFolderAction.setIcon(self.parent.icons.folder)
         self.showBuildFolderAction.triggered.connect(self.show_build_folder)
 
-        self.showConfigFolderAction = QAction("Show Config Folder")
+        config_path = self.make_portable_path()
+
+        self.showConfigFolderAction = QAction(
+            "Show Portable Config Folder" if config_path.is_dir() else "Show Config Folder"
+        )
         self.showConfigFolderAction.setIcon(self.parent.icons.folder)
         self.showConfigFolderAction.triggered.connect(self.show_config_folder)
 
@@ -246,9 +251,6 @@ class LibraryWidget(BaseBuildWidget):
         self.installTemplateAction = QAction("Install Template")
         self.installTemplateAction.triggered.connect(self.install_template)
 
-        self.makePortableAction = QAction("Make Portable")
-        version = self.build_info.subversion.rsplit(".", 1)[0]
-        config_path = Path(self.link) / version / "config"
         self.makePortableAction = QAction("Unmake Portable" if config_path.is_dir() else "Make Portable")
         self.makePortableAction.triggered.connect(self.make_portable)
 
@@ -335,6 +337,7 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.update_delete_action(self.hovering_and_shifting)
+        self.update_config_action(self.hovering_and_shifting)
 
         if len(self.list_widget.selectedItems()) > 1:
             self.menu_extended.trigger()
@@ -358,6 +361,15 @@ class LibraryWidget(BaseBuildWidget):
             self.deleteAction.setText("Delete from Drive")
         else:
             self.deleteAction.setText("Send to Trash")
+
+    @Slot(bool)
+    def update_config_action(self, shifting: bool):
+        config_path = self.make_portable_path()
+
+        if config_path.is_dir() and not shifting:
+            self.showConfigFolderAction.setText("Show Portable Config Folder")
+        else:
+            self.showConfigFolderAction.setText("Show Config Folder")
 
     def mouseDoubleClickEvent(self, _event):
         if self.build_info is not None and self.hovering_and_shifting:
@@ -507,6 +519,23 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def make_portable(self):
+        config_path = self.make_portable_path()
+        folder_name = config_path.name
+
+        _config_path = config_path.parent / ("_" + folder_name)
+        if config_path.is_dir():
+            config_path.rename(_config_path)
+            self.makePortableAction.setText("Make Portable")
+            self.showConfigFolderAction.setText("Show Config Folder")
+        else:
+            if _config_path.is_dir():
+                _config_path.rename(config_path)
+            else:
+                config_path.mkdir(parents=False, exist_ok=True)
+            self.makePortableAction.setText("Unmake Portable")
+            self.showConfigFolderAction.setText("Show Portable Config Folder")
+
+    def make_portable_path(self):
         version = self.build_info.subversion.rsplit(".", 1)[0]
 
         if version >= "4.2":
@@ -516,16 +545,7 @@ class LibraryWidget(BaseBuildWidget):
             folder_name = "config"
             config_path = Path(self.link) / version / folder_name
 
-        _config_path = config_path.parent / ("_" + folder_name)
-        if config_path.is_dir():
-            config_path.rename(_config_path)
-            self.makePortableAction.setText("Make Portable")
-        else:
-            if _config_path.is_dir():
-                _config_path.rename(config_path)
-            else:
-                config_path.mkdir(parents=False, exist_ok=True)
-            self.makePortableAction.setText("Unmake Portable")
+        return config_path
 
     @Slot()
     def rename_branch(self):
@@ -798,10 +818,24 @@ class LibraryWidget(BaseBuildWidget):
         path = library_folder / self.link
         self.show_folder(path)
 
-    # TODO: if no version or version folder is available show a popup with option to open general config folder
     @Slot()
     def show_config_folder(self):
+        mod = QApplication.keyboardModifiers()
+        is_shift_pressed = mod == Qt.KeyboardModifier.ShiftModifier
+        config_path = self.make_portable_path()
+
+        if config_path.is_dir() and not is_shift_pressed:
+            self.show_folder(config_path)
+            return
+
         if self.build_info is None:
+            PopupWindow(
+                title="Warning",
+                info_popup=True,
+                message="No build information found.",
+                icon=PopupIcon.WARNING,
+                parent=self.parent,
+            ).show()
             return
         version = self.build_info.semversion
         branch = self.build_info.branch
@@ -817,6 +851,20 @@ class LibraryWidget(BaseBuildWidget):
             version_str = f"{version.major}.{version.minor}"
 
         path = Path(get_blender_config_folder(custom_folder) / version_str)
+        general_path = Path(get_blender_config_folder(custom_folder))
+
+        if not path.is_dir():
+            popup = PopupWindow(
+                title="Warning",
+                message="No config folder found for this version.",
+                buttons=["Open General Config Folder", "Cancel"],
+                icon=PopupIcon.WARNING,
+                parent=self.parent,
+            )
+            popup.accepted.connect(lambda: self.show_folder(general_path))
+            popup.show()
+            return
+
         self.show_folder(path)
 
     def list_widget_deleted(self):
