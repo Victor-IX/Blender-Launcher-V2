@@ -29,10 +29,10 @@ jobs:
           python scripts/set_default_settings.py
           echo "Building Cache"
           python source/main.py --build-cache &
-          MAIN_PID=$!
+          $MAIN_PID = $($pid = Get-Process python | Select-Object -First 1).Id
           sleep 240
           echo "Killing main.py"
-          kill $MAIN_PID
+          Stop-Process -Id $MAIN_PID
           echo "Updating Cache API files"
           python scripts/update_cache_api.py
       - name: Commit Changes
