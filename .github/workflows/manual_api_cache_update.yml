@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,13 +16,13 @@ jobs:
       - name: Setup Project
         run: |
           echo "Venv setup"
-          python3 -m venv .venv
-          source ./.venv/bin/activate
+          python -m venv .venv
+          .venv\Scripts\activate
           echo "Installing dependencies"
           pip install -e ./
       - name: Run Blender Launcher Caching
         run: |
-          source ./.venv/bin/activate
+          .venv\Scripts\activate
           echo "Building style"
           python build_style.py
           echo "Set Settings"
