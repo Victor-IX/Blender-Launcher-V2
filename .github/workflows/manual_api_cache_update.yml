@@ -1,4 +1,4 @@
-name: Manual Ubuntu Release
+name: Manual API Cache Update
 
 on:
   workflow_dispatch:
