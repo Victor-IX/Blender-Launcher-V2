@@ -121,7 +121,7 @@ class DownloadWidget(BaseBuildWidget):
         else:
             self.installedButton.hide()
 
-        if self.build_info.branch in "stable lts":
+        if self.build_info.branch in {"stable", "lts", "daily", "bforartists"}:
             self.menu.addAction(self.showReleaseNotesAction)
         else:
             regexp = re.compile(r"D\d{5}")
