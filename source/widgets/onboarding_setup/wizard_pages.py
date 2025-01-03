@@ -102,13 +102,13 @@ class ChooseLibraryPage(BasicOnboardingPage):
         )
         self.move_exe.setChecked(True)
         self.move_exe.setVisible(is_frozen())  # hide when exe is not frozen
-warning_label = "Warning: Do not use C:/Program Files/... as your library location"
+        warning_label = "Warning: Do not use C:/Program Files/... as your library location"
 
-self.warning_label = QLabel(self)
-self.warning_label.setText(warning_label)
-self.warning_label.setWordWrap(True)
+        self.warning_label = QLabel(self)
+        self.warning_label.setText(warning_label)
+        self.warning_label.setWordWrap(True)
 
-if self.platform == "Windows":
+        if get_platform() == "Windows":
             self.layout_.addWidget(self.warning_label)
         self.layout_ = QVBoxLayout(self)
         self.layout_.addWidget(QLabel("Library location:", self))
@@ -132,7 +132,8 @@ if self.platform == "Windows":
             exe.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(sys.executable, exe)
             if get_platform() == "Windows":  # delete the exe when closed
-                self.launcher.delete_exe_on_reboot = True
+                # self.launcher.delete_exe_on_reboot = True
+                ...
             else:  # delete the executable directly
                 Path(sys.executable).unlink()
 
@@ -265,7 +266,7 @@ class ShortcutsPage(BasicOnboardingPage):
                     raise Exception("Exceptions raised while generating desktop shortcuts: {exceptions}")
 
 
-TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar.
+TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""
 TITLEBAR_LABEL_TEXT_LINUX = """This disables the custom title bar and uses the OS's default titlebar.
 
 In Linux Wayland environments, this is recommended because you will be
