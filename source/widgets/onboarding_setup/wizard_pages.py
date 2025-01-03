@@ -84,10 +84,15 @@ class WelcomePage(BasicOnboardingPage):
     def evaluate(self): ...
 
 
+PERM_WARNING_LABEL_WINDOWS = "Warning: Do not use C:/Program Files/... as your library location or anywhere else you may not have permissions"
+PERM_WARNING_LABEL_LINUX = "Warning: Do not use /bin as your library location or anywhere else you may not have permissions"
+
+
+
 class ChooseLibraryPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle("First, choose where Blender builds will be stored")
+        self.setTitle("Blender Launcher library location")
         self.setSubTitle("Make sure that this folder has enough storage to download and store all the builds you want.")
         self.launcher = parent
         self.lf = FolderSelector(
@@ -102,15 +107,19 @@ class ChooseLibraryPage(BasicOnboardingPage):
         )
         self.move_exe.setChecked(True)
         self.move_exe.setVisible(is_frozen())  # hide when exe is not frozen
-        warning_label = "Warning: Do not use C:/Program Files/... as your library location"
 
         self.warning_label = QLabel(self)
-        self.warning_label.setText(warning_label)
+        if get_platform() == "Windows":
+            self.warning_label.setText(PERM_WARNING_LABEL_WINDOWS)
+        else: 
+            self.warning_label.setText(PERM_WARNING_LABEL_LINUX)
+
         self.warning_label.setWordWrap(True)
 
         if get_platform() == "Windows":
             self.layout_.addWidget(self.warning_label)
         self.layout_ = QVBoxLayout(self)
+        self.layout_.addWidget(self.warning_label)
         self.layout_.addWidget(QLabel("Library location:", self))
         self.layout_.addWidget(self.lf)
         self.layout_.addWidget(self.move_exe)
@@ -190,6 +199,18 @@ class ShortcutsPage(BasicOnboardingPage):
         self.platform = get_platform()
         self.layout_ = QVBoxLayout(self)
 
+        explanation = ""
+        self.explanation_label = QLabel(self)
+        if self.platform == "Windows":  # Give a subtitle relating to the registry
+            explanation = ASSOC_WINDOWS_EXPLAIN
+            self.explanation_label.setToolTip(REGISTRY_KEY_EXPLAIN)
+        if self.platform == "Linux":
+            explanation = ASSOC_LINUX_EXPLAIN
+        self.explanation_label.setText(explanation)
+        self.explanation_label.setWordWrap(True)
+
+        self.use_file_associations = QCheckBox("Register for file associations", parent=self)
+
         self.select: FolderSelector | None = None
         if self.platform == "Linux":
             self.select = FolderSelector(
@@ -204,23 +225,13 @@ class ShortcutsPage(BasicOnboardingPage):
             self.addtostart = QCheckBox("Add to Start Menu", parent=self)
             self.addtostart.setChecked(True)
             self.addtodesk = QCheckBox("Add to Desktop", parent=self)
-            self.addtodesk.setChecked(Ture)
+            self.addtodesk.setChecked(True)
 
             self.layout_.insertWidget(0, self.addtostart)
             self.layout_.insertWidget(1, self.addtodesk)
             self.layout_.insertSpacing(2, 40)
 
-        explanation = ""
-        self.explanation_label = QLabel(self)
-        if self.platform == "Windows":  # Give a subtitle relating to the registry
-            explanation = ASSOC_WINDOWS_EXPLAIN
-            self.explanation_label.setToolTip(REGISTRY_KEY_EXPLAIN)
-        if self.platform == "Linux":
-            explanation = ASSOC_LINUX_EXPLAIN
-        self.explanation_label.setText(explanation)
-        self.explanation_label.setWordWrap(True)
 
-        self.use_file_associations = QCheckBox("Register for file associations", parent=self)
         self.layout_.addWidget(self.use_file_associations)
         self.layout_.addWidget(self.explanation_label)
 
