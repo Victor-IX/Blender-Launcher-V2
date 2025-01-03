@@ -205,7 +205,7 @@ requires-dist = [
     { name = "pyinstaller", specifier = ">=6.5.0" },
     { name = "pynput", specifier = "==1.8.1" },
     { name = "pyside6-essentials", specifier = "==6.10.1" },
-    { name = "pytest", marker = "extra == 'test'" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.0.2" },
     { name = "python-xlib" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=303" },
     { name = "ruff", marker = "extra == 'ruff'", specifier = ">=0.3.5" },
