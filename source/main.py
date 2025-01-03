@@ -100,6 +100,7 @@ def main():
 
     parser.add_argument("-d", "-debug", "--debug", help="Enable debug logging.", action="store_true")
     parser.add_argument("-set-library-folder", help="Set library folder", type=Path)
+    parser.add_argument("-force-first-time", help="Force the first time setup", action="store_true")
     parser.add_argument(
         "--offline",
         "-offline",
@@ -201,7 +202,7 @@ def main():
 
     app.setQuitOnLastWindowClosed(False)
 
-    BlenderLauncher(app=app, version=version, offline=args.offline, build_cache=args.build_cache)
+    BlenderLauncher(app=app, version=version, offline=args.offline, build_cache=args.build_cache, force_first_time=args.force_first_time)
     sys.exit(app.exec())
 
 

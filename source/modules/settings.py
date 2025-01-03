@@ -77,13 +77,18 @@ def get_settings():
     return QSettings(get_config_file().as_posix(), QSettings.Format.IniFormat)
 
 
+def get_actual_library_folder_no_fallback():
+    v = get_settings().value("library_folder")
+    if v:
+        return Path(v)
+    return None
+
+
 def get_actual_library_folder():
     settings = get_settings()
     library_folder = settings.value("library_folder")
-
     if not is_library_folder_valid(library_folder):
         library_folder = get_cwd()
-        settings.setValue("library_folder", library_folder)
 
     return Path(library_folder)
 
@@ -601,6 +606,14 @@ def get_launch_timer_duration() -> int:
 def set_launch_timer_duration(duration: int):
     """Sets the launch timer duration, in seconds"""
     get_settings().setValue("launch_timer", duration)
+
+
+def get_first_time_setup_seen():
+    return get_settings().value("first_time_setup_seen", defaultValue=False, type=bool)
+
+
+def set_first_time_setup_seen(b: bool):
+    get_settings().setValue("first_time_setup_seen", b)
 
 
 def get_default_delete_action() -> int:
