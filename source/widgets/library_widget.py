@@ -5,12 +5,11 @@ import logging
 import os
 import re
 import subprocess
-import semver
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_platform, get_blender_config_folder
+from modules._platform import _call, get_blender_config_folder, get_platform
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -21,22 +20,22 @@ from modules.build_info import (
     launch_build,
 )
 from modules.settings import (
+    get_default_delete_action,
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
-    get_default_delete_action,
     set_favorite_path,
 )
 from modules.shortcut import create_shortcut
 from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
+    QAction,
     QDragEnterEvent,
     QDragLeaveEvent,
     QDropEvent,
     QHoverEvent,
 )
-from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
 from threads.register import Register
@@ -50,7 +49,7 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.popup_window import PopupWindow, PopupIcon
+from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -155,7 +154,7 @@ class LibraryWidget(BaseBuildWidget):
         self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash)
 
-        self.build_state_widget = BuildStateWidget(self.parent)
+        self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
         self.layout.addWidget(self.launchButton)
         self.layout.addWidget(self.subversionLabel)

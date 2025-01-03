@@ -1,13 +1,13 @@
 import time
 
+from modules.icons import Icons
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRect, QSize
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QWidget
 
 
 class BuildStateWidget(QWidget):
-    def __init__(self, launcher, parent=None):
+    def __init__(self, icons: Icons, parent=None):
         super().__init__(parent)
-        self.launcher = launcher
         self.anim = None
 
         self.layout = QHBoxLayout(self)
@@ -19,13 +19,13 @@ class BuildStateWidget(QWidget):
         self.countIcon = self.IconButton(text="0", prop="Count")
         self.countIcon.hide()
 
-        self.newBuildIcon = self.IconButton(self.launcher.icons.filled_circle)
+        self.newBuildIcon = self.IconButton(icons.filled_circle)
         self.newBuildIcon.hide()
 
-        self.downloadIcon = self.IconButton(self.launcher.icons.download)
+        self.downloadIcon = self.IconButton(icons.download)
         self.downloadIcon.hide()
 
-        self.extractIcon = self.IconButton(self.launcher.icons.file)
+        self.extractIcon = self.IconButton(icons.file)
         self.extractIcon.hide()
 
         self.layout.addWidget(self.fakeIcon)

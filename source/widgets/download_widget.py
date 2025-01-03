@@ -96,7 +96,7 @@ class DownloadWidget(BaseBuildWidget):
 
         self.branchLabel = ElidedTextLabel(self.build_info.display_label, self)
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash, self)
-        self.build_state_widget = BuildStateWidget(parent, self)
+        self.build_state_widget = BuildStateWidget(parent.icons, self)
 
         self.build_info_hl.addWidget(self.subversionLabel)
         self.build_info_hl.addWidget(self.branchLabel, stretch=1)
