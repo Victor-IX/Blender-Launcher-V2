@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import shutil
 import sys
 from abc import abstractmethod
@@ -8,13 +7,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_cwd, get_platform, is_frozen
+from modules._platform import get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
     get_enable_high_dpi_scaling,
-    get_scrape_automated_builds,
-    get_scrape_stable_builds,
     get_show_tray_icon,
     get_use_system_titlebar,
     set_enable_high_dpi_scaling,
@@ -30,24 +27,12 @@ from modules.settings import (
     set_use_system_titlebar,
 )
 from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, register_windows_filetypes
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
-    QButtonGroup,
     QCheckBox,
-    QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QListWidget,
-    QListWidgetItem,
-    QPushButton,
-    QSizePolicy,
-    QSpacerItem,
     QTextEdit,
     QVBoxLayout,
-    QWidget,
     QWizardPage,
 )
 from widgets.folder_select import FolderSelector
@@ -117,7 +102,14 @@ class ChooseLibraryPage(BasicOnboardingPage):
         )
         self.move_exe.setChecked(True)
         self.move_exe.setVisible(is_frozen())  # hide when exe is not frozen
+warning_label = "Warning: Do not use C:/Program Files/... as your library location"
 
+self.warning_label = QLabel(self)
+self.warning_label.setText(warning_label)
+self.warning_label.setWordWrap(True)
+
+if self.platform == "Windows":
+            self.layout_.addWidget(self.warning_label)
         self.layout_ = QVBoxLayout(self)
         self.layout_.addWidget(QLabel("Library location:", self))
         self.layout_.addWidget(self.lf)
@@ -148,8 +140,8 @@ class ChooseLibraryPage(BasicOnboardingPage):
 class RepoSelectPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle("Choose which repositories you want enabled")
-        self.setSubTitle("This will enable/disable certain builds of blender to be visible / scraped.")
+        self.setTitle("Blender repositories visibility")
+        self.setSubTitle("Enable/disable certain builds of blender to be visible/scraped.")
         self.layout_ = QVBoxLayout(self)
 
         self.group = RepoGroup(self)
@@ -166,13 +158,13 @@ class RepoSelectPage(BasicOnboardingPage):
         set_scrape_bfa_builds(self.group.bforartists_repo.download)
 
 
-ASSOC_WINDOWS_EXPLAIN = """In order to launch blendfiles with BLV2 on Windows, we will update the registry to relate the launcher to the .blend extension. \
+ASSOC_WINDOWS_EXPLAIN = """In order to launch blendfiles with Blender Launcher on Windows, we will update the registry to relate the launcher to the .blend extension. \
 To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
 
 Hover over this text to see which registry keys will be changed and for what reason.
 """
 
-ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with BLV2 on Linux, we will generate a .desktop file at the requested location. \
+ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
 It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
 Our default location is typically searched by DEs for application entries.
@@ -183,16 +175,15 @@ REGISTRY_KEY_EXPLAIN = r"""The Following keys will be changed:
 CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
 UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With..." list
 UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With..." list
-CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when BLV2 is the default application
+CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when Blender Launcher is the default application
 These will be deleted/downgraded when you unregister the launcher"""
 
 
 class ShortcutsPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle("Shortcuts / Launching Blendfiles (.blend, .blend1)")
-        subtitle = 'This will allow you to automatically launch the correct version for a file\
- using the "Open With.." functionality on your desktop.'
+        self.setTitle("Shortcuts and file association")
+        subtitle = "Create Blender Launcher shortcuts and register file associations to open .blend files directly with Blender Launcher"
         self.setSubTitle(subtitle)
 
         self.platform = get_platform()
@@ -210,9 +201,9 @@ class ShortcutsPage(BasicOnboardingPage):
             self.layout_.addWidget(self.select)
         elif self.platform == "Windows":
             self.addtostart = QCheckBox("Add to Start Menu", parent=self)
-            self.addtostart.setChecked(False)
+            self.addtostart.setChecked(True)
             self.addtodesk = QCheckBox("Add to Desktop", parent=self)
-            self.addtodesk.setChecked(False)
+            self.addtodesk.setChecked(Ture)
 
             self.layout_.insertWidget(0, self.addtostart)
             self.layout_.insertWidget(1, self.addtodesk)
@@ -275,10 +266,13 @@ class ShortcutsPage(BasicOnboardingPage):
 
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar.
+TITLEBAR_LABEL_TEXT_LINUX = """This disables the custom title bar and uses the OS's default titlebar.
 
 In Linux Wayland environments, this is recommended because you will be
 able to use the title for moving and resizing the windows.
 Our main method of moving and resizing works best on X11."""
+
+TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""
 
 HIGH_DPI_TEXT = """This enables high DPI scaling for the program.
 automatically scales the user interface based on the monitor's pixel density."""
@@ -287,13 +281,16 @@ automatically scales the user interface based on the monitor's pixel density."""
 class AppearancePage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle("BLV2 appearance")
-        self.setSubTitle("Configure how BLV2 Looks")
+        self.setTitle("Blender Launcher appearance")
+        self.setSubTitle("Configure how Blender Launcher Looks")
         self.layout_ = QVBoxLayout(self)
 
         self.titlebar = QCheckBox("Use System Titlebar", self)
         self.titlebar.setChecked(get_use_system_titlebar())
-        titlebar_label = QLabel(TITLEBAR_LABEL_TEXT, self)
+        if get_platform() == "Linux":
+            titlebar_label = QLabel(TITLEBAR_LABEL_TEXT_LINUX, self)
+        else:
+            titlebar_label = QLabel(TITLEBAR_LABEL_TEXT, self)
         self.highdpiscaling = QCheckBox("High DPI Scaling")
         self.highdpiscaling.setChecked(get_enable_high_dpi_scaling())
         highdpiscaling_label = QLabel(HIGH_DPI_TEXT)
@@ -308,18 +305,18 @@ class AppearancePage(BasicOnboardingPage):
         set_enable_high_dpi_scaling(self.highdpiscaling.isChecked())
 
 
-BACKGROUND_SUBTITLE = """BLV2 can be kept alive in the background with a system tray icon.\
+BACKGROUND_SUBTITLE = """Blender Launcher can be kept alive in the background with a system tray icon.\
  This can be useful for reading efficiency and other features, but it is not totally necessary."""
 
 
 class BackgroundRunningPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle("Running BLV2 in the background")
+        self.setTitle("Running Blender Launcher in the background")
         self.setSubTitle(BACKGROUND_SUBTITLE)
         self.layout_ = QVBoxLayout(self)
 
-        self.enable_btn = QCheckBox("Run BLV2 in the background (Minimise to tray)")
+        self.enable_btn = QCheckBox("Run Blender Launcher in the background (Minimise to tray)")
         self.enable_btn.setChecked(get_show_tray_icon())
         self.layout_.addWidget(self.enable_btn)
 
