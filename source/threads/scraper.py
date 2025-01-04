@@ -270,6 +270,7 @@ class Scraper(QThread):
 
         update_stable_builds_cache(blender_version_api_data)
 
+        self.cache = ScraperCache.from_file_or_default(self.cache_path)
         self.manager.manager.clear()
 
     def get_download_links(self):
@@ -456,6 +457,7 @@ class Scraper(QThread):
         return BuildInfo(link, str(subversion), build_hash, commit_time, branch)
 
     def scrap_stable_releases(self, platform=None):
+        # Use for cache building only
         if self.build_cache and platform is not None:
             self.platform = platform
             self.cache_path = stable_cache_path().with_name(f"stable_builds_{platform}.json")
@@ -482,15 +484,14 @@ class Scraper(QThread):
             )
             return
 
-        # Convert string to Version
-        if not self.build_cache:
-            minimum_version_str = get_minimum_blender_stable_version()
-            if minimum_version_str == "None":
-                minimum_smver_version = Version(2, 48, 0)
-            else:
-                major, minor = minimum_version_str.split(".")
-                minimum_smver_version = Version(int(major), int(minor), 0)
+        minimum_version_str = get_minimum_blender_stable_version()
+        if minimum_version_str == "None":
+            minimum_smver_version = Version(2, 48, 0)
         else:
+            major, minor = minimum_version_str.split(".")
+            minimum_smver_version = Version(int(major), int(minor), 0)
+
+        if self.build_cache:
             minimum_smver_version = Version(2, 48, 0)
 
         cache_modified = False
