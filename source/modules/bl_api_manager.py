@@ -21,11 +21,8 @@ else:
 
 
 def update_local_api_files(data):
-    if not config_path.exists():
-        config_path.mkdir(parents=True)
-        logger.info(f"Created config directory in {config_path}")
-
     try:
+        config_path.mkdir(parents=True, exist_ok=True)
         with open(bl_api_path, "w") as f:
             json.dump(data, f, indent=4)
             logger.info(f"Updated API file in {bl_api_path}")
@@ -35,37 +32,39 @@ def update_local_api_files(data):
 
 
 def update_stable_builds_cache(data):
-    if not config_path.exists():
-        config_path.mkdir(parents=True)
-        logger.info(f"Created config directory in {config_path}")
-
-    # If data no data from the API have been retrieve, read from the internal API file
-    if data is None and internal_stable_build_path.is_file():
-        try:
-            with open(stable_build_path) as f:
+    try:
+        config_path.mkdir(parents=True, exist_ok=True)
+        if data is None and internal_stable_build_path.is_file():
+            logger.debug("Trying to read stable builds from internal file.")
+            with open(internal_stable_build_path) as f:
                 data = json.load(f)
-        except OSError as e:
-            logger.error(f"Failed to write API file: {e}")
-    if data is None:
-        logger.error("Unable to retrieve online build API data and no internal API file found.")
-        return
-    if not stable_build_path.is_file():
-        try:
-            with open(stable_build_path, "w") as f:
-                json.dump(data, f, indent=4)
-                logger.info(f"Create Build Cache file in {stable_build_path}")
-        except OSError as e:
-            logger.error(f"Failed to write API file: {e}")
-    else:
-        try:
-            with open(stable_build_path) as f:
-                current_data = json.load(f)
-                current_data.update(data)
-            with open(stable_build_path, "w") as f:
-                json.dump(current_data, f, indent=4)
-                logger.info(f"Updated Build Cache file in {stable_build_path}")
-        except OSError as e:
-            logger.error(f"Failed to write API file: {e}")
+        if data is None:
+            logger.critical("Fail to get build cache API data.")
+            return
+
+        if stable_build_path.is_file():
+            logger.debug("Reading build cache version from existing file.")
+            try:
+                with open(stable_build_path) as f:
+                    current_data = json.load(f)
+                    if current_data["api_file_version"] == data["api_file_version"]:
+                        logger.info("Current build cache version is up to date.")
+                        return
+                    elif current_data["api_file_version"] > data["api_file_version"]:
+                        logger.info("Current build cache version is newer than the one provided. Not updating.")
+                        return
+                    else:
+                        logger.info("Current build cache version is older than the one provided. Updating.")
+            except KeyError:
+                logger.error("Failed to read build cache version from existing file. Overwriting file.")
+
+        current_data = data
+
+        with open(stable_build_path, "w") as f:
+            json.dump(current_data, f, indent=1)
+            logger.info(f"Create or update stable builds cache file in {stable_build_path}")
+    except OSError as e:
+        logger.error(f"Failed to write stable builds cache: {e}")
 
 
 @lru_cache(maxsize=1)
