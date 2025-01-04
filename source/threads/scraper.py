@@ -538,6 +538,8 @@ class Scraper(QThread):
                 yield from self.scrap_download_links(urljoin(url, href), "stable")
 
         if cache_modified:
+            cache_path = self.cache_path
+
             if cache_path.is_file():
                 with open(cache_path) as f:
                     current_data = json.load(f)
@@ -545,16 +547,16 @@ class Scraper(QThread):
                     major, minor = map(int, file_ver.split("."))
                     minor += 1
                     new_file_ver = f"{major}.{minor}"
+                    logger.debug(f"Updating cache file version to {new_file_ver}")
             else:
                 new_file_ver = "0.1"
 
             cache_data = self.cache.to_dict()
             cache_data = {"api_file_version": new_file_ver, **cache_data}
-            cache_path = self.cache_path
 
             with cache_path.open("w", encoding="utf-8") as f:
                 json.dump(cache_data, f, indent=1)
-                logging.debug(f"Saved cache to {cache_path}")
+                logging.info(f"Saved updated cache to {cache_path}")
 
         r.release_conn()
         r.close()
