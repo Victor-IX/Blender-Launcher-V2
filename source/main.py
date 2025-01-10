@@ -61,7 +61,6 @@ file_handler = logging.handlers.RotatingFileHandler(
 file_handler.setFormatter(logging.Formatter(_format))
 file_handler.doRollover()
 
-file_handler = logging.FileHandler(cache_path.absolute() / "Blender Launcher.log")
 stream_handler = logging.StreamHandler(stream=sys.stdout)
 stream_handler.setFormatter(color_formatter)
 
