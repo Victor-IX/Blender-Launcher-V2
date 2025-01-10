@@ -19,7 +19,6 @@ from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, 
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
-from modules.string_utils import patch_note_cleaner
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_on_startup,
@@ -30,6 +29,7 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
+    get_first_time_setup_seen,
     get_last_time_checked_utc,
     get_launch_minimized_to_tray,
     get_library_folder,
@@ -54,10 +54,11 @@ from modules.settings import (
     set_library_folder,
     set_tray_icon_notified,
 )
+from modules.string_utils import patch_note_cleaner
 from modules.tasks import Task, TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, Signal, Slot
-from PySide6.QtNetwork import QLocalServer
 from PySide6.QtGui import QAction
+from PySide6.QtNetwork import QLocalServer
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -82,8 +83,9 @@ from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
-from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
+from windows.onboarding_window import OnboardingWindow
+from windows.popup_window import PopupIcon, PopupWindow
 from windows.settings_window import SettingsWindow
 
 try:
@@ -118,7 +120,14 @@ class BlenderLauncher(BaseWindow):
     quit_signal = Signal()
     quick_launch_fail_signal = Signal()
 
-    def __init__(self, app: QApplication, version: Version, offline: bool = False, build_cache: bool = False):
+    def __init__(
+        self,
+        app: QApplication,
+        version: Version,
+        offline: bool = False,
+        build_cache: bool = False,
+        force_first_time: bool = False,
+    ):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
@@ -194,19 +203,30 @@ class BlenderLauncher(BaseWindow):
             )
             dlg.cancelled.connect(self.__dont_show_resources_warning_again)
 
-        # Check library folder
+        if (not get_first_time_setup_seen()) or force_first_time:
+            self.onboarding_window = OnboardingWindow(version, self)
+            self.onboarding_window.accepted.connect(lambda: self.draw())
+            self.onboarding_window.cancelled.connect(self.app.quit)
+            self.onboarding_window.show()
+            return
+
+        # Double-check library folder
+        # This is necessary because sometimes the user can move/update the library_folder
+        # into an unknown state without them realizing. If we show the program without a
+        # valid library folder, then many things will break.
         if is_library_folder_valid() is False:
             self.dlg = PopupWindow(
                 parent=self,
                 title="Setup",
-                message="First, choose where Blender<br>builds will be stored",
+                message="Choose where Blender<br>builds will be stored",
                 buttons=["Continue"],
                 icon=PopupIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
-        else:
-            create_library_folders(get_library_folder())
-            self.draw()
+            return
+
+        create_library_folders(get_library_folder())
+        self.draw()
 
     def __dont_show_resources_warning_again(self):
         set_dont_show_resource_warning(True)
@@ -1160,9 +1180,9 @@ class BlenderLauncher(BaseWindow):
     def dropEvent(self, e):
         print(e.mimeData().text())
 
-    def restart_app(self):
+    def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
-        cwd = get_cwd()
+        cwd = cwd or get_cwd()
 
         if self.platform == "Windows":
             exe = (cwd / "Blender Launcher.exe").as_posix()

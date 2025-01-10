@@ -17,7 +17,7 @@ def error(parser: ArgumentParser, msg: str):
             title="Error",
             message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
             icon=PopupIcon.WARNING,
-            button="Quit",
+            buttons=["Quit"],
             app=app,
         ).show()
         sys.exit(app.exec())
