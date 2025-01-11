@@ -111,7 +111,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.warning_label = QLabel(self)
         if get_platform() == "Windows":
             self.warning_label.setText(PERM_WARNING_LABEL_WINDOWS)
-        else: 
+        else:
             self.warning_label.setText(PERM_WARNING_LABEL_LINUX)
 
         self.warning_label.setWordWrap(True)
@@ -137,6 +137,10 @@ class ChooseLibraryPage(BasicOnboardingPage):
         if is_frozen() and self.move_exe.isChecked():  # move the executable to the library location
             exe = pth / self.prop_settings.exe_location.name
             self.prop_settings.exe_location = exe
+
+            if exe.absolute() == sys.executable:
+                return
+
             self.prop_settings.exe_changed = True
             exe.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(sys.executable, exe)
@@ -230,7 +234,6 @@ class ShortcutsPage(BasicOnboardingPage):
             self.layout_.insertWidget(0, self.addtostart)
             self.layout_.insertWidget(1, self.addtodesk)
             self.layout_.insertSpacing(2, 40)
-
 
         self.layout_.addWidget(self.use_file_associations)
         self.layout_.addWidget(self.explanation_label)
