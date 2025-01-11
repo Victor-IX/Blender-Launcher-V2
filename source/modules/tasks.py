@@ -40,7 +40,8 @@ class TaskQueue(deque[Task]):
 
         def update_listener_dct(item, w=w):
             self.workers[w] = item
-            logging.debug(f"{w}: {item!r}")
+            if item is not None:
+                logging.debug(f"{w}: {item!r}")
 
         w.item_changed.connect(update_listener_dct)
         if readd_on_crash:
@@ -74,7 +75,8 @@ class TaskQueue(deque[Task]):
         for worker, item in list(self.workers.items()):
             if worker.isRunning():
                 worker.fullstop()
-                logging.debug(f"Stopped {worker} {item}")
+                if item is not None:
+                    logging.debug(f"Stopped {worker} {item}")
 
 
 class TaskWorker(QThread):
