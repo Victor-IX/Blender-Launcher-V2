@@ -1,0 +1,43 @@
+name: Manual Ubuntu Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5.0.0
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: |
+          echo "Venv setup"
+          python3 -m venv .venv
+          source ./.venv/bin/activate
+          echo "Installing dependencies"
+          pip install -e ./
+          echo "Building style"
+          python build_style.py
+          echo "Building Linux"
+          cd ./scripts/
+          sh ./build_linux.sh
+      - name: Get Latest Tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+      - name: Zipping
+        run: |
+          echo "Zipping to Blender_Launcher_${{ env.LATEST_TAG }}_Ubuntu_x64.zip"
+          cd ./dist/release/
+          zip Blender_Launcher_${{ env.LATEST_TAG }}_Ubuntu_x64.zip "./Blender Launcher"
+      - name: Upload to Latest Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ env.LATEST_TAG }}" ./dist/release/Blender_Launcher_"${{ env.LATEST_TAG }}"_Ubuntu_x64.zip
