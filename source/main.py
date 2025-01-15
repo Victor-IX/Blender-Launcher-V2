@@ -41,7 +41,7 @@ version = Version(
     2,
     4,
     0,
-    prerelease="rc.3",
+    prerelease="rc.4",
 )
 
 _ = gettext.gettext
@@ -211,7 +211,13 @@ def main():
 
     app.setQuitOnLastWindowClosed(False)
 
-    BlenderLauncher(app=app, version=version, offline=args.offline, build_cache=args.build_cache, force_first_time=args.force_first_time)
+    BlenderLauncher(
+        app=app,
+        version=version,
+        offline=args.offline,
+        build_cache=args.build_cache,
+        force_first_time=args.force_first_time,
+    )
     sys.exit(app.exec())
 
 
