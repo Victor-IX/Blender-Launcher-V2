@@ -547,7 +547,10 @@ class Scraper(QThread):
                         current_data = json.load(f)
                         file_ver = current_data.get("api_file_version", "0.1")
                         major, minor = map(int, file_ver.split("."))
-                        minor += 1
+                        if self.build_cache:
+                            major += 1
+                        else:
+                            minor += 1
                         new_file_ver = f"{major}.{minor}"
                         logger.debug(f"Updating cache file version to {new_file_ver}")
                 except json.JSONDecodeError:

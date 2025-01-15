@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import subprocess
 
 if sys.platform == "win32":
     source_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Blender Launcher")
@@ -22,25 +23,36 @@ for source_file, destination_file in files.items():
     destination_file_path = os.path.join(destination_dir, destination_file)
 
     if os.path.exists(source_file_path):
-        with open(source_file_path, "r") as src_file:
-            source_data = json.load(src_file)
+        try:
+            with open(source_file_path, "r") as src_file:
+                source_data = json.load(src_file)
 
-        if os.path.exists(destination_file_path):
-            with open(destination_file_path, "r") as dest_file:
-                destination_data = json.load(dest_file)
+            if os.path.exists(destination_file_path):
+                with open(destination_file_path, "r") as dest_file:
+                    destination_data = json.load(dest_file)
 
-            version = destination_data.get("api_file_version", "1.0")
-            major_version = int(version.split(".")[0]) + 1
-            destination_data["api_file_version"] = f"{major_version}.0"
+                version = destination_data.get("api_file_version", "1.0")
+                major_version = int(version.split(".")[0]) + 1
+                destination_data["api_file_version"] = f"{major_version}.0"
 
-            destination_data.update(source_data)
-        else:
-            destination_data = source_data
-            destination_data["api_file_version"] = "1.0"
+                destination_data.update(source_data)
+            else:
+                destination_data = source_data
+                destination_data["api_file_version"] = "1.0"
 
-        with open(destination_file_path, "w") as dest_file:
-            json.dump(destination_data, dest_file, indent=4)
+            with open(destination_file_path, "w") as dest_file:
+                json.dump(destination_data, dest_file, indent=4)
 
-        print(f"Updated {source_file_path} in {destination_dir}")
+            # Use git to check if the file has been modified (not only the file verison)
+            result = subprocess.run(["git", "diff", "--numstat", destination_file_path], capture_output=True, text=True)
+            modified_lines = sum(int(line.split()[0]) for line in result.stdout.splitlines())
+
+            if modified_lines <= 1:
+                subprocess.run(["git", "checkout", "--", destination_file_path])
+                print(f"Reverted changes in {destination_file_path}, no new vesrion.")
+            else:
+                print(f"Updated {source_file_path} in {destination_dir}")
+        except Exception as e:
+            print(f"Failed to update {destination_file_path}: {e}")
     else:
         print(f"{source_file_path} does not exist in the source directory")
