@@ -40,7 +40,11 @@ jobs:
           git config user.name "Blender Launcher"
           git config user.email "Blender-Launcher[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Update cache files" || echo "No changes to commit"
+          git commit -m "Update cache files" --allow-empty
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
       - name: Push Changes
         run: |
           git push --set-upstream origin main || echo "Push failed"
