@@ -84,9 +84,12 @@ class WelcomePage(BasicOnboardingPage):
     def evaluate(self): ...
 
 
-PERM_WARNING_LABEL_WINDOWS = "Warning: Do not use C:/Program Files/... as your library location or anywhere else you may not have permissions"
-PERM_WARNING_LABEL_LINUX = "Warning: Do not use /bin as your library location or anywhere else you may not have permissions"
-
+PERM_WARNING_LABEL_WINDOWS = (
+    "Warning: Do not use C:/Program Files/... as your library location or anywhere else you may not have permissions"
+)
+PERM_WARNING_LABEL_LINUX = (
+    "Warning: Do not use /bin as your library location or anywhere else you may not have permissions"
+)
 
 
 class ChooseLibraryPage(BasicOnboardingPage):
@@ -116,8 +119,6 @@ class ChooseLibraryPage(BasicOnboardingPage):
 
         self.warning_label.setWordWrap(True)
 
-        if get_platform() == "Windows":
-            self.layout_.addWidget(self.warning_label)
         self.layout_ = QVBoxLayout(self)
         self.layout_.addWidget(self.warning_label)
         self.layout_.addWidget(QLabel("Library location:", self))
