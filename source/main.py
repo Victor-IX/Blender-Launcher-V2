@@ -53,13 +53,16 @@ if not cache_path.is_dir():
     cache_path.mkdir()
 color_formatter = ColoredFormatter(_format)
 
-file_handler = logging.handlers.RotatingFileHandler(
-    cache_path.absolute() / "Blender Launcher.log",
-    maxBytes=10 * 1024 * 1024,  # 10 MB
-    backupCount=2,
-)
-file_handler.setFormatter(logging.Formatter(_format))
-file_handler.doRollover()
+try:
+    file_handler = logging.handlers.RotatingFileHandler(
+        cache_path.absolute() / "Blender Launcher.log",
+        maxBytes=10 * 1024 * 1024,  # 10 MB
+        backupCount=2,
+    )
+    file_handler.setFormatter(logging.Formatter(_format))
+    file_handler.doRollover()
+except PermissionError:
+    file_handler = logging.FileHandler(cache_path.absolute() / "Blender Launcher.log")
 
 stream_handler = logging.StreamHandler(stream=sys.stdout)
 stream_handler.setFormatter(color_formatter)
