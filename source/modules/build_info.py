@@ -4,6 +4,7 @@ import json
 import logging
 import re
 import sys
+import shlex
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cache
@@ -491,7 +492,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
     elif platform == "macOS":
         b3d_exe = Path(info.link) / "Blender" / "Blender.app"
-        args = f"open -W -n {b3d_exe.as_posix()} --args"
+        args = f"open -W -n {shlex.quote(b3d_exe.as_posix())} --args"
 
     if launch_mode is not None:
         if isinstance(launch_mode, LaunchWithBlendFile):
