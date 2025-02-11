@@ -5,6 +5,7 @@ import contextlib
 import json
 import logging
 import re
+import sys
 from datetime import datetime, timezone
 from itertools import chain
 from pathlib import Path, PurePosixPath
@@ -540,26 +541,35 @@ class Scraper(QThread):
         if cache_modified:
             cache_path = self.cache_path
             new_file_ver = "0.1"
+            # Get Local API file instead of the generated one
+            # TODO: Make a function to get app file path if not already done
+            if self.build_cache:
+                cache_path = (
+                    Path(sys._MEIPASS) / f"files/stable_builds_api_{get_platform().lower()}.json"
+                    if getattr(sys, "frozen", False)
+                    else Path(f"source/resources/api/stable_builds_api_{get_platform().lower()}.json").resolve()
+                )
+                new_file_ver = "1.0"
 
-            if cache_path.is_file():
-                try:
-                    with open(cache_path) as f:
-                        current_data = json.load(f)
-                        file_ver = current_data.get("api_file_version", "0.1")
-                        major, minor = map(int, file_ver.split("."))
-                        if self.build_cache:
-                            major += 1
-                        else:
-                            minor += 1
-                        new_file_ver = f"{major}.{minor}"
-                        logger.debug(f"Updating cache file version to {new_file_ver}")
-                except json.JSONDecodeError:
-                    logger.error("Failed to read api_file_version file. Using default 0.1")
-                except ValueError:
-                    logger.error("Invalid api_file_version version format. Using default 0.1")
-                except Exception as e:
-                    logger.error(f"Failed to read api_file_version version, using default 0.1: {e}")
+            try:
+                with open(cache_path) as f:
+                    current_data = json.load(f)
+                    file_ver = current_data.get("api_file_version", "0.0")
+                    major, minor = map(int, file_ver.split("."))
+                    if self.build_cache:
+                        major += 1
+                    else:
+                        minor += 1
+                    new_file_ver = f"{major}.{minor}"
+                    logger.debug(f"Updating cache file version to {new_file_ver}")
+            except json.JSONDecodeError:
+                logger.error("Failed to read api_file_version file. Using default 0.1")
+            except ValueError:
+                logger.error("Invalid api_file_version version format. Using default 0.1")
+            except Exception as e:
+                logger.error(f"Failed to read api_file_version version, using default 0.1: {e}")
 
+            cache_path = self.cache_path
             cache_data = self.cache.to_dict()
             cache_data = {"api_file_version": new_file_ver, **cache_data}
 
