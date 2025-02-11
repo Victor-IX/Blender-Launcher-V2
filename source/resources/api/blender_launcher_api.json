@@ -1,6 +1,8 @@
 {
-  "api_file_version": "1.0",
+  "api_file_version": "2.0",
   "blender_versions": {
+    "4.5": "LTS",
+    "4.4": "non-LTS",
     "4.3": "non-LTS",
     "4.2": "LTS",
     "4.1": "non-LTS",
