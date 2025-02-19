@@ -22,7 +22,7 @@ jobs:
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: VictorIX.BlenderLauncher
-          installers-regex: '^Blender_Launcher_v[\d\.]+_Windows_x64\.zip$'
+          installers-regex: '^Blender\_Launcher\_v[\d\.]+\_Windows\_x64\.zip$'
           version: ${{ env.WINGET_TAG_NAME }}
           release-tag: ${{ inputs.tag_name || github.event.release.tag_name }}
           token: ${{ secrets.WINGET_ACC_TOKEN }}
