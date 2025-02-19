@@ -14,6 +14,8 @@ from semver import Version
 if TYPE_CHECKING:
     from pathlib import Path
 
+logger = logging.getLogger()
+
 # Template of stable response for reference:
 STABLE_TEMPLATE = """
 <html>
@@ -72,10 +74,10 @@ class ScraperCache:
         try:
             with file.open(encoding="utf-8") as f:
                 cache = json.load(f)
-                logging.debug(f"Loaded cache from {file!r}")
+                logger.debug(f"Loaded cache from {file!r}")
                 return cls.from_dict(cache)
         except (json.decoder.JSONDecodeError, FileNotFoundError, OSError) as e:
-            logging.error(f"Failed to load cache {file}: {e}")
+            logger.exception(f"Failed to load cache {file}: {e}")
             return None
 
     @classmethod

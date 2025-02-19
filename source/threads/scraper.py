@@ -87,7 +87,7 @@ def get_tag(
         try:
             parsed_data = json.loads(r.data)
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse pre-release tag JSON data: {e}")
+            logger.exception(f"Failed to parse pre-release tag JSON data: {e}")
             return None
 
         platform = get_platform()
@@ -145,7 +145,7 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> str | None
     try:
         data = json.loads(r.data)
     except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse {file} API JSON data: {e}")
+        logger.exception(f"Failed to parse {file} API JSON data: {e}")
         return None
 
     file_content = data.get("content")
@@ -158,7 +158,7 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> str | None
             logger.info(f"API data form {file} have been loaded successfully")
             return json_data
         except (base64.binascii.Error, json.JSONDecodeError) as e:
-            logger.error(f"Failed to decode or parse JSON data: {e}")
+            logger.exception(f"Failed to decode or parse JSON data: {e}")
             return None
     else:
         logger.error(f"Failed to load API data from {file} or unsupported encoding.")
@@ -183,7 +183,7 @@ def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> 
         logger.info(f"Latest patch note found")
         return patch_note
     except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse release notes JSON data: {e}")
+        logger.exception(f"Failed to parse release notes JSON data: {e}")
         return None
 
 
@@ -463,7 +463,7 @@ class Scraper(QThread):
             self.platform = platform
             self.cache_path = stable_cache_path().with_name(f"stable_builds_{platform}.json")
             self.cache = ScraperCache.from_file_or_default(self.cache_path)
-            print(f"Scraping stable releases for {platform}")
+            logging.debug(f"Scraping stable releases for {platform}")
 
         url = "https://download.blender.org/release/"
         r = self.manager.request("GET", url)
@@ -563,11 +563,11 @@ class Scraper(QThread):
                     new_file_ver = f"{major}.{minor}"
                     logger.debug(f"Updating cache file version to {new_file_ver}")
             except json.JSONDecodeError:
-                logger.error("Failed to read api_file_version file. Using default 0.1")
+                logger.exception("Failed to read api_file_version file. Using default 0.1")
             except ValueError:
-                logger.error("Invalid api_file_version version format. Using default 0.1")
+                logger.exception("Invalid api_file_version version format. Using default 0.1")
             except Exception as e:
-                logger.error(f"Failed to read api_file_version version, using default 0.1: {e}")
+                logger.exception(f"Failed to read api_file_version version, using default 0.1: {e}")
 
             cache_path = self.cache_path
             cache_data = self.cache.to_dict()

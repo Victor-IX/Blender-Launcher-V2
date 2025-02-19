@@ -93,7 +93,7 @@ try:
 
     HOTKEYS_AVAILABLE = True
 except Exception as e:
-    logging.error(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
+    logging.exception(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
     HOTKEYS_AVAILABLE = False
 
 

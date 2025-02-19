@@ -4,7 +4,7 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-from modules._platform import get_config_path, get_cwd, get_platform
+from modules._platform import get_config_path, get_platform
 
 logger = logging.getLogger()
 
@@ -28,7 +28,7 @@ def update_local_api_files(data):
             logger.info(f"Updated API file in {bl_api_path}")
         read_bl_api.cache_clear()
     except OSError as e:
-        logger.error(f"Failed to write API file: {e}")
+        logger.exception(f"Failed to write API file: {e}")
 
 
 def update_stable_builds_cache(data):
@@ -51,12 +51,12 @@ def update_stable_builds_cache(data):
                         logger.info("Current build cache version is up to date.")
                         return
                     elif current_data["api_file_version"] > data["api_file_version"]:
-                        logger.info("Current build cache version is newer than the one provided. Not updating.")
+                        logger.info("Current build cache version is newer than the local one. Not updating.")
                         return
                     else:
-                        logger.info("Current build cache version is older than the one provided. Updating.")
+                        logger.info("Current build cache version is older than the local one. Updating.")
             except KeyError:
-                logger.error("Failed to read build cache version from existing file. Overwriting file.")
+                logger.exception("Failed to read build cache version from existing file. Overwriting file.")
 
         current_data = data
 
@@ -64,7 +64,7 @@ def update_stable_builds_cache(data):
             json.dump(current_data, f, indent=1)
             logger.info(f"Create or update stable builds cache file in {stable_build_path}")
     except OSError as e:
-        logger.error(f"Failed to write stable builds cache: {e}")
+        logger.exception(f"Failed to write stable builds cache: {e}")
 
 
 @lru_cache(maxsize=1)

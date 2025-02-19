@@ -10,6 +10,8 @@ from modules.task import Task
 from PySide6.QtCore import Signal
 from urllib3.exceptions import MaxRetryError
 
+logger = logging.getLogger()
+
 
 @dataclass
 class DownloadTask(Task):
@@ -28,7 +30,7 @@ class DownloadTask(Task):
             with self.manager.request("GET", self.link, preload_content=False, timeout=10) as r:
                 self._download(r, dist)
         except MaxRetryError as e:
-            logging.error(e)
+            logger.exception(f"Requesting is taking longer than usual! {e}")
             self.message.emit("Requesting is taking longer than usual! see debug logs for more.", MessageType.ERROR)
             with self.manager.request("GET", self.link, preload_content=False) as r:
                 self._download(r, dist)

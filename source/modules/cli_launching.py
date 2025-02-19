@@ -89,11 +89,11 @@ def cli_launch(
         # Enter which build to launch?
         while True:
             try:
-                choice = int(input(f"\nEnter the number of the build you want to launch (0-{len(matches)-1}): "))
+                choice = int(input(f"\nEnter the number of the build you want to launch (0-{len(matches) - 1}): "))
                 if 0 <= choice < len(matches):
                     break
             except ValueError:
-                print("Invalid input!")
+                logger.exception("Invalid input!")
 
         build = matches[choice]
         build_info = basics[build]

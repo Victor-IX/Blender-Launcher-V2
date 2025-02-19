@@ -278,7 +278,7 @@ class ShortcutsPage(BasicOnboardingPage):
                     except Exception as e:
                         exceptions.append(e)
                 if len(exceptions) == len(typical_paths):  # all paths failed to generate
-                    raise Exception("Exceptions raised while generating desktop shortcuts: {exceptions}")
+                    raise Exception(f"Exceptions raised while generating desktop shortcuts: {exceptions}")
 
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""
