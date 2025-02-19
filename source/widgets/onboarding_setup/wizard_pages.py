@@ -189,7 +189,6 @@ Our default location is typically searched by DEs for application entries.
 REGISTRY_KEY_EXPLAIN = r"""The Following keys will be changed:
 CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
 UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With..." list
-UPDATE Software\Classes\.blend1\OpenWithProgids -- To add the launcher to the .blend1 "Open With..." list
 CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when Blender Launcher is the default application
 These will be deleted/downgraded when you unregister the launcher"""
 
