@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from shutil import copyfile
 
-from modules._platform import get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules._platform import get_cache_path, get_cwd, get_platform, is_frozen
 from modules.icons import get_bl_file_location
 from modules.settings import get_library_folder
 
@@ -105,21 +105,13 @@ def register_windows_filetypes(exe=sys.executable):
         winreg.SetValueEx(command_key, "", 0, winreg.REG_SZ, f'{pth} "%1"')
         logging.debug("Registered blenderlauncherv2.blend")
 
-    # add it to the OpenWithProgids list
+    # add it to the OpenWithProgids list for .blend
     with winreg.CreateKey(
         winreg.HKEY_CURRENT_USER,
         r"Software\Classes\.blend\OpenWithProgids",
     ) as progids_key:
         winreg.SetValueEx(progids_key, "blenderlauncherv2.blend", 0, winreg.REG_SZ, "")
         logging.debug(r"Added blenderlauncherv2.blend to .blend\OpenWithProgids")
-
-    # add it to the OpenWithProgids list for .blend1
-    with winreg.CreateKey(
-        winreg.HKEY_CURRENT_USER,
-        r"Software\Classes\.blend1\OpenWithProgids",
-    ) as progids_key:
-        winreg.SetValueEx(progids_key, "blenderlauncherv2.blend", 0, winreg.REG_SZ, "")
-        logging.debug(r"Added blenderlauncherv2.blend to .blend1\OpenWithProgids")
 
     # Extract and save the bl_file.ico
     file_icon_path = get_bl_file_location()
@@ -170,6 +162,7 @@ def unregister_windows_filetypes():
         logging.debug("Deleted value blenderlauncherv2.blend from .blend\\OpenWithProgids")
 
     # remove it from the OpenWithProgids list for .blend1
+    # we need to keep this for deprecation purposes
     with (
         winreg.OpenKeyEx(
             winreg.HKEY_CURRENT_USER,

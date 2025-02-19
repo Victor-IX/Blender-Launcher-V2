@@ -48,11 +48,11 @@ If this option is enabled, to completely close the **Blender Launcher** you need
 
 #### Register File Association
 
-:   Add Blender Launcher as the Default program to open `.blend` and `.blend1` files
+:   Add Blender Launcher as the Default program to open `.blend`
 
 #### Unregister File Association
 
-:   Remove the Blender Launcher as the Default program to open `.blend` and `.blend1` files
+:   Remove the Blender Launcher as the Default program to open `.blend`
 
 #### Launch Time Duration
 

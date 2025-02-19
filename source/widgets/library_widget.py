@@ -399,7 +399,9 @@ class LibraryWidget(BaseBuildWidget):
             and mime_data.hasUrls()
             and mime_data.hasFormat("text/uri-list")
             and all(
-                url.isLocalFile() and Path(url.fileName()).suffix in (".blend", ".blend1") for url in mime_data.urls()
+                url.isLocalFile()
+                and Path(url.fileName()).suffix in (".blend", ".blend1", ".blend2", ".blend3", ".blend4")
+                for url in mime_data.urls()
             )
         ):
             self.setStyleSheet("background-color: #4EA13A")
