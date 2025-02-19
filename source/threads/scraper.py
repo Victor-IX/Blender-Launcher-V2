@@ -395,7 +395,7 @@ class Scraper(QThread):
             self.regex_filter()
 
         for tag in soup.find_all(limit=_limit, href=self.b3d_link):
-            build_info = self.new_blender_build(tag, url, branch_type)
+            build_info = self.new_blender_build(tag, url, branch_type, content)
 
             if build_info is not None:
                 yield build_info
@@ -403,17 +403,22 @@ class Scraper(QThread):
         r.release_conn()
         r.close()
 
-    def new_blender_build(self, tag, url, branch_type):
+    def new_blender_build(self, tag, url, branch_type, content):
         link = urljoin(url, tag["href"]).rstrip("/")
-        r = self.manager.request("HEAD", link)
 
-        if r is None:
-            return None
+        # Get commit time from content instead of creating a new request for each build
+        pattern = re.compile(r'href="[^"]*' + re.escape(tag["href"]) + r'"')
 
-        if r.status != 200:
-            return None
+        for line in content.decode("utf-8").splitlines():
+            if pattern.search(line):
+                time_pattern = r"(\d{1,2}-\w{3}-\d{4})\s+(\d{2}:\d{2})"
+                match = re.search(time_pattern, line)
+                if match:
+                    date = match.group(1)
+                    time = match.group(2)
+                    datetime_str = f"{date} {time} GMT"
+                    commit_time = dateparser.parse(datetime_str).astimezone()
 
-        info = r.headers
         build_hash: str | None = None
         stem = Path(link).stem
         match = re.findall(self.hash, stem)
@@ -452,9 +457,6 @@ class Scraper(QThread):
             if self.architecture == "x64" and "x64" not in link:
                 return None
 
-        commit_time = dateparser.parse(info["last-modified"]).astimezone()
-        r.release_conn()
-        r.close()
         return BuildInfo(link, str(subversion), build_hash, commit_time, branch)
 
     def scrap_stable_releases(self, platform=None):
