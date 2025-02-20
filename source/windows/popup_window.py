@@ -1,3 +1,5 @@
+import textwrap
+
 from enum import Enum
 from typing import List, Optional
 
@@ -68,8 +70,17 @@ class PopupWindow(BaseWindow):
         else:
             self.IconLabel.hide()
 
-        message_label = QLabel(message)
-        message_label.setWordWrap(True)
+        # Wrap the message text manually, using message_label.setWordWrap(True) don't work as expected for some reason
+        wrapped_lines = []
+        for line in message.splitlines():
+            if not line.strip():
+                wrapped_lines.append("")
+            else:
+                wrapped = textwrap.wrap(line, width=70)
+                wrapped_lines.extend(wrapped)
+        wrapped_message = "\n".join(wrapped_lines)
+
+        message_label = QLabel(wrapped_message)
 
         self.TextLayout = QHBoxLayout()
         self.TextLayout.setContentsMargins(4, 4, 6, 0)
