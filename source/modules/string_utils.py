@@ -32,6 +32,16 @@ def patch_note_cleaner(patch_note_text: str) -> str:
     text = markdown_to_text(text)
     text = re.sub(r":\n\n", ":\n", text)  # Remove double newlines after colons
     lines = text.splitlines()
+    lines = [line for line in lines if line.strip() != ""]
+
+    # Add space after "What's Changed" header
     if lines[0].startswith("What's Changed"):
-        lines = lines[1:]
+        if len(lines) == 1 or lines[1].strip() != "":
+            lines.insert(1, "")
+
+    # Add space after colon
+    for i in range(len(lines) - 1, -1, -1):
+        if lines[i].endswith(":") and lines[i - 1] != "":
+            lines.insert(i, "")
+
     return "\n".join(lines)
