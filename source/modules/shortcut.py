@@ -10,6 +10,7 @@ from modules.icons import get_bl_file_location
 from modules.settings import get_library_folder
 
 
+# TODO: Remove this duplicate code generate_program_shortcut()
 def create_shortcut(folder, name):
     platform = get_platform()
     library_folder = Path(get_library_folder())

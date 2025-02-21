@@ -255,29 +255,23 @@ class ShortcutsPage(BasicOnboardingPage):
                 register_windows_filetypes(exe=str(self.prop_settings.exe_location))
 
         elif self.platform == "Windows":
+            from win32comext.shell import shell, shellcon
+
             if self.addtostart.isChecked():
                 generate_program_shortcut(
                     get_default_shortcut_destination(),
                     exe=str(self.prop_settings.exe_location),
                 )
             if self.addtodesk.isChecked():
-                # TODO: Consider using platformdirs to find the exact path
-                typical_paths = [
-                    Path("~/Desktop/Blender Launcher V2").expanduser(),
-                    Path("~/OneDrive/Desktop/Blender Launcher V2").expanduser(),
-                ]
-                exceptions = []
-                for pth in typical_paths:
-                    try:
-                        generate_program_shortcut(
-                            pth,
-                            exe=str(self.prop_settings.exe_location),
-                        )
-                        break
-                    except Exception as e:
-                        exceptions.append(e)
-                if len(exceptions) == len(typical_paths):  # all paths failed to generate
-                    raise Exception(f"Exceptions raised while generating desktop shortcuts: {exceptions}")
+                desktop = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
+
+                try:
+                    generate_program_shortcut(
+                        desktop,
+                        exe=str(self.prop_settings.exe_location),
+                    )
+                except Exception as e:
+                    raise Exception(f"Exceptions raised while generating desktop shortcuts: {e}")
 
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""
