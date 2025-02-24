@@ -1,5 +1,5 @@
 {
-    "api_file_version": "3.0",
+    "api_file_version": "4.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -12,7 +12,7 @@
                                 "branch": "stable",
                                 "subversion": "2.48.0-a",
                                 "build_hash": null,
-                                "commit_time": "2008-11-02T15:21:30+00:00",
+                                "commit_time": "2008-11-02T15:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -42,7 +42,7 @@
                                 "branch": "stable",
                                 "subversion": "2.53.0-beta",
                                 "build_hash": null,
-                                "commit_time": "2010-07-22T13:51:34+00:00",
+                                "commit_time": "2010-07-22T13:51:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -64,7 +64,7 @@
                                 "branch": "stable",
                                 "subversion": "2.54.0-beta",
                                 "build_hash": null,
-                                "commit_time": "2010-09-11T21:28:17+00:00",
+                                "commit_time": "2010-09-11T21:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -108,7 +108,7 @@
                                 "branch": "stable",
                                 "subversion": "2.56.0-beta",
                                 "build_hash": null,
-                                "commit_time": "2010-12-30T18:06:25+00:00",
+                                "commit_time": "2010-12-30T18:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -130,7 +130,7 @@
                                 "branch": "stable",
                                 "subversion": "2.57.0",
                                 "build_hash": null,
-                                "commit_time": "2011-04-13T16:36:50+00:00",
+                                "commit_time": "2011-04-13T16:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -147,7 +147,7 @@
                                 "branch": "stable",
                                 "subversion": "2.57.0-a",
                                 "build_hash": null,
-                                "commit_time": "2011-04-22T08:58:07+00:00",
+                                "commit_time": "2011-04-22T08:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -164,7 +164,7 @@
                                 "branch": "stable",
                                 "subversion": "2.57.0-b",
                                 "build_hash": null,
-                                "commit_time": "2011-04-26T15:56:58+00:00",
+                                "commit_time": "2011-04-26T15:56:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -186,7 +186,7 @@
                                 "branch": "stable",
                                 "subversion": "2.58.0",
                                 "build_hash": null,
-                                "commit_time": "2011-06-21T21:28:07+00:00",
+                                "commit_time": "2011-06-21T21:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -203,7 +203,7 @@
                                 "branch": "stable",
                                 "subversion": "2.58.0-a",
                                 "build_hash": null,
-                                "commit_time": "2011-07-03T20:06:39+00:00",
+                                "commit_time": "2011-07-03T20:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -225,7 +225,7 @@
                                 "branch": "stable",
                                 "subversion": "2.59.0",
                                 "build_hash": null,
-                                "commit_time": "2011-08-13T08:48:03+00:00",
+                                "commit_time": "2011-08-13T08:48:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -247,7 +247,7 @@
                                 "branch": "stable",
                                 "subversion": "2.60.0",
                                 "build_hash": null,
-                                "commit_time": "2011-10-19T00:50:39+00:00",
+                                "commit_time": "2011-10-19T00:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -264,7 +264,7 @@
                                 "branch": "stable",
                                 "subversion": "2.60.0-a",
                                 "build_hash": null,
-                                "commit_time": "2011-10-24T07:58:32+00:00",
+                                "commit_time": "2011-10-24T07:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -286,7 +286,7 @@
                                 "branch": "stable",
                                 "subversion": "2.61.0-release",
                                 "build_hash": null,
-                                "commit_time": "2011-12-14T11:38:52+00:00",
+                                "commit_time": "2011-12-14T11:38:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -308,7 +308,7 @@
                                 "branch": "stable",
                                 "subversion": "2.62.0-release",
                                 "build_hash": null,
-                                "commit_time": "2012-02-16T07:02:33+00:00",
+                                "commit_time": "2012-02-16T07:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -330,7 +330,7 @@
                                 "branch": "stable",
                                 "subversion": "2.63.0-release",
                                 "build_hash": null,
-                                "commit_time": "2012-04-26T22:19:20+00:00",
+                                "commit_time": "2012-04-26T22:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -347,7 +347,7 @@
                                 "branch": "stable",
                                 "subversion": "2.63.0-a",
                                 "build_hash": null,
-                                "commit_time": "2012-05-10T10:29:44+00:00",
+                                "commit_time": "2012-05-10T10:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -369,7 +369,7 @@
                                 "branch": "stable",
                                 "subversion": "2.64.0-release",
                                 "build_hash": null,
-                                "commit_time": "2012-10-03T15:22:19+00:00",
+                                "commit_time": "2012-10-03T15:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -386,7 +386,7 @@
                                 "branch": "stable",
                                 "subversion": "2.64.0-a",
                                 "build_hash": null,
-                                "commit_time": "2012-10-09T20:13:26+00:00",
+                                "commit_time": "2012-10-09T20:13:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -408,7 +408,7 @@
                                 "branch": "stable",
                                 "subversion": "2.65.0-release",
                                 "build_hash": null,
-                                "commit_time": "2012-12-10T18:52:15+00:00",
+                                "commit_time": "2012-12-10T18:52:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -425,7 +425,7 @@
                                 "branch": "stable",
                                 "subversion": "2.65.0-a",
                                 "build_hash": null,
-                                "commit_time": "2012-12-20T00:06:26+00:00",
+                                "commit_time": "2012-12-20T00:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -447,7 +447,7 @@
                                 "branch": "stable",
                                 "subversion": "2.66.0",
                                 "build_hash": null,
-                                "commit_time": "2013-02-20T18:48:54+00:00",
+                                "commit_time": "2013-02-20T18:48:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -464,7 +464,7 @@
                                 "branch": "stable",
                                 "subversion": "2.66.0-a",
                                 "build_hash": null,
-                                "commit_time": "2013-03-06T18:08:54+00:00",
+                                "commit_time": "2013-03-06T18:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -486,7 +486,7 @@
                                 "branch": "stable",
                                 "subversion": "2.67.0",
                                 "build_hash": null,
-                                "commit_time": "2013-05-07T17:56:57+00:00",
+                                "commit_time": "2013-05-07T17:56:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -503,7 +503,7 @@
                                 "branch": "stable",
                                 "subversion": "2.67.0-a",
                                 "build_hash": null,
-                                "commit_time": "2013-05-21T14:40:49+00:00",
+                                "commit_time": "2013-05-21T14:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -520,7 +520,7 @@
                                 "branch": "stable",
                                 "subversion": "2.67.0-b",
                                 "build_hash": null,
-                                "commit_time": "2013-05-30T14:00:21+00:00",
+                                "commit_time": "2013-05-30T14:00:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -542,7 +542,7 @@
                                 "branch": "stable",
                                 "subversion": "2.68.0",
                                 "build_hash": null,
-                                "commit_time": "2013-07-18T13:53:39+00:00",
+                                "commit_time": "2013-07-18T13:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -559,7 +559,7 @@
                                 "branch": "stable",
                                 "subversion": "2.68.0-a",
                                 "build_hash": null,
-                                "commit_time": "2013-07-23T13:16:59+00:00",
+                                "commit_time": "2013-07-23T13:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -581,7 +581,7 @@
                                 "branch": "stable",
                                 "subversion": "2.69.0",
                                 "build_hash": null,
-                                "commit_time": "2013-10-30T17:29:40+00:00",
+                                "commit_time": "2013-10-30T17:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -603,7 +603,7 @@
                                 "branch": "stable",
                                 "subversion": "2.70.0",
                                 "build_hash": "vc2013_previ",
-                                "commit_time": "2014-03-19T07:50:51+00:00",
+                                "commit_time": "2014-03-19T07:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -620,7 +620,7 @@
                                 "branch": "stable",
                                 "subversion": "2.70.0",
                                 "build_hash": null,
-                                "commit_time": "2014-03-19T20:41:21+00:00",
+                                "commit_time": "2014-03-19T20:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -637,7 +637,7 @@
                                 "branch": "stable",
                                 "subversion": "2.70.0-a",
                                 "build_hash": "vc2013_previ",
-                                "commit_time": "2014-04-10T14:59:32+00:00",
+                                "commit_time": "2014-04-10T14:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -654,7 +654,7 @@
                                 "branch": "stable",
                                 "subversion": "2.70.0-a",
                                 "build_hash": null,
-                                "commit_time": "2014-04-11T05:31:12+00:00",
+                                "commit_time": "2014-04-11T05:31:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -676,7 +676,7 @@
                                 "branch": "stable",
                                 "subversion": "2.71.0",
                                 "build_hash": null,
-                                "commit_time": "2014-06-25T21:15:43+00:00",
+                                "commit_time": "2014-06-25T21:15:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -698,7 +698,7 @@
                                 "branch": "stable",
                                 "subversion": "2.72.0",
                                 "build_hash": null,
-                                "commit_time": "2014-10-03T17:07:55+00:00",
+                                "commit_time": "2014-10-03T17:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -715,7 +715,7 @@
                                 "branch": "stable",
                                 "subversion": "2.72.0-a",
                                 "build_hash": null,
-                                "commit_time": "2014-10-15T20:07:29+00:00",
+                                "commit_time": "2014-10-15T20:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -732,7 +732,7 @@
                                 "branch": "stable",
                                 "subversion": "2.72.0-b",
                                 "build_hash": null,
-                                "commit_time": "2014-10-21T14:48:27+00:00",
+                                "commit_time": "2014-10-21T14:48:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -754,7 +754,7 @@
                                 "branch": "stable",
                                 "subversion": "2.73.0",
                                 "build_hash": null,
-                                "commit_time": "2015-01-07T15:26:11+00:00",
+                                "commit_time": "2015-01-07T15:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -771,7 +771,7 @@
                                 "branch": "stable",
                                 "subversion": "2.73.0-a",
                                 "build_hash": null,
-                                "commit_time": "2015-01-20T19:50:23+00:00",
+                                "commit_time": "2015-01-20T19:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -793,7 +793,7 @@
                                 "branch": "stable",
                                 "subversion": "2.74.0",
                                 "build_hash": null,
-                                "commit_time": "2015-03-31T15:16:28+00:00",
+                                "commit_time": "2015-03-31T15:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -815,7 +815,7 @@
                                 "branch": "stable",
                                 "subversion": "2.75.0",
                                 "build_hash": null,
-                                "commit_time": "2015-07-01T14:21:57+00:00",
+                                "commit_time": "2015-07-01T14:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -832,7 +832,7 @@
                                 "branch": "stable",
                                 "subversion": "2.75.0-a",
                                 "build_hash": null,
-                                "commit_time": "2015-07-08T09:17:07+00:00",
+                                "commit_time": "2015-07-08T09:17:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -854,7 +854,7 @@
                                 "branch": "stable",
                                 "subversion": "2.76.0",
                                 "build_hash": null,
-                                "commit_time": "2015-10-11T09:03:21+00:00",
+                                "commit_time": "2015-10-11T09:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -871,7 +871,7 @@
                                 "branch": "stable",
                                 "subversion": "2.76.0-a",
                                 "build_hash": null,
-                                "commit_time": "2015-10-30T17:30:54+00:00",
+                                "commit_time": "2015-10-30T17:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -888,7 +888,7 @@
                                 "branch": "stable",
                                 "subversion": "2.76.0-b",
                                 "build_hash": null,
-                                "commit_time": "2015-11-04T07:54:10+00:00",
+                                "commit_time": "2015-11-04T07:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -910,7 +910,7 @@
                                 "branch": "stable",
                                 "subversion": "2.77.0",
                                 "build_hash": null,
-                                "commit_time": "2016-03-18T20:58:33+00:00",
+                                "commit_time": "2016-03-18T20:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -927,7 +927,7 @@
                                 "branch": "stable",
                                 "subversion": "2.77.0-a",
                                 "build_hash": null,
-                                "commit_time": "2016-04-06T11:29:50+00:00",
+                                "commit_time": "2016-04-06T11:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -949,7 +949,7 @@
                                 "branch": "stable",
                                 "subversion": "2.78.0",
                                 "build_hash": null,
-                                "commit_time": "2016-09-26T14:57:51+00:00",
+                                "commit_time": "2016-09-26T14:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -966,7 +966,7 @@
                                 "branch": "stable",
                                 "subversion": "2.78.0-a",
                                 "build_hash": null,
-                                "commit_time": "2016-10-24T17:07:45+00:00",
+                                "commit_time": "2016-10-24T17:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -983,7 +983,7 @@
                                 "branch": "stable",
                                 "subversion": "2.78.0-b",
                                 "build_hash": null,
-                                "commit_time": "2017-02-08T15:34:49+00:00",
+                                "commit_time": "2017-02-08T15:34:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1022,7 +1022,7 @@
                                 "branch": "stable",
                                 "subversion": "2.79.0",
                                 "build_hash": null,
-                                "commit_time": "2017-09-11T15:42:37+00:00",
+                                "commit_time": "2017-09-11T15:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1039,7 +1039,7 @@
                                 "branch": "stable",
                                 "subversion": "2.79.0-a",
                                 "build_hash": null,
-                                "commit_time": "2018-02-27T15:30:55+00:00",
+                                "commit_time": "2018-02-27T15:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1056,7 +1056,7 @@
                                 "branch": "stable",
                                 "subversion": "2.79.0-b",
                                 "build_hash": null,
-                                "commit_time": "2018-03-22T16:58:21+00:00",
+                                "commit_time": "2018-03-22T16:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1078,7 +1078,7 @@
                                 "branch": "stable",
                                 "subversion": "2.80.0",
                                 "build_hash": null,
-                                "commit_time": "2019-07-29T17:21:25+00:00",
+                                "commit_time": "2019-07-29T17:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1112,7 +1112,7 @@
                                 "branch": "stable",
                                 "subversion": "2.80.0-rc2",
                                 "build_hash": null,
-                                "commit_time": "2019-07-18T17:20:21+00:00",
+                                "commit_time": "2019-07-18T17:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1129,7 +1129,7 @@
                                 "branch": "stable",
                                 "subversion": "2.80.0-rc3",
                                 "build_hash": null,
-                                "commit_time": "2019-07-24T16:36:07+00:00",
+                                "commit_time": "2019-07-24T16:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1151,7 +1151,7 @@
                                 "branch": "stable",
                                 "subversion": "2.81.0",
                                 "build_hash": null,
-                                "commit_time": "2019-11-21T08:08:30+00:00",
+                                "commit_time": "2019-11-21T08:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1168,7 +1168,7 @@
                                 "branch": "stable",
                                 "subversion": "2.81.0-a",
                                 "build_hash": null,
-                                "commit_time": "2019-12-05T11:51:04+00:00",
+                                "commit_time": "2019-12-05T11:51:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1190,7 +1190,7 @@
                                 "branch": "stable",
                                 "subversion": "2.82.0",
                                 "build_hash": null,
-                                "commit_time": "2020-02-13T09:17:36+00:00",
+                                "commit_time": "2020-02-13T09:17:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1207,7 +1207,7 @@
                                 "branch": "stable",
                                 "subversion": "2.82.0-a",
                                 "build_hash": null,
-                                "commit_time": "2020-03-12T10:45:32+00:00",
+                                "commit_time": "2020-03-12T10:45:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1229,7 +1229,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.0",
                                 "build_hash": null,
-                                "commit_time": "2020-06-03T15:28:39+00:00",
+                                "commit_time": "2020-06-03T15:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1246,7 +1246,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.1",
                                 "build_hash": null,
-                                "commit_time": "2020-06-25T11:59:39+00:00",
+                                "commit_time": "2020-06-25T11:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1263,7 +1263,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.10",
                                 "build_hash": null,
-                                "commit_time": "2020-12-09T09:12:48+00:00",
+                                "commit_time": "2020-12-09T09:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1280,7 +1280,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.12",
                                 "build_hash": null,
-                                "commit_time": "2021-01-27T09:03:13+00:00",
+                                "commit_time": "2021-01-27T09:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1297,7 +1297,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.13",
                                 "build_hash": null,
-                                "commit_time": "2021-03-10T09:26:21+00:00",
+                                "commit_time": "2021-03-10T09:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1314,7 +1314,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.14",
                                 "build_hash": null,
-                                "commit_time": "2021-05-12T14:37:02+00:00",
+                                "commit_time": "2021-05-12T14:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1331,7 +1331,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.15",
                                 "build_hash": null,
-                                "commit_time": "2021-05-20T06:54:52+00:00",
+                                "commit_time": "2021-05-20T06:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1348,7 +1348,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.16",
                                 "build_hash": null,
-                                "commit_time": "2021-06-16T09:28:40+00:00",
+                                "commit_time": "2021-06-16T09:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1365,7 +1365,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.17",
                                 "build_hash": null,
-                                "commit_time": "2021-08-11T09:11:37+00:00",
+                                "commit_time": "2021-08-11T09:11:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1382,7 +1382,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.18",
                                 "build_hash": null,
-                                "commit_time": "2021-09-29T10:42:05+00:00",
+                                "commit_time": "2021-09-29T10:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1399,7 +1399,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.19",
                                 "build_hash": null,
-                                "commit_time": "2022-02-02T09:42:30+00:00",
+                                "commit_time": "2022-02-02T09:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1416,7 +1416,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.2",
                                 "build_hash": null,
-                                "commit_time": "2020-07-09T06:45:37+00:00",
+                                "commit_time": "2020-07-09T06:45:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1433,7 +1433,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.20",
                                 "build_hash": null,
-                                "commit_time": "2022-04-20T09:26:43+00:00",
+                                "commit_time": "2022-04-20T09:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1450,7 +1450,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.3",
                                 "build_hash": null,
-                                "commit_time": "2020-07-22T06:37:38+00:00",
+                                "commit_time": "2020-07-22T06:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1467,7 +1467,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.4",
                                 "build_hash": null,
-                                "commit_time": "2020-08-05T06:28:04+00:00",
+                                "commit_time": "2020-08-05T06:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1484,7 +1484,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.5",
                                 "build_hash": null,
-                                "commit_time": "2020-08-19T06:41:36+00:00",
+                                "commit_time": "2020-08-19T06:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1501,7 +1501,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.6",
                                 "build_hash": null,
-                                "commit_time": "2020-09-09T08:22:24+00:00",
+                                "commit_time": "2020-09-09T08:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1518,7 +1518,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.7",
                                 "build_hash": null,
-                                "commit_time": "2020-09-30T06:42:42+00:00",
+                                "commit_time": "2020-09-30T06:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1535,7 +1535,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.8",
                                 "build_hash": null,
-                                "commit_time": "2020-10-21T09:06:03+00:00",
+                                "commit_time": "2020-10-21T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1552,7 +1552,7 @@
                                 "branch": "lts",
                                 "subversion": "2.83.9",
                                 "build_hash": null,
-                                "commit_time": "2020-11-11T15:54:52+00:00",
+                                "commit_time": "2020-11-11T15:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1574,7 +1574,7 @@
                                 "branch": "stable",
                                 "subversion": "2.90.0",
                                 "build_hash": null,
-                                "commit_time": "2020-08-31T12:33:28+00:00",
+                                "commit_time": "2020-08-31T12:33:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1591,7 +1591,7 @@
                                 "branch": "stable",
                                 "subversion": "2.90.1",
                                 "build_hash": null,
-                                "commit_time": "2020-09-23T08:54:44+00:00",
+                                "commit_time": "2020-09-23T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1613,7 +1613,7 @@
                                 "branch": "stable",
                                 "subversion": "2.91.0",
                                 "build_hash": null,
-                                "commit_time": "2020-11-25T09:24:23+00:00",
+                                "commit_time": "2020-11-25T09:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1630,7 +1630,7 @@
                                 "branch": "stable",
                                 "subversion": "2.91.2",
                                 "build_hash": null,
-                                "commit_time": "2021-01-20T12:05:06+00:00",
+                                "commit_time": "2021-01-20T12:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1652,7 +1652,7 @@
                                 "branch": "stable",
                                 "subversion": "2.92.0",
                                 "build_hash": null,
-                                "commit_time": "2021-02-25T12:04:18+00:00",
+                                "commit_time": "2021-02-25T12:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1674,7 +1674,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.0",
                                 "build_hash": null,
-                                "commit_time": "2021-06-02T14:23:33+00:00",
+                                "commit_time": "2021-06-02T14:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1691,7 +1691,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.1",
                                 "build_hash": null,
-                                "commit_time": "2021-06-23T07:41:28+00:00",
+                                "commit_time": "2021-06-23T07:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1708,7 +1708,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.10",
                                 "build_hash": null,
-                                "commit_time": "2022-08-03T08:58:16+00:00",
+                                "commit_time": "2022-08-03T08:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1725,7 +1725,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.11",
                                 "build_hash": null,
-                                "commit_time": "2022-10-05T08:30:01+00:00",
+                                "commit_time": "2022-10-05T08:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1742,7 +1742,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.12",
                                 "build_hash": null,
-                                "commit_time": "2022-12-20T10:08:21+00:00",
+                                "commit_time": "2022-12-20T10:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1759,7 +1759,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.13",
                                 "build_hash": null,
-                                "commit_time": "2022-12-21T08:39:10+00:00",
+                                "commit_time": "2022-12-21T08:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1776,7 +1776,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.14",
                                 "build_hash": null,
-                                "commit_time": "2023-01-17T11:04:06+00:00",
+                                "commit_time": "2023-01-17T11:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1793,7 +1793,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.15",
                                 "build_hash": null,
-                                "commit_time": "2023-02-21T09:05:30+00:00",
+                                "commit_time": "2023-02-21T09:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1810,7 +1810,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.16",
                                 "build_hash": null,
-                                "commit_time": "2023-03-21T09:06:40+00:00",
+                                "commit_time": "2023-03-21T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1827,7 +1827,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.17",
                                 "build_hash": null,
-                                "commit_time": "2023-04-18T08:21:40+00:00",
+                                "commit_time": "2023-04-18T08:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1844,7 +1844,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.18",
                                 "build_hash": null,
-                                "commit_time": "2023-05-23T08:23:40+00:00",
+                                "commit_time": "2023-05-23T08:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1861,7 +1861,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.2",
                                 "build_hash": null,
-                                "commit_time": "2021-08-04T10:40:36+00:00",
+                                "commit_time": "2021-08-04T10:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1878,7 +1878,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.3",
                                 "build_hash": null,
-                                "commit_time": "2021-08-18T09:06:12+00:00",
+                                "commit_time": "2021-08-18T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1895,7 +1895,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.4",
                                 "build_hash": null,
-                                "commit_time": "2021-09-01T09:29:46+00:00",
+                                "commit_time": "2021-09-01T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1912,7 +1912,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.5",
                                 "build_hash": null,
-                                "commit_time": "2021-10-06T09:26:14+00:00",
+                                "commit_time": "2021-10-06T09:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1929,7 +1929,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.6",
                                 "build_hash": null,
-                                "commit_time": "2021-11-17T12:47:04+00:00",
+                                "commit_time": "2021-11-17T12:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1946,7 +1946,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.7",
                                 "build_hash": null,
-                                "commit_time": "2021-12-15T10:46:31+00:00",
+                                "commit_time": "2021-12-15T10:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1963,7 +1963,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.8",
                                 "build_hash": null,
-                                "commit_time": "2022-02-02T09:42:48+00:00",
+                                "commit_time": "2022-02-02T09:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -1980,7 +1980,7 @@
                                 "branch": "lts",
                                 "subversion": "2.93.9",
                                 "build_hash": null,
-                                "commit_time": "2022-04-20T08:59:03+00:00",
+                                "commit_time": "2022-04-20T08:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2002,7 +2002,7 @@
                                 "branch": "stable",
                                 "subversion": "3.0.0",
                                 "build_hash": null,
-                                "commit_time": "2021-12-03T10:06:33+00:00",
+                                "commit_time": "2021-12-03T10:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2019,7 +2019,7 @@
                                 "branch": "stable",
                                 "subversion": "3.0.1",
                                 "build_hash": null,
-                                "commit_time": "2022-01-26T13:17:15+00:00",
+                                "commit_time": "2022-01-26T13:17:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2041,7 +2041,7 @@
                                 "branch": "stable",
                                 "subversion": "3.1.0",
                                 "build_hash": null,
-                                "commit_time": "2022-03-09T10:10:40+00:00",
+                                "commit_time": "2022-03-09T10:10:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2058,7 +2058,7 @@
                                 "branch": "stable",
                                 "subversion": "3.1.1",
                                 "build_hash": null,
-                                "commit_time": "2022-03-30T09:29:10+00:00",
+                                "commit_time": "2022-03-30T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2075,7 +2075,7 @@
                                 "branch": "stable",
                                 "subversion": "3.1.2",
                                 "build_hash": null,
-                                "commit_time": "2022-04-01T08:22:57+00:00",
+                                "commit_time": "2022-04-01T08:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2097,7 +2097,7 @@
                                 "branch": "stable",
                                 "subversion": "3.2.0",
                                 "build_hash": null,
-                                "commit_time": "2022-06-08T12:14:06+00:00",
+                                "commit_time": "2022-06-08T12:14:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2114,7 +2114,7 @@
                                 "branch": "stable",
                                 "subversion": "3.2.1",
                                 "build_hash": null,
-                                "commit_time": "2022-07-06T10:08:53+00:00",
+                                "commit_time": "2022-07-06T10:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2131,7 +2131,7 @@
                                 "branch": "stable",
                                 "subversion": "3.2.2",
                                 "build_hash": null,
-                                "commit_time": "2022-08-03T08:58:32+00:00",
+                                "commit_time": "2022-08-03T08:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2153,7 +2153,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.0",
                                 "build_hash": null,
-                                "commit_time": "2022-09-07T08:24:02+00:00",
+                                "commit_time": "2022-09-07T08:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2170,7 +2170,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.1",
                                 "build_hash": null,
-                                "commit_time": "2022-10-05T08:32:48+00:00",
+                                "commit_time": "2022-10-05T08:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2187,7 +2187,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.10",
                                 "build_hash": null,
-                                "commit_time": "2023-08-17T07:46:33+00:00",
+                                "commit_time": "2023-08-17T07:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2204,7 +2204,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.11",
                                 "build_hash": null,
-                                "commit_time": "2023-09-21T08:54:08+00:00",
+                                "commit_time": "2023-09-21T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2221,7 +2221,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.12",
                                 "build_hash": null,
-                                "commit_time": "2023-10-19T10:02:53+00:00",
+                                "commit_time": "2023-10-19T10:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2238,7 +2238,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.14",
                                 "build_hash": null,
-                                "commit_time": "2023-12-12T12:06:03+00:00",
+                                "commit_time": "2023-12-12T12:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2255,7 +2255,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.15",
                                 "build_hash": null,
-                                "commit_time": "2024-01-16T09:28:13+00:00",
+                                "commit_time": "2024-01-16T09:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2272,7 +2272,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.16",
                                 "build_hash": null,
-                                "commit_time": "2024-02-20T09:34:03+00:00",
+                                "commit_time": "2024-02-20T09:34:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2289,7 +2289,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.17",
                                 "build_hash": null,
-                                "commit_time": "2024-03-19T10:16:13+00:00",
+                                "commit_time": "2024-03-19T10:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2306,7 +2306,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.18",
                                 "build_hash": null,
-                                "commit_time": "2024-04-16T08:20:05+00:00",
+                                "commit_time": "2024-04-16T08:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2323,7 +2323,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.19",
                                 "build_hash": null,
-                                "commit_time": "2024-05-21T10:07:20+00:00",
+                                "commit_time": "2024-05-21T10:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2340,7 +2340,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.2",
                                 "build_hash": null,
-                                "commit_time": "2022-12-07T09:24:46+00:00",
+                                "commit_time": "2022-12-07T09:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2357,7 +2357,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.20",
                                 "build_hash": null,
-                                "commit_time": "2024-06-25T10:11:46+00:00",
+                                "commit_time": "2024-06-25T10:11:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2374,7 +2374,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.21",
                                 "build_hash": null,
-                                "commit_time": "2024-07-16T07:39:30+00:00",
+                                "commit_time": "2024-07-16T07:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2391,7 +2391,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.3",
                                 "build_hash": null,
-                                "commit_time": "2023-01-17T11:39:10+00:00",
+                                "commit_time": "2023-01-17T11:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2408,7 +2408,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.4",
                                 "build_hash": null,
-                                "commit_time": "2023-02-21T08:46:42+00:00",
+                                "commit_time": "2023-02-21T08:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2425,7 +2425,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.5",
                                 "build_hash": null,
-                                "commit_time": "2023-03-21T09:09:59+00:00",
+                                "commit_time": "2023-03-21T09:09:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2442,7 +2442,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.6",
                                 "build_hash": null,
-                                "commit_time": "2023-04-18T08:25:03+00:00",
+                                "commit_time": "2023-04-18T08:25:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2459,7 +2459,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.7",
                                 "build_hash": null,
-                                "commit_time": "2023-05-23T08:26:41+00:00",
+                                "commit_time": "2023-05-23T08:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2476,7 +2476,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.8",
                                 "build_hash": null,
-                                "commit_time": "2023-06-20T10:10:58+00:00",
+                                "commit_time": "2023-06-20T10:10:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2493,7 +2493,7 @@
                                 "branch": "lts",
                                 "subversion": "3.3.9",
                                 "build_hash": null,
-                                "commit_time": "2023-07-18T08:37:14+00:00",
+                                "commit_time": "2023-07-18T08:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2515,7 +2515,7 @@
                                 "branch": "stable",
                                 "subversion": "3.4.0",
                                 "build_hash": null,
-                                "commit_time": "2022-12-07T09:50:16+00:00",
+                                "commit_time": "2022-12-07T09:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2532,7 +2532,7 @@
                                 "branch": "stable",
                                 "subversion": "3.4.1",
                                 "build_hash": null,
-                                "commit_time": "2022-12-20T09:39:31+00:00",
+                                "commit_time": "2022-12-20T09:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2554,7 +2554,7 @@
                                 "branch": "stable",
                                 "subversion": "3.5.0",
                                 "build_hash": null,
-                                "commit_time": "2023-03-29T09:00:15+00:00",
+                                "commit_time": "2023-03-29T09:00:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2571,7 +2571,7 @@
                                 "branch": "stable",
                                 "subversion": "3.5.1",
                                 "build_hash": null,
-                                "commit_time": "2023-04-25T11:41:09+00:00",
+                                "commit_time": "2023-04-25T11:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2593,7 +2593,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.0",
                                 "build_hash": null,
-                                "commit_time": "2023-06-27T09:53:57+00:00",
+                                "commit_time": "2023-06-27T09:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2610,7 +2610,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.1",
                                 "build_hash": null,
-                                "commit_time": "2023-07-18T08:42:19+00:00",
+                                "commit_time": "2023-07-18T08:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2627,7 +2627,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.10",
                                 "build_hash": null,
-                                "commit_time": "2024-03-19T08:14:57+00:00",
+                                "commit_time": "2024-03-19T08:14:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2644,7 +2644,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.11",
                                 "build_hash": null,
-                                "commit_time": "2024-04-16T08:07:19+00:00",
+                                "commit_time": "2024-04-16T08:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2661,7 +2661,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.12",
                                 "build_hash": null,
-                                "commit_time": "2024-05-21T10:48:11+00:00",
+                                "commit_time": "2024-05-21T10:48:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2678,7 +2678,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.13",
                                 "build_hash": null,
-                                "commit_time": "2024-06-25T10:12:52+00:00",
+                                "commit_time": "2024-06-25T10:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2695,7 +2695,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.14",
                                 "build_hash": null,
-                                "commit_time": "2024-07-16T07:41:18+00:00",
+                                "commit_time": "2024-07-16T07:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2712,7 +2712,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.15",
                                 "build_hash": null,
-                                "commit_time": "2024-08-20T07:37:56+00:00",
+                                "commit_time": "2024-08-20T07:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2729,7 +2729,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.16",
                                 "build_hash": null,
-                                "commit_time": "2024-09-24T08:01:49+00:00",
+                                "commit_time": "2024-09-24T08:01:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2746,7 +2746,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.17",
                                 "build_hash": null,
-                                "commit_time": "2024-10-15T08:13:19+00:00",
+                                "commit_time": "2024-10-15T08:13:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2763,7 +2763,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.18",
                                 "build_hash": null,
-                                "commit_time": "2024-11-19T09:16:03+00:00",
+                                "commit_time": "2024-11-19T09:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2780,7 +2780,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.19",
                                 "build_hash": null,
-                                "commit_time": "2024-12-17T09:02:47+00:00",
+                                "commit_time": "2024-12-17T09:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2797,7 +2797,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.2",
                                 "build_hash": null,
-                                "commit_time": "2023-08-17T07:51:06+00:00",
+                                "commit_time": "2023-08-17T07:51:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2814,7 +2814,24 @@
                                 "branch": "lts",
                                 "subversion": "3.6.20",
                                 "build_hash": null,
-                                "commit_time": "2025-01-21T08:58:19+00:00",
+                                "commit_time": "2025-01-21T08:58:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender3.6/blender-3.6.21-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "3.6.21",
+                                "build_hash": null,
+                                "commit_time": "2025-02-18T11:25:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2831,7 +2848,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.3",
                                 "build_hash": null,
-                                "commit_time": "2023-09-21T08:54:54+00:00",
+                                "commit_time": "2023-09-21T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2848,7 +2865,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.4",
                                 "build_hash": null,
-                                "commit_time": "2023-09-26T08:47:17+00:00",
+                                "commit_time": "2023-09-26T08:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2865,7 +2882,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.5",
                                 "build_hash": null,
-                                "commit_time": "2023-10-19T09:59:59+00:00",
+                                "commit_time": "2023-10-19T09:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2882,7 +2899,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.7",
                                 "build_hash": null,
-                                "commit_time": "2023-12-12T12:31:08+00:00",
+                                "commit_time": "2023-12-12T12:31:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2899,7 +2916,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.8",
                                 "build_hash": null,
-                                "commit_time": "2024-01-16T09:29:23+00:00",
+                                "commit_time": "2024-01-16T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2916,7 +2933,7 @@
                                 "branch": "lts",
                                 "subversion": "3.6.9",
                                 "build_hash": null,
-                                "commit_time": "2024-02-20T09:37:18+00:00",
+                                "commit_time": "2024-02-20T09:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2925,7 +2942,7 @@
                     }
                 ]
             ],
-            "modified_date": "2025-01-21T08:59:00"
+            "modified_date": "2025-02-18T11:25:00"
         },
         "4.0.0": {
             "assets": [
@@ -2938,7 +2955,7 @@
                                 "branch": "stable",
                                 "subversion": "4.0.0",
                                 "build_hash": null,
-                                "commit_time": "2023-11-14T08:54:43+00:00",
+                                "commit_time": "2023-11-14T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2955,7 +2972,7 @@
                                 "branch": "stable",
                                 "subversion": "4.0.1",
                                 "build_hash": null,
-                                "commit_time": "2023-11-17T10:04:11+00:00",
+                                "commit_time": "2023-11-17T10:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2972,7 +2989,7 @@
                                 "branch": "stable",
                                 "subversion": "4.0.2",
                                 "build_hash": null,
-                                "commit_time": "2023-12-05T14:19:55+00:00",
+                                "commit_time": "2023-12-05T14:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -2994,7 +3011,7 @@
                                 "branch": "stable",
                                 "subversion": "4.1.0",
                                 "build_hash": null,
-                                "commit_time": "2024-03-26T10:57:11+00:00",
+                                "commit_time": "2024-03-26T10:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3011,7 +3028,7 @@
                                 "branch": "stable",
                                 "subversion": "4.1.1",
                                 "build_hash": null,
-                                "commit_time": "2024-04-16T08:41:55+00:00",
+                                "commit_time": "2024-04-16T08:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3033,7 +3050,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.0",
                                 "build_hash": null,
-                                "commit_time": "2024-07-16T08:53:20+00:00",
+                                "commit_time": "2024-07-16T08:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3050,7 +3067,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.1",
                                 "build_hash": null,
-                                "commit_time": "2024-08-20T07:37:57+00:00",
+                                "commit_time": "2024-08-20T07:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3067,7 +3084,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.2",
                                 "build_hash": null,
-                                "commit_time": "2024-09-24T08:04:57+00:00",
+                                "commit_time": "2024-09-24T08:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3084,7 +3101,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.3",
                                 "build_hash": null,
-                                "commit_time": "2024-10-15T08:16:35+00:00",
+                                "commit_time": "2024-10-15T08:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3118,7 +3135,7 @@
                                 "branch": "lts",
                                 "subversion": "4.2.5",
                                 "build_hash": null,
-                                "commit_time": "2024-12-17T09:02:45+00:00",
+                                "commit_time": "2024-12-17T09:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3135,7 +3152,24 @@
                                 "branch": "lts",
                                 "subversion": "4.2.6",
                                 "build_hash": null,
-                                "commit_time": "2025-01-21T08:58:53+00:00",
+                                "commit_time": "2025-01-21T08:58:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.7-windows-x64.zip",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.7",
+                                "build_hash": null,
+                                "commit_time": "2025-02-18T11:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3144,7 +3178,7 @@
                     }
                 ]
             ],
-            "modified_date": "2025-01-21T08:59:00"
+            "modified_date": "2025-02-18T11:25:00"
         },
         "4.3.0": {
             "assets": [
@@ -3157,7 +3191,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.0",
                                 "build_hash": null,
-                                "commit_time": "2024-11-19T13:48:03+00:00",
+                                "commit_time": "2024-11-19T13:48:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3174,7 +3208,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.0",
                                 "build_hash": null,
-                                "commit_time": "2024-11-19T13:47:42+00:00",
+                                "commit_time": "2024-11-19T13:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3191,7 +3225,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.1",
                                 "build_hash": null,
-                                "commit_time": "2024-12-10T11:43:45+00:00",
+                                "commit_time": "2024-12-10T11:43:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3208,7 +3242,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.1",
                                 "build_hash": null,
-                                "commit_time": "2024-12-10T11:43:40+00:00",
+                                "commit_time": "2024-12-10T11:43:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3225,7 +3259,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.2",
                                 "build_hash": null,
-                                "commit_time": "2024-12-17T08:40:39+00:00",
+                                "commit_time": "2024-12-17T08:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
@@ -3242,7 +3276,7 @@
                                 "branch": "stable",
                                 "subversion": "4.3.2",
                                 "build_hash": null,
-                                "commit_time": "2024-12-17T08:40:35+00:00",
+                                "commit_time": "2024-12-17T08:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
                                 "custom_executable": null
