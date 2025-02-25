@@ -104,11 +104,16 @@ class ChooseLibraryPage(BasicOnboardingPage):
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
+        
+        home = Path().home()
+        executable_path = Path(sys.executable)
+ 
         self.move_exe = QCheckBox("Move exe to library", parent=self)
         self.move_exe.setToolTip(
             "Moves the program's exe to the specified location. Once first-time-setup is complete, you'll have to refer to this location in subsequent runs."
         )
-        self.move_exe.setChecked(True)
+
+        self.move_exe.setChecked(home in executable_path.parents)
         self.move_exe.setVisible(is_frozen())  # hide when exe is not frozen
 
         self.warning_label = QLabel(self)
@@ -123,6 +128,11 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.layout_.addWidget(self.warning_label)
         self.layout_.addWidget(QLabel("Library location:", self))
         self.layout_.addWidget(self.lf)
+        if home not in executable_path.parents:
+            self.path_warning_label = QLabel(self)
+            self.path_warning_label.setText(f"The program's exe is outside of {str(home)}, it may lack the permisisons needed to move the executable to the library!")
+            self.path_warning_label.setWordWrap(True)
+            self.layout_.addWidget(self.path_warning_label)
         self.layout_.addWidget(self.move_exe)
 
         self.lf.validity_changed.connect(self.completeChanged)
