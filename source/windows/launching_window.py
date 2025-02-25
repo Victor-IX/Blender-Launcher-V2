@@ -168,7 +168,7 @@ class LaunchingWindow(BaseWindow):
 
         self.__enabled_font = QFont(self.font_10)
         self.__enabled_font.setBold(True)
-        self.__enabled_font.setWeight(500)
+        self.__enabled_font.setWeight(QFont.Weight.Bold)
         self.__disabled_font = QFont(self.font_8)
         self.__disabled_font.setItalic(True)
         self.__disabled_font.setWeight(QFont.Weight.Light)
