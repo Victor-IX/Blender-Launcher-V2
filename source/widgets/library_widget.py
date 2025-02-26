@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_platform
+from modules._platform import _call, get_blender_config_folder, get_platform, is_frozen, get_environment
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -810,13 +810,29 @@ class LibraryWidget(BaseBuildWidget):
         if platform == "Windows":
             os.startfile(folder_path.as_posix())
         elif platform == "Linux":
+            # Due to a bug/feature in Pyinstaller, we
+            # have to remove all environment variables
+            # that reference tmp in order for xdg-open
+            # to work.
+            env_override = get_environment()
+
+            # Check if the program was built with Pyinstaller
+            if is_frozen():
+                toDelete = [] 
+                for (k, v) in env_override.items():
+                    if k != 'PATH' and 'tmp' in v:
+                        toDelete.append(k)
+                    
+                for k in toDelete:
+                    env_override.pop(k, None)
+
             # Use specific file managers known to be common in Linux
             try:
-                subprocess.call(["xdg-open", folder_path.as_posix()])
+                subprocess.call(["xdg-open", folder_path.as_posix()], env=env_override)
             except FileNotFoundError:
                 # Try known file managers if xdg-open fails
                 for fm in ["nautilus", "dolphin", "thunar", "pcmanfm", "nemo"]:
-                    if subprocess.call([fm, folder_path.as_posix()]) == 0:
+                    if subprocess.call([fm, folder_path.as_posix()], env=env_override) == 0:
                         return
                 logger.error("No file manager found to open the folder.")
 
