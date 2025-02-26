@@ -104,10 +104,13 @@ class ChooseLibraryPage(BasicOnboardingPage):
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
-        
+
+        # TODO: Remove this when we have a better solution
+        # Check if the exe is in the home directory
+        # Temp fix to prevent user accidentally moving the exe if BL is downloaded through a package manager
         home = Path().home()
         executable_path = Path(sys.executable)
- 
+
         self.move_exe = QCheckBox("Move exe to library", parent=self)
         self.move_exe.setToolTip(
             "Moves the program's exe to the specified location. Once first-time-setup is complete, you'll have to refer to this location in subsequent runs."
@@ -130,7 +133,9 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.layout_.addWidget(self.lf)
         if home not in executable_path.parents:
             self.path_warning_label = QLabel(self)
-            self.path_warning_label.setText(f"The program's exe is outside of {str(home)}, it may lack the permisisons needed to move the executable to the library!")
+            self.path_warning_label.setText(
+                f"The program's exe is outside of {str(home)}, it may lack the permisisons needed to move the executable to the library!"
+            )
             self.path_warning_label.setWordWrap(True)
             self.layout_.addWidget(self.path_warning_label)
         self.layout_.addWidget(self.move_exe)
