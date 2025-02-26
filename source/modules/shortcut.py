@@ -102,7 +102,7 @@ def register_windows_filetypes(exe=sys.executable):
         if is_frozen():
             pth = f'"{Path(exe).resolve()}"'
         else:
-            pth = f'"{Path(exe).resolve()}" "{Path(sys.argv[0]).resolve()}"'
+            pth = f'"{Path(sys.argv[0]).resolve()}"'
 
         winreg.SetValueEx(command_key, "", 0, winreg.REG_SZ, f'{pth} "%1"')
         logging.debug("Registered blenderlauncherv2.blend")
