@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_platform
+from modules._platform import _call, get_blender_config_folder, get_platform, is_frozen, get_environment
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -810,16 +810,14 @@ class LibraryWidget(BaseBuildWidget):
         if platform == "Windows":
             os.startfile(folder_path.as_posix())
         elif platform == "Linux":
-            import sys
-
             # Due to a bug/feature in Pyinstaller, we
             # have to remove all environment variables
             # that reference tmp in order for xdg-open
             # to work.
-            env_override = dict(os.environ)
+            env_override = get_environment()
 
             # Check if the program was built with Pyinstaller
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            if is_frozen():
                 toDelete = [] 
                 for (k, v) in env_override.items():
                     if k != 'PATH' and 'tmp' in v:
