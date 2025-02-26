@@ -810,13 +810,31 @@ class LibraryWidget(BaseBuildWidget):
         if platform == "Windows":
             os.startfile(folder_path.as_posix())
         elif platform == "Linux":
+            import sys
+
+            # Due to a bug/feature in Pyinstaller, we
+            # have to remove all environment variables
+            # that reference tmp in order for xdg-open
+            # to work.
+            env_override = dict(os.environ)
+
+            # Check if the program was built with Pyinstaller
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                toDelete = [] 
+                for (k, v) in env_override.items():
+                    if k != 'PATH' and 'tmp' in v:
+                        toDelete.append(k)
+                    
+                for k in toDelete:
+                    env_override.pop(k, None)
+
             # Use specific file managers known to be common in Linux
             try:
-                subprocess.call(["xdg-open", folder_path.as_posix()])
+                subprocess.call(["xdg-open", folder_path.as_posix()], env=env_override)
             except FileNotFoundError:
                 # Try known file managers if xdg-open fails
                 for fm in ["nautilus", "dolphin", "thunar", "pcmanfm", "nemo"]:
-                    if subprocess.call([fm, folder_path.as_posix()]) == 0:
+                    if subprocess.call([fm, folder_path.as_posix()], env=env_override) == 0:
                         return
                 logger.error("No file manager found to open the folder.")
 
