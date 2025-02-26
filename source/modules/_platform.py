@@ -89,10 +89,6 @@ def get_environment():
 
     # Removing PyInstaller variables from the environment
     env.pop("_MEIPASS", None)
-    env.pop("PYI_RUN_ONEFILE", None)
-    env.pop("QT_PLUGIN_PATH", None)
-    env.pop("QML2_IMPORT_PATH", None)
-    env.pop("PYSIDE6_OPTION_PYTHON_ENUM", None)
 
     for key in list(env.keys()):
         if key.startswith("_PYI"):
