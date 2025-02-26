@@ -37,10 +37,7 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{message}{RESET_COLOR}"
 
 
-version = Version(
-    2,
-    4,
-    0,
+version = Version(2, 4, 1,
 )
 
 _ = gettext.gettext
