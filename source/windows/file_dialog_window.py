@@ -25,7 +25,7 @@ class FileDialogWindow(QFileDialog):
         return QFileDialog.getOpenFileName(
             parent=parent,
             caption=title,
-            directory=directory,
+            dir=directory,
             options=(
                 QFileDialog.DontUseNativeDialog
                 | QFileDialog.HideNameFilterDetails
@@ -42,7 +42,7 @@ class FileDialogWindow(QFileDialog):
         return QFileDialog.getSaveFileName(
             parent=parent,
             caption=title,
-            directory=directory,
+            dir=directory,
             options=(
                 QFileDialog.DontUseNativeDialog
                 | QFileDialog.HideNameFilterDetails
