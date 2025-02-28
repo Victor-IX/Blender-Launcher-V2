@@ -134,7 +134,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         if home not in executable_path.parents:
             self.path_warning_label = QLabel(self)
             self.path_warning_label.setText(
-                f"The program's exe is outside of {str(home)}, it may lack the permisisons needed to move the executable to the library!"
+                f"The program's exe is outside of {str(home)}, it may lack the permissions needed to move the executable to the library!"
             )
             self.path_warning_label.setWordWrap(True)
             self.layout_.addWidget(self.path_warning_label)
