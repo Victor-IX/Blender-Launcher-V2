@@ -5,7 +5,7 @@ from modules.task import Task
 from PySide6.QtCore import Signal
 
 
-@dataclass
+@dataclass(frozen=True)
 class RenameTask(Task):
     src: Path
     dst_name: str

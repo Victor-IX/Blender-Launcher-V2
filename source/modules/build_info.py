@@ -357,7 +357,7 @@ def read_blender_version(
     )
 
 
-@dataclass
+@dataclass(frozen=True)
 class WriteBuildTask(Task):
     written = Signal()
     error = Signal()
@@ -411,7 +411,7 @@ def fill_build_info(
     return build_info
 
 
-@dataclass
+@dataclass(frozen=True)
 class ReadBuildTask(Task):
     path: Path
     info: BuildInfo | None = None
@@ -437,7 +437,7 @@ class ReadBuildTask(Task):
 class LaunchMode: ...
 
 
-@dataclass
+@dataclass(frozen=True)
 class LaunchWithBlendFile(LaunchMode):
     blendfile: Path
 

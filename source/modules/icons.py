@@ -8,7 +8,7 @@ base_path = ":resources/icons/"
 WHITE = QColor(255, 255, 255, 255)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Icons:
     settings: QIcon
     wiki: QIcon

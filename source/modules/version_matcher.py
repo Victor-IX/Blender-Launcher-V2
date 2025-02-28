@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 utc = datetime.timezone.utc
 
 
-@dataclass
+@dataclass(frozen=True)
 class BasicBuildInfo:
     version: Version
     branch: str
@@ -137,7 +137,7 @@ def _parse(s: str) -> tuple[int | str, int | str, int | str, str | None, str | N
     return major, minor, patch, branch, build_hash, commit_time
 
 
-@dataclass
+@dataclass(frozen=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
 
@@ -226,7 +226,7 @@ class VersionSearchQuery:
 # VersionSearchQuery("^", "*", "*"): Match any version in the latest major release
 
 
-@dataclass
+@dataclass(frozen=True)
 class BInfoMatcher:
     versions: tuple[BasicBuildInfo, ...]
 

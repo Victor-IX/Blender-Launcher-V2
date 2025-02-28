@@ -59,7 +59,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     return None
 
 
-@dataclass
+@dataclass(frozen=True)
 class ExtractTask(Task):
     file: Path
     destination: Path
