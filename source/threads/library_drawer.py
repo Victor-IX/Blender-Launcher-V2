@@ -47,7 +47,7 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
                     )
 
 
-@dataclass()
+@dataclass
 class DrawLibraryTask(Task):
     folders: Iterable[str | Path] = ("stable", "daily", "experimental", "bforartists", "custom")
     found = Signal(Path)

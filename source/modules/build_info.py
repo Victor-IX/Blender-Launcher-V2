@@ -411,7 +411,7 @@ def fill_build_info(
     return build_info
 
 
-@dataclass(frozen=True)
+@dataclass
 class ReadBuildTask(Task):
     path: Path
     info: BuildInfo | None = None
