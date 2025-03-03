@@ -24,7 +24,7 @@ def install_template(dist: Path):
             return
 
 
-@dataclass(frozen=True)
+@dataclass
 class TemplateTask(Task):
     destination: Path
 

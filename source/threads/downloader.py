@@ -13,7 +13,7 @@ from urllib3.exceptions import MaxRetryError
 logger = logging.getLogger()
 
 
-@dataclass(frozen=True)
+@dataclass
 class DownloadTask(Task):
     manager: REQUEST_MANAGER
     link: str

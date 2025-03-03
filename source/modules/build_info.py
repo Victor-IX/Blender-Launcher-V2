@@ -357,7 +357,7 @@ def read_blender_version(
     )
 
 
-@dataclass(frozen=True)
+@dataclass
 class WriteBuildTask(Task):
     written = Signal()
     error = Signal()
