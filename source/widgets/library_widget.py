@@ -26,7 +26,7 @@ from modules.settings import (
     get_mark_as_favorite,
     set_favorite_path,
 )
-from modules.shortcut import create_shortcut
+from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
 from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
@@ -50,6 +50,7 @@ from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
 from windows.popup_window import PopupIcon, PopupWindow
+from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -776,7 +777,12 @@ class LibraryWidget(BaseBuildWidget):
             self.build_info.branch.replace("-", " ").title(),
         )
 
-        create_shortcut(self.link, name)
+        destination = get_default_shortcut_destination(name)
+        file_place = FileDialogWindow().get_save_filename(
+            parent=self, title="Choose destination", directory=str(destination)
+        )
+        if file_place[0]:
+            generate_blender_shortcut(self.link, name, Path(file_place[0]))
 
     @Slot()
     def create_symlink(self):
