@@ -194,7 +194,7 @@ To reverse this after installation, there is a labeled panel in the Settings gen
 Hover over this text to see which registry keys will be changed and for what reason.
 """
 
-ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
+ASSOC_LINUX_EXPLAIN = """In order to launch blendfiles with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
 It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
 Our default location is typically searched by DEs for application entries.

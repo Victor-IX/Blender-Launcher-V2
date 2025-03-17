@@ -42,10 +42,9 @@ def create_shortcut(folder, name):
     elif platform == "Linux":
         _exec = library_folder / folder / "blender"
         icon = library_folder / folder / "blender.svg"
-        # TODO: This path will probably nor work on a non-English system
-        desktop = Path.home() / "Desktop"
+        path = get_default_shortcut_destination().parent
         filename = name.replace(" ", "-")
-        dist = desktop / (filename + ".desktop")
+        dist = path / (filename + ".desktop")
 
         kws = (
             "3d;cg;modeling;animation;painting;"
