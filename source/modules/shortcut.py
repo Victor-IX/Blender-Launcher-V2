@@ -181,10 +181,12 @@ def get_shortcut_type() -> str:
 
 
 def get_default_program_shortcut_destination():
+    """Returns the default folder to where a shortcut to Blender Launcher should be saved."""
     return get_default_shortcut_destination("Blender Launcher V2")
 
 
 def get_default_shortcut_destination(shortcut_name):
+    """Returns the default folder to where a shortcut with name 'shortcut_name' should be saved."""
     platform = get_platform()
     folder = get_default_shortcut_folder()
 
@@ -195,6 +197,7 @@ def get_default_shortcut_destination(shortcut_name):
 
 
 def get_default_shortcut_folder():
+    """Returns the default folder to where shortcuts should be saved."""
     platform = get_platform()
 
     if platform == "Windows":

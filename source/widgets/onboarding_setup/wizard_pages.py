@@ -26,7 +26,7 @@ from modules.settings import (
     set_show_tray_icon,
     set_use_system_titlebar,
 )
-from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_default_shortcut_destination, register_windows_filetypes
+from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, register_windows_filetypes
 from PySide6.QtWidgets import (
     QCheckBox,
     QHBoxLayout,
