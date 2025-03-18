@@ -191,7 +191,7 @@ def get_default_shortcut_destination(shortcut_name):
     folder = get_default_shortcut_folder()
 
     if platform == "Windows":
-        return Path(folder / shortcut_name + ".lnk")
+        return Path(folder / (shortcut_name + ".lnk"))
 
     return Path(folder / (shortcut_name.replace(" ", "-") + ".desktop"))
 
