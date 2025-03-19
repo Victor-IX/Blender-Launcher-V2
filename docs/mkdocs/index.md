@@ -4,9 +4,9 @@
 
 ![Blender Launcher Logo](imgs/bl_logo.png)
 
-[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.2/Blender_Launcher_v2.4.2_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 24.7%; text-align: center;"}
-[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.2/Blender_Launcher_v2.4.2_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
-[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.2/Blender_Launcher_v2.4.2_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.3/Blender_Launcher_v2.4.3_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.3/Blender_Launcher_v2.4.3_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.3/Blender_Launcher_v2.4.3_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
 [:fontawesome-solid-download: All Releases](https://github.com/Victor-IX/Blender-Launcher-V2/releases){: .md-button .md-button--primary style="display: inline-block; float: right; width: 24.45%; text-align: center;"}
 
 <br/>
