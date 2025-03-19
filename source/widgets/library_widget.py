@@ -824,11 +824,11 @@ class LibraryWidget(BaseBuildWidget):
 
             # Check if the program was built with Pyinstaller
             if is_frozen():
-                toDelete = [] 
-                for (k, v) in env_override.items():
-                    if k != 'PATH' and 'tmp' in v:
+                toDelete = []
+                for k, v in env_override.items():
+                    if k != "PATH" and "tmp" in v:
                         toDelete.append(k)
-                    
+
                 for k in toDelete:
                     env_override.pop(k, None)
 

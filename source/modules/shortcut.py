@@ -188,6 +188,7 @@ def get_default_program_shortcut_destination():
 
 def get_default_shortcut_destination(shortcut_name):
     """Returns the default folder to where a shortcut with name 'shortcut_name' should be saved."""
+    # TODO: Default to desktop if shortcut already exist in start menu
     platform = get_platform()
     folder = get_default_shortcut_folder()
 
