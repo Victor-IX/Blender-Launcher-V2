@@ -126,6 +126,10 @@ class GeneralTabWidget(SettingsFormWidget):
             \nDEFAULT: Off"
         )
 
+        # Create Shortcut
+        self.create_shortcut_button = QPushButton(f"Create Blender Launcher {get_shortcut_type()}")
+        self.create_shortcut_button.clicked.connect(self.create_shortcut)
+
         # Layout
         self.application_layout = QGridLayout()
         self.application_layout.addWidget(self.LibraryFolderLabel, 0, 0, 1, 1)
@@ -137,6 +141,7 @@ class GeneralTabWidget(SettingsFormWidget):
         self.application_layout.addWidget(self.WorkerThreadCountBox, 5, 0, 1, 1)
         self.application_layout.addWidget(self.WorkerThreadCount, 5, 1, 1, 2)
         self.application_layout.addWidget(self.PreReleaseBuildsCheckBox, 6, 0, 1, 1)
+        self.application_layout.addWidget(self.create_shortcut_button, 7, 0, 1, 3)
         self.application_settings.setLayout(self.application_layout)
 
         self.addRow(self.application_settings)
@@ -151,9 +156,6 @@ class GeneralTabWidget(SettingsFormWidget):
         # File Association
         self.file_association_group = SettingsGroup("File association", parent=self)
         layout = QGridLayout()
-        self.create_shortcut_button = QPushButton(f"Create {get_shortcut_type()}", parent=self.file_association_group)
-        self.create_shortcut_button.clicked.connect(self.create_shortcut)
-        layout.addWidget(self.create_shortcut_button, 0, 0, 1, 2)
 
         if sys.platform == "win32":
             from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
@@ -176,8 +178,8 @@ class GeneralTabWidget(SettingsFormWidget):
             self.unregister_file_association_button.clicked.connect(unregister_windows_filetypes)
             self.unregister_file_association_button.clicked.connect(self.refresh_association_buttons)
             self.refresh_association_buttons()
-            layout.addWidget(self.register_file_association_button, 1, 0, 1, 1)
-            layout.addWidget(self.unregister_file_association_button, 1, 1, 1, 1)
+            layout.addWidget(self.register_file_association_button, 0, 0, 1, 1)
+            layout.addWidget(self.unregister_file_association_button, 0, 1, 1, 1)
 
         self.launch_timer_duration = QSpinBox()
         self.launch_timer_duration.setToolTip(
@@ -188,8 +190,8 @@ class GeneralTabWidget(SettingsFormWidget):
         self.launch_timer_duration.setValue(get_launch_timer_duration())
         self.launch_timer_duration.valueChanged.connect(self.set_launch_timer_duration)
         self.set_launch_timer_duration()
-        layout.addWidget(QLabel("Launch Timer Duration (secs)"), 2, 0, 1, 1)
-        layout.addWidget(self.launch_timer_duration, 2, 1, 1, 1)
+        layout.addWidget(QLabel("Launch Timer Duration (secs)"), 1, 0, 1, 1)
+        layout.addWidget(self.launch_timer_duration, 1, 1, 1, 1)
 
         self.file_association_group.setLayout(layout)
         self.addRow(self.file_association_group)
