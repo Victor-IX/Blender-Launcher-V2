@@ -11,7 +11,7 @@ from modules.settings import get_library_folder
 
 
 # TODO: Remove this duplicate code generate_program_shortcut()
-def create_shortcut(folder, name):
+def generate_blender_shortcut(folder, name, destination: Path):
     platform = get_platform()
     library_folder = Path(get_library_folder())
 
@@ -21,8 +21,6 @@ def create_shortcut(folder, name):
 
         targetpath = library_folder / folder / "blender.exe"
         workingdir = library_folder / folder
-        desktop = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
-        dist = Path(desktop) / (name + ".lnk")
 
         if getattr(sys, "frozen", False):
             icon = sys._MEIPASS + "/files/winblender.ico"  # noqa: SLF001
@@ -33,7 +31,7 @@ def create_shortcut(folder, name):
         copyfile(icon, icon_location.as_posix())
 
         _WSHELL = win32com.client.Dispatch("Wscript.Shell")
-        wscript = _WSHELL.CreateShortCut(dist.as_posix())
+        wscript = _WSHELL.CreateShortCut(destination.as_posix())
         wscript.Targetpath = targetpath.as_posix()
         wscript.WorkingDirectory = workingdir.as_posix()
         wscript.WindowStyle = 0
@@ -42,10 +40,6 @@ def create_shortcut(folder, name):
     elif platform == "Linux":
         _exec = library_folder / folder / "blender"
         icon = library_folder / folder / "blender.svg"
-        # TODO: This path will probably nor work on a non-English system
-        desktop = Path.home() / "Desktop"
-        filename = name.replace(" ", "-")
-        dist = desktop / (filename + ".desktop")
 
         kws = (
             "3d;cg;modeling;animation;painting;"
@@ -68,11 +62,10 @@ def create_shortcut(folder, name):
                 "Exec={} %f".format(_exec.as_posix().replace(" ", r"\ ")),
             ]
         )
-        with open(dist, "w", encoding="utf-8") as file:
+        with open(destination, "w", encoding="utf-8") as file:
             file.write(desktop_entry)
 
-        os.chmod(dist, 0o744)
-
+        os.chmod(destination, 0o744)
 
 def association_is_registered() -> bool:
     assert sys.platform == "win32"
@@ -187,13 +180,32 @@ def get_shortcut_type() -> str:
     }.get(get_platform(), "Shortcut")
 
 
-def get_default_shortcut_destination():
-    return {
-        "Windows": Path(
-            Path.home(), "AppData", "Roaming", "Microsoft", "Windows", "Start Menu", "Programs", "Blender Launcher V2"
-        ),
-        "Linux": Path(Path.home(), ".local", "share", "applications", "BLV2.desktop"),
-    }.get(get_platform(), Path.home() / "BLV2.desktop")
+def get_default_program_shortcut_destination():
+    """Returns the default folder to where a shortcut to Blender Launcher should be saved."""
+    return get_default_shortcut_destination("Blender Launcher V2")
+
+
+def get_default_shortcut_destination(shortcut_name):
+    """Returns the default folder to where a shortcut with name 'shortcut_name' should be saved."""
+    platform = get_platform()
+    folder = get_default_shortcut_folder()
+
+    if platform == "Windows":
+        return Path(folder / (shortcut_name + ".lnk"))
+
+    return Path(folder / (shortcut_name.replace(" ", "-") + ".desktop"))
+
+
+def get_default_shortcut_folder():
+    """Returns the default folder to where shortcuts should be saved."""
+    platform = get_platform()
+
+    if platform == "Windows":
+        return Path(Path.home() / "AppData" / "Roaming" / "Microsoft" / "Windows" / "Start Menu" / "Programs")
+    elif platform == "Linux":
+        return Path(Path.home() / ".local" / "share" / "applications")
+
+    return Path.home()
 
 
 def generate_program_shortcut(destination: Path, exe=sys.executable):

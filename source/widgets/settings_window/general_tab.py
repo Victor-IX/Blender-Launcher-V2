@@ -28,7 +28,7 @@ from modules.settings import (
     set_default_delete_action,
     user_config,
 )
-from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, get_shortcut_type
+from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -276,7 +276,7 @@ class GeneralTabWidget(SettingsFormWidget):
         # Most getters should get the settings from the new position, so a restart should not be required
 
     def create_shortcut(self):
-        destination = get_default_shortcut_destination()
+        destination = get_default_program_shortcut_destination()
         file_place = FileDialogWindow().get_save_filename(
             parent=self, title="Choose destination", directory=str(destination)
         )

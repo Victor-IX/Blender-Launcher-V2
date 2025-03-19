@@ -26,7 +26,7 @@ from modules.settings import (
     set_show_tray_icon,
     set_use_system_titlebar,
 )
-from modules.shortcut import generate_program_shortcut, get_default_shortcut_destination, register_windows_filetypes
+from modules.shortcut import generate_program_shortcut, get_default_shortcut_folder, get_default_program_shortcut_destination, register_windows_filetypes
 from PySide6.QtWidgets import (
     QCheckBox,
     QHBoxLayout,
@@ -194,7 +194,7 @@ To reverse this after installation, there is a labeled panel in the Settings gen
 Hover over this text to see which registry keys will be changed and for what reason.
 """
 
-ASSOC_LINUX_EXPLAIN = """In order to launch blendilfes with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
+ASSOC_LINUX_EXPLAIN = """In order to launch blendfiles with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
 It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
 
 Our default location is typically searched by DEs for application entries.
@@ -234,7 +234,7 @@ class ShortcutsPage(BasicOnboardingPage):
         if self.platform == "Linux":
             self.select = FolderSelector(
                 parent,
-                default_folder=get_default_shortcut_destination().parent,
+                default_folder=get_default_shortcut_folder(),
                 check_relatives=False,
             )
             self.select.setEnabled(False)
@@ -259,7 +259,7 @@ class ShortcutsPage(BasicOnboardingPage):
                 assert self.select.path is not None
 
                 if self.select.path.is_dir():
-                    pth = self.select.path / get_default_shortcut_destination().name
+                    pth = self.select.path / get_default_program_shortcut_destination().name
                 else:
                     pth = self.select.path
 
@@ -274,7 +274,7 @@ class ShortcutsPage(BasicOnboardingPage):
 
             if self.addtostart.isChecked():
                 generate_program_shortcut(
-                    get_default_shortcut_destination(),
+                    get_default_program_shortcut_destination(),
                     exe=str(self.prop_settings.exe_location),
                 )
             if self.addtodesk.isChecked():
