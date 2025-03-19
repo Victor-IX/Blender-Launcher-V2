@@ -1136,7 +1136,7 @@ class BlenderLauncher(BaseWindow):
         if get_show_tray_icon():
             if not get_tray_icon_notified():
                 self.show_message(
-                    "Blender Launcher V2 is minimized to the system tray. "
+                    "Blender Launcher is minimized to the system tray. "
                     '\nDisable "Show Tray Icon" in the settings to disable this.'
                 )
                 set_tray_icon_notified()

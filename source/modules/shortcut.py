@@ -67,6 +67,7 @@ def generate_blender_shortcut(folder, name, destination: Path):
 
         os.chmod(destination, 0o744)
 
+
 def association_is_registered() -> bool:
     assert sys.platform == "win32"
     import winreg
@@ -124,7 +125,7 @@ def register_windows_filetypes(exe=sys.executable):
         winreg.SetValueEx(di_key, "", 0, winreg.REG_SZ, str(desired_location))
         logging.debug(r"Added bl_file.ico to DefaultIcon")
 
-    logging.info("Finished registering Blender Launcher V2 for file associations")
+    logging.info("Finished registering Blender Launcher for file associations")
 
 
 def unregister_windows_filetypes():
@@ -182,7 +183,7 @@ def get_shortcut_type() -> str:
 
 def get_default_program_shortcut_destination():
     """Returns the default folder to where a shortcut to Blender Launcher should be saved."""
-    return get_default_shortcut_destination("Blender Launcher V2")
+    return get_default_shortcut_destination("Blender Launcher")
 
 
 def get_default_shortcut_destination(shortcut_name):
@@ -251,7 +252,7 @@ def generate_program_shortcut(destination: Path, exe=sys.executable):
         text = "\n".join(
             [
                 "[Desktop Entry]",
-                "Name=Blender Launcher V2",
+                "Name=Blender Launcher",
                 "GenericName=Launcher",
                 f"Exec={source}",
                 "MimeType=application/x-blender;",

@@ -93,7 +93,7 @@ def add_help(parser: ArgumentParser):
 
 
 def main():
-    parser = ArgumentParser(description=f"Blender Launcher V2 ({version})", add_help=False)
+    parser = ArgumentParser(description=f"Blender Launcher ({version})", add_help=False)
     add_help(parser)
 
     subparsers = parser.add_subparsers(dest="command")
