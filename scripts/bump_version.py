@@ -18,10 +18,10 @@ def update_version_in_main_py(file_path, new_version):
 
     content = "\n".join(lines)
 
-    version_pattern = r"version = Version\(\s*([0-9]+),\s*([0-9]+),\s*([0-9]+),"
+    version_pattern = r"version = Version\(\s*([0-9]+),\n?\s*([0-9]+),\n?\s*([0-9]+),\n?"
     content = re.sub(
         version_pattern,
-        f'version = Version({new_version.replace(".", ", ")},',
+        "version = Version(\n    {},\n".format(new_version.replace(".", ",\n    ")),
         content,
     )
 
