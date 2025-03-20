@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
+from modules.bl_instance_handler import BLInstanceHandler
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.settings import (
@@ -58,7 +59,6 @@ from modules.string_utils import patch_note_cleaner
 from modules.tasks import Task, TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, Signal, Slot
 from PySide6.QtGui import QAction
-from PySide6.QtNetwork import QLocalServer
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -139,10 +139,10 @@ class BlenderLauncher(BaseWindow):
         self.setAcceptDrops(True)
 
         # Server
-        self.server = QLocalServer()
-        self.server.listen("blender-launcher-server")
+        self.instance_handler = BLInstanceHandler(self)
+        self.instance_handler.show_launcher.connect(self._show)
+
         self.quick_launch_fail_signal.connect(self.quick_launch_fail)
-        self.server.newConnection.connect(self.new_connection)
 
         # task queue
         self.task_queue = TaskQueue(
@@ -606,7 +606,7 @@ class BlenderLauncher(BaseWindow):
             _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
 
         # Destroy currently running Blender Launcher instance
-        self.server.close()
+        self.instance_handler.server.close()
         self.destroy()
 
     def _show(self):
@@ -1092,28 +1092,6 @@ class BlenderLauncher(BaseWindow):
             self.close_signal.emit()
         else:
             self.quit_()
-
-    def new_connection(self):
-        self.socket = self.server.nextPendingConnection()
-        assert self.socket is not None
-        self.socket.readyRead.connect(self.read_socket_data)
-        self._show()
-
-    def read_socket_data(self):
-        assert self.socket is not None
-        data = self.socket.readAll()
-
-        if str(data, encoding="ascii") != str(self.version):
-            self.dlg = PopupWindow(
-                parent=self,
-                title="Warning",
-                message="An attempt to launch a different version<br>\
-                      of Blender Launcher was detected!<br>\
-                      Please, terminate currently running<br>\
-                      version to proceed this action!",
-                info_popup=True,
-                icon=PopupIcon.WARNING,
-            )
 
     def open_docs(self):
         webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
