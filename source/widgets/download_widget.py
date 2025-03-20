@@ -231,14 +231,7 @@ class DownloadWidget(BaseBuildWidget):
         self.set_state(DownloadState.IDLE)
         self.cancelButton.hide()
         self.downloadButton.show()
-        if not self.parent.kill_thread_with_task(self.dl_task):  # killing failed
-            if self.dl_task in self.parent.task_queue:
-                self.parent.task_queue.remove(self.dl_task)
-            else:
-                # Task does not exist / finished in the
-                # microsecond between this function starting and now
-                ...
-
+        self.parent.task_queue.remove_task(self.dl_task)
         self.build_state_widget.setDownload(False)
 
     def download_get_info(self):

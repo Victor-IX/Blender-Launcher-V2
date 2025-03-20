@@ -89,7 +89,6 @@ class LibraryWidget(BaseBuildWidget):
         self.parent_widget = parent_widget
         self.is_damaged = False
 
-        self.parent.quit_signal.connect(self.list_widget_deleted)
         self.destroyed.connect(lambda: self._destroyed())
 
         self.outer_layout = QHBoxLayout()
@@ -897,8 +896,6 @@ class LibraryWidget(BaseBuildWidget):
 
         self.show_folder(path)
 
-    def list_widget_deleted(self):
-        self.list_widget = None
 
     def _destroyed(self):
         if self.parent.favorite == self:

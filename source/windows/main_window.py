@@ -201,7 +201,7 @@ class BlenderLauncher(BaseWindow):
                 icon=PopupIcon.WARNING,
                 buttons=["OK", "Don't Show Again"],
             )
-            dlg.cancelled.connect(self.__dont_show_resources_warning_again)
+            dlg.cancelled.connect(set_dont_show_resource_warning)
 
         if (not get_first_time_setup_seen()) or force_first_time:
             self.onboarding_window = OnboardingWindow(version, self)
@@ -227,9 +227,6 @@ class BlenderLauncher(BaseWindow):
 
         create_library_folders(get_library_folder())
         self.draw()
-
-    def __dont_show_resources_warning_again(self):
-        set_dont_show_resource_warning(True)
 
     def prompt_library_folder(self):
         library_folder = get_cwd().as_posix()
@@ -316,7 +313,7 @@ class BlenderLauncher(BaseWindow):
             "Blender Launcher",
             (self.SettingsButton, self.DocsButton),
         )
-        self.header.close_signal.connect(self.attempt_close)
+        self.header.close_signal.connect(self.close)
         self.header.minimize_signal.connect(self.showMinimized)
         self.CentralLayout.addWidget(self.header)
 
@@ -348,8 +345,6 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
         self.UserToolBox = BaseToolBoxWidget(self)
-
-        self.toggle_library_and_downloads_pages()
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
@@ -483,7 +478,7 @@ class BlenderLauncher(BaseWindow):
         quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit_)
         hide_action = QAction("Hide", self)
-        hide_action.triggered.connect(self.attempt_close)
+        hide_action.triggered.connect(self.close)
         show_action = QAction("Show", self)
         show_action.triggered.connect(self._show)
         show_favorites_action = QAction(self.icons.favorite, "Favorites", self)
@@ -571,24 +566,6 @@ class BlenderLauncher(BaseWindow):
     def show_changelog(self):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
         webbrowser.open(url)
-
-    def toggle_library_and_downloads_pages(self):
-        if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
-            self.LibraryToolBox.tab_changed.disconnect()
-
-        if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
-            self.DownloadsToolBox.tab_changed.disconnect()
-
-    def isSignalConnected(self, obj, name):
-        index = obj.metaObject().indexOfMethod(name)
-
-        if index > -1:
-            method = obj.metaObject().method(index)
-
-            if method:
-                return obj.isSignalConnected(method)
-
-        return False
 
     def is_downloading_idle(self):
         download_widgets = []
@@ -716,26 +693,6 @@ class BlenderLauncher(BaseWindow):
         elif reason == QSystemTrayIcon.ActivationReason.Context:
             self.tray_menu.trigger()
 
-    def kill_thread_with_task(self, task: Task):
-        """
-        Kills a thread listener using the current action.
-
-        Parameters
-        ----------
-        action : Action
-
-
-        Returns
-        -------
-        bool
-            success.
-        """
-        thread = self.task_queue.thread_with_task(task)
-        if thread is not None:
-            thread.fullstop()
-            return True
-        return False
-
     def destroy(self):
         self.quit_signal.emit()
 
@@ -811,7 +768,7 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsStablePageWidget.set_info_label_text(s)
 
     def force_check(self):
-        if QApplication.keyboardModifiers() & Qt.ShiftModifier:  # Shift held while pressing check
+        if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier:  # Shift held while pressing check
             # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
             show_stable = get_show_stable_builds()
             show_daily = get_show_daily_builds()
@@ -1039,18 +996,12 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox.setTabVisible(3, scrape_bfa)
         self.DownloadsToolBox.setTabEnabled(3, scrape_bfa)
 
-    def focus_widget(self, widget: BaseBuildWidget):
-        tab: QWidget | None = None
-        lst: BaseListWidget | None = None
-        item: BaseListWidgetItem | None = None
+    def focus_widget(self, widget: LibraryWidget):
+        tab = self.LibraryTab
+        item = widget.item
+        lst = item.listWidget()
 
-        if isinstance(widget, LibraryWidget):
-            tab = self.LibraryTab
-            item = widget.item
-            assert item is not None
-            lst = item.listWidget()
-
-        assert tab and lst and item
+        assert lst is not None
         self.TabWidget.setCurrentWidget(tab)
         lst.setFocus(Qt.FocusReason.ShortcutFocusReason)
         widget.setFocus(Qt.FocusReason.ShortcutFocusReason)
@@ -1127,10 +1078,6 @@ class BlenderLauncher(BaseWindow):
             return
 
         self.destroy()
-
-    @Slot()
-    def attempt_close(self):
-        self.close()
 
     def closeEvent(self, event):
         if get_show_tray_icon():

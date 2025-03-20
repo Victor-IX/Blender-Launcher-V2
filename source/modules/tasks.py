@@ -78,6 +78,29 @@ class TaskQueue(deque[Task]):
                 if item is not None:
                     logging.debug(f"Stopped {worker} {item}")
 
+    def remove_task(self, task: Task) -> bool:
+        """Removes a task from the queue if it exists, or kills the thread that is running the task.
+
+        Parameters
+        ----------
+        task: Task
+
+        Returns
+        -------
+        bool
+            success.
+        """
+        # check working threads
+        if (thread := self.thread_with_task(task)) is not None:
+            thread.fullstop()
+            return True
+
+        if task in self:
+            self.remove(task)
+            return True
+
+        return False
+
 
 class TaskWorker(QThread):
     item_changed = Signal(object)  # Task | None
