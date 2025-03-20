@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from platform import version
 from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
@@ -158,7 +157,7 @@ class BlenderLauncher(BaseWindow):
         self.version: Version = version
         self.offline = offline
         self.build_cache = build_cache
-        self.favorite: BaseBuildWidget | None = None
+        self.favorite: LibraryWidget | None = None
         self.status = "Unknown"
         self.is_force_check_on = False
         self.app_state = AppState.IDLE
@@ -175,7 +174,7 @@ class BlenderLauncher(BaseWindow):
         self.last_time_checked = get_last_time_checked_utc()
 
         if self.platform == "macOS":
-            self.app.aboutToQuit.connect(self._aboutToQuit)
+            self.app.aboutToQuit.connect(self.quit_)
 
         # Setup window
         self.setWindowTitle("Blender Launcher")
@@ -567,6 +566,9 @@ class BlenderLauncher(BaseWindow):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
         webbrowser.open(url)
 
+    def open_docs(self):
+        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
+
     def is_downloading_idle(self):
         download_widgets = []
 
@@ -706,7 +708,7 @@ class BlenderLauncher(BaseWindow):
         self.set_status("Reading local builds", False)
 
         if clear:
-            self.cm = ConnectionManager(version=version, proxy_type=get_proxy_type())
+            self.cm = ConnectionManager(version=self.version, proxy_type=get_proxy_type())
             self.cm.setup()
             self.cm.error.connect(self.connection_error)
             self.manager = self.cm.manager
@@ -1056,9 +1058,6 @@ class BlenderLauncher(BaseWindow):
         a = RemovalTask(path)
         self.task_queue.append(a)
 
-    def _aboutToQuit(self):  # MacOS Target
-        self.quit_()
-
     def quit_(self):
         busy = self.task_queue.get_busy_threads()
         if any(busy):
@@ -1092,18 +1091,6 @@ class BlenderLauncher(BaseWindow):
             self.close_signal.emit()
         else:
             self.quit_()
-
-    def open_docs(self):
-        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
-
-    def dragEnterEvent(self, e: QDragEnterEvent):
-        if e.mimeData().hasFormat("text/plain"):
-            e.accept()
-        else:
-            e.ignore()
-
-    def dropEvent(self, e):
-        print(e.mimeData().text())
 
     def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
