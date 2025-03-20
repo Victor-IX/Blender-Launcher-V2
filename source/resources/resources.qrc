@@ -29,6 +29,7 @@
     <file>icons/visibility_off.svg</file>
     <file>icons/download_on.svg</file>
     <file>icons/download_off.svg</file>
+    <file>icons/update.svg</file>
     <file>styles/global.qss</file>
     <file>fonts/OpenSans-SemiBold.ttf</file>
   </qresource>

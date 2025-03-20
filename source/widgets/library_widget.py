@@ -143,9 +143,14 @@ class LibraryWidget(BaseBuildWidget):
         self.item.date = build_info.commit_time
 
         self.launchButton = LeftIconButtonWidget("Launch", parent=self)
-        self.launchButton.setFixedWidth(85)
+        self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("LaunchButton", True)
         self._launch_icon = None
+
+        self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
+        self.updateButton.setFixedWidth(25)
+        self.updateButton.setProperty("UpdateButton", True)
+        self.updateButton.hide()
 
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
@@ -157,6 +162,7 @@ class LibraryWidget(BaseBuildWidget):
         self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
         self.layout.addWidget(self.launchButton)
+        self.layout.addWidget(self.updateButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
 
@@ -499,6 +505,54 @@ class LibraryWidget(BaseBuildWidget):
             self.observer.start()
 
         self.observer.append_proc.emit(proc)
+
+    def check_for_updates(self, available_downloads):
+        if not self.build_info or not hasattr(self.build_info, "semversion"):
+            return False
+
+        current_version = self.build_info.semversion
+        current_branch = self.build_info.branch
+        newest_download = None
+        has_update = False
+
+        for download in available_downloads:
+            if not hasattr(download, "build_info"):
+                continue
+
+            download_build_info = download.build_info
+
+            if not hasattr(download_build_info, "semversion"):
+                continue
+
+            download_version = download_build_info.semversion
+            download_branch = download_build_info.branch
+
+            if download_branch != current_branch:
+                continue
+
+            if (
+                download_version.major == current_version.major
+                and download_version.minor == current_version.minor
+                and download_version.patch > current_version.patch
+            ):
+                if newest_download is None or download_version.patch > newest_download.build_info.semversion.patch:
+                    newest_download = download
+                    has_update = True
+
+        if has_update and newest_download:
+            self.updateButton.show()
+            # Store reference to the download widget for use when button is clicked
+            self._update_download_widget = newest_download
+            self.updateButton.clicked.disconnect()
+            self.updateButton.clicked.connect(self._trigger_update_download)
+
+            self.launchButton.setFixedWidth(70)
+
+        return has_update
+
+    def _trigger_update_download(self):
+        if hasattr(self, "_update_download_widget"):
+            self._update_download_widget.init_downloader()
 
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
