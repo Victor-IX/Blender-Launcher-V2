@@ -7,7 +7,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 from modules._platform import get_platform
-from modules.build_info import BuildInfo, ReadBuildTask
+from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -171,6 +171,7 @@ class CustomBuildDialogWindow(BaseWindow):
         add_row = row_factory(settings_layout)
 
         self.subversion_edit = QLineEdit(self)
+        self.subversion_edit.textChanged.connect(self.check_binfo_is_valid)
         self.hash_edit = QLineEdit(self)
         self.commit_time = QDateTimeEdit(self)
         self.commit_time.setCalendarPopup(True)
@@ -237,7 +238,17 @@ class CustomBuildDialogWindow(BaseWindow):
 
         is_chosen = bool(self.executable_choice.text())
         self.auto_detect_button.setEnabled(is_chosen)
-        self.accept_button.setEnabled(is_chosen)
+        self.check_binfo_is_valid()
+
+    def check_binfo_is_valid(self):
+        exe_valid = self.exe_is_valid
+        try:
+            parse_blender_ver(self.subversion_edit.text())
+            version_valid = True
+        except ValueError:
+            version_valid = False
+
+        self.accept_button.setEnabled(exe_valid and version_valid)
 
     def auto_detect_info(self):
         a = ReadBuildTask(
@@ -270,6 +281,7 @@ class CustomBuildDialogWindow(BaseWindow):
             self.custom_name.setText(binfo.custom_name)
 
         self.auto_detect_button.setEnabled(True)
+        self.check_binfo_is_valid()
 
     def auto_detect_failed(self):
         self.auto_detect_button.setEnabled(True)
