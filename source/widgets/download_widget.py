@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Literal
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
 from modules.settings import get_install_template, get_library_folder
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot, QTimer
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from semver import Version
 from threads.downloader import DownloadTask
@@ -54,6 +54,7 @@ class DownloadWidget(BaseBuildWidget):
         self.state = DownloadState.IDLE
         self.build_dir = None
         self.source_file = None
+        self.updating_widget = None
 
         self.progressBar = BaseProgressBarWidget()
         self.progressBar.setFont(self.parent.font_8)
@@ -159,8 +160,9 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
 
-    def init_downloader(self):
+    def init_downloader(self, updating_widget=None):
         self.item.setSelected(True)
+        self.updating_widget = updating_widget
 
         if self.show_new is True:
             self.build_state_widget.setNewBuild(False)
@@ -326,6 +328,14 @@ class DownloadWidget(BaseBuildWidget):
                 message_type=MessageType.DOWNLOADFINISHED,
             )
             self.setInstalled(widget)
+
+            if self.updating_widget is not None:
+                QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
+
+    def remove_old_build(self, widget):
+        if hasattr(widget, "remove_from_drive"):
+            widget.remove_from_drive(trash=True)
+            self.updating_widget = None
 
     def setInstalled(self, build_widget: BaseBuildWidget):
         if self.state == DownloadState.IDLE:

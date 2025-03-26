@@ -543,7 +543,6 @@ class LibraryWidget(BaseBuildWidget):
             self.updateButton.show()
             # Store reference to the download widget for use when button is clicked
             self._update_download_widget = newest_download
-            self.updateButton.clicked.disconnect()
             self.updateButton.clicked.connect(self._trigger_update_download)
 
             self.launchButton.setFixedWidth(70)
@@ -552,7 +551,7 @@ class LibraryWidget(BaseBuildWidget):
 
     def _trigger_update_download(self):
         if hasattr(self, "_update_download_widget"):
-            self._update_download_widget.init_downloader()
+            self._update_download_widget.init_downloader(updating_widget=self)
 
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
@@ -950,7 +949,6 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.show_folder(path)
-
 
     def _destroyed(self):
         if self.parent.favorite == self:
