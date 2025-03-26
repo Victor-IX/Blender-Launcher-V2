@@ -550,6 +550,10 @@ class LibraryWidget(BaseBuildWidget):
         return has_update
 
     def _trigger_update_download(self):
+        self.updateButton.hide()
+        self.launchButton.set_text("Updating")
+        self.launchButton.setEnabled(False)
+        self.launchButton.setFixedWidth(95)
         if hasattr(self, "_update_download_widget"):
             self._update_download_widget.init_downloader(updating_widget=self)
 
