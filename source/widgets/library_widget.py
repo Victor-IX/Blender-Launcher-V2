@@ -25,6 +25,7 @@ from modules.settings import (
     get_library_folder,
     get_mark_as_favorite,
     set_favorite_path,
+    get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
 from PySide6 import QtCore
@@ -185,6 +186,7 @@ class LibraryWidget(BaseBuildWidget):
             )
         )
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.updateButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # Context menu
         self.menu_extended = BaseMenuWidget(parent=self)
@@ -540,12 +542,16 @@ class LibraryWidget(BaseBuildWidget):
                     has_update = True
 
         if has_update and newest_download:
-            self.updateButton.show()
+            if get_show_update_button():
+                self.updateButton.show()
+                self.launchButton.setFixedWidth(70)
+            else:
+                self.updateButton.hide()
+                self.launchButton.setFixedWidth(95)
+
             # Store reference to the download widget for use when button is clicked
             self._update_download_widget = newest_download
             self.updateButton.clicked.connect(self._trigger_update_download)
-
-            self.launchButton.setFixedWidth(70)
 
         return has_update
 
