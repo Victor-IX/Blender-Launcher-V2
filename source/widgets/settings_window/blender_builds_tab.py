@@ -16,6 +16,7 @@ from modules.settings import (
     get_show_daily_archive_builds,
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
+    get_show_update_button,
     set_bash_arguments,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
@@ -37,6 +38,7 @@ from modules.settings import (
     set_show_experimental_archive_builds,
     set_show_patch_archive_builds,
     set_show_stable_builds,
+    set_show_update_button,
 )
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
@@ -165,6 +167,16 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         # Downloading builds settings
         self.download_settings = SettingsGroup("Downloading & Saving Builds", parent=self)
 
+        # Update button
+        self.ShowUpdateButton = QCheckBox()
+        self.ShowUpdateButton.setText("Show Update Button")
+        self.ShowUpdateButton.setToolTip(
+            "Show the update button to quickly update Blender builds\
+            \nDEFAULT: On"
+        )
+        self.ShowUpdateButton.clicked.connect(self.show_update_button)
+        self.ShowUpdateButton.setChecked(get_show_update_button())
+
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
         self.EnableMarkAsFavorite.setText("Mark as Favorite")
@@ -195,9 +207,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.InstallTemplate.setChecked(get_install_template())
 
         self.downloading_layout = QGridLayout()
-        self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 0, 0, 1, 1)
-        self.downloading_layout.addWidget(self.MarkAsFavorite, 0, 1, 1, 1)
-        self.downloading_layout.addWidget(self.InstallTemplate, 1, 0, 1, 2)
+        self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
+        self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 1, 0, 1, 1)
+        self.downloading_layout.addWidget(self.MarkAsFavorite, 1, 1, 1, 2)
+        self.downloading_layout.addWidget(self.InstallTemplate, 2, 0, 1, 2)
         self.download_settings.setLayout(self.downloading_layout)
 
         # Launching builds settings
@@ -289,6 +302,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def update_bash_arguments(self):
         args = self.BashArguments.text()
         set_bash_arguments(args)
+
+    def show_update_button(self, is_checked):
+        set_show_update_button(is_checked)
 
     def toggle_install_template(self, is_checked):
         set_install_template(is_checked)

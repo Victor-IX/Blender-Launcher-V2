@@ -283,6 +283,14 @@ def set_bash_arguments(args):
     get_settings().setValue("bash_arguments", args.strip())
 
 
+def get_show_update_button() -> bool:
+    return get_settings().value("show_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_show_update_button(is_checked):
+    get_settings().setValue("show_update_button", is_checked)
+
+
 def get_install_template() -> bool:
     return get_settings().value("install_template", type=bool)  # type: ignore
 
