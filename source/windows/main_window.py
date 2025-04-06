@@ -777,7 +777,7 @@ class BlenderLauncher(BaseWindow):
                         library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):
-        print("connection_error")
+        logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
         self.set_status("Error: connection failed at " + utcnow)

@@ -234,6 +234,12 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self.removeFromFavoritesAction.setVisible(False)
 
+        self.updateBlenderBuildAction = QAction("Update Blender Build")
+        self.updateBlenderBuildAction.setIcon(self.parent.icons.update)
+        self.updateBlenderBuildAction.triggered.connect(self._trigger_update_download)
+        self.updateBlenderBuildAction.setToolTip("Update this build to the latest version")
+        self.updateBlenderBuildAction.setVisible(False)
+
         self.registerExtentionAction = QAction("Register Extension")
         self.registerExtentionAction.setToolTip("Use this build for .blend files and to display thumbnails")
         self.registerExtentionAction.triggered.connect(self.register_extension)
@@ -288,6 +294,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.addToQuickLaunchAction)
         self.menu.addAction(self.addToFavoritesAction)
         self.menu.addAction(self.removeFromFavoritesAction)
+        self.menu.addAction(self.updateBlenderBuildAction)
         self.menu.addMenu(self.debugMenu)
 
         if self.parent_widget is not None:
@@ -548,6 +555,7 @@ class LibraryWidget(BaseBuildWidget):
             if get_show_update_button():
                 self.updateButton.show()
                 self.launchButton.setFixedWidth(70)
+                self.updateBlenderBuildAction.setVisible(True)
             else:
                 self.updateButton.hide()
                 self.launchButton.setFixedWidth(95)
