@@ -151,6 +151,7 @@ class LibraryWidget(BaseBuildWidget):
         self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
         self.updateButton.setFixedWidth(25)
         self.updateButton.setProperty("UpdateButton", True)
+        self.updateButton.setToolTip("Update Blender to the latest version")
         self.updateButton.hide()
 
         self.subversionLabel = QLabel(self.build_info.display_version)
@@ -516,6 +517,7 @@ class LibraryWidget(BaseBuildWidget):
         current_branch = self.build_info.branch
         newest_download = None
         has_update = False
+        installed_version_list = [widget.build_info.subversion for widget in self.list_widget.items()]
 
         for download in available_downloads:
             if not hasattr(download, "build_info"):
@@ -536,6 +538,7 @@ class LibraryWidget(BaseBuildWidget):
                 download_version.major == current_version.major
                 and download_version.minor == current_version.minor
                 and download_version.patch > current_version.patch
+                and not download_build_info.subversion in installed_version_list
             ):
                 if newest_download is None or download_version.patch > newest_download.build_info.semversion.patch:
                     newest_download = download
