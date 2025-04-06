@@ -522,25 +522,38 @@ class LibraryWidget(BaseBuildWidget):
 
         current_version = self.build_info.semversion
         current_branch = self.build_info.branch
+        current_hash = self.build_info.build_hash
         newest_download = None
         has_update = False
-        installed_version_list = [
-            widget.build_info.semversion.replace(prerelease=None) for widget in self.list_widget.items()
-        ]
+        installed_hash_list = [widget.build_info.build_hash for widget in self.list_widget.items()]
+        installed_version_list = [widget.build_info.semversion for widget in self.list_widget.items()]
 
         for download in available_downloads:
             download_build_info = download.build_info
             download_version = download_build_info.semversion
             download_branch = download_build_info.branch
+            download_hash = download_build_info.build_hash
 
             if download_branch != current_branch:
                 continue
 
-            if (
+            # TODO: Absolutely not readable, but it works. Need to be refactored with update preferences implementation
+            elif (
                 download_version.major == current_version.major
                 and download_version.minor == current_version.minor
-                and download_version.patch > current_version.patch
-                and not download_version in installed_version_list
+                and (
+                    download_version.patch > current_version.patch
+                    or (
+                        current_hash != download_hash
+                        if ((download_version.patch == current_version.patch) and download_hash)
+                        else False
+                    )
+                )
+                and (
+                    download_hash not in installed_hash_list
+                    if download_hash
+                    else (download_version not in installed_version_list)
+                )
             ):
                 logger.debug(f"Found blender update for {current_version} to {download_version}")
                 if newest_download is None or download_version.patch > newest_download.build_info.semversion.patch:
