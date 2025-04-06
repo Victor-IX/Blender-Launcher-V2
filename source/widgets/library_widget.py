@@ -524,17 +524,12 @@ class LibraryWidget(BaseBuildWidget):
         current_branch = self.build_info.branch
         newest_download = None
         has_update = False
-        installed_version_list = [widget.build_info.subversion for widget in self.list_widget.items()]
+        installed_version_list = [
+            widget.build_info.semversion.replace(prerelease=None) for widget in self.list_widget.items()
+        ]
 
         for download in available_downloads:
-            if not hasattr(download, "build_info"):
-                continue
-
             download_build_info = download.build_info
-
-            if not hasattr(download_build_info, "semversion"):
-                continue
-
             download_version = download_build_info.semversion
             download_branch = download_build_info.branch
 
@@ -545,8 +540,9 @@ class LibraryWidget(BaseBuildWidget):
                 download_version.major == current_version.major
                 and download_version.minor == current_version.minor
                 and download_version.patch > current_version.patch
-                and not download_build_info.subversion in installed_version_list
+                and not download_version in installed_version_list
             ):
+                logger.debug(f"Found blender update for {current_version} to {download_version}")
                 if newest_download is None or download_version.patch > newest_download.build_info.semversion.patch:
                     newest_download = download
                     has_update = True
