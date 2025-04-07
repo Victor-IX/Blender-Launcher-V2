@@ -68,6 +68,12 @@ delete_action = {
     "Delete Permanently": 1,
 }
 
+update_behavior = {
+    "Major": 0,
+    "Minor": 1,
+    "Patch": 2,
+}
+
 
 def get_settings() -> QSettings:
     file = get_config_file()
@@ -289,6 +295,14 @@ def get_show_update_button() -> bool:
 
 def set_show_update_button(is_checked):
     get_settings().setValue("show_update_button", is_checked)
+
+
+def get_update_behavior() -> int:
+    return get_settings().value("update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_update_behavior(behavior):
+    get_settings().setValue("update_behavior", update_behavior[behavior])
 
 
 def get_install_template() -> bool:

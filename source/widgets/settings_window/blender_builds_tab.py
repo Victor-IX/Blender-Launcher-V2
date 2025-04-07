@@ -2,6 +2,7 @@ from modules._platform import get_platform
 from modules.bl_api_manager import dropdown_blender_version
 from modules.settings import (
     favorite_pages,
+    update_behavior,
     get_bash_arguments,
     get_blender_startup_arguments,
     get_check_for_new_builds_automatically,
@@ -17,6 +18,7 @@ from modules.settings import (
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
     get_show_update_button,
+    get_update_behavior,
     set_bash_arguments,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
@@ -39,6 +41,7 @@ from modules.settings import (
     set_show_patch_archive_builds,
     set_show_stable_builds,
     set_show_update_button,
+    set_update_behavior,
 )
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
@@ -177,6 +180,16 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowUpdateButton.clicked.connect(self.show_update_button)
         self.ShowUpdateButton.setChecked(get_show_update_button())
 
+        self.UpdateBehavior = QComboBox()
+        self.UpdateBehavior.addItems(update_behavior.keys())
+        self.UpdateBehavior.setToolTip(
+            "Define the update behavior\
+            \nDEFAULT: Patch"
+        )
+        self.UpdateBehavior.setCurrentIndex(get_update_behavior())
+        self.UpdateBehavior.activated[int].connect(self.change_update_behavior)
+        self.UpdateBehavior.setEnabled(self.ShowUpdateButton.isChecked())
+
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
         self.EnableMarkAsFavorite.setText("Mark as Favorite")
@@ -208,6 +221,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
         self.downloading_layout = QGridLayout()
         self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
+        self.downloading_layout.addWidget(self.UpdateBehavior, 0, 1, 1, 2)
         self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 1, 0, 1, 1)
         self.downloading_layout.addWidget(self.MarkAsFavorite, 1, 1, 1, 2)
         self.downloading_layout.addWidget(self.InstallTemplate, 2, 0, 1, 2)
@@ -304,7 +318,12 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         set_bash_arguments(args)
 
     def show_update_button(self, is_checked):
+        self.UpdateBehavior.setEnabled(is_checked)
         set_show_update_button(is_checked)
+
+    def change_update_behavior(self, index: int):
+        behavior = self.UpdateBehavior.itemText(index)
+        set_update_behavior(behavior)
 
     def toggle_install_template(self, is_checked):
         set_install_template(is_checked)
