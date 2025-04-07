@@ -2,6 +2,10 @@ QCheckBox {
     color: #FFFFFF
 }
 
+QCheckBox:disabled {
+    color: #828282;
+}
+
 QCheckBox::indicator:checked {
     image: url(:resources/icons/box_checked.svg);
 }
