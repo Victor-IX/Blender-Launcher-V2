@@ -19,6 +19,15 @@ from modules.settings import (
     get_show_patch_archive_builds,
     get_show_update_button,
     get_update_behavior,
+    get_show_advanced_update_button,
+    get_stable_update_behavior,
+    get_daily_update_behavior,
+    get_experimental_update_behavior,
+    get_bfa_update_behavior,
+    get_show_stable_update_button,
+    get_show_daily_update_button,
+    get_show_experimental_update_button,
+    get_show_bfa_update_button,
     set_bash_arguments,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
@@ -42,6 +51,15 @@ from modules.settings import (
     set_show_stable_builds,
     set_show_update_button,
     set_update_behavior,
+    set_show_advanced_update_button,
+    set_stable_update_behavior,
+    set_daily_update_behavior,
+    set_experimental_update_behavior,
+    set_bfa_update_behavior,
+    set_show_stable_update_button,
+    set_show_daily_update_button,
+    set_show_experimental_update_button,
+    set_show_bfa_update_button,
 )
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
@@ -180,6 +198,51 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowUpdateButton.clicked.connect(self.show_update_button)
         self.ShowUpdateButton.setChecked(get_show_update_button())
 
+        self.ShowAdvancedUpdateButton = QCheckBox()
+        self.ShowAdvancedUpdateButton.setText("Show Advanced Update Button")
+        self.ShowAdvancedUpdateButton.setToolTip(
+            "Show the update button to quickly update advanced builds\
+            \nDEFAULT: On"
+        )
+        self.ShowAdvancedUpdateButton.clicked.connect(self.show_advanced_update_button)
+        self.ShowAdvancedUpdateButton.setChecked(get_show_advanced_update_button())
+
+        self.ShowStableUpdateButton = QCheckBox()
+        self.ShowStableUpdateButton.setText("Show Stable Update Button")
+        self.ShowStableUpdateButton.setToolTip(
+            "Show the update button to quickly update stable builds\
+            \nDEFAULT: On"
+        )
+        self.ShowStableUpdateButton.clicked.connect(self.show_stable_update_button)
+        self.ShowStableUpdateButton.setChecked(get_show_stable_update_button())
+
+        self.ShowDailyUpdateButton = QCheckBox()
+        self.ShowDailyUpdateButton.setText("Show Daily Update Button")
+        self.ShowDailyUpdateButton.setToolTip(
+            "Show the update button to quickly update daily builds\
+            \nDEFAULT: On"
+        )
+        self.ShowDailyUpdateButton.clicked.connect(self.show_daily_update_button)
+        self.ShowDailyUpdateButton.setChecked(get_show_daily_update_button())
+
+        self.ShowExperimentalUpdateButton = QCheckBox()
+        self.ShowExperimentalUpdateButton.setText("Show Experimental Update Button")
+        self.ShowExperimentalUpdateButton.setToolTip(
+            "Show the update button to quickly update experimental builds\
+            \nDEFAULT: On"
+        )
+        self.ShowExperimentalUpdateButton.clicked.connect(self.show_experimental_update_button)
+        self.ShowExperimentalUpdateButton.setChecked(get_show_experimental_update_button())
+
+        self.ShowBFAUpdateButton = QCheckBox()
+        self.ShowBFAUpdateButton.setText("Show BFA Update Button")
+        self.ShowBFAUpdateButton.setToolTip(
+            "Show the update button to quickly update BFA builds\
+            \nDEFAULT: On"
+        )
+        self.ShowBFAUpdateButton.clicked.connect(self.show_bfa_update_button)
+        self.ShowBFAUpdateButton.setChecked(get_show_bfa_update_button())
+
         self.UpdateBehavior = QComboBox()
         self.UpdateBehavior.addItems(update_behavior.keys())
         self.UpdateBehavior.setToolTip(
@@ -189,6 +252,46 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBehavior.setCurrentIndex(get_update_behavior())
         self.UpdateBehavior.activated[int].connect(self.change_update_behavior)
         self.UpdateBehavior.setEnabled(self.ShowUpdateButton.isChecked())
+
+        self.UpdateStableBehavior = QComboBox()
+        self.UpdateStableBehavior.addItems(update_behavior.keys())
+        self.UpdateStableBehavior.setToolTip(
+            "Define the update behavior for stable builds\
+            \nDEFAULT: Patch"
+        )
+        self.UpdateStableBehavior.setCurrentIndex(get_stable_update_behavior())
+        self.UpdateStableBehavior.activated[int].connect(self.change_update_stable_behavior)
+        self.UpdateStableBehavior.setEnabled(self.ShowStableUpdateButton.isChecked())
+
+        self.UpdateDailyBehavior = QComboBox()
+        self.UpdateDailyBehavior.addItems(update_behavior.keys())
+        self.UpdateDailyBehavior.setToolTip(
+            "Define the update behavior for daily builds\
+            \nDEFAULT: Patch"
+        )
+        self.UpdateDailyBehavior.setCurrentIndex(get_daily_update_behavior())
+        self.UpdateDailyBehavior.activated[int].connect(self.change_update_daily_behavior)
+        self.UpdateDailyBehavior.setEnabled(self.ShowDailyUpdateButton.isChecked())
+
+        self.UpdateExperimentalBehavior = QComboBox()
+        self.UpdateExperimentalBehavior.addItems(update_behavior.keys())
+        self.UpdateExperimentalBehavior.setToolTip(
+            "Define the update behavior for experimental builds\
+            \nDEFAULT: Patch"
+        )
+        self.UpdateExperimentalBehavior.setCurrentIndex(get_experimental_update_behavior())
+        self.UpdateExperimentalBehavior.activated[int].connect(self.change_update_experimental_behavior)
+        self.UpdateExperimentalBehavior.setEnabled(self.ShowExperimentalUpdateButton.isChecked())
+
+        self.UpdateBFABehavior = QComboBox()
+        self.UpdateBFABehavior.addItems(update_behavior.keys())
+        self.UpdateBFABehavior.setToolTip(
+            "Define the update behavior for BFA builds\
+            \nDEFAULT: Patch"
+        )
+        self.UpdateBFABehavior.setCurrentIndex(get_bfa_update_behavior())
+        self.UpdateBFABehavior.activated[int].connect(self.change_update_bfa_behavior)
+        self.UpdateBFABehavior.setEnabled(self.ShowBFAUpdateButton.isChecked())
 
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
@@ -222,9 +325,18 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.downloading_layout = QGridLayout()
         self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
         self.downloading_layout.addWidget(self.UpdateBehavior, 0, 1, 1, 2)
-        self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 1, 0, 1, 1)
-        self.downloading_layout.addWidget(self.MarkAsFavorite, 1, 1, 1, 2)
-        self.downloading_layout.addWidget(self.InstallTemplate, 2, 0, 1, 2)
+        self.downloading_layout.addWidget(self.ShowAdvancedUpdateButton, 1, 0, 1, 1)
+        self.downloading_layout.addWidget(self.ShowStableUpdateButton, 2, 0, 1, 1)
+        self.downloading_layout.addWidget(self.UpdateStableBehavior, 2, 1, 1, 2)
+        self.downloading_layout.addWidget(self.ShowDailyUpdateButton, 3, 0, 1, 1)
+        self.downloading_layout.addWidget(self.UpdateDailyBehavior, 3, 1, 1, 2)
+        self.downloading_layout.addWidget(self.ShowExperimentalUpdateButton, 4, 0, 1, 1)
+        self.downloading_layout.addWidget(self.UpdateExperimentalBehavior, 4, 1, 1, 2)
+        self.downloading_layout.addWidget(self.ShowBFAUpdateButton, 5, 0, 1, 1)
+        self.downloading_layout.addWidget(self.UpdateBFABehavior, 5, 1, 1, 2)
+        self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 6, 0, 1, 1)
+        self.downloading_layout.addWidget(self.MarkAsFavorite, 6, 1, 1, 2)
+        self.downloading_layout.addWidget(self.InstallTemplate, 7, 0, 1, 2)
         self.download_settings.setLayout(self.downloading_layout)
 
         # Launching builds settings
@@ -301,6 +413,16 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.addRow(self.download_settings)
         self.addRow(self.launching_settings)
 
+        visible = get_show_advanced_update_button()
+        self.ShowStableUpdateButton.setVisible(visible)
+        self.UpdateStableBehavior.setVisible(visible)
+        self.ShowDailyUpdateButton.setVisible(visible)
+        self.UpdateDailyBehavior.setVisible(visible)
+        self.ShowExperimentalUpdateButton.setVisible(visible)
+        self.UpdateExperimentalBehavior.setVisible(visible)
+        self.ShowBFAUpdateButton.setVisible(visible)
+        self.UpdateBFABehavior.setVisible(visible)
+
     def change_mark_as_favorite(self, index: int):
         page = self.MarkAsFavorite.itemText(index)
         set_mark_as_favorite(page)
@@ -321,9 +443,61 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBehavior.setEnabled(is_checked)
         set_show_update_button(is_checked)
 
+    def show_advanced_update_button(self, is_checked):
+        self.UpdateBehavior.setEnabled(is_checked)
+
+        # Set visibility for all the conditional widgets
+        self.ShowStableUpdateButton.setVisible(is_checked)
+        self.UpdateStableBehavior.setVisible(is_checked)
+        self.ShowDailyUpdateButton.setVisible(is_checked)
+        self.UpdateDailyBehavior.setVisible(is_checked)
+        self.ShowExperimentalUpdateButton.setVisible(is_checked)
+        self.UpdateExperimentalBehavior.setVisible(is_checked)
+        self.ShowBFAUpdateButton.setVisible(is_checked)
+        self.UpdateBFABehavior.setVisible(is_checked)
+
+        self.downloading_layout.invalidate()
+        self.downloading_layout.activate()
+        self.download_settings.adjustSize()
+        self.adjustSize()
+
+        set_show_advanced_update_button(is_checked)
+
+    def show_stable_update_button(self, is_checked):
+        self.UpdateStableBehavior.setEnabled(is_checked)
+        set_show_stable_update_button(is_checked)
+
+    def show_daily_update_button(self, is_checked):
+        self.UpdateDailyBehavior.setEnabled(is_checked)
+        set_show_daily_update_button(is_checked)
+
+    def show_experimental_update_button(self, is_checked):
+        self.UpdateExperimentalBehavior.setEnabled(is_checked)
+        set_show_experimental_update_button(is_checked)
+
+    def show_bfa_update_button(self, is_checked):
+        self.UpdateBFABehavior.setEnabled(is_checked)
+        set_show_bfa_update_button(is_checked)
+
     def change_update_behavior(self, index: int):
         behavior = self.UpdateBehavior.itemText(index)
         set_update_behavior(behavior)
+
+    def change_update_stable_behavior(self, index: int):
+        behavior = self.UpdateStableBehavior.itemText(index)
+        set_stable_update_behavior(behavior)
+
+    def change_update_daily_behavior(self, index: int):
+        behavior = self.UpdateDailyBehavior.itemText(index)
+        set_daily_update_behavior(behavior)
+
+    def change_update_experimental_behavior(self, index: int):
+        behavior = self.UpdateExperimentalBehavior.itemText(index)
+        set_experimental_update_behavior(behavior)
+
+    def change_update_bfa_behavior(self, index: int):
+        behavior = self.UpdateBFABehavior.itemText(index)
+        set_bfa_update_behavior(behavior)
 
     def toggle_install_template(self, is_checked):
         set_install_template(is_checked)
