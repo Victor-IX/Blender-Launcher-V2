@@ -9,7 +9,9 @@
     <file>icons/delete.svg</file>
     <file>icons/folder.svg</file>
     <file>icons/box_checked.svg</file>
+    <file>icons/box_checked_disabled.svg</file>
     <file>icons/box_unchecked.svg</file>
+    <file>icons/box_unchecked_disabled.svg</file>
     <file>icons/fake.svg</file>
     <file>icons/favorite.svg</file>
     <file>icons/page_closed.svg</file>
