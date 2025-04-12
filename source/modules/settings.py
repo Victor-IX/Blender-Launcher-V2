@@ -297,12 +297,12 @@ def set_show_update_button(is_checked):
     get_settings().setValue("show_update_button", is_checked)
 
 
-def get_show_advanced_update_button() -> bool:
-    return get_settings().value("show_advanced_update_button", defaultValue=False, type=bool)  # type: ignore
+def get_use_advanced_update_button() -> bool:
+    return get_settings().value("use_advanced_update_button", defaultValue=False, type=bool)  # type: ignore
 
 
-def set_show_advanced_update_button(is_checked):
-    get_settings().setValue("show_advanced_update_button", is_checked)
+def set_use_advanced_update_button(is_checked):
+    get_settings().setValue("use_advanced_update_button", is_checked)
 
 
 def set_show_stable_update_button(is_checked):
