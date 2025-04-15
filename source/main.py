@@ -100,7 +100,7 @@ def main():
 
     update_parser = subparsers.add_parser(
         "update",
-        help="Update the application to a new version.",
+        help="Update the application to a new version. Run 'update --help' to see available options.",
         add_help=False,
     )
     add_help(update_parser)
@@ -129,7 +129,10 @@ def main():
 
     launch_parser = subparsers.add_parser(
         "launch",
-        help="Launch a specific version of Blender. If not file or version is specified, Quick launch is chosen.",
+        help=(
+            "Launch a specific version of Blender. If not file or version is specified, "
+            "Quick launch is chosen. Run 'launch --help' to see available options."
+        ),
         add_help=False,
     )
     add_help(launch_parser)
