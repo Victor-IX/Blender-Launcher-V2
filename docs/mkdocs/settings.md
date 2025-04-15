@@ -241,4 +241,3 @@ Actions that will be performed on newly added builds to Library tab right after 
     ```
     env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup %path to blender executable% %startup arguments%
     ```
-```
