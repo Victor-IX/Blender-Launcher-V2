@@ -241,3 +241,61 @@ Actions that will be performed on newly added builds to Library tab right after 
     ```
     env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup %path to blender executable% %startup arguments%
     ```
+
+### Command Line Arguments
+
+Blender Launcher can be launched from the command line with the following options.
+
+```
+usage: Blender Launcher.exe [-h] [-d] [-set-library-folder SET_LIBRARY_FOLDER]
+                            [-force-first-time] [--offline] [--build-cache]
+                            [--instanced]
+                            {update,launch,register,unregister} ...
+
+Blender Launcher (2.4.3)
+
+positional arguments:
+  {update,launch,register,unregister}
+    update              Update the application to a new version. Run 'update --help' to see available options.
+    launch              Launch a specific version of Blender. If not file or version is specified, Quick launch is
+                        chosen. Run 'launch --help' to see available options.
+    register            Registers the program to read .blend builds. Adds Blender Launcher to the Open With window.
+                        (WIN ONLY)
+    unregister          Undoes the changes that `register` makes. (WIN ONLY)
+
+options:
+  -h, --help            show this help message and exit
+  -d, -debug, --debug   Enable debug logging.
+  -set-library-folder SET_LIBRARY_FOLDER
+                        Set library folder
+  -force-first-time     Force the first time setup
+  --offline, -offline   Run the application offline. (Disables scraper threads and update checks)
+  --build-cache         Launch the app and cache all the available builds.
+  --instanced, -instanced
+                        Do not check for existing instance.
+```
+
+`launch` command line arguments:
+```
+usage: Blender Launcher.exe launch [-h] [-f FILE | -ol] [-v VERSION] [-c]
+
+options:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  Path to a specific Blender file to launch.
+  -ol, --open-last      Open the last file in the specified blender build
+  -v VERSION, --version VERSION
+                        Version to launch. <major_num>.<minor>.<patch>[-<branch>][+<build_hash>][@<commit time>]
+  -c, --cli             Launch Blender from CLI. does not open any QT frontend. WARNING: LIKELY DOES NOT WORK IN
+                        WINDOWS BUNDLED EXECUTABLE
+```
+
+`update` command line arguments:
+```
+usage: Blender Launcher.exe update [-h] [version]
+
+positional arguments:
+  version     Version to update to.
+
+options:
+  -h, --help  show this help message and exit
+```
