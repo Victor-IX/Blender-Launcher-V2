@@ -6,7 +6,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import NoReturn
+from typing import NoReturn, Sequence
 
 from modules.blendfile_reader import read_blendfile_header
 from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args
@@ -18,7 +18,10 @@ logger = logging.getLogger()
 
 
 def cli_launch(
-    file: Path | None = None, version_query: VersionSearchQuery | None = None, open_last: bool = False
+    file: Path | None = None,
+    version_query: VersionSearchQuery | None = None,
+    open_last: bool = False,
+    blender_args: Sequence[str] = (),
 ) -> NoReturn:
     # Search for builds
     logger.info("Searching for all builds")
@@ -107,6 +110,10 @@ def cli_launch(
         build_info = basics[build]
 
     args = get_args(build_info, launch_mode=launch_mode, linux_nohup=False)
+    if isinstance(args, list):
+        args.extend(blender_args)
+    else:
+        args += f" {' '.join(blender_args)}"
     logger.info(f"Launching build: {build}")
     logger.info(f"With args: {args}")
     proc = subprocess.Popen(args, shell=True)

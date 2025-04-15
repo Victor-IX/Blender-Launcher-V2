@@ -279,6 +279,10 @@ options:
 ```
 usage: Blender Launcher.exe launch [-h] [-f FILE | -ol] [-v VERSION] [-c]
 
+positional arguments:
+  blender_args          Additional arguments to pass to Blender, should be provided after double dash.
+                        E.g. 'launch -- --background',
+
 options:
   -h, --help            show this help message and exit
   -f FILE, --file FILE  Path to a specific Blender file to launch.
