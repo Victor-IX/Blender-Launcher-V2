@@ -5,9 +5,10 @@ import logging
 import logging.handlers
 import os
 import sys
+import argparse
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import NoReturn
+from typing import NoReturn, Sequence
 
 import modules._resources_rc
 from modules import argument_parsing as ap
@@ -149,6 +150,11 @@ def main():
         action="store_true",
         help="Launch Blender from CLI. does not open any QT frontend. WARNING: LIKELY DOES NOT WORK IN WINDOWS BUNDLED EXECUTABLE",
     )
+    launch_parser.add_argument(
+        "blender_args",
+        nargs=argparse.REMAINDER,
+        help="Additional arguments to pass to Blender, should be provided after double dash. E.g. 'launch -- --background',",
+    )
 
     if sys.platform == "win32":
         subparsers.add_parser(
@@ -199,7 +205,14 @@ def main():
         start_update(app, args.instanced, args.version)
 
     if args.command == "launch":
-        start_launch(app, args.file, args.version, args.open_last, cli=args.cli)
+        start_launch(
+            app,
+            args.file,
+            args.version,
+            args.open_last,
+            cli=args.cli,
+            blender_args=[arg for arg in args.blender_args if arg != "--"],
+        )
 
     if args.command == "register":
         start_register()
@@ -271,6 +284,7 @@ def start_launch(
     version_query: str | None = None,
     open_last: bool = False,
     cli: bool = False,
+    blender_args: Sequence[str] = (),
 ) -> NoReturn:
     from modules.version_matcher import VersionSearchQuery
     from windows.launching_window import LaunchingWindow
@@ -293,7 +307,7 @@ def start_launch(
         file = Path(str(file).strip('"'))
 
     if cli:
-        cli_launch(file=file, version_query=query, open_last=open_last)
+        cli_launch(file=file, version_query=query, open_last=open_last, blender_args=blender_args)
         sys.exit(1)
     else:
         LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
