@@ -5,7 +5,7 @@
 ## Requirements
 
 - Linux or Windows x64
-- Python >=3.9, <3.11
+- Python >=3.10, <3.14
 
 
 !!! info "Note"
