@@ -28,6 +28,7 @@ from modules.settings import (
     get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
+from modules.blender_update_manager import available_blender_update
 from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
@@ -517,50 +518,9 @@ class LibraryWidget(BaseBuildWidget):
         self.observer.append_proc.emit(proc)
 
     def check_for_updates(self, available_downloads):
-        if not self.build_info or not hasattr(self.build_info, "semversion"):
-            return False
-
-        current_version = self.build_info.semversion
-        current_branch = self.build_info.branch
-        current_hash = self.build_info.build_hash
-        newest_download = None
-        has_update = False
-        installed_hash_list = [widget.build_info.build_hash for widget in self.list_widget.items()]
-        installed_version_list = [widget.build_info.semversion for widget in self.list_widget.items()]
-
-        for download in available_downloads:
-            download_build_info = download.build_info
-            download_version = download_build_info.semversion
-            download_branch = download_build_info.branch
-            download_hash = download_build_info.build_hash
-
-            if download_branch != current_branch:
-                continue
-
-            # TODO: Absolutely not readable, but it works. Need to be refactored with update preferences implementation
-            elif (
-                download_version.major == current_version.major
-                and download_version.minor == current_version.minor
-                and (
-                    download_version.patch > current_version.patch
-                    or (
-                        current_hash != download_hash
-                        if ((download_version.patch == current_version.patch) and download_hash)
-                        else False
-                    )
-                )
-                and (
-                    download_hash not in installed_hash_list
-                    if download_hash
-                    else (download_version not in installed_version_list)
-                )
-            ):
-                logger.debug(f"Found blender update for {current_version} to {download_version}")
-                if newest_download is None or download_version.patch > newest_download.build_info.semversion.patch:
-                    newest_download = download
-                    has_update = True
-
-        if has_update and newest_download:
+        logger.debug(f"Checking for updates for {self.build_info.semversion} in {self.build_info.branch}")
+        update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
+        if update:
             if get_show_update_button():
                 self.updateButton.show()
                 self.launchButton.setFixedWidth(70)
@@ -570,10 +530,11 @@ class LibraryWidget(BaseBuildWidget):
                 self.launchButton.setFixedWidth(95)
 
             # Store reference to the download widget for use when button is clicked
-            self._update_download_widget = newest_download
+            self._update_download_widget = update
             self.updateButton.clicked.connect(self._trigger_update_download)
+            return True
 
-        return has_update
+        return False
 
     def _trigger_update_download(self):
         self.updateButton.hide()
