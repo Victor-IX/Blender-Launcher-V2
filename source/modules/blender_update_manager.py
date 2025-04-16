@@ -73,7 +73,7 @@ def _new_version_available(
     current_hash = current_build_info.build_hash
 
     installed_hashes = {widget.build_info.build_hash for widget in widgets}
-    installed_versions = {widget.build_info.semversion for widget in widgets}
+    installed_versions = {widget.build_info.semversion.replace(prerelease=None) for widget in widgets}
 
     update_behavior = _get_update_behavior(current_branch)
     best_download = None
