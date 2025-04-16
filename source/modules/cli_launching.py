@@ -80,6 +80,10 @@ def cli_launch(
     if open_last:
         launch_mode = LaunchOpenLast()
 
+    if len(matches) == 0:
+        logger.exception(f"Could not find any matching builds for the query: '{query}'.")
+        sys.exit(1)
+
     if len(matches) > 1:
         print(f"Found {len(matches)} matching builds:")
         for i, b in enumerate(matches):
