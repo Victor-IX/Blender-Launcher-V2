@@ -4,7 +4,7 @@
 
 ## Settings Window
 
-:   To open the **Settings Window**, use the button with a gear icon on the top left of the **Main Window**. All changes are saved automatically.
+To open the **Settings Window**, use the button with a gear icon on the top left of the **Main Window**. All changes are saved automatically.
 
 ## General
 
@@ -39,8 +39,8 @@ If this option is enabled, to completely close the **Blender Launcher** you need
 :   Sets the maximal number of **CPU Thread Blender** Launcher can use.
 
 ### File Association
-:   Use the Blender Launcher as Default program to launch `.blend` files with the desired version
-:   For detail information, check the [File Association](file_association.md) page.
+Use the Blender Launcher as Default program to launch `.blend` files with the desired version
+For detail information, check the [File Association](file_association.md) page.
 
 #### Create Shortcut
 
