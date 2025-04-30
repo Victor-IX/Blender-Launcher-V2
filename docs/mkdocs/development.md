@@ -50,7 +50,7 @@
     ===+ "All packages including development tools"
 
         ```bash
-        pip install -e ".[docs,ruff]"
+        pip install -e ".[docs,ruff,pytest]"
         ```
 
 ## Running Blender Launcher
