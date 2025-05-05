@@ -1,5 +1,5 @@
 {
-    "api_file_version": "6.0",
+    "api_file_version": "7.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -3494,9 +3494,43 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.4/blender-4.4.2-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "4.4.2",
+                                "build_hash": null,
+                                "commit_time": "2025-04-29T07:42:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.4/blender-4.4.3-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.3",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "4.4.3",
+                                "build_hash": null,
+                                "commit_time": "2025-04-29T16:30:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2025-04-15T07:38:00"
+            "modified_date": "2025-04-29T16:31:00"
         }
     }
 }
