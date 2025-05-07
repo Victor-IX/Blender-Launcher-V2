@@ -205,13 +205,17 @@ def main():
         start_update(app, args.instanced, args.version)
 
     if args.command == "launch":
+        blender_args: list[str] = args.blender_args.copy()
+        # Skip only first `--`, as it also can be a valid argument to pass to Blender.
+        if "--" in blender_args:
+            blender_args.remove("--")
         start_launch(
             app,
             args.file,
             args.version,
             args.open_last,
             cli=args.cli,
-            blender_args=[arg for arg in args.blender_args if arg != "--"],
+            blender_args=blender_args,
         )
 
     if args.command == "register":
