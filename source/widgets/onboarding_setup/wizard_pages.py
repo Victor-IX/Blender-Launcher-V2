@@ -159,7 +159,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
             exe = pth / self.prop_settings.exe_location.name
             self.prop_settings.exe_location = exe
 
-            if exe.absolute() == sys.executable:
+            if exe.exists():
                 return
 
             self.prop_settings.exe_changed = True
