@@ -274,7 +274,7 @@ if __name__ == "__main__":  # Test BInfoMatcher
 
     def test_binfo_matcher():
         # find the latest minor builds with any patch number
-        results = matcher.match(VersionSearchQuery("^", "^", "*"))
+        results = matcher.match(VersionSearchQuery("^", "^", "*", commit_time="*"))
         assert results == (
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
