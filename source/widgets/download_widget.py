@@ -209,10 +209,10 @@ class DownloadWidget(BaseBuildWidget):
             dist = library_folder / "experimental"
 
         self.source_file = source
-        a = ExtractTask(file=source, destination=dist)
-        a.progress.connect(self.progressBar.set_progress)
-        a.finished.connect(self.init_template_installer)
-        self.parent.task_queue.append(a)
+        t = ExtractTask(file=source, destination=dist)
+        t.progress.connect(self.progressBar.set_progress)
+        t.finished.connect(self.init_template_installer)
+        self.parent.task_queue.append(t)
 
     def init_template_installer(self, dist: Path):
         self.build_state_widget.setExtract(False)
@@ -252,7 +252,7 @@ class DownloadWidget(BaseBuildWidget):
             prerelease=ver_.prerelease,
         )
 
-        a = ReadBuildTask(
+        t = ReadBuildTask(
             self.build_dir,
             info=BuildInfo(
                 str(self.build_dir),
@@ -264,9 +264,9 @@ class DownloadWidget(BaseBuildWidget):
             ),
             archive_name=archive_name,
         )
-        a.finished.connect(self.download_rename)
-        a.failure.connect(lambda: print("Reading failed"))
-        self.parent.task_queue.append(a)
+        t.finished.connect(self.download_rename)
+        t.failure.connect(lambda: print("Reading failed"))
+        self.parent.task_queue.append(t)
 
     def download_rename(self, build_info: BuildInfo):
         self.set_state(DownloadState.RENAMING)
