@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import re
+import shutil
+import logging
+
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
@@ -25,6 +28,8 @@ if TYPE_CHECKING:
     from widgets.base_page_widget import BasePageWidget
     from widgets.library_widget import LibraryWidget
     from windows.main_window import BlenderLauncher
+
+logger = logging.getLogger()
 
 
 class DownloadState(Enum):
@@ -218,6 +223,9 @@ class DownloadWidget(BaseBuildWidget):
         self.build_state_widget.setExtract(False)
         self.build_dir = dist
 
+        if self.build_info.branch == "bforartists":
+            self.move_bforartists_patch_note()
+
         if get_install_template():
             self.progressBar.set_title("Copying data...")
             t = TemplateTask(destination=self.build_dir)
@@ -225,6 +233,20 @@ class DownloadWidget(BaseBuildWidget):
             self.parent.task_queue.append(t)
         else:
             self.download_get_info()
+
+    def move_bforartists_patch_note(self):
+        bforartist_lib = self.build_dir.parent
+        txt_files = [f for f in bforartist_lib.glob("*.txt") if f.is_file()]
+        folders = [folder for folder in bforartist_lib.iterdir() if folder.is_dir()]
+
+        for file in txt_files:
+            file_vesrion = ".".join(file.stem[-3:])
+            for folder in folders:
+                if file_vesrion in folder.name:
+                    try:
+                        shutil.move(file, folder / file.name)
+                    except shutil.Error as e:
+                        logger.exception(f"Failed to move {file.name} to {folder.name}: {e}")
 
     def download_cancelled(self):
         self.item.setSelected(True)
