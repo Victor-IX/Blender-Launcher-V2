@@ -14,13 +14,17 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     suffixes = source.suffixes
     if suffixes[-1] == ".zip":
         with zipfile.ZipFile(source) as zf:
-            infolist = zf.infolist()
-            folder = infolist[0].filename.split("/")[0]
-            uncompress_size = sum(member.file_size for member in infolist)
+            members = zf.infolist()
+            folder = _get_build_folder(members)
+
+            if folder is None:
+                return None
+
+            uncompress_size = sum(member.file_size for member in members)
             progress_callback(0, uncompress_size)
             extracted_size = 0
 
-            for member in infolist:
+            for member in members:
                 zf.extract(member, destination)
                 extracted_size += member.file_size
                 progress_callback(extracted_size, uncompress_size)
@@ -28,8 +32,12 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
 
     if suffixes[-2] == ".tar":
         with tarfile.open(source) as tar:
-            folder = tar.getnames()[0].split("/")[0]
             members = tar.getmembers()
+            folder = _get_build_folder(members)
+
+            if folder is None:
+                return None
+
             uncompress_size = sum(member.size for member in members)
             progress_callback(0, uncompress_size)
             extracted_size = 0
@@ -40,6 +48,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
                 progress_callback(extracted_size, uncompress_size)
         return destination / folder
 
+    # TODO: Make sure this work with Bforartists with the patch note .txt file
     if suffixes[-1] == ".dmg":
         _check_call(["hdiutil", "mount", source.as_posix()])
         dist = destination / source.stem
@@ -56,6 +65,17 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
         _check_call(["hdiutil", "unmount", f"/Volumes/{app_name}"])
 
         return dist
+    return None
+
+
+def _get_build_folder(members: zipfile.ZipInfo | tarfile.TarInfo):
+    names = [m.filename for m in members]
+    tops = {n.split("/")[0] for n in names if n and "/" in n}
+    folders = {t for t in tops if any(n.startswith(f"{t}/") for n in names)}
+
+    if len(folders) == 1:
+        return next(iter(folders))
+
     return None
 
 
