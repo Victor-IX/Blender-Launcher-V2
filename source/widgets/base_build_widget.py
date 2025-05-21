@@ -1,6 +1,8 @@
 import abc
 import re
 import webbrowser
+import logging
+
 from pathlib import PurePosixPath
 
 from PySide6 import QtCore
@@ -10,6 +12,8 @@ from PySide6.QtWidgets import QWidget
 from threads.scraper import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, get_bfa_nc_https_download_url
 from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
+
+logger = logging.getLogger()
 
 
 class BaseBuildWidget(QWidget):
@@ -35,8 +39,6 @@ class BaseBuildWidget(QWidget):
         branch = self.build_info.branch
 
         if branch in {"stable", "daily"}:
-            # TODO Check format for Blender 3 release
-            # Extract X.X format version
             ver = self.build_info.semversion
             webbrowser.open(f"https://wiki.blender.org/wiki/Reference/Release_Notes/{ver.major}.{ver.minor}")
         elif branch == "lts":
@@ -53,10 +55,10 @@ class BaseBuildWidget(QWidget):
                 )
                 for e in entries:
                     path = PurePosixPath(e["name"])
-                    if path.name.lower().startswith("releasenotes"):
+                    if "releasenote" in path.name.lower():
                         webbrowser.open(get_bfa_nc_https_download_url(path))
             except Exception:
-                pass
+                logger.exception("Failed get Bforartists release note")
         else:  # Open for builds with D12345 name pattern
             # Extract only D12345 substring
             m = re.search(r"D\d{5}", branch)
