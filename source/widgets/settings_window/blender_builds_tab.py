@@ -312,20 +312,30 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.QuickLaunchKeySeq.setEnabled(is_checked)
 
     def _keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
-        MOD_MASK = Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier
         key_name = ""
         key = e.key()
-        modifiers = int(e.modifiers())
+        modifiers = e.modifiers()
 
-        if (
-            modifiers
-            and modifiers & MOD_MASK == modifiers
-            and key > 0
-            and key not in {Qt.Key_Shift, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Meta}
-        ):
-            key_name = QtGui.QKeySequence(modifiers + key).toString()
-        elif not modifiers and (key != Qt.Key_Meta):
-            key_name = QtGui.QKeySequence(key).toString()
+        modifier_strings = []
+
+        if modifiers & Qt.ControlModifier:
+            modifier_strings.append("Ctrl")
+        if modifiers & Qt.AltModifier:
+            modifier_strings.append("Alt")
+        if modifiers & Qt.ShiftModifier:
+            modifier_strings.append("Shift")
+        # TODO: Check if it's possible to use the Meta key
+        # if modifiers & Qt.MetaModifier:
+        #     modifier_strings.append("Meta")
+
+        modifier_str = "+".join(modifier_strings)
+
+        if key > 0 and key not in {Qt.Key_Shift, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Meta}:
+            key_str = QtGui.QKeySequence(key).toString()
+            if modifier_str:
+                key_name = f"{modifier_str}+{key_str}"
+            else:
+                key_name = key_str
 
         if key_name != "":
             # Remap <Shift + *> keys sequences
