@@ -3,19 +3,21 @@ import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List, Optional
 
 from modules._platform import _check_call
 from modules.task import Task
 from PySide6.QtCore import Signal
 
 
-def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]):
+def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]) -> Optional[Path]:
     progress_callback(0, 0)
     suffixes = source.suffixes
     if suffixes[-1] == ".zip":
         with zipfile.ZipFile(source) as zf:
             members = zf.infolist()
-            folder = _get_build_folder(members)
+            names = [m.filename for m in members]
+            folder = _get_build_folder(names)
 
             if folder is None:
                 return None
@@ -33,7 +35,8 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     if suffixes[-2] == ".tar":
         with tarfile.open(source) as tar:
             members = tar.getmembers()
-            folder = _get_build_folder(members)
+            names = [m.name for m in members]
+            folder = _get_build_folder(names)
 
             if folder is None:
                 return None
@@ -68,8 +71,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     return None
 
 
-def _get_build_folder(members: zipfile.ZipInfo | tarfile.TarInfo):
-    names = [m.filename for m in members]
+def _get_build_folder(names: List[str]):
     tops = {n.split("/")[0] for n in names if n and "/" in n}
     folders = {t for t in tops if any(n.startswith(f"{t}/") for n in names)}
 
