@@ -20,7 +20,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             folder = _get_build_folder(names)
 
             if folder is None:
-                return None
+                folder = member[0].filename.split("/")[0]
 
             uncompress_size = sum(member.file_size for member in members)
             progress_callback(0, uncompress_size)
@@ -39,7 +39,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             folder = _get_build_folder(names)
 
             if folder is None:
-                return None
+                folder = tar.getnames()[0].split("/")[0]
 
             uncompress_size = sum(member.size for member in members)
             progress_callback(0, uncompress_size)
