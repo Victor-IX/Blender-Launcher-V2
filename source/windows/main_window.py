@@ -773,7 +773,7 @@ class BlenderLauncher(BaseWindow):
                 widget_item = library_list.item(item)
                 if widget_item:
                     library_widget = library_list.itemWidget(widget_item)
-                    if library_widget:
+                    if library_widget and hasattr(library_widget, "check_for_updates"):
                         library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):
