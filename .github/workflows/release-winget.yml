@@ -1,7 +1,9 @@
 name: Winget Release
 on:
-  release:
-    types: [released]
+  workflow_run:
+    workflows: ["Windows Release"]
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       tag_name:
