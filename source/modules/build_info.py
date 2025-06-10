@@ -110,7 +110,7 @@ class BuildInfo:
     # Class variables
     file_version = "1.3"
     # https://www.blender.org/download/lts/
-    lts_tags = lts_blender_version()
+    lts_vesrion = tuple(str(v) for v in lts_blender_version())
 
     # Build variables
     link: str
@@ -123,7 +123,7 @@ class BuildInfo:
     custom_executable: str | None = None
 
     def __post_init__(self):
-        if self.branch == "stable" and self.subversion.startswith(self.lts_tags):
+        if self.branch == "stable" and self.subversion.startswith(self.lts_vesrion):
             self.branch = "lts"
 
     def __eq__(self, other: BuildInfo):
@@ -515,13 +515,12 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
     return _popen(args)
 
 
-def bfa_version_matcher(blender_version: Version) -> Version | None:
-    versions = list(read_blender_version_list().keys())
-    version_foldername = f"{blender_version.major}.{blender_version.minor}"
+def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
+    versions = read_blender_version_list()
     for i, version in enumerate(versions):
-        if version_foldername in version:
+        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}"):
             if i + 1 < len(versions) and i > 0:
-                return Version.parse(versions[i - 1], optional_minor_and_patch=True)
+                return versions[i - 1]
             else:
                 return None
     return None
