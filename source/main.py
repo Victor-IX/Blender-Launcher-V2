@@ -12,10 +12,21 @@ from typing import NoReturn, Sequence
 
 import modules._resources_rc
 from modules import argument_parsing as ap
-from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules._platform import (
+    _popen,
+    get_cache_path,
+    get_cwd,
+    get_launcher_name,
+    get_platform,
+    is_frozen,
+)
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
-from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
+from modules.version_matcher import (
+    VALID_FULL_QUERIES,
+    VALID_QUERIES,
+    VERSION_SEARCH_SYNTAX,
+)
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from windows.popup_window import PopupWindow, PopupIcon
@@ -40,8 +51,9 @@ class ColoredFormatter(logging.Formatter):
 
 version = Version(
     2,
-    4,
-    6,
+    5,
+    0,
+    prerelease="rc.1",
 )
 
 _ = gettext.gettext
@@ -81,7 +93,10 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    logger.error(f"{get_platform()} - Blender Launcher {version}", exc_info=(exc_type, exc_value, exc_traceback))
+    logger.error(
+        f"{get_platform()} - Blender Launcher {version}",
+        exc_info=(exc_type, exc_value, exc_traceback),
+    )
 
 
 sys.excepthook = handle_exception
@@ -110,9 +125,13 @@ def main():
     add_help(update_parser)
     update_parser.add_argument("version", help="Version to update to.", nargs="?")
 
-    parser.add_argument("-d", "-debug", "--debug", help="Enable debug logging.", action="store_true")
+    parser.add_argument(
+        "-d", "-debug", "--debug", help="Enable debug logging.", action="store_true"
+    )
     parser.add_argument("-set-library-folder", help="Set library folder", type=Path)
-    parser.add_argument("-force-first-time", help="Force the first time setup", action="store_true")
+    parser.add_argument(
+        "-force-first-time", help="Force the first time setup", action="store_true"
+    )
     parser.add_argument(
         "--offline",
         "-offline",
@@ -141,12 +160,19 @@ def main():
     )
     add_help(launch_parser)
     grp = launch_parser.add_mutually_exclusive_group()
-    grp.add_argument("-f", "--file", type=Path, help="Path to a specific Blender file to launch.")
     grp.add_argument(
-        "-ol", "--open-last", action="store_true", help="Open the last file in the specified blender build"
+        "-f", "--file", type=Path, help="Path to a specific Blender file to launch."
+    )
+    grp.add_argument(
+        "-ol",
+        "--open-last",
+        action="store_true",
+        help="Open the last file in the specified blender build",
     )
 
-    launch_parser.add_argument("-v", "--version", help=f"Version to launch. {VERSION_SEARCH_SYNTAX}")
+    launch_parser.add_argument(
+        "-v", "--version", help=f"Version to launch. {VERSION_SEARCH_SYNTAX}"
+    )
     launch_parser.add_argument(
         "-c",
         "--cli",
@@ -164,7 +190,9 @@ def main():
             "register",
             help="Registers the program to read .blend builds. Adds Blender Launcher to the Open With window. (WIN ONLY)",
         )
-        subparsers.add_parser("unregister", help="Undoes the changes that `register` makes. (WIN ONLY)")
+        subparsers.add_parser(
+            "unregister", help="Undoes the changes that `register` makes. (WIN ONLY)"
+        )
 
     input_args = None
 
@@ -314,10 +342,17 @@ def start_launch(
         file = Path(str(file).strip('"'))
 
     if cli:
-        cli_launch(file=file, version_query=query, open_last=open_last, blender_args=blender_args)
+        cli_launch(
+            file=file,
+            version_query=query,
+            open_last=open_last,
+            blender_args=blender_args,
+        )
         sys.exit(1)
     else:
-        LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
+        LaunchingWindow(
+            app, version_query=query, blendfile=file, open_last=open_last
+        ).show()
         sys.exit(app.exec())
 
 
