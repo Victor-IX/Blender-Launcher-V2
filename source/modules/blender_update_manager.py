@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from semver import Version, compare
+from semver import Version
 from typing import TYPE_CHECKING, List, Any, Optional
 
 from modules.settings import (
@@ -30,15 +30,22 @@ def available_blender_update(
     available_downloads: List[Any],
     widgets: Any,
 ):
+    """
+    Check available update only for branches matching the settings.
+    """
     current_branch = current_build_info.branch
 
     if not _branch_visibility(current_branch):
+        print(f"Branch {current_branch} is not visible based on the settings.")
         return None
 
     return _new_version_available(current_build_info, available_downloads, widgets)
 
 
 def _branch_visibility(current_branch: str) -> bool:
+    """
+    Check if the current branch is visible based on the settings.
+    """
     stable_update_button_visibility = (
         get_show_stable_update_button() if get_use_advanced_update_button() else get_show_update_button()
     )
@@ -52,7 +59,7 @@ def _branch_visibility(current_branch: str) -> bool:
         get_show_bfa_update_button() if get_use_advanced_update_button() else get_show_update_button()
     )
 
-    if (current_branch == "stable" or current_branch == "LTS") and stable_update_button_visibility:
+    if (current_branch == "stable" or current_branch == "lts") and stable_update_button_visibility:
         return True
     elif current_branch == "daily" and daily_update_button_visibility:
         return True
@@ -68,7 +75,10 @@ def _new_version_available(
     available_downloads: List[Any],
     widgets: Any,
 ) -> Optional[Any]:
-    current_version = current_build_info.semversion
+    """
+    Find available updates
+    """
+    current_version = current_build_info.semversion.replace(prerelease=None)
     current_branch = current_build_info.branch
     current_hash = current_build_info.build_hash
 
@@ -80,58 +90,87 @@ def _new_version_available(
     best_version = Version(0, 0, 0)
 
     def is_better_version(download_version: Version) -> bool:
+        """
+        Check if the download version is greater that the highest installed version
+        """
         if update_behavior == 0:
-            return compare(str(download_version), str(current_version)) > 0
+            highest_version = max(installed_versions, default=Version.parse("0.0.0"))
+            return download_version.compare(str(highest_version)) > 0
 
         if download_version.major != current_version.major:
             return False
+        print(
+            f"Update behavior: {update_behavior}, Download version: {download_version}, Current version: {current_version}"
+        )
 
         if update_behavior == 1:
-            return download_version.minor > current_version.minor or (
-                download_version.minor == current_version.minor and download_version.patch > current_version.patch
+            filter = current_version.major
+            highest_version = max([v for v in installed_versions if v.major == filter], default=Version.parse("0.0.0"))
+            print(highest_version, download_version)
+            return download_version.minor > highest_version.minor or (
+                download_version.minor == highest_version.minor and download_version.patch > highest_version.patch
             )
 
+        if download_version.minor != current_version.minor:
+            return False
+
         if update_behavior == 2:
-            return download_version.minor == current_version.minor and download_version.patch > current_version.patch
+            filter_major = current_version.major
+            filter_minor = current_version.minor
+            highest_version = max(
+                [v for v in installed_versions if v.major == filter_major and v.minor == filter_minor],
+                default=Version.parse("0.0.0"),
+            )
+
+            return download_version.patch > highest_version.patch
 
         return False
 
     for download in available_downloads:
         download_build_info = download.build_info
-        download_version = download_build_info.semversion
+        download_version = download_build_info.semversion.replace(prerelease=None)
         download_branch = download_build_info.branch
         download_hash = download_build_info.build_hash
 
+        # Skip if the download is not for the current branch
         if current_branch != download_branch:
             continue
 
+        # Skip if the download hash is already installed
         if download_hash and download_hash in installed_hashes:
             continue
+
+        # Skip if the download version is already installed
         if not download_hash and download_version in installed_versions:
             continue
 
         if is_better_version(download_version):
-            if compare(str(download_version), str(best_version)) > 0:
+            if download_version.compare(str(best_version)) > 0:
                 best_version = download_version
                 best_download = download
 
+    # If no better version found, check for a new hash version in case the a new build exist for the same version
     if best_download is None:
         for download in available_downloads:
             download_hash = download.build_info.build_hash
-            if (
-                current_branch == download.build_info.branch
-                and compare(str(download.build_info.semversion), str(current_version)) == 0
-                and download_hash != current_hash
-                if download_hash
-                else False
-            ):
+            download_verison = download.build_info.semversion.replace(prerelease=None)
+            download_branch = download.build_info.branch
+
+            if current_branch != download_branch:
+                continue
+
+            # Skip if the download version is not the same
+            if download_verison.compare(str(current_version)) != 0:
+                continue
+
+            if download_hash != current_hash if download_hash else False:
                 best_download = download
                 logger.info(
-                    f"Found new hash version {download.build_info.semversion} available for {current_version} in the {current_branch} branch. "
+                    f"Found new hash version {download_verison} available for {current_version} in the {current_branch} branch. "
                 )
                 break
 
-    if compare(str(best_version), "0.0.0") > 0:
+    if best_version.compare("0.0.0") > 0:
         logger.info(
             f"Found new version {best_version} available for {current_version} in the {current_branch} branch. "
         )
@@ -154,7 +193,7 @@ def _get_update_behavior(
     )
     bfa_update_behavior = get_bfa_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
 
-    if current_branch == "stable":
+    if current_branch == "stable" or current_branch == "lts":
         return stable_update_behavior
     elif current_branch == "daily":
         return daily_update_behavior
