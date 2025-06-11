@@ -518,7 +518,9 @@ class LibraryWidget(BaseBuildWidget):
         self.observer.append_proc.emit(proc)
 
     def check_for_updates(self, available_downloads):
-        logger.debug(f"Checking for updates for {self.build_info.semversion} in {self.build_info.branch}")
+        logger.debug(
+            f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
+        )
         update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
         if update:
             if get_show_update_button():
