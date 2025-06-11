@@ -40,8 +40,9 @@ class ColoredFormatter(logging.Formatter):
 
 version = Version(
     2,
-    4,
     5,
+    0,
+    prerelease="rc.1",
 )
 
 _ = gettext.gettext
