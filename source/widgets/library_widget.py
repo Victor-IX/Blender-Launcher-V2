@@ -272,6 +272,9 @@ class LibraryWidget(BaseBuildWidget):
         self.copyBuildHash = QAction("Copy Build Hash")
         self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
+        self.freezeUpdate = QAction("Freeze Update")
+        self.freezeUpdate.triggered.connect(self.freeze_update)
+
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
@@ -313,6 +316,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.installTemplateAction)
         self.menu.addAction(self.makePortableAction)
         self.menu.addAction(self.copyBuildHash)
+        self.menu.addAction(self.freezeUpdate)
         self.menu.addSeparator()
 
         if self.branch in {"stable", "lts", "bforartists", "daily"}:
@@ -406,7 +410,10 @@ class LibraryWidget(BaseBuildWidget):
                 self.show_new = False
 
             mod = QApplication.keyboardModifiers()
-            if mod not in (Qt.KeyboardModifier.ShiftModifier, Qt.KeyboardModifier.ControlModifier):
+            if mod not in (
+                Qt.KeyboardModifier.ShiftModifier,
+                Qt.KeyboardModifier.ControlModifier,
+            ):
                 self.list_widget.clearSelection()
                 self.item.setSelected(True)
 
@@ -612,6 +619,17 @@ class LibraryWidget(BaseBuildWidget):
         QApplication.clipboard().setText(self.build_info.build_hash)
 
     @Slot()
+    def freeze_update(self):
+        if self.build_info.is_frozen:
+            self.build_info.is_frozen = False
+            self.freezeUpdate.setText("Freeze Update")
+        else:
+            self.build_info.is_frozen = True
+            self.freezeUpdate.setText("Unfreeze Update")
+
+        self.write_build_info()
+
+    @Slot()
     def rename_branch(self):
         self.lineEdit.setText(self.branchLabel.text)
         self.lineEdit.selectAll()
@@ -791,7 +809,13 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def add_to_favorites(self):
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self.parent, item, self.link, self.parent.UserFavoritesListWidget, parent_widget=self)
+        widget = LibraryWidget(
+            self.parent,
+            item,
+            self.link,
+            self.parent.UserFavoritesListWidget,
+            parent_widget=self,
+        )
         if not self.parent.UserFavoritesListWidget.contains_build_info(self.build_info):
             self.parent.UserFavoritesListWidget.insert_item(item, widget)
         self.child_widget = widget
