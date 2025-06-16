@@ -88,12 +88,10 @@ def _new_version_available(
     best_hash_download = None
     best_hash_timestamp = 0
 
-    for download in available_downloads:
-        build_info = download.build_info
+    branch_downloads = [d for d in available_downloads if d.build_info.branch == current_branch]
 
-        # Skip if not the same branch
-        if build_info.branch != current_branch:
-            continue
+    for download in branch_downloads:
+        build_info = download.build_info
 
         download_version = build_info.semversion.replace(prerelease=None)
         download_hash = build_info.build_hash
@@ -153,8 +151,9 @@ def _is_better_version(
 
     # Minor update (behavior 1): Same major, higher minor/patch
     if update_behavior == 1:
-        same_major_versions = [v for v in installed_versions if v.major == current_version.major]
-        highest_version = max(same_major_versions, default=Version.parse("0.0.0"))
+        highest_version = max(
+            (v for v in installed_versions if v.major == current_version.major), default=Version.parse("0.0.0")
+        )
         return download_version.minor > highest_version.minor or (
             download_version.minor == highest_version.minor and download_version.patch > highest_version.patch
         )
@@ -165,10 +164,10 @@ def _is_better_version(
 
     # Patch update (behavior 2): Same major.minor, higher patch
     if update_behavior == 2:
-        same_major_minor_versions = [
-            v for v in installed_versions if v.major == current_version.major and v.minor == current_version.minor
-        ]
-        highest_version = max(same_major_minor_versions, default=Version.parse("0.0.0"))
+        highest_version = max(
+            (v for v in installed_versions if v.major == current_version.major and v.minor == current_version.minor),
+            default=Version.parse("0.0.0"),
+        )
         return download_version.patch > highest_version.patch
 
     return False
