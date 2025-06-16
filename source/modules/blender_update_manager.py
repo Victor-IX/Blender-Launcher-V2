@@ -74,118 +74,109 @@ def _new_version_available(
     available_downloads: List[Any],
     widgets: Any,
 ) -> Optional[Any]:
-    """
-    Find available updates
-    """
+    """Find available updates based on version or newer builds of same version."""
     current_version = current_build_info.semversion.replace(prerelease=None)
     current_branch = current_build_info.branch
-    current_hash = current_build_info.build_hash
 
     installed_hashes = {widget.build_info.build_hash for widget in widgets}
     installed_versions = {widget.build_info.semversion.replace(prerelease=None) for widget in widgets}
 
     update_behavior = _get_update_behavior(current_branch)
-    best_download = None
+
+    best_version_download = None
     best_version = Version(0, 0, 0)
-
-    def is_better_version(download_version: Version) -> bool:
-        """
-        Check if the download version is greater that the highest installed version
-        """
-        if update_behavior == 0:
-            highest_version = max(installed_versions, default=Version.parse("0.0.0"))
-            return download_version.compare(str(highest_version)) > 0
-
-        if download_version.major != current_version.major:
-            return False
-
-        if update_behavior == 1:
-            filter = current_version.major
-            highest_version = max([v for v in installed_versions if v.major == filter], default=Version.parse("0.0.0"))
-            return download_version.minor > highest_version.minor or (
-                download_version.minor == highest_version.minor and download_version.patch > highest_version.patch
-            )
-
-        if download_version.minor != current_version.minor:
-            return False
-
-        if update_behavior == 2:
-            filter_major = current_version.major
-            filter_minor = current_version.minor
-            highest_version = max(
-                [v for v in installed_versions if v.major == filter_major and v.minor == filter_minor],
-                default=Version.parse("0.0.0"),
-            )
-
-            return download_version.patch > highest_version.patch
-
-        return False
+    best_hash_download = None
+    best_hash_timestamp = 0
 
     for download in available_downloads:
-        download_build_info: BuildInfo = download.build_info
-        download_version = download_build_info.semversion.replace(prerelease=None)
-        download_branch = download_build_info.branch
-        download_hash = download_build_info.build_hash
+        build_info = download.build_info
 
-        # Skip if the download is not for the current branch
-        if current_branch != download_branch:
+        # Skip if not the same branch
+        if build_info.branch != current_branch:
             continue
 
-        # Skip if the download hash is already installed
-        if download_hash and download_hash in installed_hashes:
+        download_version = build_info.semversion.replace(prerelease=None)
+        download_hash = build_info.build_hash
+
+        # Skip already installed versions/hashes
+        if download_hash in installed_hashes:
             continue
 
-        # Skip if the download version is already installed
-        if not download_hash and download_version in installed_versions:
+        if download_version in installed_versions and not _is_newer_build(build_info, current_build_info):
             continue
 
-        if is_better_version(download_version):
+        # Check for version updates
+        if _is_better_version(download_version, current_version, installed_versions, update_behavior):
             if download_version.compare(str(best_version)) > 0:
                 best_version = download_version
-                best_download = download
+                best_version_download = download
 
-    # If no better version found, check for a new hash version in case the a new build exist for the same version
-    if best_download is None:
-        for download in available_downloads:
-            download_build_info: BuildInfo = download.build_info
-            download_hash = download_build_info.build_hash
-            download_verison = download_build_info.semversion
-            download_branch = download_build_info.branch
-            download_timestamp = download_build_info.commit_time
-
-            if current_branch != download_branch:
+        # Check for hash updates for same version
+        elif (
+            download_version.compare(str(current_version)) == 0
+            and build_info.commit_time > current_build_info.commit_time
+        ):
+            # For daily builds, verify if version isn't older (check with pre-release flag)
+            if current_branch == "daily" and build_info.semversion.compare(str(current_build_info.semversion)) < 0:
                 continue
 
-            # Skip if the download version is not the same
-            if download_verison.replace(prerelease=None).compare(str(current_version)) != 0:
-                continue
+            if build_info.commit_time > best_hash_timestamp:
+                best_hash_timestamp = build_info.commit_time
+                best_hash_download = download
 
-            # For daily, check if the pre-release flag is higher or not, to prevent updating to older vesrion
-            if current_branch == "daily":
-                if download_verison.compare(str(current_build_info.semversion)) == -1:
-                    continue
+    if best_version_download:
+        logger.info(f"Found new version {best_version} available for {current_version} in the {current_branch} branch.")
+        return best_version_download
 
-            # Skip if the version is not newer
-            if download_timestamp <= current_build_info.commit_time:
-                continue
-
-            if best_download is not None:
-                if download_timestamp > best_download.build_info.commit_time:
-                    best_download = download
-            else:
-                best_download = download
-
-    if best_download is not None:
+    if best_hash_download:
         logger.info(
-            f"Found new hash version {best_download.build_info.build_hash} available for {current_version} in the {current_branch} branch. "
+            f"Found new hash version {best_hash_download.build_info.build_hash} "
+            f"available for {current_version} in the {current_branch} branch."
+        )
+        return best_hash_download
+
+    return None
+
+
+def _is_better_version(
+    download_version: Version, current_version: Version, installed_versions: set, update_behavior: int
+) -> bool:
+    """Check if download version is better according to update behavior."""
+    # Major update (behavior 0): Any higher version
+    if update_behavior == 0:
+        highest_version = max(installed_versions, default=Version.parse("0.0.0"))
+        return download_version.compare(str(highest_version)) > 0
+
+    # Skip major diff
+    if download_version.major != current_version.major:
+        return False
+
+    # Minor update (behavior 1): Same major, higher minor/patch
+    if update_behavior == 1:
+        same_major_versions = [v for v in installed_versions if v.major == current_version.major]
+        highest_version = max(same_major_versions, default=Version.parse("0.0.0"))
+        return download_version.minor > highest_version.minor or (
+            download_version.minor == highest_version.minor and download_version.patch > highest_version.patch
         )
 
-    if best_version.compare("0.0.0") > 0:
-        logger.info(
-            f"Found new version {best_version} available for {current_version} in the {current_branch} branch. "
-        )
+    # Skip minor diff
+    if download_version.minor != current_version.minor:
+        return False
 
-    return best_download
+    # Patch update (behavior 2): Same major.minor, higher patch
+    if update_behavior == 2:
+        same_major_minor_versions = [
+            v for v in installed_versions if v.major == current_version.major and v.minor == current_version.minor
+        ]
+        highest_version = max(same_major_minor_versions, default=Version.parse("0.0.0"))
+        return download_version.patch > highest_version.patch
+
+    return False
+
+
+def _is_newer_build(download_info: BuildInfo, current_info: BuildInfo) -> bool:
+    """Check if download is a newer build of the same version."""
+    return download_info.commit_time > current_info.commit_time
 
 
 def _get_update_behavior(
