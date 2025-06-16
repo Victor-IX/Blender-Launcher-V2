@@ -108,7 +108,7 @@ oldver_cutoff = Version(2, 83, 0)
 @dataclass
 class BuildInfo:
     # Class variables
-    file_version = "1.3"
+    file_version = "1.4"
     # https://www.blender.org/download/lts/
     lts_versions = tuple(f"{v.major}.{v.minor}" for v in lts_blender_version())
 
@@ -121,6 +121,7 @@ class BuildInfo:
     custom_name: str = ""
     is_favorite: bool = False
     custom_executable: str | None = None
+    is_frozen: bool = False
 
     def __post_init__(self):
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
@@ -222,6 +223,7 @@ class BuildInfo:
             blinfo["custom_name"],
             blinfo["is_favorite"],
             blinfo.get("custom_executable", ""),
+            blinfo.get("is_frozen", False),
         )
 
     def to_dict(self):
@@ -236,6 +238,7 @@ class BuildInfo:
                     "custom_name": self.custom_name,
                     "is_favorite": self.is_favorite,
                     "custom_executable": self.custom_executable,
+                    "is_frozen": self.is_frozen,
                 }
             ],
         }
@@ -344,6 +347,7 @@ def read_blender_version(
         custom_name = old_build_info.custom_name
         is_favorite = old_build_info.is_favorite
         custom_exe = old_build_info.custom_executable
+        is_frozen = old_build_info.is_frozen
 
     return BuildInfo(
         path.as_posix(),
@@ -353,7 +357,8 @@ def read_blender_version(
         branch,
         custom_name,
         is_favorite,
-        custom_executable=custom_exe,
+        custom_exe,
+        is_frozen,
     )
 
 
