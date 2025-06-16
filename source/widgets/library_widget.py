@@ -253,8 +253,8 @@ class LibraryWidget(BaseBuildWidget):
         self.makePortableAction = QAction("Unmake Portable" if config_path.is_dir() else "Make Portable")
         self.makePortableAction.triggered.connect(self.make_portable)
 
-        self.makePortableAction = QAction("Copy Build Hash")
-        self.makePortableAction.triggered.connect(self.copy_build_hash)
+        self.copyBuildHash = QAction("Copy Build Hash")
+        self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
@@ -295,6 +295,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.createSymlinkAction)
         self.menu.addAction(self.installTemplateAction)
         self.menu.addAction(self.makePortableAction)
+        self.menu.addAction(self.copyBuildHash)
         self.menu.addSeparator()
 
         if self.branch in {"stable", "lts", "bforartists", "daily"}:
