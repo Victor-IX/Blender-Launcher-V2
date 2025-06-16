@@ -86,7 +86,7 @@ def _new_version_available(
     best_version_download = None
     best_version = Version(0, 0, 0)
     best_hash_download = None
-    best_hash_timestamp = 0
+    best_hash_timestamp = None
 
     branch_downloads = [d for d in available_downloads if d.build_info.branch == current_branch]
 
@@ -118,7 +118,7 @@ def _new_version_available(
             if current_branch == "daily" and build_info.semversion.compare(str(current_build_info.semversion)) < 0:
                 continue
 
-            if build_info.commit_time > best_hash_timestamp:
+            if best_hash_timestamp is None or build_info.commit_time > best_hash_timestamp:
                 best_hash_timestamp = build_info.commit_time
                 best_hash_download = download
 
