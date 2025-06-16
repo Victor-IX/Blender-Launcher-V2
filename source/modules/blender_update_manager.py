@@ -36,7 +36,6 @@ def available_blender_update(
     current_branch = current_build_info.branch
 
     if not _branch_visibility(current_branch):
-        print(f"Branch {current_branch} is not visible based on the settings.")
         return None
 
     return _new_version_available(current_build_info, available_downloads, widgets)
@@ -99,14 +98,10 @@ def _new_version_available(
 
         if download_version.major != current_version.major:
             return False
-        print(
-            f"Update behavior: {update_behavior}, Download version: {download_version}, Current version: {current_version}"
-        )
 
         if update_behavior == 1:
             filter = current_version.major
             highest_version = max([v for v in installed_versions if v.major == filter], default=Version.parse("0.0.0"))
-            print(highest_version, download_version)
             return download_version.minor > highest_version.minor or (
                 download_version.minor == highest_version.minor and download_version.patch > highest_version.patch
             )
@@ -127,7 +122,7 @@ def _new_version_available(
         return False
 
     for download in available_downloads:
-        download_build_info = download.build_info
+        download_build_info: BuildInfo = download.build_info
         download_version = download_build_info.semversion.replace(prerelease=None)
         download_branch = download_build_info.branch
         download_hash = download_build_info.build_hash
@@ -152,23 +147,38 @@ def _new_version_available(
     # If no better version found, check for a new hash version in case the a new build exist for the same version
     if best_download is None:
         for download in available_downloads:
-            download_hash = download.build_info.build_hash
-            download_verison = download.build_info.semversion.replace(prerelease=None)
-            download_branch = download.build_info.branch
+            download_build_info: BuildInfo = download.build_info
+            download_hash = download_build_info.build_hash
+            download_verison = download_build_info.semversion
+            download_branch = download_build_info.branch
+            download_timestamp = download_build_info.commit_time
 
             if current_branch != download_branch:
                 continue
 
             # Skip if the download version is not the same
-            if download_verison.compare(str(current_version)) != 0:
+            if download_verison.replace(prerelease=None).compare(str(current_version)) != 0:
                 continue
 
-            if download_hash != current_hash if download_hash else False:
+            # For daily, check if the pre-release flag is higher or not, to prevent updating to older vesrion
+            if current_branch == "daily":
+                if download_verison.compare(str(current_build_info.semversion)) == -1:
+                    continue
+
+            # Skip if the version is not newer
+            if download_timestamp <= current_build_info.commit_time:
+                continue
+
+            if best_download is not None:
+                if download_timestamp > best_download.build_info.commit_time:
+                    best_download = download
+            else:
                 best_download = download
-                logger.info(
-                    f"Found new hash version {download_verison} available for {current_version} in the {current_branch} branch. "
-                )
-                break
+
+    if best_download is not None:
+        logger.info(
+            f"Found new hash version {best_download.build_info.build_hash} available for {current_version} in the {current_branch} branch. "
+        )
 
     if best_version.compare("0.0.0") > 0:
         logger.info(
