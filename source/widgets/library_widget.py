@@ -301,11 +301,16 @@ class LibraryWidget(BaseBuildWidget):
         if self.branch in {"stable", "lts", "bforartists", "daily"}:
             self.menu.addAction(self.showReleaseNotesAction)
         else:
-            regexp = re.compile(r"D\d{5}")
-
-            if regexp.search(self.branch):
+            exp = re.compile(r"D\d{5}")
+            if exp.search(self.build_info.branch):
                 self.showReleaseNotesAction.setText("Show Patch Details")
                 self.menu.addAction(self.showReleaseNotesAction)
+            else:
+                exp = re.compile(r"pr\d+", flags=re.IGNORECASE)
+                if exp.search(self.build_info.branch):
+                    self.showReleaseNotesAction.setText("Show PR Details")
+                    self.menu.addAction(self.showReleaseNotesAction)
+
         self.menu.addAction(self.showBuildFolderAction)
         self.menu.addAction(self.showConfigFolderAction)
         self.menu.addAction(self.editAction)

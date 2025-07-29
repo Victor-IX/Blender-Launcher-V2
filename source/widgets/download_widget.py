@@ -129,11 +129,18 @@ class DownloadWidget(BaseBuildWidget):
         if self.build_info.branch in {"stable", "lts", "daily", "bforartists"}:
             self.menu.addAction(self.showReleaseNotesAction)
         else:
-            regexp = re.compile(r"D\d{5}")
+            exp = re.compile(r"D\d{5}")
 
-            if regexp.search(self.build_info.branch):
+            if exp.search(self.build_info.branch):
                 self.showReleaseNotesAction.setText("Show Patch Details")
                 self.menu.addAction(self.showReleaseNotesAction)
+            else:
+                exp = re.compile(r"pr\d+", flags=re.IGNORECASE)
+                if exp.search(self.build_info.subversion):
+                    self.showReleaseNotesAction.setText("Show PR Details")
+                    self.menu.addAction(self.showReleaseNotesAction)
+
+
 
         self.list_widget.sortItems()
 
