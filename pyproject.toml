@@ -1,6 +1,6 @@
 [project]
 name = "Blender-Launcher-V2"
-version = "2.4.6"
+version = "2.4.7"
 description = ""
 authors = []
 dependencies = [
@@ -16,7 +16,7 @@ dependencies = [
     "zstandard>=0.23.0",
     "send2trash>=1.8.3",
     "webdav4==0.10.0",
-    "dateparser>=1.2.0",
+    "dateparser==1.2.1",
     "pyside6-essentials==6.8.1",
     "markdown>=3.7",
 ]
