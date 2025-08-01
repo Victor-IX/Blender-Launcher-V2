@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import contextlib
 import datetime
 import re
@@ -257,7 +258,7 @@ class BInfoMatcher:
         return tuple(versions)
 
 
-if __name__ == "__main__":  # Test BInfoMatcher
+if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatcher
     builds = (
         BasicBuildInfo(Version.parse("1.2.3"), "stable", "", datetime.datetime(2020, 5, 4, tzinfo=utc)),
         BasicBuildInfo(Version.parse("1.2.2"), "stable", "", datetime.datetime(2020, 4, 2, tzinfo=utc)),

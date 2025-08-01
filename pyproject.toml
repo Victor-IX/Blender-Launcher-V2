@@ -27,6 +27,7 @@ license = { text = "GPL3" }
 [project.optional-dependencies]
 docs = ["mkdocs", "mkdocs-material>=9.5.10"]
 ruff = ["ruff>=0.3.5"]
+test = ["pytest"]
 
 [build-system]
 build-backend = "pdm.backend"
@@ -82,6 +83,10 @@ extend-select = [
 
 ]
 fixable = ["ALL"]
+
+[tool.pdm.scripts]
+bl = "source/main.py"
+bld = "source/main.py -d"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]

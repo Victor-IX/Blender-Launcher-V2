@@ -59,8 +59,18 @@ class BaseBuildWidget(QWidget):
                         webbrowser.open(get_bfa_nc_https_download_url(path))
             except Exception:
                 logger.exception("Failed get Bforartists release note")
-        else:  # Open for builds with D12345 name pattern
+        else:
+            # Open for builds with D12345 name pattern
             # Extract only D12345 substring
             m = re.search(r"D\d{5}", branch)
+            if m is not None:
+                webbrowser.open(f"https://developer.blender.org/{m.group(0)}")
 
-            webbrowser.open(f"https://developer.blender.org/{m.group(0)}")
+            # Open for builds with pr123456 name pattern
+            # Extract only 123456 substring
+            if branch == "patch":
+                m = re.search(r"pr(\d+)", self.build_info.subversion, flags=re.IGNORECASE)
+            else:
+                m = re.search(r"pr(\d+)", self.build_info.branch, flags=re.IGNORECASE)
+            if m is not None:
+                webbrowser.open(f"https://projects.blender.org/blender/blender/pulls/{m.group(1)}")
