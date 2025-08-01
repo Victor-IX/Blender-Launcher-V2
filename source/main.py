@@ -41,7 +41,7 @@ class ColoredFormatter(logging.Formatter):
 version = Version(
     2,
     4,
-    6,
+    7,
 )
 
 _ = gettext.gettext
