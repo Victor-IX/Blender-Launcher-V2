@@ -25,8 +25,10 @@ from modules.settings import (
     get_library_folder,
     get_mark_as_favorite,
     set_favorite_path,
+    get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
+from modules.blender_update_manager import available_blender_update
 from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
@@ -143,9 +145,15 @@ class LibraryWidget(BaseBuildWidget):
         self.item.date = build_info.commit_time
 
         self.launchButton = LeftIconButtonWidget("Launch", parent=self)
-        self.launchButton.setFixedWidth(85)
+        self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("LaunchButton", True)
         self._launch_icon = None
+
+        self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
+        self.updateButton.setFixedWidth(25)
+        self.updateButton.setProperty("UpdateButton", True)
+        self.updateButton.setToolTip("Update Blender to the latest version")
+        self.updateButton.hide()
 
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
@@ -157,6 +165,7 @@ class LibraryWidget(BaseBuildWidget):
         self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
         self.layout.addWidget(self.launchButton)
+        self.layout.addWidget(self.updateButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
 
@@ -179,6 +188,7 @@ class LibraryWidget(BaseBuildWidget):
             )
         )
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.updateButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # Context menu
         self.menu_extended = BaseMenuWidget(parent=self)
@@ -225,6 +235,12 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self.removeFromFavoritesAction.setVisible(False)
 
+        self.updateBlenderBuildAction = QAction("Update Blender Build")
+        self.updateBlenderBuildAction.setIcon(self.parent.icons.update)
+        self.updateBlenderBuildAction.triggered.connect(self._trigger_update_download)
+        self.updateBlenderBuildAction.setToolTip("Update this build to the latest version")
+        self.updateBlenderBuildAction.setVisible(False)
+
         self.registerExtentionAction = QAction("Register Extension")
         self.registerExtentionAction.setToolTip("Use this build for .blend files and to display thumbnails")
         self.registerExtentionAction.triggered.connect(self.register_extension)
@@ -256,6 +272,9 @@ class LibraryWidget(BaseBuildWidget):
         self.copyBuildHash = QAction("Copy Build Hash")
         self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
+        self.freezeUpdate = QAction("Freeze Update")
+        self.freezeUpdate.triggered.connect(self.freeze_update)
+
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
@@ -279,6 +298,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.addToQuickLaunchAction)
         self.menu.addAction(self.addToFavoritesAction)
         self.menu.addAction(self.removeFromFavoritesAction)
+        self.menu.addAction(self.updateBlenderBuildAction)
         self.menu.addMenu(self.debugMenu)
 
         if self.parent_widget is not None:
@@ -296,6 +316,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.installTemplateAction)
         self.menu.addAction(self.makePortableAction)
         self.menu.addAction(self.copyBuildHash)
+        self.menu.addAction(self.freezeUpdate)
         self.menu.addSeparator()
 
         if self.branch in {"stable", "lts", "bforartists", "daily"}:
@@ -390,7 +411,10 @@ class LibraryWidget(BaseBuildWidget):
                 self.show_new = False
 
             mod = QApplication.keyboardModifiers()
-            if mod not in (Qt.KeyboardModifier.ShiftModifier, Qt.KeyboardModifier.ControlModifier):
+            if mod not in (
+                Qt.KeyboardModifier.ShiftModifier,
+                Qt.KeyboardModifier.ControlModifier,
+            ):
                 self.list_widget.clearSelection()
                 self.item.setSelected(True)
 
@@ -505,6 +529,40 @@ class LibraryWidget(BaseBuildWidget):
 
         self.observer.append_proc.emit(proc)
 
+    def check_for_updates(self, available_downloads):
+        logger.debug(
+            f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
+        )
+        update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
+        if update:
+            if get_show_update_button():
+                self.updateButton.show()
+                self.launchButton.setFixedWidth(70)
+                self.updateBlenderBuildAction.setVisible(True)
+            else:
+                self.updateButton.hide()
+                self.launchButton.setFixedWidth(95)
+
+            # Store reference to the download widget for use when button is clicked
+            self._update_download_widget = update
+            self.updateButton.clicked.connect(self._trigger_update_download)
+            return True
+
+        return False
+
+    def _trigger_update_download(self):
+        self.updateButton.hide()
+        self.launchButton.set_text("Updating")
+        self.launchButton.setEnabled(False)
+        self.launchButton.setFixedWidth(95)
+
+        if hasattr(self, "_update_download_widget"):
+            self._update_download_widget.init_downloader(updating_widget=self)
+            try:
+                self.updateButton.clicked.disconnect()
+            except:
+                pass
+
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
 
@@ -560,6 +618,17 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def copy_build_hash(self):
         QApplication.clipboard().setText(self.build_info.build_hash)
+
+    @Slot()
+    def freeze_update(self):
+        if self.build_info.is_frozen:
+            self.build_info.is_frozen = False
+            self.freezeUpdate.setText("Freeze Update")
+        else:
+            self.build_info.is_frozen = True
+            self.freezeUpdate.setText("Unfreeze Update")
+
+        self.write_build_info()
 
     @Slot()
     def rename_branch(self):
@@ -741,7 +810,13 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def add_to_favorites(self):
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self.parent, item, self.link, self.parent.UserFavoritesListWidget, parent_widget=self)
+        widget = LibraryWidget(
+            self.parent,
+            item,
+            self.link,
+            self.parent.UserFavoritesListWidget,
+            parent_widget=self,
+        )
         if not self.parent.UserFavoritesListWidget.contains_build_info(self.build_info):
             self.parent.UserFavoritesListWidget.insert_item(item, widget)
         self.child_widget = widget
@@ -901,7 +976,6 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.show_folder(path)
-
 
     def _destroyed(self):
         if self.parent.favorite == self:
