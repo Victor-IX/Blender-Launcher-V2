@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:e310317c74a083aea759767b964ef0952f1f45fdb0c6f95984ba8deea73c4e2e"
+content_hash = "sha256:d80e5d95bb529fcfd7d2fb6d1d27aaa4a93e96a72b0f5e5f051883f8dd60e8de"
 
 [[metadata.targets]]
 requires_python = ">=3.10,<3.14"
@@ -125,19 +125,19 @@ files = [
 
 [[package]]
 name = "dateparser"
-version = "1.2.2"
+version = "1.2.1"
 requires_python = ">=3.8"
 summary = "Date parsing library designed to parse dates from HTML pages"
 groups = ["default"]
 dependencies = [
     "python-dateutil>=2.7.0",
     "pytz>=2024.2",
-    "regex>=2024.9.11",
+    "regex!=2019.02.19,!=2021.8.27,>=2015.06.24",
     "tzlocal>=0.2",
 ]
 files = [
-    {file = "dateparser-1.2.2-py3-none-any.whl", hash = "sha256:5a5d7211a09013499867547023a2a0c91d5a27d15dd4dbcea676ea9fe66f2482"},
-    {file = "dateparser-1.2.2.tar.gz", hash = "sha256:986316f17cb8cdc23ea8ce563027c5ef12fc725b6fb1d137c14ca08777c5ecf7"},
+    {file = "dateparser-1.2.1-py3-none-any.whl", hash = "sha256:bdcac262a467e6260030040748ad7c10d6bacd4f3b9cdb4cfd2251939174508c"},
+    {file = "dateparser-1.2.1.tar.gz", hash = "sha256:7e4919aeb48481dbfc01ac9683c8e20bfe95bb715a38c1e9f6af889f4f30ccc3"},
 ]
 
 [[package]]
