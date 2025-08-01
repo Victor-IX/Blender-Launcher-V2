@@ -110,7 +110,7 @@ class BuildInfo:
     # Class variables
     file_version = "1.3"
     # https://www.blender.org/download/lts/
-    lts_vesrion = tuple(str(v) for v in lts_blender_version())
+    lts_versions = tuple(f"{v.major}.{v.minor}" for v in lts_blender_version())
 
     # Build variables
     link: str
@@ -123,7 +123,7 @@ class BuildInfo:
     custom_executable: str | None = None
 
     def __post_init__(self):
-        if self.branch == "stable" and self.subversion.startswith(self.lts_vesrion):
+        if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
 
     def __eq__(self, other: BuildInfo):

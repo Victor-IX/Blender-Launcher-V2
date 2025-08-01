@@ -106,7 +106,7 @@ def read_blender_version_list() -> list[Version]:
 
 def lts_blender_version() -> list[Version]:
     versions = read_bl_api().get("blender_versions", {})
-    return [Version.parse(version, optional_minor_and_patch=True) for version, lfs in versions.items() if lfs == "LTS"]
+    return [Version.parse(version, optional_minor_and_patch=True) for version, lts in versions.items() if lts == "LTS"]
 
 
 def dropdown_blender_version() -> dict[str, int]:
