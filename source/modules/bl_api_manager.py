@@ -35,13 +35,17 @@ def update_stable_builds_cache(data: dict | None) -> None:
             logger.debug("Reading build cache version from existing file.")
             try:
                 current_data = load_json(STABLE_BUILD_PATH)
-                version_current = current_data.get("api_file_version", -1)
-                version_new = data.get("api_file_version", 0)
+                version_current = float(current_data.get("api_file_version", -1))
+                version_new = float(data.get("api_file_version", 0))
                 if version_current >= version_new:
-                    logger.info("Current build cache version is newer or equal to the new data. Not updating.")
+                    logger.info(
+                        f"Current {version_current} build cache version is newer or equal to the new data ({version_new}). Not updating."
+                    )
                     return
                 else:
-                    logger.info("Current build cache version is older than the new data. Updating.")
+                    logger.info(
+                        f"Current {version_current} build cache version is older than the new data ({version_new}). Updating."
+                    )
             except Exception as e:
                 logger.exception("Failed to compare build cache versions from existing file. Overwriting file.")
 
