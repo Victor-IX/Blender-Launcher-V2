@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import gettext
 import logging
-import logging.handlers
 import os
 import sys
 import argparse
@@ -15,61 +14,30 @@ from modules import argument_parsing as ap
 from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
-from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
+from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
+from utils.logger import setup_logging
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from windows.popup_window import PopupWindow, PopupIcon
-
-LOG_COLORS = {
-    "DEBUG": "\033[36m",  # Cyan
-    "INFO": "\033[37m",  # White
-    "WARNING": "\033[33m",  # Yellow
-    "ERROR": "\033[31m",  # Red
-    "CRITICAL": "\033[41m",  # Red background
-}
-
-RESET_COLOR = "\033[0m"  # Reset to default color
-
-
-class ColoredFormatter(logging.Formatter):
-    def format(self, record):
-        log_color = LOG_COLORS.get(record.levelname, RESET_COLOR)
-        message = super().format(record)
-        return f"{log_color}{message}{RESET_COLOR}"
 
 
 version = Version(
     2,
     4,
     7,
+    # prerelease="rc.2",
 )
+
 
 _ = gettext.gettext
 
-# Setup logging config
-_format = "[%(asctime)s:%(levelname)s] %(message)s"
-cache_path = Path(get_cache_path())
-if not cache_path.is_dir():
-    cache_path.mkdir()
-color_formatter = ColoredFormatter(_format)
-
-try:
-    file_handler = logging.handlers.RotatingFileHandler(
-        cache_path.absolute() / "Blender Launcher.log",
-        maxBytes=10 * 1024 * 1024,  # 10 MB
-        backupCount=2,
-    )
-    file_handler.setFormatter(logging.Formatter(_format))
-    file_handler.doRollover()
-except PermissionError:
-    file_handler = logging.FileHandler(cache_path.absolute() / "Blender Launcher.log")
-
-stream_handler = logging.StreamHandler(stream=sys.stdout)
-stream_handler.setFormatter(color_formatter)
-
-logging.basicConfig(
-    format=_format,
-    handlers=[file_handler, stream_handler],
+# Setup logging
+setup_logging(
+    log_path=Path(get_cache_path()).absolute() / "blender-launcher.log",
+    level="DEBUG" if "--debug" in sys.argv else "INFO",
+    max_bytes=1 * 1024 * 1024,  # 1 MB
+    backup_count=2,
+    format_string="[%(asctime)s:%(levelname)s] %(message)s",
 )
 
 logger = logging.getLogger(__name__)
