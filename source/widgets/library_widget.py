@@ -80,7 +80,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.parent: BlenderLauncher = parent
         self.item: BaseListWidgetItem = item
-        self.link = link
+        self.link = Path(link)
         self.list_widget = list_widget
         self.show_new = show_new
         self.observer = None
@@ -127,7 +127,7 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def trigger_damaged(self):
-        self.infoLabel.setText(f"Build *{Path(self.link).name}* is damaged!")
+        self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")
         self.launchButton.set_text("Delete")
         self.launchButton.clicked.connect(self.ask_remove_from_drive)
         self.setEnabled(True)
@@ -353,9 +353,8 @@ class LibraryWidget(BaseBuildWidget):
 
         self.createSymlinkAction.setEnabled(True)
         link_path = Path(get_library_folder()) / "bl_symlink"
-        link = link_path.as_posix()
 
-        if os.path.exists(link) and (os.path.isdir(link) or os.path.islink(link)) and link_path.resolve() == self.link:
+        if link_path.exists() and (link_path.is_dir() or link_path.is_symlink()) and link_path.resolve() == self.link:
             self.createSymlinkAction.setEnabled(False)
 
         self.menu.trigger()
@@ -550,10 +549,10 @@ class LibraryWidget(BaseBuildWidget):
 
         if version >= "4.2":
             folder_name = "portable"
-            config_path = Path(self.link) / folder_name
+            config_path = self.link / folder_name
         else:
             folder_name = "config"
-            config_path = Path(self.link) / version / folder_name
+            config_path = self.link / version / folder_name
 
         return config_path
 
@@ -635,7 +634,7 @@ class LibraryWidget(BaseBuildWidget):
             self.parent_widget.remove_from_drive()
             return
 
-        path = Path(get_library_folder()) / self.link
+        path = get_library_folder() / self.link
         a = RemovalTask(path, trash=trash)
         a.finished.connect(self.remover_completed)
         self.parent.task_queue.append(a)
@@ -792,19 +791,20 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def create_symlink(self):
         target = self.link.as_posix()
-        link = (Path(get_library_folder()) / "bl_symlink").as_posix()
+        link_path = Path(get_library_folder()) / "bl_symlink"
+        link = link_path.as_posix()
         platform = get_platform()
 
         if platform == "Windows":
             with contextlib.suppress(Exception):
-                os.rmdir(link)
+                link_path.rmdir()
 
             _call(f'mklink /J "{link}" "{target}"')
         elif platform == "Linux":
-            if os.path.exists(link) and os.path.islink(link):
-                os.unlink(link)
+            if link_path.exists() and link_path.is_symlink():
+                link_path.unlink()
 
-            os.symlink(target, link)
+            link_path.symlink_to(target)
 
     @Slot()
     def show_folder(self, folder_path: Path):
@@ -812,14 +812,14 @@ class LibraryWidget(BaseBuildWidget):
             logger.debug("Path is empty or not specified.")
             return
 
-        if not os.path.isdir(folder_path):
+        if not folder_path.is_dir():
             logger.error(f"Path {folder_path} do not exist.")
             return
 
         platform = get_platform()
 
         if platform == "Windows":
-            os.startfile(folder_path.as_posix())
+            folder_path.startfile()
         elif platform == "Linux":
             # Due to a bug/feature in Pyinstaller, we
             # have to remove all environment variables
@@ -901,7 +901,6 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.show_folder(path)
-
 
     def _destroyed(self):
         if self.parent.favorite == self:
