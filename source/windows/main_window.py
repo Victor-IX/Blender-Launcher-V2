@@ -6,6 +6,7 @@ import shlex
 import shutil
 import sys
 import webbrowser
+import threading
 from datetime import datetime, timezone
 from enum import Enum
 from functools import partial
@@ -48,6 +49,8 @@ from modules.settings import (
     get_use_pre_release_builds,
     get_use_system_titlebar,
     get_worker_thread_count,
+    get_check_for_new_builds_automatically,
+    get_new_builds_check_frequency,
     is_library_folder_valid,
     set_dont_show_resource_warning,
     set_last_time_checked_utc,
@@ -760,10 +763,9 @@ class BlenderLauncher(BaseWindow):
         self.set_status("Error: connection failed at " + utcnow)
         self.app_state = AppState.IDLE
 
-        # if get_check_for_new_builds_automatically() is True:
-        #     self.timer = threading.Timer(
-        #         get_new_builds_check_frequency(), self.draw_downloads)
-        #     self.timer.start()
+        if get_check_for_new_builds_automatically() is True:
+            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
+            self.timer.start()
 
     @Slot(str)
     def scraper_error(self, s: str):
@@ -848,11 +850,10 @@ class BlenderLauncher(BaseWindow):
         self.last_time_checked = dt
         self.app_state = AppState.IDLE
 
-        # if get_check_for_new_builds_automatically() is True:
-        #     self.timer = threading.Timer(
-        #         get_new_builds_check_frequency(), self.draw_downloads)
-        #     self.timer.start()
-        #     self.started = False
+        if get_check_for_new_builds_automatically() is True:
+            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
+            self.timer.start()
+            self.started = False
         self.ready_to_scrape()
 
     def ready_to_scrape(self):

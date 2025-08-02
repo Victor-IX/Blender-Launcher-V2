@@ -442,11 +442,20 @@ def get_new_builds_check_frequency() -> int:
     settings = get_settings()
 
     if settings.contains("new_builds_check_frequency"):
-        return settings.value("new_builds_check_frequency", type=int)  # type: ignore
+        frequency: int = settings.value("new_builds_check_frequency", defaultValue=12, type=int)  # type: ignore
+
+        # Clamp value to minimum to prevent user bypass
+        if frequency < 6:
+            frequency = 6
+            set_new_builds_check_frequency(6)
+
+        return frequency
     return 12
 
 
 def set_new_builds_check_frequency(frequency):
+    if frequency < 6:
+        frequency = 6
     get_settings().setValue("new_builds_check_frequency", frequency)
 
 
