@@ -94,20 +94,30 @@ def get_actual_library_folder() -> Path:
 
 
 def get_library_folder() -> Path:
-    return get_actual_library_folder().resolve()
+    library_folder = get_actual_library_folder()
+
+    if not library_folder.is_absolute():
+        library_folder = get_cwd() / library_folder
+
+    return library_folder.resolve()
 
 
 def is_library_folder_valid(library_folder=None) -> bool:
     if library_folder is None:
         library_folder = get_settings().value("library_folder")
 
-    if (library_folder is not None) and Path(library_folder).exists():
-        try:
-            (Path(library_folder) / ".temp").mkdir(parents=True, exist_ok=True)
-        except PermissionError:
-            return False
+    if library_folder is not None:
+        path = Path(library_folder)
+        if not path.is_absolute():
+            path = get_cwd() / path
 
-        return True
+        if path.exists():
+            try:
+                (path / ".temp").mkdir(parents=True, exist_ok=True)
+            except PermissionError:
+                return False
+
+            return True
 
     return False
 
@@ -124,8 +134,12 @@ def set_library_folder(new_library_folder: str) -> bool:
 
 
 def create_library_folders(library_folder):
+    path = Path(library_folder)
+    if not path.is_absolute():
+        path = get_cwd() / path
+
     for subfolder in library_subfolders:
-        (Path(library_folder) / subfolder).mkdir(parents=True, exist_ok=True)
+        (path / subfolder).mkdir(parents=True, exist_ok=True)
 
 
 def get_favorite_path() -> str | None:
