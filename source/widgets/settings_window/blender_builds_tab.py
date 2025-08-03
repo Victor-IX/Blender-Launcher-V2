@@ -118,27 +118,25 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
         # Whether to check for new builds based on a timer
         self.CheckForNewBuildsAutomatically = QCheckBox()
-        self.CheckForNewBuildsAutomatically.setChecked(False)
+        self.CheckForNewBuildsAutomatically.setChecked(get_check_for_new_builds_automatically())
+        self.CheckForNewBuildsAutomatically.setEnabled(True)
         self.CheckForNewBuildsAutomatically.clicked.connect(self.toggle_check_for_new_builds_automatically)
         self.CheckForNewBuildsAutomatically.setText("Check automatically")
-        self.CheckForNewBuildsAutomatically.setToolTip(
-            "Check for new Blender builds automatically\
-            \nDEFAULT: Off"
-        )
-        # How often to check for new builds if ^^ enabled
+        self.CheckForNewBuildsAutomatically.setToolTip("Check for new Blender builds automatically\nDEFAULT: Off")
+
         self.NewBuildsCheckFrequency = QSpinBox()
         self.NewBuildsCheckFrequency.setEnabled(get_check_for_new_builds_automatically())
         self.NewBuildsCheckFrequency.setContextMenuPolicy(Qt.NoContextMenu)
         self.NewBuildsCheckFrequency.setToolTip(
-            "Time in hours between new Blender builds check\
-            \nDEFAULT: 12h"
+            "Time in hours between new Blender builds check\nDEFAULT: 12h\nMINIMUM: 6h"
         )
         self.NewBuildsCheckFrequency.setMaximum(24 * 7 * 4)  # 4 weeks?
-        self.NewBuildsCheckFrequency.setMinimum(12)
+        self.NewBuildsCheckFrequency.setMinimum(6)  # Set minimum to 6h
         self.NewBuildsCheckFrequency.setPrefix("Interval: ")
         self.NewBuildsCheckFrequency.setSuffix("h")
         self.NewBuildsCheckFrequency.setValue(get_new_builds_check_frequency())
         self.NewBuildsCheckFrequency.editingFinished.connect(self.new_builds_check_frequency_changed)
+
         # Whether to check on startup
         self.CheckForNewBuildsOnStartup = QCheckBox()
         self.CheckForNewBuildsOnStartup.setChecked(get_check_for_new_builds_on_startup())
@@ -556,7 +554,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.NewBuildsCheckFrequency.setEnabled(is_checked)
 
     def new_builds_check_frequency_changed(self):
-        set_new_builds_check_frequency(self.NewBuildsCheckFrequency.value() * 60)
+        set_new_builds_check_frequency(self.NewBuildsCheckFrequency.value())
 
     def toggle_check_on_startup(self, is_checked):
         set_check_for_new_builds_on_startup(is_checked)

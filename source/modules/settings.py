@@ -100,20 +100,30 @@ def get_actual_library_folder() -> Path:
 
 
 def get_library_folder() -> Path:
-    return get_actual_library_folder().resolve()
+    library_folder = get_actual_library_folder()
+
+    if not library_folder.is_absolute():
+        library_folder = get_cwd() / library_folder
+
+    return library_folder.resolve()
 
 
 def is_library_folder_valid(library_folder=None) -> bool:
     if library_folder is None:
         library_folder = get_settings().value("library_folder")
 
-    if (library_folder is not None) and Path(library_folder).exists():
-        try:
-            (Path(library_folder) / ".temp").mkdir(parents=True, exist_ok=True)
-        except PermissionError:
-            return False
+    if library_folder is not None:
+        path = Path(library_folder)
+        if not path.is_absolute():
+            path = get_cwd() / path
 
-        return True
+        if path.exists():
+            try:
+                (path / ".temp").mkdir(parents=True, exist_ok=True)
+            except PermissionError:
+                return False
+
+            return True
 
     return False
 
@@ -130,8 +140,12 @@ def set_library_folder(new_library_folder: str) -> bool:
 
 
 def create_library_folders(library_folder):
+    path = Path(library_folder)
+    if not path.is_absolute():
+        path = get_cwd() / path
+
     for subfolder in library_subfolders:
-        (Path(library_folder) / subfolder).mkdir(parents=True, exist_ok=True)
+        (path / subfolder).mkdir(parents=True, exist_ok=True)
 
 
 def get_favorite_path() -> str | None:
@@ -213,6 +227,14 @@ def get_enable_high_dpi_scaling() -> bool:
 
 def set_enable_high_dpi_scaling(is_checked):
     get_settings().setValue("enable_high_dpi_scaling", is_checked)
+
+
+def get_sync_library_and_downloads_pages() -> bool:
+    return get_settings().value("sync_library_and_downloads_pages", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_sync_library_and_downloads_pages(is_checked):
+    get_settings().setValue("sync_library_and_downloads_pages", is_checked)
 
 
 def get_default_library_page() -> int:
@@ -522,11 +544,20 @@ def get_new_builds_check_frequency() -> int:
     settings = get_settings()
 
     if settings.contains("new_builds_check_frequency"):
-        return settings.value("new_builds_check_frequency", type=int)  # type: ignore
+        frequency: int = settings.value("new_builds_check_frequency", defaultValue=12, type=int)  # type: ignore
+
+        # Clamp value to minimum to prevent user bypass
+        if frequency < 6:
+            frequency = 6
+            set_new_builds_check_frequency(6)
+
+        return frequency
     return 12
 
 
 def set_new_builds_check_frequency(frequency):
+    if frequency < 6:
+        frequency = 6
     get_settings().setValue("new_builds_check_frequency", frequency)
 
 

@@ -86,7 +86,6 @@ fixable = ["ALL"]
 
 [tool.pdm.scripts]
 bl = "source/main.py"
-bld = "source/main.py -d"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
