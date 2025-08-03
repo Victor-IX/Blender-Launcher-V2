@@ -199,7 +199,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowUpdateButton.setChecked(get_show_update_button())
 
         self.UpdateBehavior = QComboBox()
-        self.UpdateBehavior.addItems(update_behavior.keys())
+        self.UpdateBehavior.addItems(list(update_behavior.keys()))
         self.UpdateBehavior.setToolTip(
             "Define the update behavior\
             \nDEFAULT: Patch"
@@ -227,7 +227,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowStableUpdateButton.setChecked(get_show_stable_update_button())
 
         self.UpdateStableBehavior = QComboBox()
-        self.UpdateStableBehavior.addItems(update_behavior.keys())
+        self.UpdateStableBehavior.addItems(list(update_behavior.keys()))
         self.UpdateStableBehavior.setToolTip(
             "Define the update behavior for stable builds\
             \nDEFAULT: Patch"
@@ -246,7 +246,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowDailyUpdateButton.setChecked(get_show_daily_update_button())
 
         self.UpdateDailyBehavior = QComboBox()
-        self.UpdateDailyBehavior.addItems(update_behavior.keys())
+        self.UpdateDailyBehavior.addItems(list(update_behavior.keys()))
         self.UpdateDailyBehavior.setToolTip(
             "Define the update behavior for daily builds\
             \nDEFAULT: Patch"
@@ -265,7 +265,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowExperimentalUpdateButton.setChecked(get_show_experimental_update_button())
 
         self.UpdateExperimentalBehavior = QComboBox()
-        self.UpdateExperimentalBehavior.addItems(update_behavior.keys())
+        self.UpdateExperimentalBehavior.addItems(list(update_behavior.keys()))
         self.UpdateExperimentalBehavior.setToolTip(
             "Define the update behavior for experimental builds\
             \nDEFAULT: Patch"
@@ -284,7 +284,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.ShowBFAUpdateButton.setChecked(get_show_bfa_update_button())
 
         self.UpdateBFABehavior = QComboBox()
-        self.UpdateBFABehavior.addItems(update_behavior.keys())
+        self.UpdateBFABehavior.addItems(list(update_behavior.keys()))
         self.UpdateBFABehavior.setToolTip(
             "Define the update behavior for BFA builds\
             \nDEFAULT: Patch"
@@ -340,8 +340,13 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.advanced_page_layout.addWidget(self.UpdateBFABehavior, 3, 1, 1, 2)
 
         self.advanced_settings_stack.addWidget(self.advanced_page)
-        self.advanced_settings_stack.setCurrentIndex(1)
-        self.advanced_settings_stack.setEnabled(get_use_advanced_update_button())
+
+        is_advanced = get_use_advanced_update_button()
+        if is_advanced:
+            self.advanced_settings_stack.setCurrentIndex(1)
+        else:
+            self.advanced_settings_stack.setCurrentIndex(0)
+        self.advanced_settings_stack.setEnabled(is_advanced)
 
         self.downloading_layout = QGridLayout()
         self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
@@ -450,7 +455,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def use_advanced_update_button(self, is_checked):
         self.advanced_settings_stack.setEnabled(is_checked)
         self.ShowUpdateButton.setEnabled(not is_checked)
-        self.UpdateBehavior.setEnabled(not is_checked)
+        self.UpdateBehavior.setEnabled(not is_checked and self.ShowUpdateButton.isChecked())
         set_use_advanced_update_button(is_checked)
 
     def show_stable_update_button(self, is_checked):

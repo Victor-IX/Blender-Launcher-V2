@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import contextlib
-import logging
-import os
 import re
+import logging
+import contextlib
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -272,7 +271,7 @@ class LibraryWidget(BaseBuildWidget):
         self.copyBuildHash = QAction("Copy Build Hash")
         self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
-        self.freezeUpdate = QAction("Freeze Update")
+        self.freezeUpdate = QAction("Unfreeze Update" if self.build_info.is_frozen else "Freeze Update")
         self.freezeUpdate.triggered.connect(self.freeze_update)
 
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
@@ -528,38 +527,64 @@ class LibraryWidget(BaseBuildWidget):
 
         self.observer.append_proc.emit(proc)
 
+    def update_finished(self):
+        """Reset the widget state after update completion."""
+        self.launchButton.set_text("Launch")
+        self.launchButton.setEnabled(True)
+        if hasattr(self, "_update_download_widget"):
+            delattr(self, "_update_download_widget")
+
+    def _show_update_button(self):
+        """Show update button and adjust layout."""
+        self.updateButton.show()
+        self.launchButton.setFixedWidth(70)
+
+    def _hide_update_button(self):
+        """Hide update button and reset layout."""
+        self.updateButton.hide()
+        self.launchButton.setFixedWidth(95)
+        self.updateBlenderBuildAction.setVisible(False)
+
     def check_for_updates(self, available_downloads):
         logger.debug(
             f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
         )
+
+        # Skip update check if build is frozen
+        if self.build_info.is_frozen:
+            self._hide_update_button()
+            return False
+
         update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
         if update:
             if get_show_update_button():
-                self.updateButton.show()
-                self.launchButton.setFixedWidth(70)
+                self._show_update_button()
                 self.updateBlenderBuildAction.setVisible(True)
             else:
-                self.updateButton.hide()
-                self.launchButton.setFixedWidth(95)
+                self._hide_update_button()
 
-            # Store reference to the download widget for use when button is clicked
             self._update_download_widget = update
+
+            try:
+                self.updateButton.clicked.disconnect()
+            except TypeError:
+                pass
             self.updateButton.clicked.connect(self._trigger_update_download)
             return True
 
+        self._hide_update_button()
         return False
 
     def _trigger_update_download(self):
-        self.updateButton.hide()
+        self._hide_update_button()
         self.launchButton.set_text("Updating")
         self.launchButton.setEnabled(False)
-        self.launchButton.setFixedWidth(95)
 
         if hasattr(self, "_update_download_widget"):
             self._update_download_widget.init_downloader(updating_widget=self)
             try:
                 self.updateButton.clicked.disconnect()
-            except:
+            except TypeError:
                 pass
 
     def proc_count_changed(self, count):
@@ -626,6 +651,7 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self.build_info.is_frozen = True
             self.freezeUpdate.setText("Unfreeze Update")
+            self._hide_update_button()
 
         self.write_build_info()
 

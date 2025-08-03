@@ -108,7 +108,7 @@ oldver_cutoff = Version(2, 83, 0)
 @dataclass
 class BuildInfo:
     # Class variables
-    file_version = "1.4"
+    file_version = "1.5"
     # https://www.blender.org/download/lts/
     lts_versions = tuple(f"{v.major}.{v.minor}" for v in lts_blender_version())
 

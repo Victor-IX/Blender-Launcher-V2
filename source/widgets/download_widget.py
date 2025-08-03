@@ -141,8 +141,6 @@ class DownloadWidget(BaseBuildWidget):
                     self.showReleaseNotesAction.setText("Show PR Details")
                     self.menu.addAction(self.showReleaseNotesAction)
 
-
-
         self.list_widget.sortItems()
 
     def context_menu(self):
@@ -342,6 +340,8 @@ class DownloadWidget(BaseBuildWidget):
     def remove_old_build(self, widget):
         if hasattr(widget, "remove_from_drive"):
             widget.remove_from_drive(trash=True)
+            if hasattr(widget, "update_finished"):
+                widget.update_finished()
             self.updating_widget = None
 
     def setInstalled(self, build_widget: BaseBuildWidget):

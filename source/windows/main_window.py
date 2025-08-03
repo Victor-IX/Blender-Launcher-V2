@@ -880,7 +880,6 @@ class BlenderLauncher(BaseWindow):
         self.scraper.start()
 
     def scraper_finished(self):
-        self.scraper.finished.connect(lambda: self.scraper_finished_signal.emit())
         if self.new_downloads:
             self.show_message("New builds of Blender are available!", message_type=MessageType.NEWBUILDS)
 

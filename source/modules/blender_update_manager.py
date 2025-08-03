@@ -201,3 +201,5 @@ def _get_update_behavior(
         return experimental_update_behavior
     elif current_branch == "bforartists":
         return bfa_update_behavior
+
+    return get_update_behavior()
