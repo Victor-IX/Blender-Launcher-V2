@@ -223,6 +223,14 @@ def set_enable_high_dpi_scaling(is_checked):
     get_settings().setValue("enable_high_dpi_scaling", is_checked)
 
 
+def get_sync_library_and_downloads_pages() -> bool:
+    return get_settings().value("sync_library_and_downloads_pages", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_sync_library_and_downloads_pages(is_checked):
+    get_settings().setValue("sync_library_and_downloads_pages", is_checked)
+
+
 def get_default_library_page() -> int:
     return get_settings().value("default_library_page", defaultValue=0, type=int)  # type: ignore
 

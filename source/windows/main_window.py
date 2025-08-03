@@ -45,6 +45,7 @@ from modules.settings import (
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
     get_show_tray_icon,
+    get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
     get_use_pre_release_builds,
     get_use_system_titlebar,
@@ -284,6 +285,24 @@ class BlenderLauncher(BaseWindow):
         self.header.setHidden(b)
         self.corner_settings_widget.setHidden(not b)
 
+    def toggle_sync_library_and_downloads_pages(self, is_sync):
+        if is_sync:
+            self.LibraryToolBox.tab_changed.connect(self.DownloadsToolBox.setCurrentIndex)
+            self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
+        else:
+            if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
+                self.LibraryToolBox.tab_changed.disconnect()
+
+            if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
+                self.DownloadsToolBox.tab_changed.disconnect()
+
+    def isSignalConnected(self, obj, name):
+        index = obj.metaObject().indexOfMethod(name)
+        if index == -1:
+            return False
+        method = obj.metaObject().method(index)
+        return obj.isSignalConnected(method)
+
     def draw(self, polish=False):
         # Header
         self.SettingsButton = WHeaderButton(self.icons.settings, "", self)
@@ -347,6 +366,8 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
         self.UserToolBox = BaseToolBoxWidget(self)
+
+        self.toggle_sync_library_and_downloads_pages(get_sync_library_and_downloads_pages())
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)

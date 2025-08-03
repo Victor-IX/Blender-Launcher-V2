@@ -6,6 +6,7 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_high_dpi_scaling,
     get_enable_new_builds_notifications,
+    get_sync_library_and_downloads_pages,
     get_use_system_titlebar,
     library_pages,
     set_default_downloads_page,
@@ -15,6 +16,7 @@ from modules.settings import (
     set_enable_high_dpi_scaling,
     set_enable_new_builds_notifications,
     set_make_error_notifications,
+    set_sync_library_and_downloads_pages,
     set_use_system_titlebar,
     tabs,
 )
@@ -109,6 +111,16 @@ class AppearanceTabWidget(SettingsFormWidget):
         self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
         self.DefaultTabComboBox.activated[int].connect(self.change_default_tab)
 
+        # Sync Library and Downloads pages
+        self.SyncLibraryAndDownloadsPages = QCheckBox()
+        self.SyncLibraryAndDownloadsPages.setText("Sync Library && Downloads Pages")
+        self.SyncLibraryAndDownloadsPages.setToolTip(
+            "Sync the selected Library tab with the corresponding Downloads tab\
+            \nDEFAULT: True"
+        )
+        self.SyncLibraryAndDownloadsPages.clicked.connect(self.toggle_sync_library_and_downloads_pages)
+        self.SyncLibraryAndDownloadsPages.setChecked(get_sync_library_and_downloads_pages())
+
         # Default Library Page
         self.DefaultLibraryPageComboBox = QComboBox()
         self.DefaultLibraryPageComboBox.addItems(library_pages.keys())
@@ -130,6 +142,7 @@ class AppearanceTabWidget(SettingsFormWidget):
 
         self.tabs_layout = QFormLayout()
         self.tabs_layout.addRow(QLabel("Default Tab", self), self.DefaultTabComboBox)
+        self.tabs_layout.addRow(self.SyncLibraryAndDownloadsPages)
         self.tabs_layout.addRow(QLabel("Default Library Page", self), self.DefaultLibraryPageComboBox)
         self.tabs_layout.addRow(QLabel("Default Downloads Page", self), self.DefaultDownloadsPageComboBox)
         self.tabs_settings.setLayout(self.tabs_layout)
@@ -150,13 +163,31 @@ class AppearanceTabWidget(SettingsFormWidget):
         tab = self.DefaultTabComboBox.itemText(index)
         set_default_tab(tab)
 
+    def toggle_sync_library_and_downloads_pages(self, is_checked):
+        set_sync_library_and_downloads_pages(is_checked)
+        self.parent.toggle_sync_library_and_downloads_pages(is_checked)
+
+        if is_checked:
+            index = self.DefaultLibraryPageComboBox.currentIndex()
+            self.DefaultDownloadsPageComboBox.setCurrentIndex(index)
+            text = self.DefaultLibraryPageComboBox.currentText()
+            set_default_downloads_page(text)
+
     def change_default_library_page(self, index: int):
         page = self.DefaultLibraryPageComboBox.itemText(index)
         set_default_library_page(page)
 
+        if get_sync_library_and_downloads_pages():
+            self.DefaultDownloadsPageComboBox.setCurrentIndex(index)
+            set_default_downloads_page(page)
+
     def change_default_downloads_page(self, index: int):
         page = self.DefaultDownloadsPageComboBox.itemText(index)
         set_default_downloads_page(page)
+
+        if get_sync_library_and_downloads_pages():
+            self.DefaultLibraryPageComboBox.setCurrentIndex(index)
+            set_default_library_page(page)
 
     def toggle_enable_download_notifications(self, is_checked):
         set_enable_download_notifications(is_checked)
