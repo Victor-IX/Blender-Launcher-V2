@@ -14,7 +14,7 @@
 
 ## Original [Project](https://github.com/DotBow/Blender-Launcher) By [DotBow](https://github.com/DotBow)
 
-> The **Blender Laucnher V2** project exists because DotBow/Blender-Launcher has been inactive since October of 2022. It was archived on the 28th of Nov, 2023 and will no longer be receiving updates.
+> The **Blender Launcher V2** project exists because DotBow/Blender-Launcher has been inactive since October of 2022. It was archived on the 28th of Nov, 2023 and will no longer be receiving updates.
 
 ## What is it?
 
@@ -48,18 +48,21 @@ The goal of Blender Launcher is to make it easier to stay up to date with the la
 Compared to its [predecessor](https://github.com/DotBow/Blender-Version-Manager) Blender Launcher introduces a number of major improvements:
 
 * Rewritten from the ground up for better stability and extensibility
-* All official builds are available:
+* All official builds are available, aswell as the popular fork Bforartists:
     * [Stable releases](https://download.blender.org/release/)
     * [Daily builds](https://builder.blender.org/download/daily/)
     * [Experimental branches](https://builder.blender.org/download/branches/)
+    * [Bforartists](https://www.bforartists.de/download/)
+* Version consistent .blend file opening
 * Faster starting times by caching data
 * Support for high DPI displays
+And many new quality of life features!
 
 Core features:
 
 * Automatic checking of latest builds
 * Fast access of favorite build via tray context menu or by middle click on tray icon
-* Register .blend file extension for preferred build
+* Register .blend file extension for preferred build or the last saved build
 * Startup arguments for launching Blender
 * Template installation
 * Indication of running builds and its number of instances
