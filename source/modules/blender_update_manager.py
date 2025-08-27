@@ -178,6 +178,15 @@ def _is_newer_build(download_info: BuildInfo, current_info: BuildInfo) -> bool:
     return download_info.commit_time > current_info.commit_time
 
 
+def is_major_version_update(current_build_info: BuildInfo, update_download) -> bool:
+    """Check if the update is a major or minor version change."""
+
+    current_version = current_build_info.semversion.replace(prerelease=None)
+    update_version = update_download.build_info.semversion.replace(prerelease=None)
+
+    return update_version.major != current_version.major or update_version.minor != current_version.minor
+
+
 def _get_update_behavior(
     current_branch: str,
 ) -> int:

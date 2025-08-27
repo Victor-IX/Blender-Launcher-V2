@@ -27,7 +27,8 @@ from modules.settings import (
     get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from modules.blender_update_manager import available_blender_update
+from modules.blender_update_manager import available_blender_update, is_major_version_update
+from windows.popup_window import PopupIcon, PopupWindow
 from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
@@ -577,6 +578,11 @@ class LibraryWidget(BaseBuildWidget):
         return False
 
     def _trigger_update_download(self):
+        if hasattr(self, "_update_download_widget"):
+            self._is_major_version_update = is_major_version_update(self.build_info, self._update_download_widget)
+        else:
+            self._is_major_version_update = False
+
         self._hide_update_button()
         self.launchButton.set_text("Updating")
         self.launchButton.setEnabled(False)
@@ -590,6 +596,36 @@ class LibraryWidget(BaseBuildWidget):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", RuntimeWarning)
                 self.updateButton.clicked.disconnect()
+
+    def confirm_major_version_update_removal(self, callback):
+        """Show confirmation dialog for major version update before removing old build."""
+        if hasattr(self, "_update_download_widget"):
+            update_download_widget = self._update_download_widget
+
+        if update_download_widget and is_major_version_update(self.build_info, update_download_widget):
+            current_version = self.build_info.semversion.replace(prerelease=None)
+            update_version = update_download_widget.build_info.semversion.replace(prerelease=None)
+
+            message = (
+                f"Updating from {current_version} to {update_version} will use a new set of Blender Preferences\n\n"
+                f"Do you want to remove the old build ({current_version}) from your library?"
+            )
+
+            self._confirmation_popup = PopupWindow(
+                message=message,
+                title="Major Version Update - Remove Old Build",
+                icon=PopupIcon.WARNING,
+                buttons=["Remove", "Keep Both Versions"],
+                parent=self.parent,
+            )
+
+            self._confirmation_popup.accepted.connect(lambda: self._handle_removal_confirmation(callback, True))
+            self._confirmation_popup.cancelled.connect(lambda: self._handle_removal_confirmation(callback, False))
+        else:
+            callback(True)
+
+    def _handle_removal_confirmation(self, callback, remove_old_build):
+        callback(remove_old_build)
 
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)

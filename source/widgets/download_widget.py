@@ -338,11 +338,21 @@ class DownloadWidget(BaseBuildWidget):
                 QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
 
     def remove_old_build(self, widget):
-        if hasattr(widget, "remove_from_drive"):
+        if hasattr(widget, "confirm_major_version_update_removal"):
+            widget.confirm_major_version_update_removal(
+                lambda should_remove: self._proceed_with_removal(widget, should_remove)
+            )
+        else:
+            self._proceed_with_removal(widget, True)
+
+    def _proceed_with_removal(self, widget, should_remove):
+        """Actually remove the old build based on user's choice."""
+        if should_remove and hasattr(widget, "remove_from_drive"):
             widget.remove_from_drive(trash=True)
-            if hasattr(widget, "update_finished"):
-                widget.update_finished()
-            self.updating_widget = None
+
+        if hasattr(widget, "update_finished"):
+            widget.update_finished()
+        self.updating_widget = None
 
     def setInstalled(self, build_widget: BaseBuildWidget):
         if self.state == DownloadState.IDLE:
