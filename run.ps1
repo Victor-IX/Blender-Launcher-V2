@@ -5,6 +5,9 @@ if ($args -contains "-debug") {
 elseif ($args -contains "-rc") {
     & ./.venv/Scripts/python.exe ./source/main.py --build-cache
 }
+elseif ($args -contains "-debug -offline") {
+    & ./.venv/Scripts/python.exe ./source/main.py -debug -offline
+}
 else {
     & ./.venv/Scripts/python.exe ./source/main.py
 }

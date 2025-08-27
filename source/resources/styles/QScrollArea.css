@@ -1,0 +1,12 @@
+QScrollArea {
+    background-color: transparent;
+    border: none;
+}
+
+QScrollArea > QWidget > QWidget {
+    background-color: transparent;
+}
+
+QScrollArea::corner {
+    background-color: transparent;
+}
