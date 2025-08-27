@@ -565,10 +565,11 @@ class LibraryWidget(BaseBuildWidget):
 
             self._update_download_widget = update
 
-            try:
+            import warnings
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
                 self.updateButton.clicked.disconnect()
-            except TypeError:
-                pass
             self.updateButton.clicked.connect(self._trigger_update_download)
             return True
 
@@ -582,10 +583,13 @@ class LibraryWidget(BaseBuildWidget):
 
         if hasattr(self, "_update_download_widget"):
             self._update_download_widget.init_downloader(updating_widget=self)
-            try:
+            # Safely disconnect any existing connections
+            # Suppress RuntimeWarning for disconnecting when no connections exist
+            import warnings
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
                 self.updateButton.clicked.disconnect()
-            except TypeError:
-                pass
 
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
