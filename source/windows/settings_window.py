@@ -29,7 +29,8 @@ class SettingsWindow(BaseWindow):
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
-        self.setMinimumSize(QSize(600, 700))
+        self.resize(QSize(700, 800))
+        self.setMinimumSize(QSize(500, 600))
 
         self.CentralWidget = QWidget(self)
         self.CentralLayout = QVBoxLayout(self.CentralWidget)

@@ -191,10 +191,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         # Update button
         self.ShowUpdateButton = QCheckBox()
         self.ShowUpdateButton.setText("Show Update Button")
-        self.ShowUpdateButton.setToolTip(
-            "Show the update button to quickly update Blender builds\
-            \nDEFAULT: On"
-        )
         self.ShowUpdateButton.clicked.connect(self.show_update_button)
         self.ShowUpdateButton.setChecked(get_show_update_button())
 
@@ -216,6 +212,13 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         )
         self.UseAdvancedUpdateButton.clicked.connect(self.use_advanced_update_button)
         self.UseAdvancedUpdateButton.setChecked(get_use_advanced_update_button())
+
+        self.show_update_button_tooltip_normal = "Show the update button to quickly update Blender builds\
+            \nDEFAULT: On"
+        self.show_update_button_tooltip_disabled = "Show the update button to quickly update Blender builds\
+            \nThis option is disabled because Advanced Update Button is enabled\
+            \nDisable 'Use Advanced Update Button' to use this option\
+            \nDEFAULT: On"
 
         self.ShowStableUpdateButton = QCheckBox()
         self.ShowStableUpdateButton.setText("Show Stable Update Button")
@@ -322,40 +325,39 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.InstallTemplate.clicked.connect(self.toggle_install_template)
         self.InstallTemplate.setChecked(get_install_template())
 
-        self.advanced_settings_stack = QStackedWidget()
-        self.empty_page = QWidget()
-        self.advanced_settings_stack.addWidget(self.empty_page)
+        self.advanced_settings_widget = QWidget()
+        self.advanced_settings_layout = QGridLayout(self.advanced_settings_widget)
+        self.advanced_settings_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.advanced_page = QWidget()
-        self.advanced_page_layout = QGridLayout(self.advanced_page)
-        self.advanced_page_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.advanced_page_layout.addWidget(self.ShowStableUpdateButton, 0, 0, 1, 1)
-        self.advanced_page_layout.addWidget(self.UpdateStableBehavior, 0, 1, 1, 2)
-        self.advanced_page_layout.addWidget(self.ShowDailyUpdateButton, 1, 0, 1, 1)
-        self.advanced_page_layout.addWidget(self.UpdateDailyBehavior, 1, 1, 1, 2)
-        self.advanced_page_layout.addWidget(self.ShowExperimentalUpdateButton, 2, 0, 1, 1)
-        self.advanced_page_layout.addWidget(self.UpdateExperimentalBehavior, 2, 1, 1, 2)
-        self.advanced_page_layout.addWidget(self.ShowBFAUpdateButton, 3, 0, 1, 1)
-        self.advanced_page_layout.addWidget(self.UpdateBFABehavior, 3, 1, 1, 2)
-
-        self.advanced_settings_stack.addWidget(self.advanced_page)
+        # Advanced settings layout
+        self.advanced_settings_layout.addWidget(self.ShowStableUpdateButton, 0, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateStableBehavior, 0, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowDailyUpdateButton, 1, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateDailyBehavior, 1, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowExperimentalUpdateButton, 2, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateExperimentalBehavior, 2, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowBFAUpdateButton, 3, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateBFABehavior, 3, 1, 1, 2)
 
         is_advanced = get_use_advanced_update_button()
+        self.advanced_settings_widget.setVisible(is_advanced)
+
+        self.ShowUpdateButton.setEnabled(not is_advanced)
+        self.UpdateBehavior.setEnabled(not is_advanced and self.ShowUpdateButton.isChecked())
+
         if is_advanced:
-            self.advanced_settings_stack.setCurrentIndex(1)
+            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_disabled)
         else:
-            self.advanced_settings_stack.setCurrentIndex(0)
-        self.advanced_settings_stack.setEnabled(is_advanced)
+            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_normal)
 
         self.downloading_layout = QGridLayout()
         self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
         self.downloading_layout.addWidget(self.UpdateBehavior, 0, 1, 1, 2)
-        self.downloading_layout.addWidget(self.UseAdvancedUpdateButton, 1, 0, 1, 1)
-        self.downloading_layout.addWidget(self.advanced_settings_stack, 2, 0, 1, 3)
+        self.downloading_layout.addWidget(self.UseAdvancedUpdateButton, 1, 0, 1, 3)
+        self.downloading_layout.addWidget(self.advanced_settings_widget, 2, 0, 1, 3)
         self.downloading_layout.addWidget(self.EnableMarkAsFavorite, 3, 0, 1, 1)
         self.downloading_layout.addWidget(self.MarkAsFavorite, 3, 1, 1, 2)
-        self.downloading_layout.addWidget(self.InstallTemplate, 4, 0, 1, 2)
+        self.downloading_layout.addWidget(self.InstallTemplate, 4, 0, 1, 3)
         self.download_settings.setLayout(self.downloading_layout)
 
         # Launching builds settings
@@ -453,9 +455,16 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         set_show_update_button(is_checked)
 
     def use_advanced_update_button(self, is_checked):
-        self.advanced_settings_stack.setEnabled(is_checked)
+        self.advanced_settings_widget.setVisible(is_checked)
+
         self.ShowUpdateButton.setEnabled(not is_checked)
         self.UpdateBehavior.setEnabled(not is_checked and self.ShowUpdateButton.isChecked())
+
+        if is_checked:
+            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_disabled)
+        else:
+            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_normal)
+
         set_use_advanced_update_button(is_checked)
 
     def show_stable_update_button(self, is_checked):
