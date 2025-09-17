@@ -75,6 +75,24 @@ QPushButton[LaunchButton=true]:disabled {
     padding: 9px;
 }
 
+QPushButton[UpdateButton=true] {
+    background-color: #3c669e;
+    border: none;
+    padding: 9px;
+}
+
+QPushButton[UpdateButton=true]:hover {
+    background-color: #5485c5;
+    border: none;
+    padding: 9px;
+}
+
+QPushButton[UpdateButton=true]:disabled {
+    background-color: #6E6E6E;
+    border: none;
+    padding: 9px;
+}
+
 QPushButton[CreateButton=true] {
     background-color: rgb(218, 218, 218);
     color: black;

@@ -4,6 +4,7 @@ import logging
 
 from functools import lru_cache
 from pathlib import Path
+from semver import Version
 
 from modules._platform import get_config_path, get_platform
 
@@ -96,12 +97,16 @@ def update_local_api_files(data: dict) -> None:
         logger.exception(f"Failed to update API file: {e}")
 
 
-def read_blender_version_list() -> dict[str, str]:
-    return read_bl_api().get("blender_versions", {})
+def read_blender_version_list() -> list[Version]:
+    return [
+        Version.parse(version, optional_minor_and_patch=True)
+        for version in read_bl_api().get("blender_versions", {}).keys()
+    ]
 
 
-def lts_blender_version() -> tuple:
-    return tuple(version for version, tag in read_blender_version_list().items() if tag == "LTS")
+def lts_blender_version() -> list[Version]:
+    versions = read_bl_api().get("blender_versions", {})
+    return [Version.parse(version, optional_minor_and_patch=True) for version, lts in versions.items() if lts == "LTS"]
 
 
 def dropdown_blender_version() -> dict[str, int]:
@@ -113,4 +118,5 @@ def dropdown_blender_version() -> dict[str, int]:
         "3.4": 3
     }
     """
-    return {key: index for index, key in enumerate(read_blender_version_list().keys())}
+    versions = tuple(f"{v.major}.{v.minor}" for v in read_blender_version_list())
+    return {version: i for i, version in enumerate(versions)}
