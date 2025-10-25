@@ -1,3 +1,4 @@
+import logging
 import tarfile
 import zipfile
 from collections.abc import Callable
@@ -6,31 +7,44 @@ from pathlib import Path
 from typing import List, Optional
 
 from modules._platform import _check_call
+from modules.enums import MessageType
 from modules.task import Task
 from PySide6.QtCore import Signal
+
+logger = logging.getLogger()
 
 
 def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]) -> Optional[Path]:
     progress_callback(0, 0)
     suffixes = source.suffixes
     if suffixes[-1] == ".zip":
-        with zipfile.ZipFile(source) as zf:
-            members = zf.infolist()
-            names = [m.filename for m in members]
-            folder = _get_build_folder(names)
+        # Validate zip file before attempting extraction
+        if not zipfile.is_zipfile(source):
+            error_msg = f"File is not a valid zip file: {source}"
+            logger.error(error_msg)
+            raise zipfile.BadZipFile(error_msg)
 
-            if folder is None:
-                folder = members[0].filename.split("/")[0]
+        try:
+            with zipfile.ZipFile(source) as zf:
+                members = zf.infolist()
+                names = [m.filename for m in members]
+                folder = _get_build_folder(names)
 
-            uncompress_size = sum(member.file_size for member in members)
-            progress_callback(0, uncompress_size)
-            extracted_size = 0
+                if folder is None:
+                    folder = members[0].filename.split("/")[0]
 
-            for member in members:
-                zf.extract(member, destination)
-                extracted_size += member.file_size
-                progress_callback(extracted_size, uncompress_size)
-        return destination / folder
+                uncompress_size = sum(member.file_size for member in members)
+                progress_callback(0, uncompress_size)
+                extracted_size = 0
+
+                for member in members:
+                    zf.extract(member, destination)
+                    extracted_size += member.file_size
+                    progress_callback(extracted_size, uncompress_size)
+            return destination / folder
+        except zipfile.BadZipFile as e:
+            logger.error(f"Bad zip file: {source} - {e}")
+            raise
 
     if suffixes[-2] == ".tar":
         with tarfile.open(source) as tar:
@@ -89,10 +103,31 @@ class ExtractTask(Task):
     progress = Signal(int, int)
     finished = Signal(Path)
 
+    def _handle_extraction_error(self, error: Exception, use_exception_log: bool = False):
+        """Handle extraction errors with cleanup."""
+        error_msg = f"Extraction failed: {error}"
+        if use_exception_log:
+            logger.exception(error_msg)
+        else:
+            logger.error(error_msg)
+        self.message.emit(error_msg, MessageType.ERROR)
+
+        # Clean up corrupted file
+        if self.file.exists():
+            logger.info(f"Removing corrupted file: {self.file}")
+            self.file.unlink()
+
     def run(self):
-        result = extract(self.file, self.destination, self.progress.emit)
-        if result is not None:
-            self.finished.emit(result)
+        try:
+            result = extract(self.file, self.destination, self.progress.emit)
+            if result is not None:
+                self.finished.emit(result)
+        except (zipfile.BadZipFile, tarfile.TarError) as e:
+            self._handle_extraction_error(e)
+            raise
+        except Exception as e:
+            self._handle_extraction_error(e, use_exception_log=True)
+            raise
 
     def __str__(self):
         return f"Extract {self.file} to {self.destination}"
