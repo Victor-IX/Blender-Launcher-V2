@@ -57,7 +57,7 @@ BFA_NC_WEBDAV_SHARE_TOKEN = "JxCjbyt2fFcHjy4"
 
 
 def get_bfa_nc_https_download_url(webdav_file_path: PurePosixPath):
-    return f"{BFA_NC_HTTPS_URL}/{BFA_NC_WEBDAV_SHARE_TOKEN}/download?path=/{webdav_file_path.parent}&files={webdav_file_path.name}"
+    return f"{BFA_NC_WEBDAV_URL}/{webdav_file_path}"
 
 
 def get_release_tag(connection_manager: ConnectionManager) -> str | None:

@@ -36,14 +36,26 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
         "macOS": "Blender/Blender.app/Contents/MacOS/Blender",
     }.get(platform, "blender")
 
+    # Bforartists uses different executable names
+    bforartists_exe = {
+        "Windows": "bforartists.exe",
+        "Linux": "bforartists",
+        "macOS": "Bforartists/Bforartists.app/Contents/MacOS/Bforartists",
+    }.get(platform, "bforartists")
+
     for folder in folders:
         path = library_folder / folder
         if path.is_dir():
             for build in path.iterdir():
                 if build.is_dir():
+                    # Check for .blinfo file or executable (blender.exe or bforartists.exe)
+                    has_blinfo = (folder / build / ".blinfo").is_file()
+                    has_blender_exe = (path / build / blender_exe).is_file()
+                    has_bforartists_exe = (path / build / bforartists_exe).is_file()
+
                     yield (
                         folder / build,
-                        ((folder / build / ".blinfo").is_file() or (path / build / blender_exe).is_file()),
+                        has_blinfo or has_blender_exe or has_bforartists_exe,
                     )
 
 

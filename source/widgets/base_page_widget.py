@@ -16,6 +16,7 @@ from widgets.base_list_widget import BaseListWidget
 class SortingType(Enum):
     DATETIME = 1
     VERSION = 2
+    LABEL = 3
 
 
 class BasePageWidget(QWidget):
@@ -97,8 +98,10 @@ class BasePageWidget(QWidget):
         self.subversionLabel.setProperty("ListHeader", True)
         self.subversionLabel.setCheckable(True)
         self.subversionLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.VERSION))
-        self.branchLabel = QLabel("Branch")
-        self.branchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.branchLabel = QPushButton("Branch")
+        self.branchLabel.setProperty("ListHeader", True)
+        self.branchLabel.setCheckable(True)
+        self.branchLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.LABEL))
         self.commitTimeLabel = QPushButton(time_label)
         self.commitTimeLabel.setFixedWidth(118)
         self.commitTimeLabel.setProperty("ListHeader", True)
@@ -138,5 +141,6 @@ class BasePageWidget(QWidget):
 
         self.commitTimeLabel.setChecked(sorting_type == SortingType.DATETIME)
         self.subversionLabel.setChecked(sorting_type == SortingType.VERSION)
+        self.branchLabel.setChecked(sorting_type == SortingType.LABEL)
 
         set_list_sorting_type(self.name, sorting_type)

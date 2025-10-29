@@ -132,7 +132,18 @@ class BuildInfo:
             return False
         if (self.build_hash is not None) and (other.build_hash is not None):
             return self.build_hash == other.build_hash
-        return self.subversion == other.subversion
+
+        # Compare by semver major.minor.patch (ignore prerelease differences)
+        # This allows "4.5.2" to match "4.5.2-window" for Bforartists builds
+        try:
+            self_ver = parse_blender_ver(self.subversion)
+            other_ver = parse_blender_ver(other.subversion)
+            return (self_ver.major == other_ver.major and
+                    self_ver.minor == other_ver.minor and
+                    self_ver.patch == other_ver.patch)
+        except (ValueError, Exception):
+            # Fall back to string comparison if parsing fails
+            return self.subversion == other.subversion
 
     @property
     def semversion(self):
@@ -289,7 +300,7 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
 
     if info is not None and info.subversion is not None:
         subversion = info.subversion
-    elif s := re.search("Blender (.*)", version):
+    elif s := re.search(r"(?:Blender|Bforartists) (.*)", version):
         subversion = s[1].rstrip()
     else:
         s = version.splitlines()[0].strip()
