@@ -97,6 +97,8 @@ def parse_blender_ver(s: str, search=False) -> Version:
             patch = int(g.group("pa"))
         if "pre" in g.groupdict() and g.group("pre") is not None:
             prerelease = g.group("pre").casefold().strip("- ")
+            if prerelease.strip().lower() == "lts":
+                prerelease = None
 
         return Version(major=major, minor=minor, patch=patch, prerelease=prerelease)
         # print(f"Parsed {s} to {v} using {matcher}")
@@ -138,9 +140,11 @@ class BuildInfo:
         try:
             self_ver = parse_blender_ver(self.subversion)
             other_ver = parse_blender_ver(other.subversion)
-            return (self_ver.major == other_ver.major and
-                    self_ver.minor == other_ver.minor and
-                    self_ver.patch == other_ver.patch)
+            return (
+                self_ver.major == other_ver.major
+                and self_ver.minor == other_ver.minor
+                and self_ver.patch == other_ver.patch
+            )
         except (ValueError, Exception):
             # Fall back to string comparison if parsing fails
             return self.subversion == other.subversion

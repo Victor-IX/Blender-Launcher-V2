@@ -16,10 +16,10 @@ class RemovalTask(Task):
     def run(self):
         try:
             if self.trash:
-                send2trash(str(self.path))
+                send2trash(self.path)
             else:
                 if self.path.is_dir():
-                    rmtree(self.path.as_posix())
+                    rmtree(self.path)
                 else:
                     self.path.unlink()
 
