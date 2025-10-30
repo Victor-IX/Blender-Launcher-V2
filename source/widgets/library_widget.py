@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import logging
 import contextlib
@@ -29,7 +30,6 @@ from modules.settings import (
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
 from modules.blender_update_manager import available_blender_update, is_major_version_update
 from windows.popup_window import PopupIcon, PopupWindow
-from PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
     QAction,
@@ -960,7 +960,7 @@ class LibraryWidget(BaseBuildWidget):
         platform = get_platform()
 
         if platform == "Windows":
-            folder_path.startfile()
+            os.startfile(folder_path.as_posix())
         elif platform == "Linux":
             # Due to a bug/feature in Pyinstaller, we
             # have to remove all environment variables
