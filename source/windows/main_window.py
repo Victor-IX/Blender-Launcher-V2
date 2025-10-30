@@ -122,6 +122,7 @@ class BlenderLauncher(BaseWindow):
     close_signal = Signal()
     quit_signal = Signal()
     quick_launch_fail_signal = Signal()
+    scraper_finished_signal = Signal()
 
     def __init__(
         self,
@@ -797,8 +798,30 @@ class BlenderLauncher(BaseWindow):
         else:
             self.ready_to_scrape()
 
+        self.scraper_finished_signal.connect(self.check_library_for_updates)
+
+    def check_library_for_updates(self):
+        all_downloads = []
+        all_downloads.extend(self.DownloadsStableListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsDailyListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsExperimentalListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsBFAListWidget.findChildren(DownloadWidget))
+
+        for library_list in [
+            self.LibraryStableListWidget,
+            self.LibraryDailyListWidget,
+            self.LibraryExperimentalListWidget,
+            self.LibraryBFAListWidget,
+        ]:
+            for item in range(library_list.count()):
+                widget_item = library_list.item(item)
+                if widget_item:
+                    library_widget = library_list.itemWidget(widget_item)
+                    if library_widget and hasattr(library_widget, "check_for_updates"):
+                        library_widget.check_for_updates(all_downloads)
+
     def connection_error(self):
-        print("connection_error")
+        logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
         self.set_status("Error: connection failed at " + utcnow)
@@ -901,6 +924,7 @@ class BlenderLauncher(BaseWindow):
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
         self.set_status("Last check at " + self.last_time_checked.strftime(DATETIME_FORMAT), True)
+        self.scraper_finished_signal.emit()
 
     def draw_from_cashed(self, build_info):
         if self.app_state == AppState.IDLE:

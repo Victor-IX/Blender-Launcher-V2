@@ -29,6 +29,10 @@ class BaseListWidget(QListWidget):
         if extended_selection is True:
             self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
+    def __str__(self):
+        widget = [widget.build_info for widget in self.widgets]
+        return f"BaseListWidget build info: {widget}"
+
     def add_item(self, item, widget):
         item.setSizeHint(widget.sizeHint())
         self.addItem(item)
