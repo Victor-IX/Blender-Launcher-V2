@@ -1,3 +1,5 @@
+import logging
+
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import rmtree
@@ -5,6 +7,9 @@ from shutil import rmtree
 from modules.task import Task
 from PySide6.QtCore import Signal
 from send2trash import send2trash
+
+
+logger = logging.getLogger()
 
 
 @dataclass
@@ -15,6 +20,10 @@ class RemovalTask(Task):
 
     def run(self):
         try:
+            if not self.path.exists():
+                self.finished.emit(0)
+                logger.info(f"Path {self.path} does not exist, nothing to remove.")
+                return
             if self.trash:
                 send2trash(self.path)
             else:
