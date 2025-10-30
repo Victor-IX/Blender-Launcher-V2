@@ -7,7 +7,7 @@ import shutil
 import sys
 import webbrowser
 import threading
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
 from functools import partial
 from pathlib import Path
@@ -59,8 +59,8 @@ from modules.settings import (
     set_tray_icon_notified,
 )
 from modules.string_utils import patch_note_cleaner
-from modules.tasks import Task, TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, Signal, Slot
+from modules.tasks import TaskQueue, TaskWorker
+from PySide6.QtCore import QSize, Qt, Signal, Slot, QTimer
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -719,12 +719,33 @@ class BlenderLauncher(BaseWindow):
         elif reason == QSystemTrayIcon.ActivationReason.Context:
             self.tray_menu.trigger()
 
-    def destroy(self):
-        self.quit_signal.emit()
-
+    def stop_auto_scrape_timer(self):
         if self.timer is not None:
             self.timer.cancel()
+            self.timer = None
 
+    def schedule_auto_scrape_timer(self):
+        self.stop_auto_scrape_timer()
+
+        if not get_check_for_new_builds_automatically():
+            return
+
+        interval_seconds = get_new_builds_check_frequency() * 3600
+
+        if interval_seconds <= 0:
+            return
+
+        def trigger_auto_scrape():
+            self.timer = None
+            QTimer.singleShot(0, self.draw_downloads)
+
+        self.timer = threading.Timer(interval_seconds, trigger_auto_scrape)
+        self.timer.daemon = True
+        self.timer.start()
+
+    def destroy(self):
+        self.quit_signal.emit()
+        self.stop_auto_scrape_timer()
         self.tray_icon.hide()
         self.app.quit()
 
@@ -737,8 +758,7 @@ class BlenderLauncher(BaseWindow):
             self.cm.error.connect(self.connection_error)
             self.manager = self.cm.manager
 
-            if self.timer is not None:
-                self.timer.cancel()
+            self.stop_auto_scrape_timer()
             if self.scraper is not None:
                 self.scraper.quit()
             self.DownloadsStableListWidget.clear_()
@@ -785,8 +805,7 @@ class BlenderLauncher(BaseWindow):
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
-            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
-            self.timer.start()
+            self.schedule_auto_scrape_timer()
 
     @Slot(str)
     def scraper_error(self, s: str):
@@ -813,6 +832,7 @@ class BlenderLauncher(BaseWindow):
 
     def start_scraper(self, scrape_stable=None, scrape_automated=None, scrape_bfa=None):
         self.set_status("Checking for new builds", False)
+        self.stop_auto_scrape_timer()
 
         if scrape_stable is None:
             scrape_stable = get_scrape_stable_builds()
@@ -872,9 +892,10 @@ class BlenderLauncher(BaseWindow):
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
-            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
-            self.timer.start()
+            self.schedule_auto_scrape_timer()
             self.started = False
+        else:
+            self.stop_auto_scrape_timer()
         self.ready_to_scrape()
 
     def ready_to_scrape(self):
