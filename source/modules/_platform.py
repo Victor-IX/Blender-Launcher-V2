@@ -155,12 +155,53 @@ def is_frozen():
     return bool(getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"))
 
 
+def find_app_bundle(executable_path: Path) -> Path | None:
+    """
+    Find the .app bundle containing the executable.
+    Returns the .app directory path, or None if not found.
+
+    First checks the standard macOS app structure (MyApp.app/Contents/MacOS/executable),
+    then searches parent directories for any .app bundle.
+    """
+    # First, check if the executable is in the standard macOS app structure
+    # Typical structure: MyApp.app/Contents/MacOS/executable
+    # So we need to go up 3 levels
+    try:
+        potential_app = executable_path.parents[2]
+        if potential_app.suffix == ".app" and potential_app.is_dir():
+            return potential_app
+    except IndexError:
+        pass
+
+    # If not found in standard location, search parent directories
+    for parent in executable_path.parents:
+        if parent.suffix == ".app" and parent.is_dir():
+            return parent
+
+    return None
+
+
 @cache
 def get_cwd():
     if is_frozen():
         return Path(os.path.dirname(sys.executable))
 
     return Path.cwd()
+
+
+@cache
+def get_default_library_folder():
+    """
+    Get the default folder for library storage.
+    On macOS with app bundles, returns the parent folder of the .app bundle.
+    Otherwise, returns get_cwd().
+    """
+    if is_frozen() and get_platform() == "macOS":
+        app_bundle = find_app_bundle(Path(sys.executable))
+        if app_bundle is not None:
+            return app_bundle.parent
+
+    return get_cwd()
 
 
 @cache

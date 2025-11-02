@@ -15,7 +15,7 @@ from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules._platform import _popen, get_cwd, get_default_library_folder, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
 from modules.connection_manager import ConnectionManager
@@ -232,7 +232,7 @@ class BlenderLauncher(BaseWindow):
         self.draw()
 
     def prompt_library_folder(self):
-        library_folder = get_cwd().as_posix()
+        library_folder = get_default_library_folder().as_posix()
         new_library_folder = FileDialogWindow().get_directory(self, "Select Library Folder", library_folder)
 
         if new_library_folder:
