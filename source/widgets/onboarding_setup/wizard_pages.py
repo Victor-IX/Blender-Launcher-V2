@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform, is_frozen
+from modules._platform import find_app_bundle, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
@@ -156,6 +156,34 @@ class ChooseLibraryPage(BasicOnboardingPage):
         set_library_folder(str(pth))
 
         if is_frozen() and self.move_exe.isChecked():  # move the executable to the library location
+            platform = get_platform()
+
+            if platform == "macOS":
+                # On macOS, we need to move the entire .app bundle
+                app_bundle = find_app_bundle(Path(sys.executable))
+
+                if app_bundle is not None:
+                    # Move the entire .app bundle
+                    dest_app = pth / app_bundle.name
+
+                    if dest_app.exists():
+                        return
+
+                    self.prop_settings.exe_changed = True
+                    dest_app.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copytree(app_bundle, dest_app)
+
+                    # Update exe_location to point to the executable inside the moved .app
+                    # Maintain the same relative path from .app to executable
+                    relative_exe = Path(sys.executable).relative_to(app_bundle)
+                    self.prop_settings.exe_location = dest_app / relative_exe
+
+                    # Delete the original .app bundle immediately
+                    shutil.rmtree(app_bundle)
+                    return
+                # If no .app bundle found, fall through to move just the executable
+
+            # Windows and Linux, or macOS without .app bundle
             exe = pth / self.prop_settings.exe_location.name
             self.prop_settings.exe_location = exe
 
@@ -165,7 +193,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
             self.prop_settings.exe_changed = True
             exe.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(sys.executable, exe)
-            if get_platform() == "Windows":  # delete the exe when closed
+            if platform == "Windows":  # delete the exe when closed
                 # self.launcher.delete_exe_on_reboot = True
                 ...
             else:  # delete the executable directly
