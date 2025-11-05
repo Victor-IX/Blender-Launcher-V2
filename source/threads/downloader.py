@@ -24,6 +24,7 @@ VALID_ARCHIVE_TYPES = [
     "application/octet-stream",
     "application/x-tar",
     "application/x-gzip",
+    "application/x-xz",
     "application/gzip",
     "application/x-dmg",
 ]
