@@ -277,6 +277,15 @@ class BuildInfo:
 
 
 def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetime, str, str, str]:
+    if not exe.exists():
+        # List parent directory contents for debugging
+        parent_contents = list(exe.parent.parent.iterdir()) if exe.parent.parent.exists() else []
+        logger.error(
+            f"Executable not found: {exe}\n"
+            f"Parent directory contents: {[p.name for p in parent_contents[:10]]}"
+        )
+        raise FileNotFoundError(f"Executable not found: {exe}")
+
     version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
     build_hash = ""
     subversion = ""
@@ -323,10 +332,32 @@ def read_blender_version(
     old_build_info: BuildInfo | None = None,
     archive_name=None,
 ) -> BuildInfo:
+    # Track if we have valid old build info that we can reuse
+    reuse_old_info = False
+    corrected_exe_path = None
+
     if old_build_info is not None and old_build_info.custom_executable:
         exe_path = path / old_build_info.custom_executable
-    else:
+        # If the custom executable doesn't exist, fall back to auto-detection
+        if not exe_path.exists():
+            logger.warning(
+                f"Custom executable not found: {exe_path}, "
+                f"falling back to auto-detection for {path.name}"
+            )
+            # We still have the build info, just need to find the correct executable path
+            reuse_old_info = True
+        else:
+            # Custom executable path is valid, use it
+            corrected_exe_path = exe_path
+            logger.debug(f"Using custom executable: {exe_path}")
+
+    # Track if we found a non-standard path that should be saved as custom_executable
+    found_nonstandard_path = False
+
+    if corrected_exe_path is None:
         platform = get_platform()
+
+        # Standard paths for different platforms
         blender_exe = {
             "Windows": "blender.exe",
             "Linux": "blender",
@@ -339,14 +370,35 @@ def read_blender_version(
             "macOS": "Bforartists/Bforartists.app/Contents/MacOS/Bforartists",
         }.get(platform, "bforartists")
 
-        # Check if this is a Bforartists build by checking if bforartists executable exists
+        # Auto-detect executable path
+        # Priority: Bforartists (macOS DMG) > Bforartists (standard) > Blender (macOS DMG) > Blender (standard)
         bforartists_path = path / bforartists_exe
-        if bforartists_path.is_file() or (platform == "macOS" and (path / "Bforartists.app").is_dir()):
-            exe_path = bforartists_path
-        else:
-            exe_path = path / blender_exe
 
-    commit_time, build_hash, subversion, custom_name = fill_blender_info(exe_path, info=old_build_info)
+        if platform == "macOS" and (path / "Bforartists.app").is_dir():
+            # macOS: DMG extraction places .app directly at root
+            corrected_exe_path = path / "Bforartists.app" / "Contents/MacOS/Bforartists"
+            found_nonstandard_path = True
+        elif bforartists_path.is_file():
+            # Standard Bforartists structure
+            corrected_exe_path = bforartists_path
+        elif platform == "macOS" and (path / "Blender.app").is_dir():
+            # macOS: DMG extraction places .app directly at root
+            corrected_exe_path = path / "Blender.app" / "Contents/MacOS/Blender"
+            found_nonstandard_path = True
+        else:
+            # Standard Blender structure (fallback)
+            corrected_exe_path = path / blender_exe
+
+    # If we're reusing old info and found the correct executable, skip the slow version check
+    if reuse_old_info and corrected_exe_path and corrected_exe_path.exists():
+        logger.info(f"Reusing build info, updated executable path to: {corrected_exe_path.relative_to(path)}")
+        commit_time = old_build_info.commit_time
+        build_hash = old_build_info.build_hash
+        subversion = old_build_info.subversion
+        custom_name = old_build_info.custom_name
+    else:
+        # Need to read version info from the executable
+        commit_time, build_hash, subversion, custom_name = fill_blender_info(corrected_exe_path, info=old_build_info)
 
     subfolder = path.parent.name
 
@@ -368,13 +420,25 @@ def read_blender_version(
 
     # Recover user defined favorites builds information
     is_favorite = False
-
+    is_frozen = False
     custom_exe = None
+
     if old_build_info is not None:
         custom_name = old_build_info.custom_name
         is_favorite = old_build_info.is_favorite
-        custom_exe = old_build_info.custom_executable
         is_frozen = old_build_info.is_frozen
+
+        # Update custom_exe with corrected path if we found a new one
+        if reuse_old_info and corrected_exe_path:
+            custom_exe = corrected_exe_path.relative_to(path).as_posix()
+        elif found_nonstandard_path and corrected_exe_path:
+            # Even with old_build_info, save the non-standard path if found
+            custom_exe = corrected_exe_path.relative_to(path).as_posix()
+        else:
+            custom_exe = old_build_info.custom_executable
+    elif found_nonstandard_path and corrected_exe_path:
+        # For new builds with non-standard paths (DMG extraction format), save the detected executable path
+        custom_exe = corrected_exe_path.relative_to(path).as_posix()
 
     return BuildInfo(
         path.as_posix(),
@@ -523,12 +587,22 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
 
     elif platform == "macOS":
-        # Check if this is a Bforartists build
+        # Auto-detect .app bundle path
+        # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
         bforartists_app = Path(info.link) / "Bforartists.app"
+        blender_app = Path(info.link) / "Blender.app"
+        blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
+
         if bforartists_app.is_dir():
+            # macOS: Bforartists from DMG extraction
             b3d_exe = bforartists_app
+        elif blender_app.is_dir():
+            # macOS: Blender from DMG extraction
+            b3d_exe = blender_app
         else:
-            b3d_exe = Path(info.link) / "Blender" / "Blender.app"
+            # macOS: Standard Blender structure (fallback)
+            b3d_exe = blender_standard_app
+
         args = f"open -W -n {shlex.quote(b3d_exe.as_posix())} --args"
 
     if launch_mode is not None:

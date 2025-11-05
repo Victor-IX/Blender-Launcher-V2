@@ -115,6 +115,15 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             try:
                 _check_call(["ditto", app_file.as_posix(), dest_app.as_posix()])
                 logger.info(f"Successfully copied {app_file.name} to {dest_app}")
+
+                # Verify the copy was successful by checking if the destination exists
+                if not dest_app.exists():
+                    raise RuntimeError(f"Copy completed but destination not found: {dest_app}")
+
+                # On macOS, ensure file system buffers are flushed
+                _check_call(["sync"])
+                logger.info("File system buffers flushed")
+
             except Exception as e:
                 logger.error(f"Failed to copy {app_file} with ditto: {e}")
                 raise

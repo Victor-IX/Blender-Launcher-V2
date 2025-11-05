@@ -128,12 +128,15 @@ class LibraryWidget(BaseBuildWidget):
             self.draw(self.parent_widget.build_info)
 
     @Slot()
-    def trigger_damaged(self):
+    def trigger_damaged(self, exception: Exception = None):
+        if exception:
+            logger.error(f"Failed to read build info for {self.link.name}: {exception}")
         self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")
         self.launchButton.set_text("Delete")
         self.launchButton.clicked.connect(self.ask_remove_from_drive)
         self.setEnabled(True)
         self.is_damaged = True
+        # Keep build_info as None to prevent further errors
 
     def draw(self, build_info: BuildInfo):
         if self.parent_widget is None:
@@ -547,6 +550,12 @@ class LibraryWidget(BaseBuildWidget):
         self.updateBlenderBuildAction.setVisible(False)
 
     def check_for_updates(self, available_downloads):
+        # Skip update check if build_info is not available
+        if self.build_info is None:
+            logger.warning(f"Skipping update check for {self.link}: build_info is None")
+            self._hide_update_button()
+            return False
+
         logger.debug(
             f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
         )

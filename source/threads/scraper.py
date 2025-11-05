@@ -630,16 +630,12 @@ class Scraper(QThread):
             if not isinstance(commit_time, datetime):
                 continue
 
-            exe_name = {
-                "Windows": "bforartists.exe",
-                "Linux": "bforartists",
-                "macOS": "Bforartists/Bforartists.app/Contents/MacOS/Bforartists",
-            }.get(get_platform(), "bforartists")
+            # Don't set custom_executable - let it be auto-detected during installation
+            # This ensures consistent behavior with Blender
             yield BuildInfo(
                 get_bfa_nc_https_download_url(ppath),
                 str(semver),
                 None,
                 commit_time.astimezone(),
                 "bforartists",
-                custom_executable=exe_name,
             )
