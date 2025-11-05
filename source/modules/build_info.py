@@ -326,13 +326,25 @@ def read_blender_version(
     if old_build_info is not None and old_build_info.custom_executable:
         exe_path = path / old_build_info.custom_executable
     else:
+        platform = get_platform()
         blender_exe = {
             "Windows": "blender.exe",
             "Linux": "blender",
             "macOS": "Blender/Blender.app/Contents/MacOS/Blender",
-        }.get(get_platform(), "blender")
+        }.get(platform, "blender")
 
-        exe_path = path / blender_exe
+        bforartists_exe = {
+            "Windows": "bforartists.exe",
+            "Linux": "bforartists",
+            "macOS": "Bforartists/Bforartists.app/Contents/MacOS/Bforartists",
+        }.get(platform, "bforartists")
+
+        # Check if this is a Bforartists build by checking if bforartists executable exists
+        bforartists_path = path / bforartists_exe
+        if bforartists_path.is_file() or (platform == "macOS" and (path / "Bforartists.app").is_dir()):
+            exe_path = bforartists_path
+        else:
+            exe_path = path / blender_exe
 
     commit_time, build_hash, subversion, custom_name = fill_blender_info(exe_path, info=old_build_info)
 
@@ -511,7 +523,12 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
 
     elif platform == "macOS":
-        b3d_exe = Path(info.link) / "Blender" / "Blender.app"
+        # Check if this is a Bforartists build
+        bforartists_app = Path(info.link) / "Bforartists.app"
+        if bforartists_app.is_dir():
+            b3d_exe = bforartists_app
+        else:
+            b3d_exe = Path(info.link) / "Blender" / "Blender.app"
         args = f"open -W -n {shlex.quote(b3d_exe.as_posix())} --args"
 
     if launch_mode is not None:
