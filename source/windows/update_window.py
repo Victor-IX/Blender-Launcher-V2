@@ -125,7 +125,7 @@ class BlenderLauncherUpdater(BaseWindow):
         a.finished.connect(self.finish)
         self.queue.append(a)
 
-    def finish(self, dist):
+    def finish(self, dist, is_removed):
         # Launch 'Blender Launcher.exe' and exit
         launcher = str(dist)
         if self.platform == "Windows":

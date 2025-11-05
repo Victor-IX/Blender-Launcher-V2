@@ -97,6 +97,8 @@ def parse_blender_ver(s: str, search=False) -> Version:
             patch = int(g.group("pa"))
         if "pre" in g.groupdict() and g.group("pre") is not None:
             prerelease = g.group("pre").casefold().strip("- ")
+            if prerelease.strip().lower() == "lts":
+                prerelease = None
 
         return Version(major=major, minor=minor, patch=patch, prerelease=prerelease)
         # print(f"Parsed {s} to {v} using {matcher}")
@@ -108,9 +110,9 @@ oldver_cutoff = Version(2, 83, 0)
 @dataclass
 class BuildInfo:
     # Class variables
-    file_version = "1.3"
+    file_version = "1.5"
     # https://www.blender.org/download/lts/
-    lts_tags = lts_blender_version()
+    lts_versions = tuple(f"{v.major}.{v.minor}" for v in lts_blender_version())
 
     # Build variables
     link: str
@@ -121,9 +123,10 @@ class BuildInfo:
     custom_name: str = ""
     is_favorite: bool = False
     custom_executable: str | None = None
+    is_frozen: bool = False
 
     def __post_init__(self):
-        if self.branch == "stable" and self.subversion.startswith(self.lts_tags):
+        if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
 
     def __eq__(self, other: BuildInfo):
@@ -137,9 +140,11 @@ class BuildInfo:
         try:
             self_ver = parse_blender_ver(self.subversion)
             other_ver = parse_blender_ver(other.subversion)
-            return (self_ver.major == other_ver.major and
-                    self_ver.minor == other_ver.minor and
-                    self_ver.patch == other_ver.patch)
+            return (
+                self_ver.major == other_ver.major
+                and self_ver.minor == other_ver.minor
+                and self_ver.patch == other_ver.patch
+            )
         except (ValueError, Exception):
             # Fall back to string comparison if parsing fails
             return self.subversion == other.subversion
@@ -233,6 +238,7 @@ class BuildInfo:
             blinfo["custom_name"],
             blinfo["is_favorite"],
             blinfo.get("custom_executable", ""),
+            blinfo.get("is_frozen", False),
         )
 
     def to_dict(self):
@@ -247,6 +253,7 @@ class BuildInfo:
                     "custom_name": self.custom_name,
                     "is_favorite": self.is_favorite,
                     "custom_executable": self.custom_executable,
+                    "is_frozen": self.is_frozen,
                 }
             ],
         }
@@ -367,6 +374,7 @@ def read_blender_version(
         custom_name = old_build_info.custom_name
         is_favorite = old_build_info.is_favorite
         custom_exe = old_build_info.custom_executable
+        is_frozen = old_build_info.is_frozen
 
     return BuildInfo(
         path.as_posix(),
@@ -376,7 +384,8 @@ def read_blender_version(
         branch,
         custom_name,
         is_favorite,
-        custom_executable=custom_exe,
+        custom_exe,
+        is_frozen,
     )
 
 
@@ -543,13 +552,12 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
     return _popen(args)
 
 
-def bfa_version_matcher(blender_version: Version) -> Version | None:
-    versions = list(read_blender_version_list().keys())
-    version_foldername = f"{blender_version.major}.{blender_version.minor}"
+def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
+    versions = read_blender_version_list()
     for i, version in enumerate(versions):
-        if version_foldername in version:
+        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}"):
             if i + 1 < len(versions) and i > 0:
-                return Version.parse(versions[i - 1], optional_minor_and_patch=True)
+                return versions[i - 1]
             else:
                 return None
     return None

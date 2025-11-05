@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
+from send2trash import send2trash
 
 from modules._platform import _check_call, _check_output
 from modules.enums import MessageType
@@ -157,7 +158,7 @@ class ExtractTask(Task):
     destination: Path
 
     progress = Signal(int, int)
-    finished = Signal(Path)
+    finished = Signal(Path, bool)
 
     def _handle_extraction_error(self, error: Exception, use_exception_log: bool = False):
         """Handle extraction errors with cleanup."""
@@ -174,10 +175,16 @@ class ExtractTask(Task):
             self.file.unlink()
 
     def run(self):
+        is_removed = False
         try:
+            if (self.destination / self.file.stem).exists():
+                is_removed = True
+                send2trash(self.destination / self.file.stem)
+                logger.debug(f"Removed existing file: {self.destination / self.file.stem}")
+
             result = extract(self.file, self.destination, self.progress.emit)
             if result is not None:
-                self.finished.emit(result)
+                self.finished.emit(result, is_removed)
         except (zipfile.BadZipFile, tarfile.TarError) as e:
             self._handle_extraction_error(e)
             raise
