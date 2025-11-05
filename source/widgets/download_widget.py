@@ -55,6 +55,7 @@ class DownloadWidget(BaseBuildWidget):
         self.build_dir = None
         self.source_file = None
         self.updating_widget = None
+        self._is_removed = False
 
         self.progressBar = BaseProgressBarWidget()
         self.progressBar.setFont(self.parent.font_8)
@@ -226,7 +227,8 @@ class DownloadWidget(BaseBuildWidget):
         t.finished.connect(self.init_template_installer)
         self.parent.task_queue.append(t)
 
-    def init_template_installer(self, dist: Path):
+    def init_template_installer(self, dist: Path, is_removed: bool):
+        self._is_removed = is_removed
         self.build_state_widget.setExtract(False)
         self.build_dir = dist
 
@@ -309,7 +311,10 @@ class DownloadWidget(BaseBuildWidget):
         t.failure.connect(lambda: print("Renaming failed"))
         self.parent.task_queue.append(t)
 
-    def download_finished(self, path):
+    def download_finished(self, path, is_removed: bool):
+        if self._is_removed is False:
+            self._is_removed = is_removed
+
         self.set_state(DownloadState.IDLE)
 
         if path is None:
@@ -334,7 +339,7 @@ class DownloadWidget(BaseBuildWidget):
             )
             self.setInstalled(widget)
 
-            if self.updating_widget is not None:
+            if self.updating_widget is not None and self._is_removed is False:
                 QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
 
     def remove_old_build(self, widget):
