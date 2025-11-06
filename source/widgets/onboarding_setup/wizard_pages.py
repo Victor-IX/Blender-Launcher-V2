@@ -16,8 +16,9 @@ from modules.settings import (
     get_use_system_titlebar,
     set_enable_high_dpi_scaling,
     set_library_folder,
-    set_scrape_automated_builds,
     set_scrape_bfa_builds,
+    set_scrape_daily_builds,
+    set_scrape_experimental_builds,
     set_scrape_stable_builds,
     set_show_bfa_builds,
     set_show_daily_builds,
@@ -217,7 +218,8 @@ class RepoSelectPage(BasicOnboardingPage):
         set_show_bfa_builds(self.group.bforartists_repo.library)
 
         set_scrape_stable_builds(self.group.stable_repo.download)
-        set_scrape_automated_builds(self.group.daily_repo.download)
+        set_scrape_daily_builds(self.group.daily_repo.download)
+        set_scrape_experimental_builds(self.group.experimental_repo.download)
         set_scrape_bfa_builds(self.group.bforartists_repo.download)
 
 

@@ -2,6 +2,8 @@ from modules._platform import get_platform
 from modules.bl_api_manager import dropdown_blender_version
 from modules.settings import (
     favorite_pages,
+    set_scrape_daily_builds,
+    set_scrape_experimental_builds,
     update_behavior,
     get_bash_arguments,
     get_blender_startup_arguments,
@@ -39,7 +41,6 @@ from modules.settings import (
     set_minimum_blender_stable_version,
     set_new_builds_check_frequency,
     set_quick_launch_key_seq,
-    set_scrape_automated_builds,
     set_scrape_bfa_builds,
     set_scrape_stable_builds,
     set_show_bfa_builds,
@@ -91,8 +92,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
         self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
         self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
-        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_automated_builds)
+        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_daily_builds)
         self.repo_group.experimental_repo.library_changed.connect(lambda b: set_show_experimental_and_patch_builds(b))
+        self.repo_group.experimental_repo.download_changed.connect(self.toggle_scrape_experimental_builds)
         self.repo_group.bforartists_repo.library_changed.connect(lambda b: set_show_bfa_builds(b))
         self.repo_group.bforartists_repo.download_changed.connect(self.toggle_scrape_bfa_builds)
 
@@ -577,8 +579,11 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def toggle_scrape_stable_builds(self, is_checked):
         set_scrape_stable_builds(is_checked)
 
-    def toggle_scrape_automated_builds(self, is_checked):
-        set_scrape_automated_builds(is_checked)
+    def toggle_scrape_daily_builds(self, is_checked):
+        set_scrape_daily_builds(is_checked)
+
+    def toggle_scrape_experimental_builds(self, is_checked):
+        set_scrape_experimental_builds(is_checked)
 
     def toggle_scrape_bfa_builds(self, is_checked):
         set_scrape_bfa_builds(is_checked)

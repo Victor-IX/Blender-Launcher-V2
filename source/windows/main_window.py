@@ -37,8 +37,9 @@ from modules.settings import (
     get_make_error_popup,
     get_proxy_type,
     get_quick_launch_key_seq,
-    get_scrape_automated_builds,
     get_scrape_bfa_builds,
+    get_scrape_daily_builds,
+    get_scrape_experimental_builds,
     get_scrape_stable_builds,
     get_show_bfa_builds,
     get_show_daily_builds,
@@ -853,14 +854,16 @@ class BlenderLauncher(BaseWindow):
             self.start_scraper()
             self.update_visible_lists()
 
-    def start_scraper(self, scrape_stable=None, scrape_automated=None, scrape_bfa=None):
+    def start_scraper(self, scrape_stable=None, scrape_daily=None, scrape_expatch=None, scrape_bfa=None):
         self.set_status("Checking for new builds", False)
         self.stop_auto_scrape_timer()
 
         if scrape_stable is None:
             scrape_stable = get_scrape_stable_builds()
-        if scrape_automated is None:
-            scrape_automated = get_scrape_automated_builds()
+        if scrape_daily is None:
+            scrape_daily = get_scrape_daily_builds()
+        if scrape_expatch is None:
+            scrape_expatch = get_scrape_experimental_builds()
         if scrape_bfa is None:
             scrape_bfa = get_scrape_bfa_builds()
 
@@ -869,14 +872,15 @@ class BlenderLauncher(BaseWindow):
         else:
             self.DownloadsStablePageWidget.set_info_label_text("Checking for stable builds is disabled")
 
-        if scrape_automated:
-            msg = "Checking for new builds"
+        if scrape_daily:
+            self.DownloadsDailyPageWidget.set_info_label_text("Checking for new builds")
         else:
-            msg = "Checking for automated builds is disabled"
+            self.DownloadsDailyPageWidget.set_info_label_text("Checking for daily builds is disabled")
 
-        for page in self.DownloadsToolBox.pages:
-            if page is not self.DownloadsStablePageWidget:
-                page.set_info_label_text(msg)
+        if scrape_expatch:
+            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for new builds")
+        else:
+            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for experimental builds is disabled")
 
         if scrape_bfa:
             self.DownloadsBFAPageWidget.set_info_label_text("Checking for new builds")
@@ -894,7 +898,8 @@ class BlenderLauncher(BaseWindow):
         self.app_state = AppState.CHECKINGBUILDS
 
         self.scraper.scrape_stable = scrape_stable
-        self.scraper.scrape_automated = scrape_automated
+        self.scraper.scrape_daily = scrape_daily
+        self.scraper.scrape_experimental = scrape_expatch
         self.scraper.scrape_bfa = scrape_bfa
         self.scraper.manager = self.cm
         self.scraper.start()
@@ -1044,8 +1049,8 @@ class BlenderLauncher(BaseWindow):
         show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
         show_bfa = force_l_bfa or get_show_bfa_builds()
         scrape_stable = force_s_stable or get_scrape_stable_builds()
-        scrape_daily = force_s_daily or (get_scrape_automated_builds() and get_show_daily_builds())
-        scrape_expatch = force_s_expatch or (get_scrape_automated_builds() and get_show_experimental_and_patch_builds())
+        scrape_daily = force_s_daily or get_scrape_daily_builds()
+        scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
         scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
 
         self.LibraryToolBox.setTabVisible(0, show_stable)
