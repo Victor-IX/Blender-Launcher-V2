@@ -111,7 +111,7 @@ def register_windows_filetypes(exe=sys.executable):
 
     # Extract and save the bl_file.ico
     file_icon_path = get_bl_file_location()
-    desired_location = Path(get_cache_path()) / "bl_file.ico"
+    desired_location = get_cache_path() / "bl_file.ico"
 
     if not desired_location.exists():
         copyfile(file_icon_path, desired_location)

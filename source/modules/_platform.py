@@ -243,7 +243,7 @@ def get_config_file():
 
 
 @cache
-def get_cache_path():
+def get_cache_path() -> Path:
     platform = get_platform()
 
     cache_path = ""
@@ -257,16 +257,20 @@ def get_cache_path():
     elif platform == "macOS":
         cache_path = os.path.expanduser("~/Library/Logs")
     if not cache_path:
-        return os.getcwd()
-    return os.path.join(cache_path, "Blender Launcher")
+        return Path(os.getcwd())
+
+    full_path = Path(cache_path) / "Blender Launcher"
+    full_path.mkdir(parents=True, exist_ok=True)
+
+    return full_path
 
 
-def stable_cache_path():
-    return Path(get_cache_path(), "stable_builds.json")
+def stable_cache_path() -> Path:
+    return get_cache_path() / "stable_builds.json"
 
 
-def bfa_cache_path():
-    return Path(get_cache_path(), "bforartists_builds.json")
+def bfa_cache_path() -> Path:
+    return get_cache_path() / "bforartists_builds.json"
 
 
 def get_blender_config_folder(custom_folder: str = None):

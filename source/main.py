@@ -45,7 +45,7 @@ _ = gettext.gettext
 
 # Setup logging
 setup_logging(
-    log_path=Path(get_cache_path()).absolute() / "blender-launcher.log",
+    log_path=get_cache_path().absolute() / "blender-launcher.log",
     level="DEBUG" if "--debug" in sys.argv else "INFO",
     max_bytes=1 * 1024 * 1024,  # 1 MB
     backup_count=2,
