@@ -281,8 +281,7 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
         # List parent directory contents for debugging
         parent_contents = list(exe.parent.parent.iterdir()) if exe.parent.parent.exists() else []
         logger.error(
-            f"Executable not found: {exe}\n"
-            f"Parent directory contents: {[p.name for p in parent_contents[:10]]}"
+            f"Executable not found: {exe}\nParent directory contents: {[p.name for p in parent_contents[:10]]}"
         )
         raise FileNotFoundError(f"Executable not found: {exe}")
 
@@ -340,10 +339,7 @@ def read_blender_version(
         exe_path = path / old_build_info.custom_executable
         # If the custom executable doesn't exist, fall back to auto-detection
         if not exe_path.exists():
-            logger.warning(
-                f"Custom executable not found: {exe_path}, "
-                f"falling back to auto-detection for {path.name}"
-            )
+            logger.warning(f"Custom executable not found: {exe_path}, falling back to auto-detection for {path.name}")
             # We still have the build info, just need to find the correct executable path
             reuse_old_info = True
         else:
@@ -565,10 +561,17 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
                 else:
                     b3d_exe = library_folder / info.link / "blender.exe"
 
-            if blender_args == "":
-                args = [b3d_exe.as_posix()]
+            # Check if the executable is a batch file and needs cmd /C
+            if b3d_exe.suffix.lower() in (".bat", ".cmd"):
+                if blender_args == "":
+                    args = ["cmd", "/C", b3d_exe.as_posix()]
+                else:
+                    args = ["cmd", "/C", b3d_exe.as_posix(), *blender_args.split(" ")]
             else:
-                args = [b3d_exe.as_posix(), *blender_args.split(" ")]
+                if blender_args == "":
+                    args = [b3d_exe.as_posix()]
+                else:
+                    args = [b3d_exe.as_posix(), *blender_args.split(" ")]
 
     elif platform == "Linux":
         bash_args = get_bash_arguments()
