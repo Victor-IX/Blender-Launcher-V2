@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timezone
 from itertools import chain
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 from urllib.parse import urljoin
 
 import dateparser
@@ -31,8 +31,9 @@ from modules.build_info import BuildInfo, parse_blender_ver
 from modules.scraper_cache import ScraperCache
 from modules.settings import (
     get_minimum_blender_stable_version,
-    get_scrape_automated_builds,
     get_scrape_bfa_builds,
+    get_scrape_daily_builds,
+    get_scrape_experimental_builds,
     get_scrape_stable_builds,
     get_show_daily_archive_builds,
     get_show_experimental_archive_builds,
@@ -220,7 +221,8 @@ class Scraper(QThread):
         self.subversion = re.compile(r"-\d\.[a-zA-Z0-9.]+-")
 
         self.scrape_stable = get_scrape_stable_builds()
-        self.scrape_automated = get_scrape_automated_builds()
+        self.scrape_daily = get_scrape_daily_builds()
+        self.scrape_experimental = get_scrape_experimental_builds()
         self.scrape_bfa = get_scrape_bfa_builds()
 
         self._latest_tag_cache = None
@@ -278,8 +280,10 @@ class Scraper(QThread):
         scrapers = []
         if self.scrape_stable:
             scrapers.append(self.scrap_stable_releases())
-        if self.scrape_automated:
-            scrapers.append(self.scrape_automated_releases())
+        if self.scrape_daily:
+            scrapers.append(self.scrape_daily_releases())
+        if self.scrape_experimental:
+            scrapers.append(self.scrape_experimental_releases())
         if self.scrape_bfa:
             scrapers.append(self.scrape_bfa_releases())
         if self.build_cache:
@@ -306,50 +310,53 @@ class Scraper(QThread):
                 self.links.emit(build)
                 continue
 
-    def scrape_automated_releases(self):
+    def scrape_daily_releases(self):
+        b = "daily"
+        if get_show_daily_archive_builds():
+            b += "/archive"
+        yield from self.scrape_automated_releases(b)
+
+    def scrape_experimental_releases(self):
+        b = "experimental"
+        if get_show_experimental_archive_builds():
+            b += "/archive"
+        yield from self.scrape_automated_releases(b)
+        b = "patch"
+        if get_show_experimental_archive_builds():
+            b += "/archive"
+        yield from self.scrape_automated_releases(b)
+
+    def scrape_automated_releases(self, branch: str) -> Generator[BuildInfo]:
         base_fmt = "https://builder.blender.org/download/{}/?format=json&v=1"
 
-        branch_mapping = {
-            "daily": get_show_daily_archive_builds,
-            "experimental": get_show_experimental_archive_builds,
-            "patch": get_show_patch_archive_builds,
-        }
+        url = base_fmt.format(branch)
+        r = self.manager.request("GET", url)
 
-        branches = tuple(
-            f"{branch}/archive" if check_archive() else branch for branch, check_archive in branch_mapping.items()
-        )
+        if r is None:
+            return
 
-        for branch_type in branches:
-            url = base_fmt.format(branch_type)
-            r = self.manager.request("GET", url)
+        data = json.loads(r.data)
+        architecture_specific_build = False
 
-            if r is None:
-                continue
+        # Remove /archive from branch name
+        if "/archive" in branch:
+            branch = branch.replace("/archive", "")
 
-            data = json.loads(r.data)
-            architecture_specific_build = False
+        for build in data:
+            if (
+                build["platform"] == self.json_platform
+                and build["architecture"].lower() == self.architecture
+                and self.b3d_link.match(build["file_name"])
+            ):
+                architecture_specific_build = True
+                yield self.new_build_from_dict(build, branch, architecture_specific_build)
 
-            # Remove /archive from branch name
-            if "/archive" in branch_type:
-                branch_type = branch_type.replace("/archive", "")
+        if not architecture_specific_build:
+            logger.warning(f"No builds found for {branch} build on {self.platform} architecture {self.architecture}")
 
             for build in data:
-                if (
-                    build["platform"] == self.json_platform
-                    and build["architecture"].lower() == self.architecture
-                    and self.b3d_link.match(build["file_name"])
-                ):
-                    architecture_specific_build = True
-                    yield self.new_build_from_dict(build, branch_type, architecture_specific_build)
-
-            if not architecture_specific_build:
-                logger.warning(
-                    f"No builds found for {branch_type} build on {self.platform} architecture {self.architecture}"
-                )
-
-                for build in data:
-                    if build["platform"] == self.json_platform and self.b3d_link.match(build["file_name"]):
-                        yield self.new_build_from_dict(build, branch_type, architecture_specific_build)
+                if build["platform"] == self.json_platform and self.b3d_link.match(build["file_name"]):
+                    yield self.new_build_from_dict(build, branch, architecture_specific_build)
 
     def new_build_from_dict(self, build, branch_type, architecture_specific_build):
         dt = datetime.fromtimestamp(build["file_mtime"], tz=timezone.utc)

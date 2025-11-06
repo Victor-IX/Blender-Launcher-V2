@@ -595,12 +595,35 @@ def set_scrape_stable_builds(b: bool):
     get_settings().setValue("scrape_stable_builds", b)
 
 
+# For backcompat -- keep for a few versions
 def get_scrape_automated_builds() -> bool:
     return get_settings().value("scrape_automated_builds", defaultValue=True, type=bool)  # type: ignore
 
 
-def set_scrape_automated_builds(b: bool):
-    get_settings().setValue("scrape_automated_builds", b)
+def get_scrape_daily_builds() -> bool:
+    v = get_settings().value("scrape_daily_builds")
+
+    if isinstance(v, bool):
+        return v
+
+    return get_scrape_automated_builds()
+
+
+def set_scrape_daily_builds(b: bool):
+    get_settings().setValue("scrape_daily_builds", b)
+
+
+def get_scrape_experimental_builds() -> bool:
+    v = get_settings().value("scrape_experimental_builds")
+
+    if isinstance(v, bool):
+        return v
+
+    return get_scrape_automated_builds()
+
+
+def set_scrape_experimental_builds(b: bool):
+    get_settings().setValue("scrape_experimental_builds", b)
 
 
 def get_scrape_bfa_builds() -> bool:
