@@ -617,6 +617,7 @@ def get_scrape_experimental_builds() -> bool:
         return get_scrape_automated_builds()
     return v == "true"
 
+
 def set_scrape_experimental_builds(b: bool):
     get_settings().setValue("scrape_experimental_builds", b)
 
