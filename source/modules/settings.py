@@ -601,10 +601,11 @@ def get_scrape_automated_builds() -> bool:
 
 
 def get_scrape_daily_builds() -> bool:
-    v = get_settings().value("scrape_daily_builds")
-    if v is None:
+    s = get_settings()
+    if not s.contains("scrape_daily_builds") and s.contains("scrape_automated_builds"):
         return get_scrape_automated_builds()
-    return v == "true"
+
+    return s.value("scrape_daily_builds", defaultValue=True, type=bool)  # type: ignore
 
 
 def set_scrape_daily_builds(b: bool):
@@ -612,10 +613,11 @@ def set_scrape_daily_builds(b: bool):
 
 
 def get_scrape_experimental_builds() -> bool:
-    v = get_settings().value("scrape_experimental_builds")
-    if v is None:
+    s = get_settings()
+    if not s.contains("scrape_experimental_builds") and s.contains("scrape_automated_builds"):
         return get_scrape_automated_builds()
-    return v == "true"
+
+    return s.value("scrape_experimental_builds", defaultValue=True, type=bool)  # type: ignore
 
 
 def set_scrape_experimental_builds(b: bool):
