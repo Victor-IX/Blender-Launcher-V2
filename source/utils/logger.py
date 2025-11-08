@@ -37,6 +37,9 @@ def setup_logging(
     file_formatter = logging.Formatter(format_string)
     console_formatter = ColoredFormatter(format_string)
 
+    # Ensure the log directory exists
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
     try:
         file_handler = logging.handlers.RotatingFileHandler(log_path, maxBytes=max_bytes, backupCount=backup_count)
         file_handler.setFormatter(file_formatter)
