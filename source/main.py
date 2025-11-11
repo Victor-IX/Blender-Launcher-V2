@@ -36,7 +36,7 @@ from windows.popup_window import PopupWindow, PopupIcon
 version = Version(
     2,
     5,
-    2,
+    3,
     # prerelease="rc.2",
 )
 
