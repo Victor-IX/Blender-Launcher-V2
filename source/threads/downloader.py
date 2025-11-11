@@ -20,6 +20,7 @@ logger = logging.getLogger()
 # Valid MIME types for archive files
 VALID_ARCHIVE_TYPES = [
     "application/zip",
+    "application/x-apple-diskimage",
     "application/x-zip-compressed",
     "application/octet-stream",
     "application/x-tar",
