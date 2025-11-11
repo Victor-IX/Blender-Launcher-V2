@@ -31,9 +31,8 @@ class DateTimeWidget(QPushButton):
         self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.font_metrics = self.datetimeLabel.fontMetrics()
 
-        self.setMinimumWidth(
-            self.font_metrics.horizontalAdvance(f"{self.left_arrow}{self.datetimeStr}{self.right_arrow}")
-        )
+        # Set fixed width to match header width (118px from base_page_widget.py)
+        self.setFixedWidth(118)
 
         if self.build_hash is not None:
             self.LeftArrowLabel = QLabel(self.left_arrow)
@@ -43,19 +42,19 @@ class DateTimeWidget(QPushButton):
 
             self.BuildHashLabel = QLabel(self.build_hash)
             self.BuildHashLabel.hide()
+            self.BuildHashLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
             self.layout.addWidget(self.LeftArrowLabel)
-            self.layout.addStretch()
-            self.layout.addWidget(self.datetimeLabel)
-            self.layout.addWidget(self.BuildHashLabel)
-            self.layout.addStretch()
+            self.layout.addWidget(self.datetimeLabel, stretch=1)
+            self.layout.addWidget(self.BuildHashLabel, stretch=1)
             self.layout.addWidget(self.RightArrowLabel)
 
             self.setCursor(Qt.CursorShape.PointingHandCursor)
             self.setToolTip("Press to show build hash number")
             self.clicked.connect(self.toggle_visibility)
         else:
-            self.layout.addWidget(self.datetimeLabel)
+            self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.layout.addWidget(self.datetimeLabel, stretch=1)
 
     def toggle_visibility(self):
         self.datetimeLabel.setVisible(not self.datetimeLabel.isVisible())
