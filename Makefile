@@ -2,6 +2,7 @@ SHELL := sh
 
 .PHONY:
 run:
+	python build_style.py
 	python source/main.py
 
 .PHONY:
@@ -10,6 +11,7 @@ test:
 
 .PHONY: build
 build:
+	python build_style.py
 ifeq ($(OS),Windows_NT)
 	./scripts/build_win.bat
 else
