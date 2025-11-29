@@ -558,6 +558,8 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
                     and (launcher := (library_folder / info.link / "blender-launcher.exe")).exists()
                 ):
                     b3d_exe = launcher
+                elif (bfa_exe := (library_folder / info.link / "bforartists.exe")).exists():
+                    b3d_exe = bfa_exe
                 else:
                     b3d_exe = library_folder / info.link / "blender.exe"
 
@@ -584,6 +586,8 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         cexe = info.custom_executable
         if cexe:
             b3d_exe = library_folder / info.link / cexe
+        elif (bfa_exe := (library_folder / info.link / "bforartists")).exists():
+            b3d_exe = bfa_exe
         else:
             b3d_exe = library_folder / info.link / "blender"
 
