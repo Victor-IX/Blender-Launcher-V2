@@ -6,6 +6,13 @@
 
 The **Main Window** is the main interface of Blender Launcher and where you can access all of the main features.
 
+??? image "Menu Bar"
+
+    <figure>
+      <img src="../imgs/menu_bar.png"/>
+      <figcaption>The menu bar</figcaption>
+    </figure>
+
 The top horizontal menu bar contains following buttons from left to right:
 
 1. Settings Menu
