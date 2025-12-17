@@ -126,3 +126,5 @@ stable_builds.json
 
 !extras/Blender Launcher.ini
 .github/*.md
+
+bazel-*

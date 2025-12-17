@@ -1,0 +1,29 @@
+# Enable build output for debugging
+build --announce_rc
+
+# Use a static value for PATH and does not inherit LD_LIBRARY_PATH
+build --incompatible_strict_action_env
+
+# Python configuration
+#build --incompatible_use_python_toolchains=true
+
+# Make system C compiler available for building native extensions
+build --action_env=CC=/usr/bin/gcc
+build --action_env=CXX=/usr/bin/g++
+
+# Build flags for different configurations
+build:debug -c dbg
+build:release -c opt
+build:release --compilation_mode=opt
+
+# Platform-specific configurations
+build:linux --copt=-fPIC
+build:linux --cxxopt=-std=c++17
+
+build:macos --copt=-fPIC
+build:macos --cxxopt=-std=c++17
+
+build:windows --copt=/std:c++17
+
+# Try to import user-specific configuration if it exists
+try-import %workspace%/.bazelrc.user

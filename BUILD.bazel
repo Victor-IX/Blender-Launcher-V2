@@ -1,0 +1,39 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@blender_launcher_pip//:requirements.bzl", "requirement")
+
+# Placeholder resources_rc module
+py_library(
+    name = "resources_rc",
+    srcs = ["source/resources_rc.py"],
+    imports = ["source"],
+)
+
+compile_pip_requirements(
+    name = "requirements",
+    src = "requirements.in",
+    requirements_txt = "requirements_lock.txt",
+)
+
+py_binary(
+    name = "blender_launcher",
+    srcs = ["source/main.py"],
+    data = [
+        "//source/resources:resources",
+    ],
+    imports = ["source"],
+    deps = [
+        ":resources_rc",
+        "//source/items:items",
+        "//source/modules:modules",
+        "//source/threads:threads",
+        "//source/utils:utils",
+        "//source/widgets:widgets",
+        "//source/windows:windows",
+        requirement("pyside6-essentials"),
+        requirement("semver"),
+    ],
+    main = "source/main.py",
+    python_version = "PY3",
+    visibility = ["//visibility:public"],
+)
