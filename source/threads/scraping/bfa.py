@@ -3,10 +3,9 @@ from __future__ import annotations
 import json
 import logging
 import re
-from collections.abc import Generator
 from datetime import datetime
 from pathlib import PurePosixPath
-from typing import Self
+from typing import TYPE_CHECKING
 
 from modules._platform import (
     bfa_cache_path,
@@ -17,6 +16,9 @@ from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
 from webdav4.client import Client
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 logger = logging.getLogger()
 

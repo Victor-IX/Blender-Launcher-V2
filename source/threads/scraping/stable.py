@@ -6,7 +6,7 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Generator, Self
+from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
 import dateparser
@@ -21,13 +21,15 @@ from modules.scraper_cache import ScraperCache
 from modules.settings import (
     get_minimum_blender_stable_version,
 )
-from PySide6.QtCore import SignalInstance
 from semver import Version
 
 from source.threads.scraping.base import BuildScraper, regex_filter
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from modules.connection_manager import ConnectionManager
+    from PySide6.QtCore import SignalInstance
 
 logger = logging.getLogger()
 

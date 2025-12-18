@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
 from modules._platform import (
     get_architecture,
@@ -14,6 +14,8 @@ from modules.build_info import BuildInfo, parse_blender_ver
 from source.threads.scraping.base import BuildScraper, regex_filter
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from modules.connection_manager import ConnectionManager
 
 logger = logging.getLogger()
