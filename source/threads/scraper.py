@@ -3,16 +3,13 @@ from __future__ import annotations
 import base64
 import json
 import logging
-import re
 from itertools import chain
 from typing import TYPE_CHECKING
 
 import distro
 from modules._platform import (
-    bfa_cache_path,
     get_architecture,
     get_platform,
-    stable_cache_path,
 )
 from modules.bl_api_manager import (
     dropdown_blender_version,
@@ -167,7 +164,7 @@ def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> 
     try:
         release_data = json.loads(r.data)
         patch_note = release_data.get("body", "No patch notes available.")
-        logger.info(f"Latest patch note found")
+        logger.info("Latest patch note found")
         return patch_note
     except json.JSONDecodeError as e:
         logger.exception(f"Failed to parse release notes JSON data: {e}")
@@ -188,14 +185,6 @@ class Scraper(QThread):
 
         self.platform = get_platform()
         self.architecture = get_architecture()
-
-        self.json_platform = {
-            "Windows": "windows",
-            "Linux": "linux",
-            "macOS": "darwin",
-        }.get(self.platform, self.platform)
-
-        self.subversion = re.compile(r"-\d\.[a-zA-Z0-9.]+-")
 
         self.scrape_stable = get_scrape_stable_builds()
         self.scrape_daily = get_scrape_daily_builds()
