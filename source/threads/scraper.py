@@ -18,7 +18,6 @@ from modules.bl_api_manager import (
     update_stable_builds_cache,
 )
 from modules.build_info import BuildInfo
-from modules.scraper_cache import ScraperCache
 from modules.settings import (
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
@@ -191,6 +190,10 @@ class Scraper(QThread):
         self.scrape_experimental = get_scrape_experimental_builds()
         self.scrape_bfa = get_scrape_bfa_builds()
 
+        # these are saved because they hold caches
+        self.scraper_stable = ScraperStable(self.manager, self.stable_error, self.build_cache)
+        self.scraper_bfa = ScraperBfa()
+
         self._latest_tag_cache = None
 
     def run(self):
@@ -224,20 +227,20 @@ class Scraper(QThread):
             dropdown_blender_version()
 
         update_stable_builds_cache(blender_version_api_data)
+        self.scraper_stable.refresh_cache()
 
-        self.cache = ScraperCache.from_file_or_default(self.cache_path)
         self.manager.manager.clear()
 
     def scrapers(self):
         ss: list[BuildScraper] = []
         if self.scrape_stable:
-            ss.append(ScraperStable(self.manager, self.stable_error, self.build_cache))
+            ss.append(self.scraper_stable)
         if self.scrape_daily:
             ss.extend(self.scrape_daily_releases())
         if self.scrape_experimental:
             ss.extend(self.scrape_experimental_releases())
         if self.scrape_bfa:
-            ss.append(ScraperBfa())
+            ss.append(self.scraper_bfa)
         return ss
 
     def get_download_links(self):
