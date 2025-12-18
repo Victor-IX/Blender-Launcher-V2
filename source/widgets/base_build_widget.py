@@ -1,15 +1,14 @@
 import abc
+import logging
 import re
 import webbrowser
-import logging
-
 from pathlib import PurePosixPath
 
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QWidget
-from threads.scraper import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, get_bfa_nc_https_download_url
+from threads.scraping.bfa import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, get_bfa_nc_https_download_url
 from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
 
