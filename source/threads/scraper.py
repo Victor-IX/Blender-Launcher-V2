@@ -232,16 +232,16 @@ class Scraper(QThread):
         self.manager.manager.clear()
 
     def scrapers(self):
-        ss: list[BuildScraper] = []
+        scrapers: list[BuildScraper] = []
         if self.scrape_stable:
-            ss.append(self.scraper_stable)
+            scrapers.append(self.scraper_stable)
         if self.scrape_daily:
-            ss.extend(self.scrape_daily_releases())
+            scrapers.extend(self.scrape_daily_releases())
         if self.scrape_experimental:
-            ss.extend(self.scrape_experimental_releases())
+            scrapers.extend(self.scrape_experimental_releases())
         if self.scrape_bfa:
-            ss.append(self.scraper_bfa)
-        return ss
+            scrapers.append(self.scraper_bfa)
+        return scrapers
 
     def get_download_links(self):
         ss = self.scrapers()
@@ -252,15 +252,16 @@ class Scraper(QThread):
                 if self.architecture == "arm64" and "arm64" in build.link:
                     self.links.emit(build)
                     continue
-                elif self.architecture == "amd64" and (
+                if self.architecture == "amd64" and (
                     ("x64" in build.link or "windows64" in build.link)
                     or "amd64" in build.link
                     or "bforartists" in build.link.lower()
                 ):
                     self.links.emit(build)
                     continue
-                else:
-                    logger.debug(f"Skipping {build.link} as it doesn't match the current platform")
+
+                logger.debug(f"Skipping {build.link} as it doesn't match the current platform")
+
             else:
                 self.links.emit(build)
                 continue
