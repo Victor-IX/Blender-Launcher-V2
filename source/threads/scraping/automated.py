@@ -5,10 +5,7 @@ import logging
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from modules._platform import (
-    get_architecture,
-    get_platform,
-)
+from modules._platform import get_architecture, get_platform
 from modules.build_info import BuildInfo, parse_blender_ver
 
 from source.threads.scraping.base import BuildScraper, regex_filter
