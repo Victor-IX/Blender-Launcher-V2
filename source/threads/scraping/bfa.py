@@ -6,7 +6,7 @@ import re
 from collections.abc import Generator
 from datetime import datetime
 from pathlib import PurePosixPath
-from urllib.parse import urljoin
+from typing import Self
 
 from modules._platform import (
     bfa_cache_path,
@@ -48,6 +48,9 @@ class ScraperBfa(BuildScraper):
         super().__init__()
 
         self.cache_path = bfa_cache_path()
+        self.cache = ScraperCache.from_file_or_default(self.cache_path)
+
+    def refresh_cache(self):
         self.cache = ScraperCache.from_file_or_default(self.cache_path)
 
     def scrape(self) -> Generator[BuildInfo, None, None]:

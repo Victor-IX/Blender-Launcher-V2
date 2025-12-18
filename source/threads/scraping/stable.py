@@ -6,7 +6,7 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Generator, Self
 from urllib.parse import urljoin
 
 import dateparser
@@ -46,6 +46,9 @@ class ScraperStable(BuildScraper):
         self.cache_path = stable_cache_path()
         self.cache = ScraperCache.from_file_or_default(self.cache_path)
         self.architecture = get_architecture()
+
+    def refresh_cache(self):
+        self.cache = ScraperCache.from_file_or_default(self.cache_path)
 
     def scrape(self) -> Generator[BuildInfo, None, None]:
         if not self.force_build_cache:
