@@ -5,9 +5,7 @@ from abc import ABC, abstractmethod
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from modules._platform import (
-    get_platform,
-)
+from modules._platform import get_platform
 
 if TYPE_CHECKING:
     from collections.abc import Generator

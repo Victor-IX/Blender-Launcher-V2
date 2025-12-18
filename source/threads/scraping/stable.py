@@ -11,16 +11,10 @@ from urllib.parse import urljoin
 
 import dateparser
 from bs4 import BeautifulSoup, SoupStrainer
-from modules._platform import (
-    get_architecture,
-    get_platform,
-    stable_cache_path,
-)
+from modules._platform import get_architecture, get_platform, stable_cache_path
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.scraper_cache import ScraperCache
-from modules.settings import (
-    get_minimum_blender_stable_version,
-)
+from modules.settings import get_minimum_blender_stable_version
 from semver import Version
 
 from source.threads.scraping.base import BuildScraper, regex_filter
