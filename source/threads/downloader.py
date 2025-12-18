@@ -1,11 +1,8 @@
 import base64
 import logging
-
 from dataclasses import dataclass
 from pathlib import Path
-from PySide6.QtCore import Signal
 from urllib.parse import parse_qs, urlparse
-from urllib3.exceptions import MaxRetryError
 
 from modules._copyfileobj import copyfileobj
 from modules.connection_manager import REQUEST_MANAGER
@@ -13,7 +10,9 @@ from modules.enums import MessageType
 from modules.settings import get_library_folder
 from modules.string_utils import extract_filename_from_url
 from modules.task import Task
-from threads.scraper import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_BASE_URL
+from PySide6.QtCore import Signal
+from threads.scraping.bfa import BFA_NC_BASE_URL, BFA_NC_WEBDAV_SHARE_TOKEN
+from urllib3.exceptions import MaxRetryError
 
 logger = logging.getLogger()
 
@@ -118,7 +117,9 @@ class DownloadTask(Task):
                 download_url = webdav_url
 
         # Apply authentication for Nextcloud WebDAV endpoints
-        is_nextcloud = "cloud.bforartists.de" in download_url and ("public.php/webdav" in download_url or "public.php/dav" in download_url)
+        is_nextcloud = "cloud.bforartists.de" in download_url and (
+            "public.php/webdav" in download_url or "public.php/dav" in download_url
+        )
         if is_nextcloud:
             auth_string = base64.b64encode(f"{BFA_NC_WEBDAV_SHARE_TOKEN}:".encode()).decode("ascii")
             headers["Authorization"] = f"Basic {auth_string}"
