@@ -45,9 +45,15 @@ class DateTimeWidget(QPushButton):
     # Reserve space for arrows when they appear on hover
     ARROW_RESERVE_WIDTH = 20
 
+    # Display modes
+    MODE_RELATIVE = 0
+    MODE_HASH = 1
+    MODE_EXACT = 2
+
     def __init__(self, dt: datetime, build_hash: str | None, parent=None):
         super().__init__(parent)
         self.build_hash = build_hash
+        self._display_mode = self.MODE_RELATIVE
 
         self.setProperty("TextOnly", True)
 
@@ -59,10 +65,10 @@ class DateTimeWidget(QPushButton):
         self.relativeTimeStr = get_relative_time(dt)
         self._buildHashStr = build_hash or ""
 
-        self.datetimeLabel = QLabel()
-        self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.datetimeLabel.setStyleSheet("color: #808080;")
-        self.font_metrics = QFontMetrics(self.datetimeLabel.font())
+        self.displayLabel = QLabel()
+        self.displayLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.displayLabel.setStyleSheet("color: #808080;")
+        self.font_metrics = QFontMetrics(self.displayLabel.font())
 
         # Set fixed width to match header width (118px from base_page_widget.py)
         self.setFixedWidth(118)
@@ -73,34 +79,38 @@ class DateTimeWidget(QPushButton):
             self.RightArrowLabel = QLabel(self.right_arrow)
             self.RightArrowLabel.setVisible(False)
 
-            self.BuildHashLabel = QLabel()
-            self.BuildHashLabel.hide()
-            self.BuildHashLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
             self.layout.addWidget(self.LeftArrowLabel)
-            self.layout.addWidget(self.datetimeLabel, stretch=1)
-            self.layout.addWidget(self.BuildHashLabel, stretch=1)
+            self.layout.addWidget(self.displayLabel, stretch=1)
             self.layout.addWidget(self.RightArrowLabel)
 
             self.setCursor(Qt.CursorShape.PointingHandCursor)
-            self.setToolTip(f"Exact time: {self.datetimeStr}\nPress to show build hash number")
-            self.clicked.connect(self.toggle_visibility)
+            self.clicked.connect(self.cycle_display_mode)
         else:
-            self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.layout.addWidget(self.datetimeLabel, stretch=1)
-            self.setToolTip(f"Exact time: {self.datetimeStr}")
+            self.displayLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.layout.addWidget(self.displayLabel, stretch=1)
 
-        # Set initial elided text
+        # Set initial elided text and tooltip
         self._update_elided_text()
+        self._update_tooltip()
 
-    def toggle_visibility(self):
-        self.datetimeLabel.setVisible(not self.datetimeLabel.isVisible())
-        self.BuildHashLabel.setVisible(not self.BuildHashLabel.isVisible())
+    def cycle_display_mode(self):
+        """Cycle through display modes: relative time -> hash -> exact datetime."""
+        self._display_mode = (self._display_mode + 1) % 3
+        self._update_elided_text()
+        self._update_tooltip()
 
-        if self.BuildHashLabel.isVisible():
-            self.setToolTip(f"Exact time: {self.datetimeStr}\nPress to show relative time")
-        else:
-            self.setToolTip(f"Exact time: {self.datetimeStr}\nPress to show build hash number")
+    def _update_tooltip(self):
+        """Update tooltip based on current display mode."""
+        if self.build_hash is None:
+            self.setToolTip(f"Exact time: {self.datetimeStr}")
+            return
+
+        if self._display_mode == self.MODE_RELATIVE:
+            self.setToolTip(f"Exact time: {self.datetimeStr}\nClick to show build hash")
+        elif self._display_mode == self.MODE_HASH:
+            self.setToolTip(f"Exact time: {self.datetimeStr}\nClick to show exact date")
+        else:  # MODE_EXACT
+            self.setToolTip(f"Build hash: {self._buildHashStr}\nClick to show relative time")
 
     def enterEvent(self, event: QEvent) -> None:
         if self.build_hash is not None:
@@ -126,15 +136,14 @@ class DateTimeWidget(QPushButton):
         margins = self.layout.contentsMargins()
         available_width = self.width() - self.ARROW_RESERVE_WIDTH - margins.left() - margins.right()
 
-        # Elide the relative time text
-        elided_time = self.font_metrics.elidedText(
-            self.relativeTimeStr, Qt.TextElideMode.ElideRight, available_width
-        )
-        self.datetimeLabel.setText(elided_time)
+        # Get the text to display based on current mode
+        if self._display_mode == self.MODE_RELATIVE:
+            text = self.relativeTimeStr
+        elif self._display_mode == self.MODE_HASH:
+            text = self._buildHashStr
+        else:  # MODE_EXACT
+            text = self.datetimeStr
 
-        # Elide the build hash text if it exists
-        if self.build_hash is not None:
-            elided_hash = self.font_metrics.elidedText(
-                self._buildHashStr, Qt.TextElideMode.ElideRight, available_width
-            )
-            self.BuildHashLabel.setText(elided_hash)
+        # Elide the text to fit
+        elided_text = self.font_metrics.elidedText(text, Qt.TextElideMode.ElideRight, available_width)
+        self.displayLabel.setText(elided_text)
