@@ -1,6 +1,7 @@
 QTabBar::tab {
     color: #989898;
     background-color: #2B2B2B;
+    font-size: 14px;
 }
 
 QTabBar::tab:hover {
