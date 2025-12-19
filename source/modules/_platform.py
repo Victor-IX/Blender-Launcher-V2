@@ -287,8 +287,8 @@ def get_blender_config_folder(custom_folder: str = None):
         parent_folder_name = custom_folder
 
     if platform == "Windows":
-        return Path(os.getenv("APPDATA"), parent_folder_name, folder_name)
+        return Path(os.environ.get("APPDATA"), parent_folder_name, folder_name)
     elif platform == "Linux":
-        return Path(os.path.expanduser("~/.config"), folder_name)
+        return Path(os.environ.get("XDG_CONFIG_HOME", "") or os.path.expanduser("~/.config"), folder_name)
     elif platform == "macOS":
         return Path(os.path.expanduser("~/Library/Application Support"), folder_name)

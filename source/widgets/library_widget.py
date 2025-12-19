@@ -970,6 +970,8 @@ class LibraryWidget(BaseBuildWidget):
 
         if platform == "Windows":
             os.startfile(folder_path.as_posix())
+        elif platform == "macOS":
+            subprocess.call(["open", folder_path.as_posix()])
         elif platform == "Linux":
             # Due to a bug/feature in Pyinstaller, we
             # have to remove all environment variables
@@ -996,6 +998,7 @@ class LibraryWidget(BaseBuildWidget):
                     if subprocess.call([fm, folder_path.as_posix()], env=env_override) == 0:
                         return
                 logger.error("No file manager found to open the folder.")
+
 
     @Slot()
     def show_build_folder(self):
