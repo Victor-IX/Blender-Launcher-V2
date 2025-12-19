@@ -14,8 +14,8 @@ class BaseToolBoxWidget(QTabWidget):
         self.list_widgets = set()
 
         self.setContentsMargins(0, 0, 0, 0)
-        self.setTabPosition(QTabWidget.TabPosition.West)
-        self.setProperty("West", True)
+        self.setTabPosition(QTabWidget.TabPosition.North)
+        self.setProperty("FilterBar", True)
         self.currentChanged.connect(self.current_changed)
 
     def add_page_widget(self, page_widget: BasePageWidget, page_name) -> BaseListWidget:

@@ -78,14 +78,9 @@ from semver import Version
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper
-from widgets.base_menu_widget import BaseMenuWidget
-from widgets.base_page_widget import BasePageWidget
-from widgets.base_tool_box_widget import BaseToolBoxWidget
-from widgets.datetime_widget import DATETIME_FORMAT
-from widgets.download_widget import DownloadState, DownloadWidget
-from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
+from widgets.navigation import SidebarWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
@@ -307,6 +302,14 @@ class BlenderLauncher(BaseWindow):
 
     def draw(self, polish=False):
         # Header
+        self.CheckUpdatesButton = WHeaderButton(self.icons.update, "", self)
+        self.CheckUpdatesButton.setToolTip(
+            "Check for new builds online\n"
+            "(Hold SHIFT to force check stable and automated builds)"
+        )
+        self.CheckUpdatesButton.clicked.connect(self.force_check)
+        self.CheckUpdatesButton.setProperty("HeaderButton", True)
+
         self.SettingsButton = WHeaderButton(self.icons.settings, "", self)
         self.SettingsButton.setToolTip("Show settings window")
         self.SettingsButton.clicked.connect(self.show_settings_window)
@@ -334,17 +337,30 @@ class BlenderLauncher(BaseWindow):
         self.header = WindowHeader(
             self,
             "Blender Launcher",
-            (self.SettingsButton, self.DocsButton),
+            (self.CheckUpdatesButton, self.SettingsButton, self.DocsButton),
         )
         self.header.close_signal.connect(self.close)
         self.header.minimize_signal.connect(self.showMinimized)
         self.CentralLayout.addWidget(self.header)
 
-        # Tab layout
+        # Main content area
+        self.main_content_layout = QHBoxLayout()
+        self.CentralLayout.addLayout(self.main_content_layout)
+
+        # Sidebar navigation
+        self.sidebar = SidebarWidget(self)
+        self.main_content_layout.addWidget(self.sidebar)
+
         self.TabWidget = QTabWidget()
-        self.TabWidget.setProperty("North", True)
-        self.TabWidget.setCornerWidget(self.corner_settings_widget)
-        self.CentralLayout.addWidget(self.TabWidget)
+        self.TabWidget.tabBar().hide() # Hide the original tab bar
+        self.TabWidget.setProperty("North", True) # Still set property for styling existing TabWidget
+        # self.TabWidget.setCornerWidget(self.corner_settings_widget) # Corner widget not needed with sidebar
+        self.main_content_layout.addWidget(self.TabWidget)
+
+        # Connect sidebar to main TabWidget
+        self.sidebar.index_changed.connect(self.TabWidget.setCurrentIndex)
+        self.TabWidget.currentChanged.connect(self.sidebar.set_current_index)
+
 
         self.update_system_titlebar(get_use_system_titlebar())
         self.LibraryTab = QWidget()
@@ -352,18 +368,31 @@ class BlenderLauncher(BaseWindow):
         self.LibraryTabLayout.setContentsMargins(0, 0, 0, 0)
         self.LibraryTab.setLayout(self.LibraryTabLayout)
         self.TabWidget.addTab(self.LibraryTab, "Library")
+        self.sidebar.add_tab(self.icons.folder, "Library", 0)
 
         self.DownloadsTab = QWidget()
         self.DownloadsTabLayout = QVBoxLayout()
         self.DownloadsTabLayout.setContentsMargins(0, 0, 0, 0)
         self.DownloadsTab.setLayout(self.DownloadsTabLayout)
         self.TabWidget.addTab(self.DownloadsTab, "Downloads")
+        self.sidebar.add_tab(self.icons.download, "Downloads", 1)
 
         self.UserTab = QWidget()
         self.UserTabLayout = QVBoxLayout()
         self.UserTabLayout.setContentsMargins(0, 0, 0, 0)
         self.UserTab.setLayout(self.UserTabLayout)
         self.TabWidget.addTab(self.UserTab, "Favorites")
+        self.sidebar.add_tab(self.icons.favorite, "Favorites", 2)
+
+        # Placeholder for settings tab in QTabWidget, settings dialog will be shown on button click
+        self.SettingsPlaceholderTab = QWidget()
+        self.TabWidget.addTab(self.SettingsPlaceholderTab, "Settings")
+        self.sidebar.add_tab(self.icons.settings, "Settings", 3)
+
+        # Connect the settings sidebar button to show the settings window
+        self.sidebar.button_group.button(3).clicked.connect(self.show_settings_window)
+
+        self.sidebar.add_spacer()
 
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
@@ -491,13 +520,7 @@ class BlenderLauncher(BaseWindow):
         self.status_bar.setContentsMargins(0, 0, 0, 2)
         self.status_bar.setFont(self.font_10)
         self.statusbarLabel = QLabel()
-        self.ForceCheckNewBuilds = QPushButton("Check")
-        self.ForceCheckNewBuilds.setEnabled(False)
-        self.ForceCheckNewBuilds.setToolTip(
-            "Check for new builds online<br>\
-            (Hold SHIFT to force check stable and automated builds)"
-        )
-        self.ForceCheckNewBuilds.clicked.connect(self.force_check)
+        
         self.NewVersionButton = QPushButton()
         self.NewVersionButton.hide()
         self.NewVersionButton.clicked.connect(self.show_update_window)
@@ -506,9 +529,9 @@ class BlenderLauncher(BaseWindow):
         self.statusbarVersion.setToolTip(
             "The version of Blender Launcher that is currently run. Press to check changelog."
         )
-        self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
-        self.status_bar.addPermanentWidget(QLabel("│"))
-        self.status_bar.addPermanentWidget(self.statusbarLabel)
+        # self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
+        # self.status_bar.addPermanentWidget(QLabel("│"))
+        # self.status_bar.addPermanentWidget(self.statusbarLabel)
         self.status_bar.addPermanentWidget(QLabel(""), 1)
         self.status_bar.addPermanentWidget(self.NewVersionButton)
         self.status_bar.addPermanentWidget(self.statusbarVersion)
