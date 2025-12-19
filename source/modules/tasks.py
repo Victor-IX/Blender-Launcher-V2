@@ -144,7 +144,9 @@ class TaskWorker(QThread):
     @Slot()
     def fullstop(self):
         self._stop_requested = True
-        self.wait(1000)  # Wait up to 1 second for graceful exit
+        if self.isRunning():
+            self.terminate()
+            self.wait()  # Wait for thread to actually terminate
 
     def __repr__(self):
         return f"{self.__class__.__name__}[{self.objectName()}]"
