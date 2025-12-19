@@ -16,7 +16,7 @@ class SidebarWidget(QWidget):
 
         self.setFixedWidth(64)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
-        self.setStyleSheet("SidebarWidget { background-color: #181818; }")
+        self.setProperty("Sidebar", True)
 
     def add_tab(self, icon, text, index):
         btn = QPushButton()
@@ -25,23 +25,7 @@ class SidebarWidget(QWidget):
         btn.setCheckable(True)
         btn.setIconSize(QSize(28, 28))
         btn.setFixedSize(48, 48)
-        
-        # Simple styling for sidebar buttons
-        btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                border: none;
-                border-radius: 8px;
-                margin: 0px 8px;
-            }
-            QPushButton:hover {
-                background-color: #333333;
-            }
-            QPushButton:checked {
-                background-color: #444444;
-                border-left: 3px solid #F5792A;
-            }
-        """)
+        btn.setProperty("SidebarButton", True)
         
         self.layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.button_group.addButton(btn, index)
@@ -59,18 +43,7 @@ class SidebarWidget(QWidget):
         btn.setToolTip(text)
         btn.setIconSize(QSize(28, 28))
         btn.setFixedSize(48, 48)
-
-        btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                border: none;
-                border-radius: 8px;
-                margin: 0px 8px;
-            }
-            QPushButton:hover {
-                background-color: #333333;
-            }
-        """)
+        btn.setProperty("SidebarAction", True)
 
         self.layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignHCenter)
         return btn

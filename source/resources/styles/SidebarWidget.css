@@ -1,0 +1,22 @@
+/* Sidebar Navigation Widget */
+QWidget[Sidebar="true"] {
+    background-color: #181818;
+}
+
+QPushButton[SidebarButton="true"],
+QPushButton[SidebarAction="true"] {
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+    margin: 0px 8px;
+}
+
+QPushButton[SidebarButton="true"]:hover,
+QPushButton[SidebarAction="true"]:hover {
+    background-color: #333333;
+}
+
+QPushButton[SidebarButton="true"]:checked {
+    background-color: #444444;
+    border-left: 3px solid #F5792A;
+}
