@@ -782,3 +782,28 @@ def migrate_config(force=False):
         if not config_path.is_dir():
             config_path.mkdir()
         shutil.move(old_config.resolve(), new_config.resolve())
+
+
+def get_column_widths(list_name: str = None) -> list[int] | None:
+    """Get saved column widths (global, shared across all lists)."""
+    import json
+
+    # Use global key - all lists share the same column widths
+    value: str = get_settings().value("Internal/global_column_widths", defaultValue="", type=str)  # type: ignore
+    if not value:
+        return None
+    try:
+        widths = json.loads(value)
+        if isinstance(widths, list) and len(widths) == 3:
+            return widths
+    except json.JSONDecodeError:
+        pass
+    return None
+
+
+def set_column_widths(list_name: str, widths: list[int]):
+    """Save column widths (global, shared across all lists)."""
+    import json
+
+    # Use global key - all lists share the same column widths
+    get_settings().setValue("Internal/global_column_widths", json.dumps(widths))

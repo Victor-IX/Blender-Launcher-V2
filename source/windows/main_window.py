@@ -462,6 +462,23 @@ class BlenderLauncher(BaseWindow):
         )
         self.UserCustomListWidget = self.LibraryToolBox.add_page_widget(self.UserCustomPageWidget, "Custom")
 
+        # Collect all page widgets for column width synchronization
+        self._all_page_widgets = [
+            self.LibraryStablePageWidget,
+            self.LibraryDailyPageWidget,
+            self.LibraryExperimentalPageWidget,
+            self.LibraryBFAPageWidget,
+            self.DownloadsStablePageWidget,
+            self.DownloadsDailyPageWidget,
+            self.DownloadsExperimentalPageWidget,
+            self.DownloadsBFAPageWidget,
+            self.UserCustomPageWidget,
+        ]
+        self._syncing_column_widths = False  # Guard against recursion
+        # Connect all page widgets to sync column widths
+        for page_widget in self._all_page_widgets:
+            page_widget.column_widths_changed.connect(self._sync_column_widths)
+
         self.TabWidget.setCurrentIndex(get_default_tab())
         self.LibraryToolBox.setCurrentIndex(get_default_library_page())
         self.DownloadsToolBox.setCurrentIndex(get_default_downloads_page())
@@ -1149,6 +1166,22 @@ class BlenderLauncher(BaseWindow):
             return
 
         self.destroy()
+
+    @Slot(int, int, int)
+    def _sync_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Synchronize column widths across all page widgets."""
+        if self._syncing_column_widths:
+            return
+        self._syncing_column_widths = True
+        sizes = [version_width, branch_width, commit_time_width]
+        for page_widget in self._all_page_widgets:
+            # Block signals to prevent infinite loop from splitter
+            page_widget.headerSplitter.blockSignals(True)
+            page_widget.headerSplitter.setSizes(sizes)
+            page_widget.headerSplitter.blockSignals(False)
+            # Emit signal to update list items in this page
+            page_widget.column_widths_changed.emit(version_width, branch_width, commit_time_width)
+        self._syncing_column_widths = False
 
     def closeEvent(self, event):
         if get_show_tray_icon():
