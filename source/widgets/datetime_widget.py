@@ -70,8 +70,8 @@ class DateTimeWidget(QPushButton):
         self.displayLabel.setStyleSheet("color: #808080;")
         self.font_metrics = QFontMetrics(self.displayLabel.font())
 
-        # Set fixed width to match header width (118px from base_page_widget.py)
-        self.setFixedWidth(118)
+        # Set fixed width to match header column width
+        self.setFixedWidth(100)
 
         if self.build_hash is not None:
             self.LeftArrowLabel = QLabel(self.left_arrow)
