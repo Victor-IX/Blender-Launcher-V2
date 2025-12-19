@@ -51,7 +51,30 @@ class SidebarWidget(QWidget):
             
     def add_spacer(self):
         self.layout.addStretch(1)
-    
+
+    def add_action_button(self, icon, text):
+        """Add a standalone button not part of the tab group (e.g., settings)."""
+        btn = QPushButton()
+        btn.setIcon(icon)
+        btn.setToolTip(text)
+        btn.setIconSize(QSize(28, 28))
+        btn.setFixedSize(48, 48)
+
+        btn.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                border-radius: 8px;
+                margin: 0px 8px;
+            }
+            QPushButton:hover {
+                background-color: #333333;
+            }
+        """)
+
+        self.layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignHCenter)
+        return btn
+
     def set_current_index(self, index):
         btn = self.button_group.button(index)
         if btn:
