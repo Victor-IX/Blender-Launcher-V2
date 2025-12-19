@@ -111,11 +111,10 @@ class TaskWorker(QThread):
         super().__init__(parent)
         self.queue = queue
         self.item: Task | None = None
-        self._stop_requested = False
 
     def run(self):
         empty = False
-        while not self._stop_requested:
+        while True:
             try:
                 self.item = self.queue.popleft()
             except IndexError:
@@ -143,8 +142,7 @@ class TaskWorker(QThread):
 
     @Slot()
     def fullstop(self):
-        self._stop_requested = True
-        self.wait(1000)  # Wait up to 1 second for graceful exit
+        self.terminate()
 
     def __repr__(self):
         return f"{self.__class__.__name__}[{self.objectName()}]"
