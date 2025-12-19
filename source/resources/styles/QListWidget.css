@@ -1,15 +1,15 @@
 QListWidget {
-    background-color: #2b2b2b;
+    background-color: #1d1d1d;
     outline: 0;
-    border-radius: 4px;
+    border: none;
 }
 
 QListWidget::item {
-    background-color: #333333;
-    border-radius: 4px;
-    margin: 2px 4px;
-    padding: 4px;
-    border: 1px solid transparent;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    margin: 4px 8px;
+    padding: 8px;
+    border: 1px solid #3d3d3d;
 }
 
 QListWidget::item:alternate {
@@ -17,16 +17,16 @@ QListWidget::item:alternate {
 }
 
 QListWidget::item:hover {
-    background-color: #3d3d3d;
-    border: 1px solid #4d4d4d;
+    background-color: #333333;
+    border: 1px solid #505050;
 }
 
 QListWidget::item:selected {
-    background-color: #474747;
-    border: 1px solid #e87d0d;
+    background-color: #333333;
+    border: 1px solid #F5792A;
 }
 
 QListWidget::item:selected:hover {
-    background-color: #525252;
-    border: 1px solid #e87d0d;
+    background-color: #383838;
+    border: 1px solid #F5792A;
 }

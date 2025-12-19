@@ -62,7 +62,7 @@ QPushButton[CloseButton=true]:hover {
 }
 
 QPushButton[LaunchButton=true] {
-    background-color: #598F4C;
+    background-color: #F5792A;
     border: none;
     padding: 13px;
     border-radius: 4px;
@@ -71,7 +71,7 @@ QPushButton[LaunchButton=true] {
 }
 
 QPushButton[LaunchButton=true]:hover {
-    background-color: #6AAE5B;
+    background-color: #FF8A3D;
     border: none;
 }
 

@@ -161,16 +161,18 @@ class LibraryWidget(BaseBuildWidget):
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
         self.subversionLabel.setIndent(20)
+        self.subversionLabel.setStyleSheet("font-weight: bold; font-size: 13px; color: white;")
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
         self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash)
 
         self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
-        self.layout.addWidget(self.launchButton)
-        self.layout.addWidget(self.updateButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
+        self.layout.addWidget(self.commitTimeLabel)
+        self.layout.addWidget(self.launchButton)
+        self.layout.addWidget(self.updateButton)
 
         # Connect to column width changes from the page widget
         page_widget = self.list_widget.parent

@@ -99,6 +99,7 @@ class DownloadWidget(BaseBuildWidget):
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
         self.subversionLabel.setIndent(20)
+        self.subversionLabel.setStyleSheet("font-weight: bold; font-size: 13px; color: white;")
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
 
         self.branchLabel = ElidedTextLabel(self.build_info.display_label, self)
@@ -125,10 +126,10 @@ class DownloadWidget(BaseBuildWidget):
         self.sub_vl.addLayout(self.build_info_hl)
         self.sub_vl.addLayout(self.progress_bar_hl)
 
+        self.main_hl.addLayout(self.sub_vl)
         self.main_hl.addWidget(self.downloadButton)
         self.main_hl.addWidget(self.cancelButton)
         self.main_hl.addWidget(self.installedButton)
-        self.main_hl.addLayout(self.sub_vl)
         self.main_hl.addWidget(self.build_state_widget)
 
         if installed:
