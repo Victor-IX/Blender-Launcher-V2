@@ -78,6 +78,12 @@ from semver import Version
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper
+from widgets.base_menu_widget import BaseMenuWidget
+from widgets.base_page_widget import BasePageWidget
+from widgets.base_tool_box_widget import BaseToolBoxWidget
+from widgets.datetime_widget import DATETIME_FORMAT
+from widgets.download_widget import DownloadState, DownloadWidget
+from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
 from widgets.navigation import SidebarWidget
