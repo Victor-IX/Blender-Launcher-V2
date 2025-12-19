@@ -285,7 +285,11 @@ class BlenderLauncher(BaseWindow):
             if window is not self:
                 window.update_system_titlebar(b)
         self.header.setHidden(b)
-        self.corner_settings_widget.setHidden(not b)
+        # Show/hide sidebar changelog and docs buttons based on system titlebar
+        if hasattr(self, "sidebar_changelog_btn"):
+            self.sidebar_changelog_btn.setVisible(b)
+        if hasattr(self, "sidebar_docs_btn"):
+            self.sidebar_docs_btn.setVisible(b)
 
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
@@ -318,20 +322,6 @@ class BlenderLauncher(BaseWindow):
         self.DocsButton.clicked.connect(self.open_docs)
         self.DocsButton.setProperty("HeaderButton", True)
 
-        self.corner_settings = QPushButton(self.icons.settings, "", self)
-        self.corner_settings.clicked.connect(self.show_settings_window)
-        self.corner_docs = QPushButton(self.icons.wiki, "", self)
-        self.corner_docs.clicked.connect(self.open_docs)
-
-        self.corner_settings_widget = QWidget(self)
-        # self.corner_settings_widget.setMaximumHeight(25)
-        self.corner_settings_widget.setContentsMargins(0, 0, 0, 0)
-        self.corner_settings_layout = QHBoxLayout(self.corner_settings_widget)
-        self.corner_settings_layout.addWidget(self.corner_docs)
-        self.corner_settings_layout.addWidget(self.corner_settings)
-        self.corner_settings_layout.setContentsMargins(0, 0, 0, 0)
-        self.corner_settings_layout.setSpacing(0)
-
         self.header = WindowHeader(
             self,
             "Blender Launcher",
@@ -343,6 +333,7 @@ class BlenderLauncher(BaseWindow):
 
         # Main content area
         self.main_content_layout = QHBoxLayout()
+        self.main_content_layout.setSpacing(0)
         self.CentralLayout.addLayout(self.main_content_layout)
 
         # Sidebar navigation
@@ -359,7 +350,6 @@ class BlenderLauncher(BaseWindow):
         self.sidebar.index_changed.connect(self.TabWidget.setCurrentIndex)
         self.TabWidget.currentChanged.connect(self.sidebar.set_current_index)
 
-        self.update_system_titlebar(get_use_system_titlebar())
         self.LibraryTab = QWidget()
         self.LibraryTabLayout = QVBoxLayout()
         self.LibraryTabLayout.setContentsMargins(0, 0, 0, 0)
@@ -383,6 +373,16 @@ class BlenderLauncher(BaseWindow):
 
         self.sidebar.add_spacer()
 
+        # Changelog button (shown when system titlebar is ON)
+        self.sidebar_changelog_btn = self.sidebar.add_action_button(self.icons.file, f"Changelog (v{self.version})")
+        self.sidebar_changelog_btn.clicked.connect(self.show_changelog)
+        self.sidebar_changelog_btn.setVisible(False)  # Hidden by default, shown when system titlebar is ON
+
+        # Documentation button (shown when system titlebar is ON)
+        self.sidebar_docs_btn = self.sidebar.add_action_button(self.icons.wiki, "Documentation")
+        self.sidebar_docs_btn.clicked.connect(self.open_docs)
+        self.sidebar_docs_btn.setVisible(False)  # Hidden by default, shown when system titlebar is ON
+
         # Check for updates button
         check_updates_btn = self.sidebar.add_action_button(self.icons.update, "Check for new builds")
         check_updates_btn.setIconSize(QSize(20, 20))
@@ -395,6 +395,9 @@ class BlenderLauncher(BaseWindow):
         # Settings button
         settings_btn = self.sidebar.add_action_button(self.icons.settings, "Settings")
         settings_btn.clicked.connect(self.show_settings_window)
+
+        # Update system titlebar visibility (must be after sidebar buttons are created)
+        self.update_system_titlebar(get_use_system_titlebar())
 
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)

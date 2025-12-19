@@ -18,3 +18,32 @@ QTabWidget::tab-bar[West=true] {
 QTabWidget::tab-bar[Center=true] {
     alignment: center;
 }
+
+QTabWidget[FilterBar=true] {
+    background-color: #1d1d1d;
+}
+
+QTabWidget[FilterBar=true]::tab-bar {
+    left: 8px;
+}
+
+QTabWidget[FilterBar=true] > QTabBar::tab {
+    color: #999999;
+    background-color: #2b2b2b;
+    border: 1px solid #3d3d3d;
+    padding: 6px 16px;
+    margin: 4px 2px;
+    border-radius: 6px;
+}
+
+QTabWidget[FilterBar=true] > QTabBar::tab:hover {
+    color: #ffffff;
+    background-color: #383838;
+    border-color: #505050;
+}
+
+QTabWidget[FilterBar=true] > QTabBar::tab:selected {
+    color: #ffffff;
+    background-color: #3d3d3d;
+    border-color: #e87d0d;
+}
