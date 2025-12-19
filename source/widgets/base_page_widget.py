@@ -1,7 +1,7 @@
 from enum import Enum
 
-from modules.settings import get_list_sorting_type, set_list_sorting_type, get_column_widths, set_column_widths
-from PySide6.QtCore import Qt, Signal
+from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -32,7 +32,12 @@ class BasePageWidget(QWidget):
     def __init__(self, parent, page_name, time_label, info_text, show_reload=False, extended_selection=False):
         super().__init__(parent)
         self.name = page_name
-        self._emitting_column_widths = False  # Guard against recursion
+
+        # Debounce timer for saving column widths
+        self._save_widths_timer = QTimer(self)
+        self._save_widths_timer.setSingleShot(True)
+        self._save_widths_timer.setInterval(200)
+        self._save_widths_timer.timeout.connect(self._save_column_widths)
 
         self.sort_order_asc = True
 
@@ -130,6 +135,11 @@ class BasePageWidget(QWidget):
         self.headerSplitter.addWidget(self.branchLabel)
         self.headerSplitter.addWidget(self.commitTimeLabel)
 
+        # Set stretch factors: version and commit time stay fixed, branch stretches
+        self.headerSplitter.setStretchFactor(0, 0)  # Version
+        self.headerSplitter.setStretchFactor(1, 1)  # Branch
+        self.headerSplitter.setStretchFactor(2, 0)  # Commit time
+
         # Load saved column widths or use defaults
         saved_widths = get_column_widths(self.name)
         if saved_widths:
@@ -180,21 +190,21 @@ class BasePageWidget(QWidget):
         set_list_sorting_type(self.name, sorting_type)
 
     def _on_splitter_moved(self, pos, index):
-        """Handle splitter movement - save widths and emit signal."""
+        """Handle splitter movement - debounce save and emit signal."""
+        sizes = self.headerSplitter.sizes()
+        self._save_widths_timer.start()  # Restart debounce timer
+        self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
+
+    def _save_column_widths(self):
+        """Save column widths to settings (called after debounce)."""
         sizes = self.headerSplitter.sizes()
         set_column_widths(self.name, sizes)
-        self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
 
     def resizeEvent(self, event):
         """Emit column width changes when the widget is resized."""
         super().resizeEvent(event)
-        # Update list items when the header resizes (window resize)
-        # Use guard to prevent infinite recursion
-        if hasattr(self, 'headerSplitter') and not self._emitting_column_widths:
-            self._emitting_column_widths = True
-            sizes = self.headerSplitter.sizes()
-            self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
-            self._emitting_column_widths = False
+        sizes = self.headerSplitter.sizes()
+        self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
 
     def get_column_widths(self) -> tuple[int, int, int]:
         """Return current column widths (version, branch, commit_time)."""

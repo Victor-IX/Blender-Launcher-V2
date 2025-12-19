@@ -795,8 +795,8 @@ def get_column_widths(list_name: str = None) -> list[int] | None:
     try:
         widths = json.loads(value)
         if isinstance(widths, list) and len(widths) == 3:
-            return [int(w) for w in widths]
-    except (json.JSONDecodeError, ValueError):
+            return widths
+    except json.JSONDecodeError:
         pass
     return None
 
