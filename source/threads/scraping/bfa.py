@@ -114,8 +114,6 @@ class ScraperBfa(BuildScraper):
                     "Linux": "bforartists",
                 }.get(platform, "bforartists")
 
-            # Don't set custom_executable - let it be auto-detected during installation
-            # This ensures consistent behavior with Blender
             yield BuildInfo(
                 get_bfa_nc_https_download_url(ppath),
                 str(semver),
