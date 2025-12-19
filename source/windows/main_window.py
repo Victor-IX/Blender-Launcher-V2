@@ -1133,7 +1133,7 @@ class BlenderLauncher(BaseWindow):
         if is_force_check_on is not None:
             self.is_force_check_on = is_force_check_on
 
-        self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
+        # self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on) # This button was moved to header
         self.statusbarLabel.setText(self.status)
 
     def set_version(self, latest_tag, path_note):
