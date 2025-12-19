@@ -2,7 +2,7 @@ QPushButton {
     color: #eeeeee;
     background-color: #333333;
     border: 1px solid #3d3d3d;
-    padding: 6px 14px;
+    padding: 4px 14px;
     border-radius: 4px;
 }
 
@@ -22,7 +22,7 @@ QPushButton[Popup=true] {
     color: #eeeeee;
     background-color: #333333;
     border: 1px solid #3d3d3d;
-    padding: 6px 14px;
+    padding: 4px 14px;
     border-radius: 4px;
 }
 
@@ -64,7 +64,7 @@ QPushButton[CloseButton=true]:hover {
 QPushButton[LaunchButton=true] {
     background-color: #598F4C;
     border: none;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
     color: white;
     font-weight: bold;
@@ -83,14 +83,14 @@ QPushButton[LaunchButton=true]:disabled {
 QPushButton[UpdateButton=true] {
     background-color: #3c669e;
     border: none;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
 }
 
 QPushButton[UpdateButton=true]:hover {
     background-color: #5485c5;
     border: none;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
 }
 
@@ -102,7 +102,7 @@ QPushButton[UpdateButton=true]:disabled {
 QPushButton[CreateButton=true] {
     background-color: #e87d0d;
     color: white;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
     border: none;
 }
@@ -115,7 +115,7 @@ QPushButton[CreateButton=true]:disabled {
 QPushButton[InstalledButton=true] {
     background-color: #3c669e;
     border: none;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
 }
 
@@ -127,7 +127,7 @@ QPushButton[CreateButton=true]:hover {
 QPushButton[CancelButton=true] {
     background-color: #cd4128;
     border: none;
-    padding: 11px;
+    padding: 9px;
     border-radius: 4px;
 }
 
