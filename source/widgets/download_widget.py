@@ -59,7 +59,7 @@ class DownloadWidget(BaseBuildWidget):
 
         self.progressBar = BaseProgressBarWidget()
         self.progressBar.setFont(self.parent.font_8)
-        self.progressBar.setFixedHeight(18)
+        self.progressBar.setFixedHeight(24)
         self.progressBar.hide()
 
         self.downloadButton = QPushButton("Download")
