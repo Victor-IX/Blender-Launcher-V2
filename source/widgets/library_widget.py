@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+import contextlib
+import logging
 import os
 import re
-import logging
-import contextlib
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_platform, is_frozen, get_environment
+from modules._platform import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
+from modules.blender_update_manager import available_blender_update, is_major_version_update
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -24,12 +25,10 @@ from modules.settings import (
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
-    set_favorite_path,
     get_show_update_button,
+    set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from modules.blender_update_manager import available_blender_update, is_major_version_update
-from windows.popup_window import PopupIcon, PopupWindow
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
     QAction,
@@ -51,8 +50,8 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
 from windows.file_dialog_window import FileDialogWindow
+from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -100,7 +99,7 @@ class LibraryWidget(BaseBuildWidget):
         # box should highlight when dragged over
         self.layout_widget = QWidget(self)
         self.layout: QHBoxLayout = QHBoxLayout()
-        self.layout.setContentsMargins(2, 2, 0, 2)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout_widget.setLayout(self.layout)
         self.outer_layout.addWidget(self.layout_widget)
@@ -128,7 +127,7 @@ class LibraryWidget(BaseBuildWidget):
             self.draw(self.parent_widget.build_info)
 
     @Slot()
-    def trigger_damaged(self, exception: Exception = None):
+    def trigger_damaged(self, exception: Exception | None = None):
         if exception:
             logger.error(f"Failed to read build info for {self.link.name}: {exception}")
         self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")
@@ -160,19 +159,20 @@ class LibraryWidget(BaseBuildWidget):
 
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
-        self.subversionLabel.setIndent(20)
+        self.subversionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.subversionLabel.setStyleSheet("font-weight: bold; font-size: 13px; color: white;")
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
         self.branchLabel = ElidedTextLabel(self.build_info.custom_name or self.build_info.display_label)
+        self.branchLabel.setStyleSheet("padding-left: 8px;")
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash)
 
         self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
-        self.layout.addWidget(self.subversionLabel)
-        self.layout.addWidget(self.branchLabel, stretch=1)
-        self.layout.addWidget(self.commitTimeLabel)
         self.layout.addWidget(self.launchButton)
         self.layout.addWidget(self.updateButton)
+        self.layout.addSpacing(17)
+        self.layout.addWidget(self.subversionLabel)
+        self.layout.addWidget(self.branchLabel, stretch=1)
 
         # Connect to column width changes from the page widget
         page_widget = self.list_widget.parent
@@ -1072,7 +1072,7 @@ class LibraryWidget(BaseBuildWidget):
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
         """Update column widths to match header splitter."""
-        if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
+        if not hasattr(self, "subversionLabel") or self.subversionLabel is None:
             return
         self.subversionLabel.setFixedWidth(version_width)
         self.branchLabel.setFixedWidth(branch_width)

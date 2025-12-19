@@ -1,26 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from PySide6.QtCore import QEvent, Qt
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy
-
-if TYPE_CHECKING:
-    pass
-
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 DATETIME_FORMAT = "%d %b %Y, %H:%M"
 
 
 def get_relative_time(dt: datetime) -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    
+        dt = dt.replace(tzinfo=UTC)
+
     diff = now - dt
     seconds = diff.total_seconds()
-    
+
     if seconds < 60:
         return "Just now"
     elif seconds < 3600:
@@ -46,6 +42,8 @@ def get_relative_time(dt: datetime) -> str:
 class DateTimeWidget(QPushButton):
     left_arrow = "◂"
     right_arrow = "▸"
+    # Reserve space for arrows when they appear on hover
+    ARROW_RESERVE_WIDTH = 20
 
     def __init__(self, dt: datetime, build_hash: str | None, parent=None):
         super().__init__(parent)
@@ -54,16 +52,17 @@ class DateTimeWidget(QPushButton):
         self.setProperty("TextOnly", True)
 
         self.layout: QHBoxLayout = QHBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(8, 0, 8, 0)
         self.layout.setSpacing(0)
 
         self.datetimeStr = dt.strftime(DATETIME_FORMAT)
         self.relativeTimeStr = get_relative_time(dt)
-        
-        self.datetimeLabel = QLabel(self.relativeTimeStr)
+        self._buildHashStr = build_hash or ""
+
+        self.datetimeLabel = QLabel()
         self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.datetimeLabel.setStyleSheet("color: #808080;")  # Lighter grey for secondary text
-        self.font_metrics = self.datetimeLabel.fontMetrics()
+        self.datetimeLabel.setStyleSheet("color: #808080;")
+        self.font_metrics = QFontMetrics(self.datetimeLabel.font())
 
         # Set fixed width to match header width (118px from base_page_widget.py)
         self.setFixedWidth(118)
@@ -74,7 +73,7 @@ class DateTimeWidget(QPushButton):
             self.RightArrowLabel = QLabel(self.right_arrow)
             self.RightArrowLabel.setVisible(False)
 
-            self.BuildHashLabel = QLabel(self.build_hash)
+            self.BuildHashLabel = QLabel()
             self.BuildHashLabel.hide()
             self.BuildHashLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -90,6 +89,9 @@ class DateTimeWidget(QPushButton):
             self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.layout.addWidget(self.datetimeLabel, stretch=1)
             self.setToolTip(f"Exact time: {self.datetimeStr}")
+
+        # Set initial elided text
+        self._update_elided_text()
 
     def toggle_visibility(self):
         self.datetimeLabel.setVisible(not self.datetimeLabel.isVisible())
@@ -113,3 +115,26 @@ class DateTimeWidget(QPushButton):
             self.RightArrowLabel.setVisible(False)
 
         return super().leaveEvent(event)
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        self._update_elided_text()
+
+    def _update_elided_text(self):
+        """Update label text with eliding to fit available width."""
+        # Calculate available width for text (reserve space for arrows on hover and margins)
+        margins = self.layout.contentsMargins()
+        available_width = self.width() - self.ARROW_RESERVE_WIDTH - margins.left() - margins.right()
+
+        # Elide the relative time text
+        elided_time = self.font_metrics.elidedText(
+            self.relativeTimeStr, Qt.TextElideMode.ElideRight, available_width
+        )
+        self.datetimeLabel.setText(elided_time)
+
+        # Elide the build hash text if it exists
+        if self.build_hash is not None:
+            elided_hash = self.font_metrics.elidedText(
+                self._buildHashStr, Qt.TextElideMode.ElideRight, available_width
+            )
+            self.BuildHashLabel.setText(elided_hash)

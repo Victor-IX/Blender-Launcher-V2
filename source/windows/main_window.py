@@ -316,14 +316,15 @@ class BlenderLauncher(BaseWindow):
         self.CheckUpdatesButton.clicked.connect(self.force_check)
         self.CheckUpdatesButton.setProperty("HeaderButton", True)
 
-        self.SettingsButton = WHeaderButton(self.icons.settings, "", self)
-        self.SettingsButton.setToolTip("Show settings window")
-        self.SettingsButton.clicked.connect(self.show_settings_window)
+        self.VersionLabel = QPushButton(f"v{self.version}")
+        self.VersionLabel.setToolTip("View changelog on GitHub")
+        self.VersionLabel.clicked.connect(self.show_changelog)
+        self.VersionLabel.setProperty("HeaderVersionLabel", True)
+        self.VersionLabel.setCursor(Qt.CursorShape.PointingHandCursor)
+
         self.DocsButton = WHeaderButton(self.icons.wiki, "", self)
         self.DocsButton.setToolTip("Open documentation")
         self.DocsButton.clicked.connect(self.open_docs)
-
-        self.SettingsButton.setProperty("HeaderButton", True)
         self.DocsButton.setProperty("HeaderButton", True)
 
         self.corner_settings = QPushButton(self.icons.settings, "", self)
@@ -343,7 +344,7 @@ class BlenderLauncher(BaseWindow):
         self.header = WindowHeader(
             self,
             "Blender Launcher",
-            (self.CheckUpdatesButton, self.SettingsButton, self.DocsButton),
+            (self.CheckUpdatesButton, self.DocsButton, self.VersionLabel),
         )
         self.header.close_signal.connect(self.close)
         self.header.minimize_signal.connect(self.showMinimized)
@@ -530,17 +531,8 @@ class BlenderLauncher(BaseWindow):
         self.NewVersionButton = QPushButton()
         self.NewVersionButton.hide()
         self.NewVersionButton.clicked.connect(self.show_update_window)
-        self.statusbarVersion = QPushButton(str(self.version))
-        self.statusbarVersion.clicked.connect(self.show_changelog)
-        self.statusbarVersion.setToolTip(
-            "The version of Blender Launcher that is currently run. Press to check changelog."
-        )
-        # self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
-        # self.status_bar.addPermanentWidget(QLabel("│"))
-        # self.status_bar.addPermanentWidget(self.statusbarLabel)
         self.status_bar.addPermanentWidget(QLabel(""), 1)
         self.status_bar.addPermanentWidget(self.NewVersionButton)
-        self.status_bar.addPermanentWidget(self.statusbarVersion)
 
         # Draw library
         self.draw_library()
@@ -792,7 +784,6 @@ class BlenderLauncher(BaseWindow):
         self.timer.start()
 
     def destroy(self):
-        self.quit_signal.emit()
         self.stop_auto_scrape_timer()
         self.task_queue.fullstop()
         self.tray_icon.hide()
