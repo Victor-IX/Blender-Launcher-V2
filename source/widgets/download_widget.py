@@ -63,18 +63,18 @@ class DownloadWidget(BaseBuildWidget):
         self.progressBar.hide()
 
         self.downloadButton = QPushButton("Download")
-        self.downloadButton.setFixedWidth(85)
+        self.downloadButton.setFixedWidth(95)  # Match header fakeLabel width
         self.downloadButton.setProperty("LaunchButton", True)
         self.downloadButton.clicked.connect(self.init_downloader)
         self.downloadButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         self.installedButton = QPushButton("Installed")
-        self.installedButton.setFixedWidth(85)
+        self.installedButton.setFixedWidth(95)  # Match header fakeLabel width
         self.installedButton.setProperty("InstalledButton", True)
         self.installedButton.clicked.connect(self.focus_installed)
 
         self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.setFixedWidth(85)
+        self.cancelButton.setFixedWidth(95)  # Match header fakeLabel width
         self.cancelButton.setProperty("CancelButton", True)
         self.cancelButton.clicked.connect(self.download_cancelled)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -108,6 +108,14 @@ class DownloadWidget(BaseBuildWidget):
         self.build_info_hl.addWidget(self.subversionLabel)
         self.build_info_hl.addWidget(self.branchLabel, stretch=1)
         self.build_info_hl.addWidget(self.commitTimeLabel)
+
+        # Connect to column width changes from the page widget
+        page_widget = self.list_widget.parent
+        if page_widget is not None:
+            page_widget.column_widths_changed.connect(self._update_column_widths)
+            # Apply initial column widths
+            widths = page_widget.get_column_widths()
+            self._update_column_widths(widths[0], widths[1], widths[2])
 
         if self.show_new and not self.installed:
             self.build_state_widget.setNewBuild(True)
@@ -373,3 +381,10 @@ class DownloadWidget(BaseBuildWidget):
         self.installedButton.hide()
         self.downloadButton.show()
         self.installed = None
+
+    @Slot(int, int, int)
+    def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Update column widths to match header splitter."""
+        self.subversionLabel.setFixedWidth(version_width)
+        self.branchLabel.setFixedWidth(branch_width)
+        self.commitTimeLabel.setFixedWidth(commit_time_width)

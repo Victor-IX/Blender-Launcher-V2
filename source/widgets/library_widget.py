@@ -112,7 +112,7 @@ class LibraryWidget(BaseBuildWidget):
             self.infoLabel.setWordWrap(True)
 
             self.launchButton = LeftIconButtonWidget("", parent=self)
-            self.launchButton.setFixedWidth(85)
+            self.launchButton.setFixedWidth(95)
             self.launchButton.setProperty("CancelButton", True)
 
             self.layout.addWidget(self.launchButton)
@@ -171,6 +171,14 @@ class LibraryWidget(BaseBuildWidget):
         self.layout.addWidget(self.updateButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
+
+        # Connect to column width changes from the page widget
+        page_widget = self.list_widget.parent
+        if page_widget is not None:
+            page_widget.column_widths_changed.connect(self._update_column_widths)
+            # Apply initial column widths
+            widths = page_widget.get_column_widths()
+            self._update_column_widths(widths[0], widths[1], widths[2])
 
         if self.parent_widget is not None:
             self.lineEdit = BaseLineEdit(self)
@@ -1055,3 +1063,12 @@ class LibraryWidget(BaseBuildWidget):
     def _destroyed(self):
         if self.parent.favorite == self:
             self.parent.favorite = None
+
+    @Slot(int, int, int)
+    def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Update column widths to match header splitter."""
+        if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
+            return
+        self.subversionLabel.setFixedWidth(version_width)
+        self.branchLabel.setFixedWidth(branch_width)
+        self.commitTimeLabel.setFixedWidth(commit_time_width)
