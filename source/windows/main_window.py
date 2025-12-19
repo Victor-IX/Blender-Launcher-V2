@@ -5,8 +5,8 @@ import os
 import shlex
 import shutil
 import sys
-import webbrowser
 import threading
+import webbrowser
 from datetime import datetime
 from enum import Enum
 from functools import partial
@@ -22,6 +22,7 @@ from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.settings import (
     create_library_folders,
+    get_check_for_new_builds_automatically,
     get_check_for_new_builds_on_startup,
     get_default_downloads_page,
     get_default_library_page,
@@ -35,6 +36,7 @@ from modules.settings import (
     get_launch_minimized_to_tray,
     get_library_folder,
     get_make_error_popup,
+    get_new_builds_check_frequency,
     get_proxy_type,
     get_quick_launch_key_seq,
     get_scrape_bfa_builds,
@@ -51,8 +53,6 @@ from modules.settings import (
     get_use_pre_release_builds,
     get_use_system_titlebar,
     get_worker_thread_count,
-    get_check_for_new_builds_automatically,
-    get_new_builds_check_frequency,
     is_library_folder_valid,
     set_dont_show_resource_warning,
     set_last_time_checked_utc,
@@ -61,14 +61,13 @@ from modules.settings import (
 )
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, Signal, Slot, QTimer
+from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QStatusBar,
     QSystemTrayIcon,
     QTabWidget,
     QVBoxLayout,
@@ -86,6 +85,7 @@ from widgets.download_widget import DownloadState, DownloadWidget
 from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
 from widgets.library_widget import LibraryWidget
+from widgets.navigation import SidebarWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
@@ -285,7 +285,11 @@ class BlenderLauncher(BaseWindow):
             if window is not self:
                 window.update_system_titlebar(b)
         self.header.setHidden(b)
-        self.corner_settings_widget.setHidden(not b)
+        # Show/hide sidebar changelog and docs buttons based on system titlebar
+        if hasattr(self, "sidebar_changelog_btn"):
+            self.sidebar_changelog_btn.setVisible(b)
+        if hasattr(self, "sidebar_docs_btn"):
+            self.sidebar_docs_btn.setVisible(b)
 
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
@@ -307,63 +311,93 @@ class BlenderLauncher(BaseWindow):
 
     def draw(self, polish=False):
         # Header
-        self.SettingsButton = WHeaderButton(self.icons.settings, "", self)
-        self.SettingsButton.setToolTip("Show settings window")
-        self.SettingsButton.clicked.connect(self.show_settings_window)
+        self.VersionLabel = QPushButton(f"v{self.version}")
+        self.VersionLabel.setToolTip("View changelog on GitHub")
+        self.VersionLabel.clicked.connect(self.show_changelog)
+        self.VersionLabel.setProperty("HeaderVersionLabel", True)
+        self.VersionLabel.setCursor(Qt.CursorShape.PointingHandCursor)
+
         self.DocsButton = WHeaderButton(self.icons.wiki, "", self)
         self.DocsButton.setToolTip("Open documentation")
         self.DocsButton.clicked.connect(self.open_docs)
-
-        self.SettingsButton.setProperty("HeaderButton", True)
         self.DocsButton.setProperty("HeaderButton", True)
-
-        self.corner_settings = QPushButton(self.icons.settings, "", self)
-        self.corner_settings.clicked.connect(self.show_settings_window)
-        self.corner_docs = QPushButton(self.icons.wiki, "", self)
-        self.corner_docs.clicked.connect(self.open_docs)
-
-        self.corner_settings_widget = QWidget(self)
-        # self.corner_settings_widget.setMaximumHeight(25)
-        self.corner_settings_widget.setContentsMargins(0, 0, 0, 0)
-        self.corner_settings_layout = QHBoxLayout(self.corner_settings_widget)
-        self.corner_settings_layout.addWidget(self.corner_docs)
-        self.corner_settings_layout.addWidget(self.corner_settings)
-        self.corner_settings_layout.setContentsMargins(0, 0, 0, 0)
-        self.corner_settings_layout.setSpacing(0)
 
         self.header = WindowHeader(
             self,
             "Blender Launcher",
-            (self.SettingsButton, self.DocsButton),
+            (self.DocsButton, self.VersionLabel),
         )
         self.header.close_signal.connect(self.close)
         self.header.minimize_signal.connect(self.showMinimized)
         self.CentralLayout.addWidget(self.header)
 
-        # Tab layout
-        self.TabWidget = QTabWidget()
-        self.TabWidget.setProperty("North", True)
-        self.TabWidget.setCornerWidget(self.corner_settings_widget)
-        self.CentralLayout.addWidget(self.TabWidget)
+        # Main content area
+        self.main_content_layout = QHBoxLayout()
+        self.main_content_layout.setSpacing(0)
+        self.CentralLayout.addLayout(self.main_content_layout)
 
-        self.update_system_titlebar(get_use_system_titlebar())
+        # Sidebar navigation
+        self.sidebar = SidebarWidget(self)
+        self.main_content_layout.addWidget(self.sidebar)
+
+        self.TabWidget = QTabWidget()
+        self.TabWidget.tabBar().hide()  # Hide the original tab bar
+        self.TabWidget.setProperty("North", True)  # Still set property for styling existing TabWidget
+        # self.TabWidget.setCornerWidget(self.corner_settings_widget) # Corner widget not needed with sidebar
+        self.main_content_layout.addWidget(self.TabWidget)
+
+        # Connect sidebar to main TabWidget
+        self.sidebar.index_changed.connect(self.TabWidget.setCurrentIndex)
+        self.TabWidget.currentChanged.connect(self.sidebar.set_current_index)
+
         self.LibraryTab = QWidget()
         self.LibraryTabLayout = QVBoxLayout()
         self.LibraryTabLayout.setContentsMargins(0, 0, 0, 0)
         self.LibraryTab.setLayout(self.LibraryTabLayout)
         self.TabWidget.addTab(self.LibraryTab, "Library")
+        self.sidebar.add_tab(self.icons.folder, "Library", 0)
 
         self.DownloadsTab = QWidget()
         self.DownloadsTabLayout = QVBoxLayout()
         self.DownloadsTabLayout.setContentsMargins(0, 0, 0, 0)
         self.DownloadsTab.setLayout(self.DownloadsTabLayout)
         self.TabWidget.addTab(self.DownloadsTab, "Downloads")
+        self.sidebar.add_tab(self.icons.download, "Downloads", 1)
 
         self.UserTab = QWidget()
         self.UserTabLayout = QVBoxLayout()
         self.UserTabLayout.setContentsMargins(0, 0, 0, 0)
         self.UserTab.setLayout(self.UserTabLayout)
         self.TabWidget.addTab(self.UserTab, "Favorites")
+        self.sidebar.add_tab(self.icons.favorite, "Favorites", 2)
+
+        self.sidebar.add_spacer()
+
+        # Changelog button (shown when system titlebar is ON)
+        self.sidebar_changelog_btn = self.sidebar.add_action_button(self.icons.file, f"Changelog (v{self.version})")
+        self.sidebar_changelog_btn.clicked.connect(self.show_changelog)
+        self.sidebar_changelog_btn.setVisible(False)  # Hidden by default, shown when system titlebar is ON
+
+        # Documentation button (shown when system titlebar is ON)
+        self.sidebar_docs_btn = self.sidebar.add_action_button(self.icons.wiki, "Documentation")
+        self.sidebar_docs_btn.clicked.connect(self.open_docs)
+        self.sidebar_docs_btn.setVisible(False)  # Hidden by default, shown when system titlebar is ON
+
+        # Check for updates button
+        check_updates_btn = self.sidebar.add_action_button(self.icons.update, "Check for new builds")
+        check_updates_btn.setIconSize(QSize(20, 20))
+        check_updates_btn.setToolTip(
+            "Check for new builds online\n"
+            "(Hold SHIFT to force check stable and automated builds)"
+        )
+        check_updates_btn.clicked.connect(self.force_check)
+
+        # Settings button
+        settings_btn = self.sidebar.add_action_button(self.icons.settings, "Settings")
+        settings_btn.clicked.connect(self.show_settings_window)
+
+        # Update system titlebar visibility (must be after sidebar buttons are created)
+        self.update_system_titlebar(get_use_system_titlebar())
 
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
@@ -484,34 +518,6 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox.setCurrentIndex(get_default_downloads_page())
 
         self.update_visible_lists()
-
-        # Status bar
-        self.status_bar = QStatusBar(self)
-        self.setStatusBar(self.status_bar)
-        self.status_bar.setContentsMargins(0, 0, 0, 2)
-        self.status_bar.setFont(self.font_10)
-        self.statusbarLabel = QLabel()
-        self.ForceCheckNewBuilds = QPushButton("Check")
-        self.ForceCheckNewBuilds.setEnabled(False)
-        self.ForceCheckNewBuilds.setToolTip(
-            "Check for new builds online<br>\
-            (Hold SHIFT to force check stable and automated builds)"
-        )
-        self.ForceCheckNewBuilds.clicked.connect(self.force_check)
-        self.NewVersionButton = QPushButton()
-        self.NewVersionButton.hide()
-        self.NewVersionButton.clicked.connect(self.show_update_window)
-        self.statusbarVersion = QPushButton(str(self.version))
-        self.statusbarVersion.clicked.connect(self.show_changelog)
-        self.statusbarVersion.setToolTip(
-            "The version of Blender Launcher that is currently run. Press to check changelog."
-        )
-        self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
-        self.status_bar.addPermanentWidget(QLabel("│"))
-        self.status_bar.addPermanentWidget(self.statusbarLabel)
-        self.status_bar.addPermanentWidget(QLabel(""), 1)
-        self.status_bar.addPermanentWidget(self.NewVersionButton)
-        self.status_bar.addPermanentWidget(self.statusbarVersion)
 
         # Draw library
         self.draw_library()
@@ -763,8 +769,8 @@ class BlenderLauncher(BaseWindow):
         self.timer.start()
 
     def destroy(self):
-        self.quit_signal.emit()
         self.stop_auto_scrape_timer()
+        self.task_queue.fullstop()
         self.tray_icon.hide()
         self.app.quit()
 
@@ -1104,9 +1110,6 @@ class BlenderLauncher(BaseWindow):
         if is_force_check_on is not None:
             self.is_force_check_on = is_force_check_on
 
-        self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
-        self.statusbarLabel.setText(self.status)
-
     def set_version(self, latest_tag, path_note):
         if self.version.build is not None and "dev" in self.version.build:
             return
@@ -1121,8 +1124,6 @@ class BlenderLauncher(BaseWindow):
         logging.debug(f"Latest version on GitHub is {latest}")
 
         if latest > current:
-            self.NewVersionButton.setText(f"Update to version {latest_tag.replace('v', '')}")
-            self.NewVersionButton.show()
             self.latest_tag = latest_tag
             if path_note is not None:
                 path_note_text = patch_note_cleaner(path_note)
@@ -1134,9 +1135,6 @@ class BlenderLauncher(BaseWindow):
                 parent=self,
             )
             popup.accepted.connect(self.show_update_window)
-
-        else:
-            self.NewVersionButton.hide()
 
     def show_settings_window(self):
         self.settings_window = SettingsWindow(parent=self)

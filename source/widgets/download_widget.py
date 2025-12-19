@@ -1,18 +1,17 @@
 from __future__ import annotations
 
+import logging
 import re
 import shutil
-import logging
-
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
 from modules.settings import get_install_template, get_library_folder
-from PySide6.QtCore import Qt, Signal, Slot, QTimer
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
 from semver import Version
 from threads.downloader import DownloadTask
 from threads.extractor import ExtractTask
@@ -23,9 +22,9 @@ from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from widgets.build_state_widget import BuildStateWidget
 from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
+from widgets.left_icon_button_widget import LeftIconButtonWidget
 
 if TYPE_CHECKING:
-    from widgets.base_page_widget import BasePageWidget
     from widgets.library_widget import LibraryWidget
     from windows.main_window import BlenderLauncher
 
@@ -59,29 +58,29 @@ class DownloadWidget(BaseBuildWidget):
 
         self.progressBar = BaseProgressBarWidget()
         self.progressBar.setFont(self.parent.font_8)
-        self.progressBar.setFixedHeight(18)
+        self.progressBar.setFixedHeight(24)
         self.progressBar.hide()
 
-        self.downloadButton = QPushButton("Download")
-        self.downloadButton.setFixedWidth(95)  # Match header fakeLabel width
+        self.downloadButton = LeftIconButtonWidget("Download", parent=self)
+        self.downloadButton.setFixedWidth(95)
         self.downloadButton.setProperty("LaunchButton", True)
         self.downloadButton.clicked.connect(self.init_downloader)
         self.downloadButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.installedButton = QPushButton("Installed")
-        self.installedButton.setFixedWidth(95)  # Match header fakeLabel width
+        self.installedButton = LeftIconButtonWidget("Installed", parent=self)
+        self.installedButton.setFixedWidth(95)
         self.installedButton.setProperty("InstalledButton", True)
         self.installedButton.clicked.connect(self.focus_installed)
 
-        self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.setFixedWidth(95)  # Match header fakeLabel width
+        self.cancelButton = LeftIconButtonWidget("Cancel", parent=self)
+        self.cancelButton.setFixedWidth(95)
         self.cancelButton.setProperty("CancelButton", True)
         self.cancelButton.clicked.connect(self.download_cancelled)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.cancelButton.hide()
 
         self.main_hl = QHBoxLayout(self)
-        self.main_hl.setContentsMargins(2, 2, 0, 2)
+        self.main_hl.setContentsMargins(0, 0, 0, 0)
         self.main_hl.setSpacing(0)
 
         self.sub_vl = QVBoxLayout()
@@ -98,10 +97,12 @@ class DownloadWidget(BaseBuildWidget):
 
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
-        self.subversionLabel.setIndent(20)
+        self.subversionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.subversionLabel.setStyleSheet("font-weight: bold; font-size: 13px; color: white;")
         self.subversionLabel.setToolTip(str(self.build_info.semversion))
 
         self.branchLabel = ElidedTextLabel(self.build_info.display_label, self)
+        self.branchLabel.setStyleSheet("padding-left: 8px;")
         self.commitTimeLabel = DateTimeWidget(self.build_info.commit_time, self.build_info.build_hash, self)
         self.build_state_widget = BuildStateWidget(parent.icons, self)
 
@@ -128,6 +129,7 @@ class DownloadWidget(BaseBuildWidget):
         self.main_hl.addWidget(self.downloadButton)
         self.main_hl.addWidget(self.cancelButton)
         self.main_hl.addWidget(self.installedButton)
+        self.main_hl.addSpacing(17)
         self.main_hl.addLayout(self.sub_vl)
         self.main_hl.addWidget(self.build_state_widget)
 

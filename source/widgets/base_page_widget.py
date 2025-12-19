@@ -27,7 +27,7 @@ class BasePageWidget(QWidget):
     # Default column widths
     DEFAULT_VERSION_WIDTH = 85
     DEFAULT_BRANCH_WIDTH = 200
-    DEFAULT_COMMIT_TIME_WIDTH = 118
+    DEFAULT_COMMIT_TIME_WIDTH = 100
 
     def __init__(self, parent, page_name, time_label, info_text, show_reload=False, extended_selection=False):
         super().__init__(parent)
@@ -95,7 +95,7 @@ class BasePageWidget(QWidget):
         self.HeaderWidget.hide()
         self.HeaderWidget.setProperty("ToolBoxWidget", True)
         self.HeaderLayout = QHBoxLayout(self.HeaderWidget)
-        self.HeaderLayout.setContentsMargins(2, 0, 0, 0)
+        self.HeaderLayout.setContentsMargins(8, 0, 8, 0)
         self.HeaderLayout.setSpacing(0)
 
         if show_reload is True:
@@ -106,7 +106,7 @@ class BasePageWidget(QWidget):
         else:
             self.fakeLabel = QLabel()
 
-        self.fakeLabel.setFixedWidth(95)  # Match launchButton width in list items
+        self.fakeLabel.setFixedWidth(115)
 
         # Create splitter for resizable columns
         self.headerSplitter = QSplitter(Qt.Orientation.Horizontal)
