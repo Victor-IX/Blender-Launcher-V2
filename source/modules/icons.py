@@ -23,6 +23,7 @@ class Icons:
     filled_circle: QIcon
     quick_launch: QIcon
     download: QIcon
+    update: QIcon
     file: QIcon
     taskbar: QIcon
     bl_file: QIcon
@@ -45,6 +46,7 @@ class Icons:
             load_icon(color, "filled_circle"),
             load_icon(color, "quick_launch"),
             load_icon(color, "download"),
+            load_icon(color, "update"),
             load_icon(color, "file"),
             QIcon(base_path + "bl/bl.ico"),
             QIcon(base_path + "bl/bl_file.ico"),

@@ -7,7 +7,7 @@ import shutil
 import sys
 import webbrowser
 import threading
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
 from functools import partial
 from pathlib import Path
@@ -15,7 +15,7 @@ from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _popen, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules._platform import _popen, get_cwd, get_default_library_folder, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
 from modules.connection_manager import ConnectionManager
@@ -37,8 +37,9 @@ from modules.settings import (
     get_make_error_popup,
     get_proxy_type,
     get_quick_launch_key_seq,
-    get_scrape_automated_builds,
     get_scrape_bfa_builds,
+    get_scrape_daily_builds,
+    get_scrape_experimental_builds,
     get_scrape_stable_builds,
     get_show_bfa_builds,
     get_show_daily_builds,
@@ -59,8 +60,8 @@ from modules.settings import (
     set_tray_icon_notified,
 )
 from modules.string_utils import patch_note_cleaner
-from modules.tasks import Task, TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, Signal, Slot
+from modules.tasks import TaskQueue, TaskWorker
+from PySide6.QtCore import QSize, Qt, Signal, Slot, QTimer
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -122,6 +123,7 @@ class BlenderLauncher(BaseWindow):
     close_signal = Signal()
     quit_signal = Signal()
     quick_launch_fail_signal = Signal()
+    scraper_finished_signal = Signal()
 
     def __init__(
         self,
@@ -232,7 +234,7 @@ class BlenderLauncher(BaseWindow):
         self.draw()
 
     def prompt_library_folder(self):
-        library_folder = get_cwd().as_posix()
+        library_folder = get_default_library_folder().as_posix()
         new_library_folder = FileDialogWindow().get_directory(self, "Select Library Folder", library_folder)
 
         if new_library_folder:
@@ -459,6 +461,23 @@ class BlenderLauncher(BaseWindow):
             extended_selection=True,
         )
         self.UserCustomListWidget = self.LibraryToolBox.add_page_widget(self.UserCustomPageWidget, "Custom")
+
+        # Collect all page widgets for column width synchronization
+        self._all_page_widgets = [
+            self.LibraryStablePageWidget,
+            self.LibraryDailyPageWidget,
+            self.LibraryExperimentalPageWidget,
+            self.LibraryBFAPageWidget,
+            self.DownloadsStablePageWidget,
+            self.DownloadsDailyPageWidget,
+            self.DownloadsExperimentalPageWidget,
+            self.DownloadsBFAPageWidget,
+            self.UserCustomPageWidget,
+        ]
+        self._syncing_column_widths = False  # Guard against recursion
+        # Connect all page widgets to sync column widths
+        for page_widget in self._all_page_widgets:
+            page_widget.column_widths_changed.connect(self._sync_column_widths)
 
         self.TabWidget.setCurrentIndex(get_default_tab())
         self.LibraryToolBox.setCurrentIndex(get_default_library_page())
@@ -719,12 +738,33 @@ class BlenderLauncher(BaseWindow):
         elif reason == QSystemTrayIcon.ActivationReason.Context:
             self.tray_menu.trigger()
 
-    def destroy(self):
-        self.quit_signal.emit()
-
+    def stop_auto_scrape_timer(self):
         if self.timer is not None:
             self.timer.cancel()
+            self.timer = None
 
+    def schedule_auto_scrape_timer(self):
+        self.stop_auto_scrape_timer()
+
+        if not get_check_for_new_builds_automatically():
+            return
+
+        interval_seconds = get_new_builds_check_frequency() * 3600
+
+        if interval_seconds <= 0:
+            return
+
+        def trigger_auto_scrape():
+            self.timer = None
+            QTimer.singleShot(0, self.draw_downloads)
+
+        self.timer = threading.Timer(interval_seconds, trigger_auto_scrape)
+        self.timer.daemon = True
+        self.timer.start()
+
+    def destroy(self):
+        self.quit_signal.emit()
+        self.stop_auto_scrape_timer()
         self.tray_icon.hide()
         self.app.quit()
 
@@ -737,8 +777,7 @@ class BlenderLauncher(BaseWindow):
             self.cm.error.connect(self.connection_error)
             self.manager = self.cm.manager
 
-            if self.timer is not None:
-                self.timer.cancel()
+            self.stop_auto_scrape_timer()
             if self.scraper is not None:
                 self.scraper.quit()
             self.DownloadsStableListWidget.clear_()
@@ -777,16 +816,37 @@ class BlenderLauncher(BaseWindow):
         else:
             self.ready_to_scrape()
 
+        self.scraper_finished_signal.connect(self.check_library_for_updates)
+
+    def check_library_for_updates(self):
+        all_downloads = []
+        all_downloads.extend(self.DownloadsStableListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsDailyListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsExperimentalListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsBFAListWidget.findChildren(DownloadWidget))
+
+        for library_list in [
+            self.LibraryStableListWidget,
+            self.LibraryDailyListWidget,
+            self.LibraryExperimentalListWidget,
+            self.LibraryBFAListWidget,
+        ]:
+            for item in range(library_list.count()):
+                widget_item = library_list.item(item)
+                if widget_item:
+                    library_widget = library_list.itemWidget(widget_item)
+                    if library_widget and hasattr(library_widget, "check_for_updates"):
+                        library_widget.check_for_updates(all_downloads)
+
     def connection_error(self):
-        print("connection_error")
+        logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
         self.set_status("Error: connection failed at " + utcnow)
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
-            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
-            self.timer.start()
+            self.schedule_auto_scrape_timer()
 
     @Slot(str)
     def scraper_error(self, s: str):
@@ -811,13 +871,16 @@ class BlenderLauncher(BaseWindow):
             self.start_scraper()
             self.update_visible_lists()
 
-    def start_scraper(self, scrape_stable=None, scrape_automated=None, scrape_bfa=None):
+    def start_scraper(self, scrape_stable=None, scrape_daily=None, scrape_expatch=None, scrape_bfa=None):
         self.set_status("Checking for new builds", False)
+        self.stop_auto_scrape_timer()
 
         if scrape_stable is None:
             scrape_stable = get_scrape_stable_builds()
-        if scrape_automated is None:
-            scrape_automated = get_scrape_automated_builds()
+        if scrape_daily is None:
+            scrape_daily = get_scrape_daily_builds()
+        if scrape_expatch is None:
+            scrape_expatch = get_scrape_experimental_builds()
         if scrape_bfa is None:
             scrape_bfa = get_scrape_bfa_builds()
 
@@ -826,14 +889,15 @@ class BlenderLauncher(BaseWindow):
         else:
             self.DownloadsStablePageWidget.set_info_label_text("Checking for stable builds is disabled")
 
-        if scrape_automated:
-            msg = "Checking for new builds"
+        if scrape_daily:
+            self.DownloadsDailyPageWidget.set_info_label_text("Checking for new builds")
         else:
-            msg = "Checking for automated builds is disabled"
+            self.DownloadsDailyPageWidget.set_info_label_text("Checking for daily builds is disabled")
 
-        for page in self.DownloadsToolBox.pages:
-            if page is not self.DownloadsStablePageWidget:
-                page.set_info_label_text(msg)
+        if scrape_expatch:
+            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for new builds")
+        else:
+            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for experimental builds is disabled")
 
         if scrape_bfa:
             self.DownloadsBFAPageWidget.set_info_label_text("Checking for new builds")
@@ -851,7 +915,8 @@ class BlenderLauncher(BaseWindow):
         self.app_state = AppState.CHECKINGBUILDS
 
         self.scraper.scrape_stable = scrape_stable
-        self.scraper.scrape_automated = scrape_automated
+        self.scraper.scrape_daily = scrape_daily
+        self.scraper.scrape_experimental = scrape_expatch
         self.scraper.scrape_bfa = scrape_bfa
         self.scraper.manager = self.cm
         self.scraper.start()
@@ -872,14 +937,16 @@ class BlenderLauncher(BaseWindow):
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
-            self.timer = threading.Timer(get_new_builds_check_frequency() * 3600, self.draw_downloads)
-            self.timer.start()
+            self.schedule_auto_scrape_timer()
             self.started = False
+        else:
+            self.stop_auto_scrape_timer()
         self.ready_to_scrape()
 
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
         self.set_status("Last check at " + self.last_time_checked.strftime(DATETIME_FORMAT), True)
+        self.scraper_finished_signal.emit()
 
     def draw_from_cashed(self, build_info):
         if self.app_state == AppState.IDLE:
@@ -999,8 +1066,8 @@ class BlenderLauncher(BaseWindow):
         show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
         show_bfa = force_l_bfa or get_show_bfa_builds()
         scrape_stable = force_s_stable or get_scrape_stable_builds()
-        scrape_daily = force_s_daily or (get_scrape_automated_builds() and get_show_daily_builds())
-        scrape_expatch = force_s_expatch or (get_scrape_automated_builds() and get_show_experimental_and_patch_builds())
+        scrape_daily = force_s_daily or get_scrape_daily_builds()
+        scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
         scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
 
         self.LibraryToolBox.setTabVisible(0, show_stable)
@@ -1099,6 +1166,22 @@ class BlenderLauncher(BaseWindow):
             return
 
         self.destroy()
+
+    @Slot(int, int, int)
+    def _sync_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Synchronize column widths across all page widgets."""
+        if self._syncing_column_widths:
+            return
+        self._syncing_column_widths = True
+        sizes = [version_width, branch_width, commit_time_width]
+        for page_widget in self._all_page_widgets:
+            # Block signals to prevent infinite loop from splitter
+            page_widget.headerSplitter.blockSignals(True)
+            page_widget.headerSplitter.setSizes(sizes)
+            page_widget.headerSplitter.blockSignals(False)
+            # Emit signal to update list items in this page
+            page_widget.column_widths_changed.emit(version_width, branch_width, commit_time_width)
+        self._syncing_column_widths = False
 
     def closeEvent(self, event):
         if get_show_tray_icon():

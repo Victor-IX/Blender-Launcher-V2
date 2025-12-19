@@ -11,11 +11,23 @@ from typing import NoReturn, Sequence
 
 import modules._resources_rc
 from modules import argument_parsing as ap
-from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules._platform import (
+    _popen,
+    get_cache_path,
+    get_cwd,
+    get_launcher_name,
+    get_platform,
+    is_frozen,
+)
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
 from utils.logger import setup_logging
+from modules.version_matcher import (
+    VALID_FULL_QUERIES,
+    VALID_QUERIES,
+    VERSION_SEARCH_SYNTAX,
+)
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from windows.popup_window import PopupWindow, PopupIcon
@@ -23,8 +35,8 @@ from windows.popup_window import PopupWindow, PopupIcon
 
 version = Version(
     2,
-    4,
-    7,
+    5,
+    3,
     # prerelease="rc.2",
 )
 
@@ -33,7 +45,7 @@ _ = gettext.gettext
 
 # Setup logging
 setup_logging(
-    log_path=Path(get_cache_path()).absolute() / "blender-launcher.log",
+    log_path=get_cache_path().absolute() / "blender-launcher.log",
     level="DEBUG" if "--debug" in sys.argv else "INFO",
     max_bytes=1 * 1024 * 1024,  # 1 MB
     backup_count=2,
@@ -49,7 +61,10 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    logger.error(f"{get_platform()} - Blender Launcher {version}", exc_info=(exc_type, exc_value, exc_traceback))
+    logger.error(
+        f"{get_platform()} - Blender Launcher {version}",
+        exc_info=(exc_type, exc_value, exc_traceback),
+    )
 
 
 sys.excepthook = handle_exception
@@ -111,7 +126,10 @@ def main():
     grp = launch_parser.add_mutually_exclusive_group()
     grp.add_argument("-f", "--file", type=Path, help="Path to a specific Blender file to launch.")
     grp.add_argument(
-        "-ol", "--open-last", action="store_true", help="Open the last file in the specified blender build"
+        "-ol",
+        "--open-last",
+        action="store_true",
+        help="Open the last file in the specified blender build",
     )
 
     launch_parser.add_argument("-v", "--version", help=f"Version to launch. {VERSION_SEARCH_SYNTAX}")
@@ -282,7 +300,12 @@ def start_launch(
         file = Path(str(file).strip('"'))
 
     if cli:
-        cli_launch(file=file, version_query=query, open_last=open_last, blender_args=blender_args)
+        cli_launch(
+            file=file,
+            version_query=query,
+            open_last=open_last,
+            blender_args=blender_args,
+        )
         sys.exit(1)
     else:
         LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()

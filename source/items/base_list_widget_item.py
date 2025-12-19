@@ -17,12 +17,14 @@ class BaseListWidgetItem(QListWidgetItem):
         self.listWidget: Callable[[], BaseListWidget | None]
 
     def __lt__(self, other):
-        soring_type = self.listWidget().parent.sorting_type
+        sorting_type = self.listWidget().parent.sorting_type
 
-        if soring_type.name == "DATETIME":
+        if sorting_type.name == "DATETIME":
             return self.compare_datetime(other)
-        if soring_type.name == "VERSION":
+        if sorting_type.name == "VERSION":
             return self.compare_version(other)
+        if sorting_type.name == "LABEL":
+            return self.compare_label(other)
         return False
 
     def compare_datetime(self, other):
@@ -56,3 +58,22 @@ class BaseListWidgetItem(QListWidgetItem):
             return self.compare_datetime(other)
 
         return this_version > other_version
+
+    def compare_label(self, other):
+        list_widget = self.listWidget()
+
+        this_widget = list_widget.itemWidget(self)
+        other_widget = list_widget.itemWidget(other)
+
+        if (
+            this_widget is None
+            or other_widget is None
+            or this_widget.build_info is None
+            or other_widget.build_info is None
+        ):
+            return False
+
+        this_label = this_widget.build_info.display_label
+        other_label = other_widget.build_info.display_label
+
+        return this_label < other_label

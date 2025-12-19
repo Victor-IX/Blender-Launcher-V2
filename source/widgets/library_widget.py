@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import contextlib
-import logging
 import os
 import re
+import logging
+import contextlib
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -25,9 +25,11 @@ from modules.settings import (
     get_library_folder,
     get_mark_as_favorite,
     set_favorite_path,
+    get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6 import QtCore
+from modules.blender_update_manager import available_blender_update, is_major_version_update
+from windows.popup_window import PopupIcon, PopupWindow
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import (
     QAction,
@@ -110,7 +112,7 @@ class LibraryWidget(BaseBuildWidget):
             self.infoLabel.setWordWrap(True)
 
             self.launchButton = LeftIconButtonWidget("", parent=self)
-            self.launchButton.setFixedWidth(85)
+            self.launchButton.setFixedWidth(95)
             self.launchButton.setProperty("CancelButton", True)
 
             self.layout.addWidget(self.launchButton)
@@ -126,12 +128,15 @@ class LibraryWidget(BaseBuildWidget):
             self.draw(self.parent_widget.build_info)
 
     @Slot()
-    def trigger_damaged(self):
+    def trigger_damaged(self, exception: Exception = None):
+        if exception:
+            logger.error(f"Failed to read build info for {self.link.name}: {exception}")
         self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")
         self.launchButton.set_text("Delete")
         self.launchButton.clicked.connect(self.ask_remove_from_drive)
         self.setEnabled(True)
         self.is_damaged = True
+        # Keep build_info as None to prevent further errors
 
     def draw(self, build_info: BuildInfo):
         if self.parent_widget is None:
@@ -143,9 +148,15 @@ class LibraryWidget(BaseBuildWidget):
         self.item.date = build_info.commit_time
 
         self.launchButton = LeftIconButtonWidget("Launch", parent=self)
-        self.launchButton.setFixedWidth(85)
+        self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("LaunchButton", True)
         self._launch_icon = None
+
+        self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
+        self.updateButton.setFixedWidth(25)
+        self.updateButton.setProperty("UpdateButton", True)
+        self.updateButton.setToolTip("Update Blender to the latest version")
+        self.updateButton.hide()
 
         self.subversionLabel = QLabel(self.build_info.display_version)
         self.subversionLabel.setFixedWidth(85)
@@ -157,8 +168,17 @@ class LibraryWidget(BaseBuildWidget):
         self.build_state_widget = BuildStateWidget(self.parent.icons, self)
 
         self.layout.addWidget(self.launchButton)
+        self.layout.addWidget(self.updateButton)
         self.layout.addWidget(self.subversionLabel)
         self.layout.addWidget(self.branchLabel, stretch=1)
+
+        # Connect to column width changes from the page widget
+        page_widget = self.list_widget.parent
+        if page_widget is not None:
+            page_widget.column_widths_changed.connect(self._update_column_widths)
+            # Apply initial column widths
+            widths = page_widget.get_column_widths()
+            self._update_column_widths(widths[0], widths[1], widths[2])
 
         if self.parent_widget is not None:
             self.lineEdit = BaseLineEdit(self)
@@ -179,6 +199,7 @@ class LibraryWidget(BaseBuildWidget):
             )
         )
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.updateButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # Context menu
         self.menu_extended = BaseMenuWidget(parent=self)
@@ -225,6 +246,12 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self.removeFromFavoritesAction.setVisible(False)
 
+        self.updateBlenderBuildAction = QAction("Update Blender Build")
+        self.updateBlenderBuildAction.setIcon(self.parent.icons.update)
+        self.updateBlenderBuildAction.triggered.connect(self._trigger_update_download)
+        self.updateBlenderBuildAction.setToolTip("Update this build to the latest version")
+        self.updateBlenderBuildAction.setVisible(False)
+
         self.registerExtentionAction = QAction("Register Extension")
         self.registerExtentionAction.setToolTip("Use this build for .blend files and to display thumbnails")
         self.registerExtentionAction.triggered.connect(self.register_extension)
@@ -256,6 +283,9 @@ class LibraryWidget(BaseBuildWidget):
         self.copyBuildHash = QAction("Copy Build Hash")
         self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
+        self.freezeUpdate = QAction("Unfreeze Update" if self.build_info.is_frozen else "Freeze Update")
+        self.freezeUpdate.triggered.connect(self.freeze_update)
+
         self.debugMenu = BaseMenuWidget("Debug", parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
@@ -279,6 +309,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.addToQuickLaunchAction)
         self.menu.addAction(self.addToFavoritesAction)
         self.menu.addAction(self.removeFromFavoritesAction)
+        self.menu.addAction(self.updateBlenderBuildAction)
         self.menu.addMenu(self.debugMenu)
 
         if self.parent_widget is not None:
@@ -296,6 +327,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.installTemplateAction)
         self.menu.addAction(self.makePortableAction)
         self.menu.addAction(self.copyBuildHash)
+        self.menu.addAction(self.freezeUpdate)
         self.menu.addSeparator()
 
         if self.branch in {"stable", "lts", "bforartists", "daily"}:
@@ -389,7 +421,10 @@ class LibraryWidget(BaseBuildWidget):
                 self.show_new = False
 
             mod = QApplication.keyboardModifiers()
-            if mod not in (Qt.KeyboardModifier.ShiftModifier, Qt.KeyboardModifier.ControlModifier):
+            if mod not in (
+                Qt.KeyboardModifier.ShiftModifier,
+                Qt.KeyboardModifier.ControlModifier,
+            ):
                 self.list_widget.clearSelection()
                 self.item.setSelected(True)
 
@@ -504,6 +539,111 @@ class LibraryWidget(BaseBuildWidget):
 
         self.observer.append_proc.emit(proc)
 
+    def update_finished(self):
+        """Reset the widget state after update completion."""
+        self.launchButton.set_text("Launch")
+        self.launchButton.setEnabled(True)
+        if hasattr(self, "_update_download_widget"):
+            delattr(self, "_update_download_widget")
+
+    def _show_update_button(self):
+        """Show update button and adjust layout."""
+        self.updateButton.show()
+        self.launchButton.setFixedWidth(70)
+
+    def _hide_update_button(self):
+        """Hide update button and reset layout."""
+        self.updateButton.hide()
+        self.launchButton.setFixedWidth(95)
+        self.updateBlenderBuildAction.setVisible(False)
+
+    def check_for_updates(self, available_downloads):
+        # Skip update check if build_info is not available
+        if self.build_info is None:
+            logger.warning(f"Skipping update check for {self.link}: build_info is None")
+            self._hide_update_button()
+            return False
+
+        logger.debug(
+            f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
+        )
+
+        # Skip update check if build is frozen
+        if self.build_info.is_frozen:
+            self._hide_update_button()
+            return False
+
+        update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
+        if update:
+            if get_show_update_button():
+                self._show_update_button()
+                self.updateBlenderBuildAction.setVisible(True)
+            else:
+                self._hide_update_button()
+
+            self._update_download_widget = update
+
+            import warnings
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
+                self.updateButton.clicked.disconnect()
+            self.updateButton.clicked.connect(self._trigger_update_download)
+            return True
+
+        self._hide_update_button()
+        return False
+
+    def _trigger_update_download(self):
+        if hasattr(self, "_update_download_widget"):
+            self._is_major_version_update = is_major_version_update(self.build_info, self._update_download_widget)
+        else:
+            self._is_major_version_update = False
+
+        self._hide_update_button()
+        self.launchButton.set_text("Updating")
+        self.launchButton.setEnabled(False)
+
+        if hasattr(self, "_update_download_widget"):
+            self._update_download_widget.init_downloader(updating_widget=self)
+            # Safely disconnect any existing connections
+            # Suppress RuntimeWarning for disconnecting when no connections exist
+            import warnings
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
+                self.updateButton.clicked.disconnect()
+
+    def confirm_major_version_update_removal(self, callback):
+        """Show confirmation dialog for major version update before removing old build."""
+        if hasattr(self, "_update_download_widget"):
+            update_download_widget = self._update_download_widget
+
+        if update_download_widget and is_major_version_update(self.build_info, update_download_widget):
+            current_version = self.build_info.semversion.replace(prerelease=None)
+            update_version = update_download_widget.build_info.semversion.replace(prerelease=None)
+
+            message = (
+                f"Updating from {current_version} to {update_version} will use a new set of Blender Preferences\n\n"
+                f"Do you want to remove the old build ({current_version}) from your library?"
+            )
+
+            self._confirmation_popup = PopupWindow(
+                message=message,
+                title="Major Version Update - Remove Old Build",
+                icon=PopupIcon.WARNING,
+                buttons=["Remove", "Keep Both Versions"],
+                parent=self.parent,
+            )
+
+            self._confirmation_popup.accepted.connect(lambda: self._handle_removal_confirmation(callback, True))
+            self._confirmation_popup.cancelled.connect(lambda: self._handle_removal_confirmation(callback, False))
+        else:
+            callback(True)
+
+    def _handle_removal_confirmation(self, callback, remove_old_build):
+        callback(remove_old_build)
+
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
 
@@ -559,6 +699,18 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def copy_build_hash(self):
         QApplication.clipboard().setText(self.build_info.build_hash)
+
+    @Slot()
+    def freeze_update(self):
+        if self.build_info.is_frozen:
+            self.build_info.is_frozen = False
+            self.freezeUpdate.setText("Freeze Update")
+        else:
+            self.build_info.is_frozen = True
+            self.freezeUpdate.setText("Unfreeze Update")
+            self._hide_update_button()
+
+        self.write_build_info()
 
     @Slot()
     def rename_branch(self):
@@ -740,7 +892,13 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def add_to_favorites(self):
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self.parent, item, self.link, self.parent.UserFavoritesListWidget, parent_widget=self)
+        widget = LibraryWidget(
+            self.parent,
+            item,
+            self.link,
+            self.parent.UserFavoritesListWidget,
+            parent_widget=self,
+        )
         if not self.parent.UserFavoritesListWidget.contains_build_info(self.build_info):
             self.parent.UserFavoritesListWidget.insert_item(item, widget)
         self.child_widget = widget
@@ -819,7 +977,9 @@ class LibraryWidget(BaseBuildWidget):
         platform = get_platform()
 
         if platform == "Windows":
-            folder_path.startfile()
+            os.startfile(folder_path.as_posix())
+        elif platform == "macOS":
+            subprocess.call(["open", folder_path.as_posix()])
         elif platform == "Linux":
             # Due to a bug/feature in Pyinstaller, we
             # have to remove all environment variables
@@ -846,6 +1006,7 @@ class LibraryWidget(BaseBuildWidget):
                     if subprocess.call([fm, folder_path.as_posix()], env=env_override) == 0:
                         return
                 logger.error("No file manager found to open the folder.")
+
 
     @Slot()
     def show_build_folder(self):
@@ -905,3 +1066,12 @@ class LibraryWidget(BaseBuildWidget):
     def _destroyed(self):
         if self.parent.favorite == self:
             self.parent.favorite = None
+
+    @Slot(int, int, int)
+    def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Update column widths to match header splitter."""
+        if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
+            return
+        self.subversionLabel.setFixedWidth(version_width)
+        self.branchLabel.setFixedWidth(branch_width)
+        self.commitTimeLabel.setFixedWidth(commit_time_width)

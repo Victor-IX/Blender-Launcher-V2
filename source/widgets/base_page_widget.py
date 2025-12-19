@@ -1,12 +1,13 @@
 from enum import Enum
 
-from modules.settings import get_list_sorting_type, set_list_sorting_type
-from PySide6.QtCore import Qt
+from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QSplitter,
     QVBoxLayout,
     QWidget,
 )
@@ -16,12 +17,27 @@ from widgets.base_list_widget import BaseListWidget
 class SortingType(Enum):
     DATETIME = 1
     VERSION = 2
+    LABEL = 3
 
 
 class BasePageWidget(QWidget):
+    # Signal emitted when column widths change: (version_width, branch_width, commit_time_width)
+    column_widths_changed = Signal(int, int, int)
+
+    # Default column widths
+    DEFAULT_VERSION_WIDTH = 85
+    DEFAULT_BRANCH_WIDTH = 200
+    DEFAULT_COMMIT_TIME_WIDTH = 118
+
     def __init__(self, parent, page_name, time_label, info_text, show_reload=False, extended_selection=False):
         super().__init__(parent)
         self.name = page_name
+
+        # Debounce timer for saving column widths
+        self._save_widths_timer = QTimer(self)
+        self._save_widths_timer.setSingleShot(True)
+        self._save_widths_timer.setInterval(200)
+        self._save_widths_timer.timeout.connect(self._save_column_widths)
 
         self.sort_order_asc = True
 
@@ -80,7 +96,7 @@ class BasePageWidget(QWidget):
         self.HeaderWidget.setProperty("ToolBoxWidget", True)
         self.HeaderLayout = QHBoxLayout(self.HeaderWidget)
         self.HeaderLayout.setContentsMargins(2, 0, 0, 0)
-        self.HeaderLayout.setSpacing(2)
+        self.HeaderLayout.setSpacing(0)
 
         if show_reload is True:
             self.fakeLabel = QPushButton("Reload")
@@ -90,25 +106,56 @@ class BasePageWidget(QWidget):
         else:
             self.fakeLabel = QLabel()
 
-        self.fakeLabel.setFixedWidth(85)
+        self.fakeLabel.setFixedWidth(95)  # Match launchButton width in list items
+
+        # Create splitter for resizable columns
+        self.headerSplitter = QSplitter(Qt.Orientation.Horizontal)
+        self.headerSplitter.setHandleWidth(3)
+        self.headerSplitter.setChildrenCollapsible(False)
 
         self.subversionLabel = QPushButton("Version")
-        self.subversionLabel.setFixedWidth(75)
+        self.subversionLabel.setMinimumWidth(60)
         self.subversionLabel.setProperty("ListHeader", True)
         self.subversionLabel.setCheckable(True)
         self.subversionLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.VERSION))
-        self.branchLabel = QLabel("Branch")
-        self.branchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.branchLabel = QPushButton("Branch")
+        self.branchLabel.setMinimumWidth(80)
+        self.branchLabel.setProperty("ListHeader", True)
+        self.branchLabel.setCheckable(True)
+        self.branchLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.LABEL))
+
         self.commitTimeLabel = QPushButton(time_label)
-        self.commitTimeLabel.setFixedWidth(118)
+        self.commitTimeLabel.setMinimumWidth(80)
         self.commitTimeLabel.setProperty("ListHeader", True)
         self.commitTimeLabel.setCheckable(True)
         self.commitTimeLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.DATETIME))
 
+        self.headerSplitter.addWidget(self.subversionLabel)
+        self.headerSplitter.addWidget(self.branchLabel)
+        self.headerSplitter.addWidget(self.commitTimeLabel)
+
+        # Set stretch factors: version and commit time stay fixed, branch stretches
+        self.headerSplitter.setStretchFactor(0, 0)  # Version
+        self.headerSplitter.setStretchFactor(1, 1)  # Branch
+        self.headerSplitter.setStretchFactor(2, 0)  # Commit time
+
+        # Load saved column widths or use defaults
+        saved_widths = get_column_widths(self.name)
+        if saved_widths:
+            self.headerSplitter.setSizes(saved_widths)
+        else:
+            self.headerSplitter.setSizes([
+                self.DEFAULT_VERSION_WIDTH,
+                self.DEFAULT_BRANCH_WIDTH,
+                self.DEFAULT_COMMIT_TIME_WIDTH
+            ])
+
+        # Connect splitter movement to emit signal and save
+        self.headerSplitter.splitterMoved.connect(self._on_splitter_moved)
+
         self.HeaderLayout.addWidget(self.fakeLabel)
-        self.HeaderLayout.addWidget(self.subversionLabel)
-        self.HeaderLayout.addWidget(self.branchLabel, stretch=1)
-        self.HeaderLayout.addWidget(self.commitTimeLabel)
+        self.HeaderLayout.addWidget(self.headerSplitter, stretch=1)
         self.HeaderLayout.addSpacing(34)
 
         # Final layout
@@ -138,5 +185,28 @@ class BasePageWidget(QWidget):
 
         self.commitTimeLabel.setChecked(sorting_type == SortingType.DATETIME)
         self.subversionLabel.setChecked(sorting_type == SortingType.VERSION)
+        self.branchLabel.setChecked(sorting_type == SortingType.LABEL)
 
         set_list_sorting_type(self.name, sorting_type)
+
+    def _on_splitter_moved(self, pos, index):
+        """Handle splitter movement - debounce save and emit signal."""
+        sizes = self.headerSplitter.sizes()
+        self._save_widths_timer.start()  # Restart debounce timer
+        self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
+
+    def _save_column_widths(self):
+        """Save column widths to settings (called after debounce)."""
+        sizes = self.headerSplitter.sizes()
+        set_column_widths(self.name, sizes)
+
+    def resizeEvent(self, event):
+        """Emit column width changes when the widget is resized."""
+        super().resizeEvent(event)
+        sizes = self.headerSplitter.sizes()
+        self.column_widths_changed.emit(sizes[0], sizes[1], sizes[2])
+
+    def get_column_widths(self) -> tuple[int, int, int]:
+        """Return current column widths (version, branch, commit_time)."""
+        sizes = self.headerSplitter.sizes()
+        return (sizes[0], sizes[1], sizes[2])

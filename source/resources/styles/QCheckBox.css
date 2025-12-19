@@ -2,8 +2,20 @@ QCheckBox {
     color: #FFFFFF
 }
 
+QCheckBox:disabled {
+    color: #828282;
+}
+
+QCheckBox::indicator::disabled:checked {
+    image: url(:resources/icons/box_checked_disabled.svg);
+}
+
 QCheckBox::indicator:checked {
     image: url(:resources/icons/box_checked.svg);
+}
+
+QCheckBox::indicator:unchecked:disabled {
+    image: url(:resources/icons/box_unchecked_disabled.svg);
 }
 
 QCheckBox::indicator:unchecked {

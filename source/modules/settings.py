@@ -68,6 +68,12 @@ delete_action = {
     "Delete Permanently": 1,
 }
 
+update_behavior = {
+    "Major": 0,
+    "Minor": 1,
+    "Patch": 2,
+}
+
 
 def get_settings() -> QSettings:
     file = get_config_file()
@@ -305,6 +311,94 @@ def set_bash_arguments(args):
     get_settings().setValue("bash_arguments", args.strip())
 
 
+def get_show_update_button() -> bool:
+    return get_settings().value("show_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_show_update_button(is_checked):
+    get_settings().setValue("show_update_button", is_checked)
+
+
+def get_use_advanced_update_button() -> bool:
+    return get_settings().value("use_advanced_update_button", defaultValue=False, type=bool)  # type: ignore
+
+
+def set_use_advanced_update_button(is_checked):
+    get_settings().setValue("use_advanced_update_button", is_checked)
+
+
+def set_show_stable_update_button(is_checked):
+    get_settings().setValue("show_stable_update_button", is_checked)
+
+
+def get_show_stable_update_button() -> bool:
+    return get_settings().value("show_stable_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_show_daily_update_button(is_checked):
+    get_settings().setValue("show_daily_update_button", is_checked)
+
+
+def get_show_daily_update_button() -> bool:
+    return get_settings().value("show_daily_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_show_experimental_update_button(is_checked):
+    get_settings().setValue("show_experimental_update_button", is_checked)
+
+
+def get_show_experimental_update_button() -> bool:
+    return get_settings().value("show_experimental_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_show_bfa_update_button(is_checked):
+    get_settings().setValue("show_bfa_update_button", is_checked)
+
+
+def get_show_bfa_update_button() -> bool:
+    return get_settings().value("show_bfa_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def get_update_behavior() -> int:
+    return get_settings().value("update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_update_behavior(behavior):
+    get_settings().setValue("update_behavior", update_behavior[behavior])
+
+
+def get_stable_update_behavior() -> int:
+    return get_settings().value("stable_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_stable_update_behavior(behavior):
+    get_settings().setValue("stable_update_behavior", update_behavior[behavior])
+
+
+def get_daily_update_behavior() -> int:
+    return get_settings().value("daily_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_daily_update_behavior(behavior):
+    get_settings().setValue("daily_update_behavior", update_behavior[behavior])
+
+
+def get_experimental_update_behavior() -> int:
+    return get_settings().value("experimental_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_experimental_update_behavior(behavior):
+    get_settings().setValue("experimental_update_behavior", update_behavior[behavior])
+
+
+def get_bfa_update_behavior() -> int:
+    return get_settings().value("bfa_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_bfa_update_behavior(behavior):
+    get_settings().setValue("bfa_update_behavior", update_behavior[behavior])
+
+
 def get_install_template() -> bool:
     return get_settings().value("install_template", type=bool)  # type: ignore
 
@@ -501,12 +595,33 @@ def set_scrape_stable_builds(b: bool):
     get_settings().setValue("scrape_stable_builds", b)
 
 
+# For backcompat -- keep for a few versions
 def get_scrape_automated_builds() -> bool:
     return get_settings().value("scrape_automated_builds", defaultValue=True, type=bool)  # type: ignore
 
 
-def set_scrape_automated_builds(b: bool):
-    get_settings().setValue("scrape_automated_builds", b)
+def get_scrape_daily_builds() -> bool:
+    s = get_settings()
+    if not s.contains("scrape_daily_builds") and s.contains("scrape_automated_builds"):
+        return get_scrape_automated_builds()
+
+    return s.value("scrape_daily_builds", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_scrape_daily_builds(b: bool):
+    get_settings().setValue("scrape_daily_builds", b)
+
+
+def get_scrape_experimental_builds() -> bool:
+    s = get_settings()
+    if not s.contains("scrape_experimental_builds") and s.contains("scrape_automated_builds"):
+        return get_scrape_automated_builds()
+
+    return s.value("scrape_experimental_builds", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_scrape_experimental_builds(b: bool):
+    get_settings().setValue("scrape_experimental_builds", b)
 
 
 def get_scrape_bfa_builds() -> bool:
@@ -667,3 +782,28 @@ def migrate_config(force=False):
         if not config_path.is_dir():
             config_path.mkdir()
         shutil.move(old_config.resolve(), new_config.resolve())
+
+
+def get_column_widths(list_name: str = None) -> list[int] | None:
+    """Get saved column widths (global, shared across all lists)."""
+    import json
+
+    # Use global key - all lists share the same column widths
+    value: str = get_settings().value("Internal/global_column_widths", defaultValue="", type=str)  # type: ignore
+    if not value:
+        return None
+    try:
+        widths = json.loads(value)
+        if isinstance(widths, list) and len(widths) == 3:
+            return widths
+    except json.JSONDecodeError:
+        pass
+    return None
+
+
+def set_column_widths(list_name: str, widths: list[int]):
+    """Save column widths (global, shared across all lists)."""
+    import json
+
+    # Use global key - all lists share the same column widths
+    get_settings().setValue("Internal/global_column_widths", json.dumps(widths))

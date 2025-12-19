@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Literal
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
 from modules.settings import get_install_template, get_library_folder
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot, QTimer
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from semver import Version
 from threads.downloader import DownloadTask
@@ -54,6 +54,8 @@ class DownloadWidget(BaseBuildWidget):
         self.state = DownloadState.IDLE
         self.build_dir = None
         self.source_file = None
+        self.updating_widget = None
+        self._is_removed = False
 
         self.progressBar = BaseProgressBarWidget()
         self.progressBar.setFont(self.parent.font_8)
@@ -61,18 +63,18 @@ class DownloadWidget(BaseBuildWidget):
         self.progressBar.hide()
 
         self.downloadButton = QPushButton("Download")
-        self.downloadButton.setFixedWidth(85)
+        self.downloadButton.setFixedWidth(95)  # Match header fakeLabel width
         self.downloadButton.setProperty("LaunchButton", True)
         self.downloadButton.clicked.connect(self.init_downloader)
         self.downloadButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
         self.installedButton = QPushButton("Installed")
-        self.installedButton.setFixedWidth(85)
+        self.installedButton.setFixedWidth(95)  # Match header fakeLabel width
         self.installedButton.setProperty("InstalledButton", True)
         self.installedButton.clicked.connect(self.focus_installed)
 
         self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.setFixedWidth(85)
+        self.cancelButton.setFixedWidth(95)  # Match header fakeLabel width
         self.cancelButton.setProperty("CancelButton", True)
         self.cancelButton.clicked.connect(self.download_cancelled)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -107,6 +109,14 @@ class DownloadWidget(BaseBuildWidget):
         self.build_info_hl.addWidget(self.branchLabel, stretch=1)
         self.build_info_hl.addWidget(self.commitTimeLabel)
 
+        # Connect to column width changes from the page widget
+        page_widget = self.list_widget.parent
+        if page_widget is not None:
+            page_widget.column_widths_changed.connect(self._update_column_widths)
+            # Apply initial column widths
+            widths = page_widget.get_column_widths()
+            self._update_column_widths(widths[0], widths[1], widths[2])
+
         if self.show_new and not self.installed:
             self.build_state_widget.setNewBuild(True)
 
@@ -140,8 +150,6 @@ class DownloadWidget(BaseBuildWidget):
                     self.showReleaseNotesAction.setText("Show PR Details")
                     self.menu.addAction(self.showReleaseNotesAction)
 
-
-
         self.list_widget.sortItems()
 
     def context_menu(self):
@@ -166,8 +174,9 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
 
-    def init_downloader(self):
+    def init_downloader(self, updating_widget=None):
         self.item.setSelected(True)
+        self.updating_widget = updating_widget
 
         if self.show_new is True:
             self.build_state_widget.setNewBuild(False)
@@ -226,7 +235,8 @@ class DownloadWidget(BaseBuildWidget):
         t.finished.connect(self.init_template_installer)
         self.parent.task_queue.append(t)
 
-    def init_template_installer(self, dist: Path):
+    def init_template_installer(self, dist: Path, is_removed: bool):
+        self._is_removed = is_removed
         self.build_state_widget.setExtract(False)
         self.build_dir = dist
 
@@ -309,7 +319,10 @@ class DownloadWidget(BaseBuildWidget):
         t.failure.connect(lambda: print("Renaming failed"))
         self.parent.task_queue.append(t)
 
-    def download_finished(self, path):
+    def download_finished(self, path, is_removed: bool):
+        if self._is_removed is False:
+            self._is_removed = is_removed
+
         self.set_state(DownloadState.IDLE)
 
         if path is None:
@@ -334,6 +347,26 @@ class DownloadWidget(BaseBuildWidget):
             )
             self.setInstalled(widget)
 
+            if self.updating_widget is not None and self._is_removed is False:
+                QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
+
+    def remove_old_build(self, widget):
+        if hasattr(widget, "confirm_major_version_update_removal"):
+            widget.confirm_major_version_update_removal(
+                lambda should_remove: self._proceed_with_removal(widget, should_remove)
+            )
+        else:
+            self._proceed_with_removal(widget, True)
+
+    def _proceed_with_removal(self, widget, should_remove):
+        """Actually remove the old build based on user's choice."""
+        if should_remove and hasattr(widget, "remove_from_drive"):
+            widget.remove_from_drive(trash=True)
+
+        if hasattr(widget, "update_finished"):
+            widget.update_finished()
+        self.updating_widget = None
+
     def setInstalled(self, build_widget: BaseBuildWidget):
         if self.state == DownloadState.IDLE:
             build_widget.destroyed.connect(self.uninstalled)
@@ -348,3 +381,10 @@ class DownloadWidget(BaseBuildWidget):
         self.installedButton.hide()
         self.downloadButton.show()
         self.installed = None
+
+    @Slot(int, int, int)
+    def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+        """Update column widths to match header splitter."""
+        self.subversionLabel.setFixedWidth(version_width)
+        self.branchLabel.setFixedWidth(branch_width)
+        self.commitTimeLabel.setFixedWidth(commit_time_width)

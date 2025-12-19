@@ -4,9 +4,9 @@
 
 ![Blender Launcher Logo](imgs/bl_logo.png)
 
-[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.7/Blender_Launcher_v2.4.7_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 24.7%; text-align: center;"}
-[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.7/Blender_Launcher_v2.4.7_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
-[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.4.7/Blender_Launcher_v2.4.7_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
+[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 24.7%; text-align: center;"}
 [:fontawesome-solid-download: All Releases](https://github.com/Victor-IX/Blender-Launcher-V2/releases){: .md-button .md-button--primary style="display: inline-block; float: right; width: 24.45%; text-align: center;"}
 
 <br/>
@@ -14,9 +14,9 @@
 
 ## Original [Project](https://github.com/DotBow/Blender-Launcher) By [DotBow](https://github.com/DotBow)
 
-> The **Blender Laucnher V2** project exists because DotBow/Blender-Launcher has been inactive since October of 2022. It was archived on the 28th of Nov, 2023 and will no longer be receiving updates.
-
-## What is it?
+>  This project exists because [DotBow/Blender-Launcher](https://github.com/DotBow/Blender-Launcher) has been inactive since October of 2022. It was archived on the 28th of November, 2023 and no longer receives updates.
+> 
+## What is Blender Launcher?
 
 Blender Launcher is a standalone software client that provides management for stable, daily and experimental builds of [Blender 3D](https://www.blender.org/). It is a free open source project available for 64-bit Windows and Linux (GLIBC 2.27 and higher) operating systems.
 
@@ -41,34 +41,37 @@ Blender Launcher is a standalone software client that provides management for st
 
 ## Why do I need it?
 
-The goal of Blender Launcher is to make it easier to stay up to date with the latest features and improvements of Blender 3D together with the security of stable releases. Being a minimalistic portable application it is a nice tool for organizing the evolving free and open source 3D creation suite.
+The goal of Blender Launcher is to make it easier to stay up to date with the latest features and improvements of Blender 3D together with the security of stable releases. Since it is a minimalistic portable application, it is a nice tool for organizing the evolving, free, and open source 3D creation suite.
 
 ## What features does it have?
 
-Compared to its [predecessor](https://github.com/DotBow/Blender-Version-Manager) Blender Launcher introduces a number of major improvements:
+Core features:
 
-* Rewritten from the ground up for better stability and extensibility
-* All official builds are available:
+* Automatic checking for the latest builds.
+* Quick access to your favorite builds via the tray context menu or by middle clicking on the tray icon.
+* Register .blend file extension for your preferred build or the last saved build.
+* Startup arguments for launching Blender.
+* Template installation.
+* Indication of running builds and its number of instances.
+
+Compared to its [predecessor](https://github.com/DotBow/Blender-Version-Manager), Blender Launcher introduces a number of major improvements:
+
+* It's rewritten from the ground up for better stability and extensibility.
+* All official builds, as well as the popular fork Bforartists, are available:
     * [Stable releases](https://download.blender.org/release/)
     * [Daily builds](https://builder.blender.org/download/daily/)
     * [Experimental branches](https://builder.blender.org/download/branches/)
+    * [Bforartists](https://www.bforartists.de/download/)
+* Version consistent .blend file opening
 * Faster starting times by caching data
 * Support for high DPI displays
-
-Core features:
-
-* Automatic checking of latest builds
-* Fast access of favorite build via tray context menu or by middle click on tray icon
-* Register .blend file extension for preferred build
-* Startup arguments for launching Blender
-* Template installation
-* Indication of running builds and its number of instances
+And many new quality of life features!
 
 ## How to start using it?
 
-* :fontawesome-solid-download: Download [latest version](https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest) from [releases page](https://github.com/Victor-IX/Blender-Launcher-V2/releases)
-* :fontawesome-solid-rocket: Follow [Installation](installation.md#installing-blender-launcher) instructions and notes
-* :fontawesome-solid-comment: Use Blender Artists Community [thread](https://blenderartists.org/t/blender-launcher-standalone-software-client) to ask questions and make proposals
+* :fontawesome-solid-download: Download the [latest version](https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest) from the [releases page](https://github.com/Victor-IX/Blender-Launcher-V2/releases)
+* :fontawesome-solid-rocket: Follow the [Installation](installation.md#installing-blender-launcher) instructions and notes
+* :fontawesome-solid-comment: Ask questions and make proposals in the Blender Artists Community [thread](https://blenderartists.org/t/blender-launcher-standalone-software-client) or in our [Discord](https://discord.gg/3jrTZFJkTd)
 
 ## How to thank the developer?
 

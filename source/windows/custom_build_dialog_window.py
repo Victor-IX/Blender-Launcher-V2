@@ -99,7 +99,9 @@ class CustomBuildDialogWindow(BaseWindow):
         # get list of executable files in `path`
         if platform == "Windows":
             executables = [
-                str(file.relative_to(path)) for file in path.iterdir() if file.is_file() and file.suffix == ".exe"
+                str(file.relative_to(path))
+                for file in path.iterdir()
+                if file.is_file() and file.suffix in (".exe", ".bat", ".cmd")
             ]
         else:
             executables = [
@@ -229,7 +231,14 @@ class CustomBuildDialogWindow(BaseWindow):
 
     def check_executable_choice(self):
         p = self.path / self.executable_choice.text()
-        if os.access(p, os.X_OK):
+        platform = get_platform()
+
+        if platform == "Windows":
+            is_valid = p.is_file() and p.suffix in (".exe", ".bat", ".cmd")
+        else:
+            is_valid = os.access(p, os.X_OK)
+
+        if is_valid:
             self.executable_choice.set_valid(True)
             self.exe_is_valid = True
         else:
@@ -237,7 +246,15 @@ class CustomBuildDialogWindow(BaseWindow):
             self.exe_is_valid = False
 
         is_chosen = bool(self.executable_choice.text())
+
+        # Disable auto-detect for batch files on Windows
+        if platform == "Windows" and p.suffix.lower() in (".bat", ".cmd"):
+            self.auto_detect_button.setEnabled(False)
+        else:
+            self.auto_detect_button.setEnabled(is_chosen)
+
         self.auto_detect_button.setEnabled(is_chosen)
+
         self.check_binfo_is_valid()
 
     def check_binfo_is_valid(self):

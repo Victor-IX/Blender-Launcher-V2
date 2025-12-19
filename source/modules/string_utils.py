@@ -1,9 +1,9 @@
-from operator import add
 import re
 
+from pathlib import Path
+from urllib.parse import urlparse, parse_qs
 from bs4 import BeautifulSoup
 from markdown import markdown
-import re
 
 
 def markdown_to_text(markdown_text: str) -> str:
@@ -45,3 +45,24 @@ def patch_note_cleaner(patch_note_text: str) -> str:
             lines.insert(i, "")
 
     return "\n".join(lines)
+
+
+def extract_filename_from_url(url: str) -> str:
+    """
+    Extracts the filename from a URL, handling special cases like query parameters.
+
+    Args:
+        url: The URL to extract filename from
+
+    Returns:
+        str: The extracted filename
+    """
+    parsed_url = urlparse(url)
+
+    # Check if this is a bforartists NextCloud URL with query parameters (legacy format)
+    if "cloud.bforartists.de" in parsed_url.netloc and parsed_url.query:
+        query_params = parse_qs(parsed_url.query)
+        if "files" in query_params:
+            return query_params["files"][0]
+
+    return Path(parsed_url.path).name

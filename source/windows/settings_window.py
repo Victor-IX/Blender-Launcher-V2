@@ -15,7 +15,7 @@ from modules.settings import (
     proxy_types,
 )
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QSizePolicy, QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QScrollArea, QTabWidget, QVBoxLayout, QWidget
 from widgets.header import WindowHeader
 from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget
@@ -28,15 +28,10 @@ class SettingsWindow(BaseWindow):
         super().__init__(parent=parent)
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
-        sizePolicy = QSizePolicy(
-            QSizePolicy.Preferred,
-            QSizePolicy.MinimumExpanding,
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QSize(480, 744))
+
+        self.resize(QSize(700, 800))
+        self.setMinimumSize(QSize(500, 600))
+
         self.CentralWidget = QWidget(self)
         self.CentralLayout = QVBoxLayout(self.CentralWidget)
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
@@ -74,23 +69,50 @@ class SettingsWindow(BaseWindow):
         self.TabWidget.setProperty("Center", True)
         self.CentralLayout.addWidget(self.TabWidget)
 
+        # General Tab
         self.GeneralTab = TabWidget(self.TabWidget, "General")
+        self.GeneralScrollArea = QScrollArea()
+        self.GeneralScrollArea.setWidgetResizable(True)
+        self.GeneralScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.GeneralScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.GeneralScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.GeneralTabWidget = general_tab.GeneralTabWidget(parent=self.parent)
-        self.GeneralTab.layout().addWidget(self.GeneralTabWidget)
+        self.GeneralScrollArea.setWidget(self.GeneralTabWidget)
+        self.GeneralTab.layout().addWidget(self.GeneralScrollArea)
 
+        # Appearance Tab
         self.AppearanceTab = TabWidget(self.TabWidget, "Appearance")
+        self.AppearanceScrollArea = QScrollArea()
+        self.AppearanceScrollArea.setWidgetResizable(True)
+        self.AppearanceScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.AppearanceScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.AppearanceScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.AppearanceTabWidget = appearance_tab.AppearanceTabWidget(parent=self.parent)
-        self.AppearanceTab.layout().addWidget(self.AppearanceTabWidget)
+        self.AppearanceScrollArea.setWidget(self.AppearanceTabWidget)
+        self.AppearanceTab.layout().addWidget(self.AppearanceScrollArea)
 
+        # Connection Tab
         self.ConnectionTab = TabWidget(self.TabWidget, "Connection")
+        self.ConnectionScrollArea = QScrollArea()
+        self.ConnectionScrollArea.setWidgetResizable(True)
+        self.ConnectionScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.ConnectionScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.ConnectionScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.ConnectionTabWidget = connection_tab.ConnectionTabWidget(parent=self.parent)
-        self.ConnectionTab.layout().addWidget(self.ConnectionTabWidget)
+        self.ConnectionScrollArea.setWidget(self.ConnectionTabWidget)
+        self.ConnectionTab.layout().addWidget(self.ConnectionScrollArea)
 
+        # Blender Builds Tab
         self.BlenderBuildsTab = TabWidget(self.TabWidget, "Blender Builds")
+        self.BlenderBuildsScrollArea = QScrollArea()
+        self.BlenderBuildsScrollArea.setWidgetResizable(True)
+        self.BlenderBuildsScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.BlenderBuildsScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.BlenderBuildsScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget(parent=self.parent)
-        self.BlenderBuildsTab.layout().addWidget(self.BlenderBuildsTabWidget)
+        self.BlenderBuildsScrollArea.setWidget(self.BlenderBuildsTabWidget)
+        self.BlenderBuildsTab.layout().addWidget(self.BlenderBuildsScrollArea)
 
-        self.resize(self.sizeHint())
         self.show()
 
     def get_unfinished_business(self) -> list[str]:

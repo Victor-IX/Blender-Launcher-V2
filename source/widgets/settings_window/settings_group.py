@@ -96,6 +96,9 @@ class SettingsGroup(QFrame):
         self._collapsed = True
         self.collapsed.emit(True)
 
+        if self.parent():
+            self.parent().updateGeometry()
+
     @Slot()
     def uncollapse(self):
         assert self._widget is not None
@@ -103,3 +106,6 @@ class SettingsGroup(QFrame):
         self.collapse_button.setIcon(self._collapse_icon)
         self._collapsed = False
         self.collapsed.emit(False)
+
+        if self.parent():
+            self.parent().updateGeometry()

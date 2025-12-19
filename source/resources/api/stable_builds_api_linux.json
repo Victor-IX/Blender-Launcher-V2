@@ -1,12 +1,12 @@
 {
-    "api_file_version": "10.0",
+    "api_file_version": "16.0",
     "folders": {
         "2.48.0": {
             "assets": [
                 [
                     "https://download.blender.org/release/Blender2.48a/blender-2.48a-linux-glibc236-py24-x86_64-static.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -15,7 +15,8 @@
                                 "commit_time": "2008-10-23T08:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -23,7 +24,7 @@
                 [
                     "https://download.blender.org/release/Blender2.48a/blender-2.48a-linux-glibc236-py24-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -32,7 +33,8 @@
                                 "commit_time": "2008-10-23T08:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -40,7 +42,7 @@
                 [
                     "https://download.blender.org/release/Blender2.48a/blender-2.48a-linux-glibc236-py25-x86_64-static.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -49,7 +51,8 @@
                                 "commit_time": "2008-10-23T08:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -57,7 +60,7 @@
                 [
                     "https://download.blender.org/release/Blender2.48a/blender-2.48a-linux-glibc236-py25-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -66,7 +69,8 @@
                                 "commit_time": "2008-10-23T08:12:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -79,7 +83,7 @@
                 [
                     "https://download.blender.org/release/Blender2.49b/blender-2.49b-linux-glibc236-py25-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -88,7 +92,8 @@
                                 "commit_time": "2009-09-01T18:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -96,7 +101,7 @@
                 [
                     "https://download.blender.org/release/Blender2.49b/blender-2.49b-linux-glibc236-py26-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -105,7 +110,8 @@
                                 "commit_time": "2009-09-01T18:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -118,7 +124,7 @@
                 [
                     "https://download.blender.org/release/Blender2.50alpha/blender-2.5-alpha0-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -127,7 +133,8 @@
                                 "commit_time": "2009-12-09T19:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -135,7 +142,7 @@
                 [
                     "https://download.blender.org/release/Blender2.50alpha/blender-2.5-alpha1-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -144,7 +151,8 @@
                                 "commit_time": "2010-02-18T16:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -152,7 +160,7 @@
                 [
                     "https://download.blender.org/release/Blender2.50alpha/blender-2.5-alpha2-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -161,7 +169,8 @@
                                 "commit_time": "2010-03-09T17:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -174,7 +183,7 @@
                 [
                     "https://download.blender.org/release/Blender2.53beta/blender-2.53-beta-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -183,7 +192,8 @@
                                 "commit_time": "2010-07-21T17:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -196,7 +206,7 @@
                 [
                     "https://download.blender.org/release/Blender2.54beta/blender-2.54-beta-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -205,7 +215,8 @@
                                 "commit_time": "2010-09-11T21:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -218,7 +229,7 @@
                 [
                     "https://download.blender.org/release/Blender2.55beta/blender-2.55-beta-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -227,7 +238,8 @@
                                 "commit_time": "2010-11-12T15:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -240,7 +252,7 @@
                 [
                     "https://download.blender.org/release/Blender2.56beta/blender-2.56-beta-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -249,7 +261,8 @@
                                 "commit_time": "2010-12-30T17:25:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -262,7 +275,7 @@
                 [
                     "https://download.blender.org/release/Blender2.57/blender-2.57-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -271,7 +284,8 @@
                                 "commit_time": "2011-04-13T16:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -279,7 +293,7 @@
                 [
                     "https://download.blender.org/release/Blender2.57/blender-2.57a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -288,7 +302,8 @@
                                 "commit_time": "2011-04-21T20:43:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -296,7 +311,7 @@
                 [
                     "https://download.blender.org/release/Blender2.57/blender-2.57b-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -305,7 +320,8 @@
                                 "commit_time": "2011-04-26T15:56:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -318,7 +334,7 @@
                 [
                     "https://download.blender.org/release/Blender2.58/blender-2.58-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -327,7 +343,8 @@
                                 "commit_time": "2011-06-22T15:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -335,7 +352,7 @@
                 [
                     "https://download.blender.org/release/Blender2.58/blender-2.58a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -344,7 +361,8 @@
                                 "commit_time": "2011-07-01T15:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -357,7 +375,7 @@
                 [
                     "https://download.blender.org/release/Blender2.59/blender-2.59-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -366,7 +384,8 @@
                                 "commit_time": "2011-08-12T09:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -379,7 +398,7 @@
                 [
                     "https://download.blender.org/release/Blender2.60/blender-2.60-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -388,7 +407,8 @@
                                 "commit_time": "2011-10-19T00:52:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -396,7 +416,7 @@
                 [
                     "https://download.blender.org/release/Blender2.60/blender-2.60a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -405,7 +425,8 @@
                                 "commit_time": "2011-10-23T17:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -418,7 +439,7 @@
                 [
                     "https://download.blender.org/release/Blender2.61/blender-2.61-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -427,7 +448,8 @@
                                 "commit_time": "2011-12-13T21:01:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -440,7 +462,7 @@
                 [
                     "https://download.blender.org/release/Blender2.62/blender-2.62-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -449,7 +471,8 @@
                                 "commit_time": "2012-02-15T19:43:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -462,7 +485,7 @@
                 [
                     "https://download.blender.org/release/Blender2.63/blender-2.63-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -471,7 +494,8 @@
                                 "commit_time": "2012-04-29T11:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -479,7 +503,7 @@
                 [
                     "https://download.blender.org/release/Blender2.63/blender-2.63a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -488,7 +512,8 @@
                                 "commit_time": "2012-05-09T18:45:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -501,7 +526,7 @@
                 [
                     "https://download.blender.org/release/Blender2.64/blender-2.64-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -510,7 +535,8 @@
                                 "commit_time": "2012-10-03T14:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -518,7 +544,7 @@
                 [
                     "https://download.blender.org/release/Blender2.64/blender-2.64a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -527,7 +553,8 @@
                                 "commit_time": "2012-10-09T18:35:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -540,7 +567,7 @@
                 [
                     "https://download.blender.org/release/Blender2.65/blender-2.65-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -549,7 +576,8 @@
                                 "commit_time": "2012-12-10T17:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -557,7 +585,7 @@
                 [
                     "https://download.blender.org/release/Blender2.65/blender-2.65-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -566,7 +594,8 @@
                                 "commit_time": "2012-12-10T17:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -574,7 +603,7 @@
                 [
                     "https://download.blender.org/release/Blender2.65/blender-2.65a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -583,7 +612,8 @@
                                 "commit_time": "2012-12-19T14:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -591,7 +621,7 @@
                 [
                     "https://download.blender.org/release/Blender2.65/blender-2.65a-linux-glibc27-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -600,7 +630,8 @@
                                 "commit_time": "2012-12-19T14:31:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -613,7 +644,7 @@
                 [
                     "https://download.blender.org/release/Blender2.66/blender-2.66-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -622,7 +653,8 @@
                                 "commit_time": "2013-02-20T18:01:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -630,7 +662,7 @@
                 [
                     "https://download.blender.org/release/Blender2.66/blender-2.66a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -639,7 +671,8 @@
                                 "commit_time": "2013-03-05T17:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -652,7 +685,7 @@
                 [
                     "https://download.blender.org/release/Blender2.67/blender-2.67-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -661,7 +694,8 @@
                                 "commit_time": "2013-05-07T17:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -669,7 +703,7 @@
                 [
                     "https://download.blender.org/release/Blender2.67/blender-2.67a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -678,7 +712,8 @@
                                 "commit_time": "2013-05-21T14:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -686,7 +721,7 @@
                 [
                     "https://download.blender.org/release/Blender2.67/blender-2.67b-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -695,7 +730,8 @@
                                 "commit_time": "2013-05-30T06:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -708,7 +744,7 @@
                 [
                     "https://download.blender.org/release/Blender2.68/blender-2.68-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -717,7 +753,8 @@
                                 "commit_time": "2013-07-18T11:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -725,7 +762,7 @@
                 [
                     "https://download.blender.org/release/Blender2.68/blender-2.68a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -734,7 +771,8 @@
                                 "commit_time": "2013-07-24T08:09:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -747,7 +785,7 @@
                 [
                     "https://download.blender.org/release/Blender2.69/blender-2.69-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -756,7 +794,8 @@
                                 "commit_time": "2013-10-29T16:17:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -769,7 +808,7 @@
                 [
                     "https://download.blender.org/release/Blender2.70/blender-2.70-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -778,7 +817,8 @@
                                 "commit_time": "2014-03-19T06:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -786,7 +826,7 @@
                 [
                     "https://download.blender.org/release/Blender2.70/blender-2.70a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -795,7 +835,8 @@
                                 "commit_time": "2014-04-10T12:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -808,7 +849,7 @@
                 [
                     "https://download.blender.org/release/Blender2.71/blender-2.71-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -817,7 +858,8 @@
                                 "commit_time": "2014-06-25T20:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -830,7 +872,7 @@
                 [
                     "https://download.blender.org/release/Blender2.72/blender-2.72-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -839,7 +881,8 @@
                                 "commit_time": "2014-10-03T17:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -847,7 +890,7 @@
                 [
                     "https://download.blender.org/release/Blender2.72/blender-2.72a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -856,7 +899,8 @@
                                 "commit_time": "2014-10-15T17:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -864,7 +908,7 @@
                 [
                     "https://download.blender.org/release/Blender2.72/blender-2.72b-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -873,7 +917,8 @@
                                 "commit_time": "2014-10-23T10:35:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -886,7 +931,7 @@
                 [
                     "https://download.blender.org/release/Blender2.73/blender-2.73-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -895,7 +940,8 @@
                                 "commit_time": "2015-01-07T13:34:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -903,7 +949,7 @@
                 [
                     "https://download.blender.org/release/Blender2.73/blender-2.73a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -912,7 +958,8 @@
                                 "commit_time": "2015-01-20T18:31:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -925,7 +972,7 @@
                 [
                     "https://download.blender.org/release/Blender2.74/blender-2.74-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -934,7 +981,8 @@
                                 "commit_time": "2015-03-31T16:14:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -947,7 +995,7 @@
                 [
                     "https://download.blender.org/release/Blender2.75/blender-2.75-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -956,7 +1004,8 @@
                                 "commit_time": "2015-07-01T13:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -964,7 +1013,7 @@
                 [
                     "https://download.blender.org/release/Blender2.75/blender-2.75a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -973,7 +1022,8 @@
                                 "commit_time": "2015-07-07T20:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -986,7 +1036,7 @@
                 [
                     "https://download.blender.org/release/Blender2.76/blender-2.76-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -995,7 +1045,8 @@
                                 "commit_time": "2015-10-11T07:27:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1003,7 +1054,7 @@
                 [
                     "https://download.blender.org/release/Blender2.76/blender-2.76a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1012,7 +1063,8 @@
                                 "commit_time": "2015-10-30T09:00:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1020,7 +1072,7 @@
                 [
                     "https://download.blender.org/release/Blender2.76/blender-2.76b-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1029,7 +1081,8 @@
                                 "commit_time": "2015-11-04T09:56:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1042,7 +1095,7 @@
                 [
                     "https://download.blender.org/release/Blender2.77/blender-2.77-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1051,7 +1104,8 @@
                                 "commit_time": "2016-03-19T12:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1059,7 +1113,7 @@
                 [
                     "https://download.blender.org/release/Blender2.77/blender-2.77a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1068,7 +1122,8 @@
                                 "commit_time": "2016-04-06T08:00:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1081,7 +1136,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1090,7 +1145,8 @@
                                 "commit_time": "2016-09-27T09:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1098,7 +1154,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1107,7 +1163,8 @@
                                 "commit_time": "2016-09-27T09:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1115,7 +1172,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78a-linux-glibc211-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1124,7 +1181,8 @@
                                 "commit_time": "2016-10-25T08:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1132,7 +1190,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78a-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1141,7 +1199,8 @@
                                 "commit_time": "2016-10-25T08:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1149,7 +1208,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78b-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1158,7 +1217,8 @@
                                 "commit_time": "2017-02-08T14:09:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1166,7 +1226,7 @@
                 [
                     "https://download.blender.org/release/Blender2.78/blender-2.78c-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1175,7 +1235,8 @@
                                 "commit_time": "2017-02-26T18:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1188,7 +1249,7 @@
                 [
                     "https://download.blender.org/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1197,7 +1258,8 @@
                                 "commit_time": "2017-09-11T13:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1205,7 +1267,7 @@
                 [
                     "https://download.blender.org/release/Blender2.79/blender-2.79a-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1214,7 +1276,8 @@
                                 "commit_time": "2018-02-27T15:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1222,7 +1285,7 @@
                 [
                     "https://download.blender.org/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1231,7 +1294,8 @@
                                 "commit_time": "2018-03-22T14:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1244,7 +1308,7 @@
                 [
                     "https://download.blender.org/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1253,7 +1317,8 @@
                                 "commit_time": "2019-07-29T17:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1261,7 +1326,7 @@
                 [
                     "https://download.blender.org/release/Blender2.80/blender-2.80rc1-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1270,7 +1335,8 @@
                                 "commit_time": "2019-07-11T15:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1278,7 +1344,7 @@
                 [
                     "https://download.blender.org/release/Blender2.80/blender-2.80rc2-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1287,7 +1353,8 @@
                                 "commit_time": "2019-07-18T17:20:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1295,7 +1362,7 @@
                 [
                     "https://download.blender.org/release/Blender2.80/blender-2.80rc3-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1304,7 +1371,8 @@
                                 "commit_time": "2019-07-24T16:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1317,7 +1385,7 @@
                 [
                     "https://download.blender.org/release/Blender2.81/blender-2.81-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1326,7 +1394,8 @@
                                 "commit_time": "2019-11-21T08:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1334,7 +1403,7 @@
                 [
                     "https://download.blender.org/release/Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1343,7 +1412,8 @@
                                 "commit_time": "2019-12-05T11:49:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1356,7 +1426,7 @@
                 [
                     "https://download.blender.org/release/Blender2.82/blender-2.82-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1365,7 +1435,8 @@
                                 "commit_time": "2020-02-13T09:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1373,7 +1444,7 @@
                 [
                     "https://download.blender.org/release/Blender2.82/blender-2.82a-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1382,7 +1453,8 @@
                                 "commit_time": "2020-03-12T10:44:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1395,7 +1467,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.0-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1404,7 +1476,8 @@
                                 "commit_time": "2020-06-03T15:27:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1412,7 +1485,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.1-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1421,7 +1494,8 @@
                                 "commit_time": "2020-06-25T11:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1429,7 +1503,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.10-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1438,7 +1512,8 @@
                                 "commit_time": "2020-12-09T09:11:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1446,7 +1521,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.12-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1455,7 +1530,8 @@
                                 "commit_time": "2021-01-27T09:01:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1463,7 +1539,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.13-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1472,7 +1548,8 @@
                                 "commit_time": "2021-03-10T09:25:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1480,7 +1557,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.14-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1489,7 +1566,8 @@
                                 "commit_time": "2021-05-12T14:35:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1497,7 +1575,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.15-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1506,7 +1584,8 @@
                                 "commit_time": "2021-05-20T06:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1514,7 +1593,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.16-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1523,7 +1602,8 @@
                                 "commit_time": "2021-06-16T09:28:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1531,7 +1611,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.17-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1540,7 +1620,8 @@
                                 "commit_time": "2021-08-11T09:11:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1548,7 +1629,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.18-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1557,7 +1638,8 @@
                                 "commit_time": "2021-09-29T10:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1565,7 +1647,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.19-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1574,7 +1656,8 @@
                                 "commit_time": "2022-02-02T09:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1582,7 +1665,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.2-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1591,7 +1674,8 @@
                                 "commit_time": "2020-07-09T06:44:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1599,7 +1683,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.20-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1608,7 +1692,8 @@
                                 "commit_time": "2022-04-20T09:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1616,7 +1701,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.3-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1625,7 +1710,8 @@
                                 "commit_time": "2020-07-22T06:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1633,7 +1719,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.4-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1642,7 +1728,8 @@
                                 "commit_time": "2020-08-05T06:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1650,7 +1737,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.5-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1659,7 +1746,8 @@
                                 "commit_time": "2020-08-19T06:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1667,7 +1755,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.6-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1676,7 +1764,8 @@
                                 "commit_time": "2020-09-09T08:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1684,7 +1773,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.7-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1693,7 +1782,8 @@
                                 "commit_time": "2020-09-30T06:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1701,7 +1791,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.8-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1710,7 +1800,8 @@
                                 "commit_time": "2020-10-21T09:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1718,7 +1809,7 @@
                 [
                     "https://download.blender.org/release/Blender2.83/blender-2.83.9-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1727,7 +1818,8 @@
                                 "commit_time": "2020-11-11T15:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1740,7 +1832,7 @@
                 [
                     "https://download.blender.org/release/Blender2.90/blender-2.90.0-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1749,7 +1841,8 @@
                                 "commit_time": "2020-08-31T12:31:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1757,7 +1850,7 @@
                 [
                     "https://download.blender.org/release/Blender2.90/blender-2.90.1-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1766,7 +1859,8 @@
                                 "commit_time": "2020-09-23T08:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1779,7 +1873,7 @@
                 [
                     "https://download.blender.org/release/Blender2.91/blender-2.91.0-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1788,7 +1882,8 @@
                                 "commit_time": "2020-11-25T09:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1796,7 +1891,7 @@
                 [
                     "https://download.blender.org/release/Blender2.91/blender-2.91.2-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1805,7 +1900,8 @@
                                 "commit_time": "2021-01-20T12:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1818,7 +1914,7 @@
                 [
                     "https://download.blender.org/release/Blender2.92/blender-2.92.0-linux64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -1827,7 +1923,8 @@
                                 "commit_time": "2021-02-25T12:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1840,7 +1937,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1849,7 +1946,8 @@
                                 "commit_time": "2021-06-02T14:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1857,7 +1955,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1866,7 +1964,8 @@
                                 "commit_time": "2021-06-23T07:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1874,7 +1973,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.10-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1883,7 +1982,8 @@
                                 "commit_time": "2022-08-03T08:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1891,7 +1991,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.11-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1900,7 +2000,8 @@
                                 "commit_time": "2022-10-05T08:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1908,7 +2009,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.12-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1917,7 +2018,8 @@
                                 "commit_time": "2022-12-20T10:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1925,7 +2027,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.13-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1934,7 +2036,8 @@
                                 "commit_time": "2022-12-21T08:38:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1942,7 +2045,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.14-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1951,7 +2054,8 @@
                                 "commit_time": "2023-01-17T11:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1959,7 +2063,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.15-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1968,7 +2072,8 @@
                                 "commit_time": "2023-02-21T09:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1976,7 +2081,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.16-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -1985,7 +2090,8 @@
                                 "commit_time": "2023-03-21T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -1993,7 +2099,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.17-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2002,7 +2108,8 @@
                                 "commit_time": "2023-04-18T08:21:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2010,7 +2117,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.18-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2019,7 +2126,8 @@
                                 "commit_time": "2023-05-23T08:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2027,7 +2135,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2036,7 +2144,8 @@
                                 "commit_time": "2021-08-04T10:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2044,7 +2153,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.3-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2053,7 +2162,8 @@
                                 "commit_time": "2021-08-18T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2061,7 +2171,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.4-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2070,7 +2180,8 @@
                                 "commit_time": "2021-09-01T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2078,7 +2189,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.5-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2087,7 +2198,8 @@
                                 "commit_time": "2021-10-06T09:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2095,7 +2207,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.6-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2104,7 +2216,8 @@
                                 "commit_time": "2021-11-17T12:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2112,7 +2225,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.7-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2121,7 +2234,8 @@
                                 "commit_time": "2021-12-15T10:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2129,7 +2243,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.8-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2138,7 +2252,8 @@
                                 "commit_time": "2022-02-02T09:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2146,7 +2261,7 @@
                 [
                     "https://download.blender.org/release/Blender2.93/blender-2.93.9-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2155,7 +2270,8 @@
                                 "commit_time": "2022-04-20T08:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2168,7 +2284,7 @@
                 [
                     "https://download.blender.org/release/Blender3.0/blender-3.0.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2177,7 +2293,8 @@
                                 "commit_time": "2021-12-03T10:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2185,7 +2302,7 @@
                 [
                     "https://download.blender.org/release/Blender3.0/blender-3.0.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2194,7 +2311,8 @@
                                 "commit_time": "2022-01-26T13:17:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2207,7 +2325,7 @@
                 [
                     "https://download.blender.org/release/Blender3.1/blender-3.1.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2216,7 +2334,8 @@
                                 "commit_time": "2022-03-09T10:10:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2224,7 +2343,7 @@
                 [
                     "https://download.blender.org/release/Blender3.1/blender-3.1.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2233,7 +2352,8 @@
                                 "commit_time": "2022-03-30T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2241,7 +2361,7 @@
                 [
                     "https://download.blender.org/release/Blender3.1/blender-3.1.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2250,7 +2370,8 @@
                                 "commit_time": "2022-04-01T08:22:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2263,7 +2384,7 @@
                 [
                     "https://download.blender.org/release/Blender3.2/blender-3.2.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2272,7 +2393,8 @@
                                 "commit_time": "2022-06-08T12:13:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2280,7 +2402,7 @@
                 [
                     "https://download.blender.org/release/Blender3.2/blender-3.2.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2289,7 +2411,8 @@
                                 "commit_time": "2022-07-06T10:08:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2297,7 +2420,7 @@
                 [
                     "https://download.blender.org/release/Blender3.2/blender-3.2.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2306,7 +2429,8 @@
                                 "commit_time": "2022-08-03T08:58:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2319,7 +2443,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2328,7 +2452,8 @@
                                 "commit_time": "2022-09-07T14:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2336,7 +2461,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2345,7 +2470,8 @@
                                 "commit_time": "2022-10-05T08:32:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2353,7 +2479,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.10-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2362,7 +2488,8 @@
                                 "commit_time": "2023-08-17T07:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2370,7 +2497,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.11-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2379,7 +2506,8 @@
                                 "commit_time": "2023-09-21T08:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2387,7 +2515,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.12-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2396,7 +2524,8 @@
                                 "commit_time": "2023-10-19T10:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2404,7 +2533,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.14-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2413,7 +2542,8 @@
                                 "commit_time": "2023-12-12T12:05:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2421,7 +2551,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.15-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2430,7 +2560,8 @@
                                 "commit_time": "2024-01-16T09:27:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2438,7 +2569,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.16-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2447,7 +2578,8 @@
                                 "commit_time": "2024-02-20T09:33:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2455,7 +2587,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.17-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2464,7 +2596,8 @@
                                 "commit_time": "2024-03-19T10:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2472,7 +2605,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.18-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2481,7 +2614,8 @@
                                 "commit_time": "2024-04-16T08:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2489,7 +2623,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.19-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2498,7 +2632,8 @@
                                 "commit_time": "2024-05-21T10:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2506,7 +2641,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2515,7 +2650,8 @@
                                 "commit_time": "2022-12-07T09:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2523,7 +2659,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.20-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2532,7 +2668,8 @@
                                 "commit_time": "2024-06-25T10:11:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2540,7 +2677,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.21-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2549,7 +2686,8 @@
                                 "commit_time": "2024-07-16T07:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2557,7 +2695,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.3-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2566,7 +2704,8 @@
                                 "commit_time": "2023-01-17T11:38:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2574,7 +2713,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.4-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2583,7 +2722,8 @@
                                 "commit_time": "2023-02-21T08:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2591,7 +2731,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.5-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2600,7 +2740,8 @@
                                 "commit_time": "2023-03-21T09:09:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2608,7 +2749,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.6-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2617,7 +2758,8 @@
                                 "commit_time": "2023-04-18T08:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2625,7 +2767,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.7-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2634,7 +2776,8 @@
                                 "commit_time": "2023-05-23T08:26:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2642,7 +2785,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.8-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2651,7 +2794,8 @@
                                 "commit_time": "2023-06-20T10:10:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2659,7 +2803,7 @@
                 [
                     "https://download.blender.org/release/Blender3.3/blender-3.3.9-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2668,7 +2812,8 @@
                                 "commit_time": "2023-07-18T08:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2681,7 +2826,7 @@
                 [
                     "https://download.blender.org/release/Blender3.4/blender-3.4.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2690,7 +2835,8 @@
                                 "commit_time": "2022-12-07T09:49:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2698,7 +2844,7 @@
                 [
                     "https://download.blender.org/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2707,7 +2853,8 @@
                                 "commit_time": "2022-12-20T09:39:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2720,7 +2867,7 @@
                 [
                     "https://download.blender.org/release/Blender3.5/blender-3.5.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2729,7 +2876,8 @@
                                 "commit_time": "2023-03-29T08:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2737,7 +2885,7 @@
                 [
                     "https://download.blender.org/release/Blender3.5/blender-3.5.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -2746,7 +2894,8 @@
                                 "commit_time": "2023-04-25T11:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2759,7 +2908,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2768,7 +2917,8 @@
                                 "commit_time": "2023-06-27T09:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2776,7 +2926,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2785,7 +2935,8 @@
                                 "commit_time": "2023-07-18T08:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2793,7 +2944,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.10-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2802,7 +2953,8 @@
                                 "commit_time": "2024-03-19T08:14:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2810,7 +2962,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.11-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2819,7 +2971,8 @@
                                 "commit_time": "2024-04-16T08:07:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2827,7 +2980,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.12-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2836,7 +2989,8 @@
                                 "commit_time": "2024-05-21T10:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2844,7 +2998,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.13-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2853,7 +3007,8 @@
                                 "commit_time": "2024-06-25T10:13:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2861,7 +3016,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.14-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2870,7 +3025,8 @@
                                 "commit_time": "2024-07-16T07:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2878,7 +3034,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.15-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2887,7 +3043,8 @@
                                 "commit_time": "2024-08-20T07:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2895,7 +3052,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.16-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2904,7 +3061,8 @@
                                 "commit_time": "2024-09-24T08:01:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2912,7 +3070,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.17-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2921,7 +3079,8 @@
                                 "commit_time": "2024-10-15T08:13:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2929,7 +3088,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.18-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2938,7 +3097,8 @@
                                 "commit_time": "2024-11-19T09:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2946,7 +3106,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.19-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2955,7 +3115,8 @@
                                 "commit_time": "2024-12-17T09:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2963,7 +3124,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2972,7 +3133,8 @@
                                 "commit_time": "2023-08-17T07:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2980,7 +3142,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.20-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -2989,7 +3151,8 @@
                                 "commit_time": "2025-01-21T08:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -2997,7 +3160,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.21-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3006,7 +3169,8 @@
                                 "commit_time": "2025-02-18T11:24:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3014,7 +3178,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.22-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3023,7 +3187,8 @@
                                 "commit_time": "2025-04-15T07:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3031,7 +3196,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3040,7 +3205,8 @@
                                 "commit_time": "2025-06-17T08:35:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3048,7 +3214,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.3-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3057,7 +3223,8 @@
                                 "commit_time": "2023-09-21T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3065,7 +3232,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.4-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3074,7 +3241,8 @@
                                 "commit_time": "2023-09-26T08:46:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3082,7 +3250,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.5-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3091,7 +3259,8 @@
                                 "commit_time": "2023-10-19T09:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3099,7 +3268,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.7-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3108,7 +3277,8 @@
                                 "commit_time": "2023-12-12T12:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3116,7 +3286,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.8-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3125,7 +3295,8 @@
                                 "commit_time": "2024-01-16T09:29:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3133,7 +3304,7 @@
                 [
                     "https://download.blender.org/release/Blender3.6/blender-3.6.9-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3142,7 +3313,8 @@
                                 "commit_time": "2024-02-20T09:37:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3155,7 +3327,7 @@
                 [
                     "https://download.blender.org/release/Blender4.0/blender-4.0.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3164,7 +3336,8 @@
                                 "commit_time": "2023-11-14T08:54:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3172,7 +3345,7 @@
                 [
                     "https://download.blender.org/release/Blender4.0/blender-4.0.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3181,7 +3354,8 @@
                                 "commit_time": "2023-11-17T10:03:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3189,7 +3363,7 @@
                 [
                     "https://download.blender.org/release/Blender4.0/blender-4.0.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3198,7 +3372,8 @@
                                 "commit_time": "2023-12-05T14:19:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3211,7 +3386,7 @@
                 [
                     "https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3220,7 +3395,8 @@
                                 "commit_time": "2024-03-26T10:57:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3228,7 +3404,7 @@
                 [
                     "https://download.blender.org/release/Blender4.1/blender-4.1.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3237,7 +3413,8 @@
                                 "commit_time": "2024-04-16T08:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3250,7 +3427,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3259,7 +3436,8 @@
                                 "commit_time": "2024-07-16T08:53:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3267,7 +3445,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3276,7 +3454,8 @@
                                 "commit_time": "2024-08-20T07:38:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3284,7 +3463,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.10-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3293,7 +3472,8 @@
                                 "commit_time": "2025-05-20T07:44:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3301,7 +3481,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.11-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3310,7 +3490,8 @@
                                 "commit_time": "2025-06-17T08:36:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3318,7 +3499,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.12-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3327,7 +3508,80 @@
                                 "commit_time": "2025-07-15T08:33:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.13-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.13",
+                                "build_hash": null,
+                                "commit_time": "2025-08-20T08:32:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.14-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.14",
+                                "build_hash": null,
+                                "commit_time": "2025-09-09T09:08:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.15-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.15",
+                                "build_hash": null,
+                                "commit_time": "2025-10-28T15:06:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.16-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.16",
+                                "build_hash": null,
+                                "commit_time": "2025-11-18T08:15:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3335,7 +3589,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3344,7 +3598,8 @@
                                 "commit_time": "2024-09-24T08:04:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3352,7 +3607,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.3-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3361,7 +3616,8 @@
                                 "commit_time": "2024-10-15T08:16:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3369,7 +3625,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.4-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3378,7 +3634,8 @@
                                 "commit_time": "2024-11-19T11:00:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3386,7 +3643,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.5-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3395,7 +3652,8 @@
                                 "commit_time": "2024-12-17T09:02:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3403,7 +3661,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.6-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3412,7 +3670,8 @@
                                 "commit_time": "2025-01-21T08:59:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3420,7 +3679,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.7-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3429,7 +3688,8 @@
                                 "commit_time": "2025-02-18T11:23:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3437,7 +3697,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.8-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3446,7 +3706,8 @@
                                 "commit_time": "2025-03-18T07:50:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3454,7 +3715,7 @@
                 [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.9-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3463,20 +3724,21 @@
                                 "commit_time": "2025-04-15T07:41:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
                 ]
             ],
-            "modified_date": "2025-07-15T08:33:00"
+            "modified_date": "2025-11-18T08:18:00"
         },
         "4.3.0": {
             "assets": [
                 [
                     "https://download.blender.org/release/Blender4.3/blender-4.3.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3485,7 +3747,8 @@
                                 "commit_time": "2024-11-19T13:47:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3493,7 +3756,7 @@
                 [
                     "https://download.blender.org/release/Blender4.3/blender-4.3.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3502,7 +3765,8 @@
                                 "commit_time": "2024-12-10T11:43:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3510,7 +3774,7 @@
                 [
                     "https://download.blender.org/release/Blender4.3/blender-4.3.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3519,7 +3783,8 @@
                                 "commit_time": "2024-12-17T08:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3532,7 +3797,7 @@
                 [
                     "https://download.blender.org/release/Blender4.4/blender-4.4.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3541,7 +3806,8 @@
                                 "commit_time": "2025-03-18T09:06:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3549,7 +3815,7 @@
                 [
                     "https://download.blender.org/release/Blender4.4/blender-4.4.1-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3558,7 +3824,8 @@
                                 "commit_time": "2025-04-15T07:38:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3566,7 +3833,7 @@
                 [
                     "https://download.blender.org/release/Blender4.4/blender-4.4.2-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3575,7 +3842,8 @@
                                 "commit_time": "2025-04-29T07:42:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3583,7 +3851,7 @@
                 [
                     "https://download.blender.org/release/Blender4.4/blender-4.4.3-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "stable",
@@ -3592,7 +3860,8 @@
                                 "commit_time": "2025-04-29T16:30:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
@@ -3605,7 +3874,7 @@
                 [
                     "https://download.blender.org/release/Blender4.5/blender-4.5.0-linux-x64.tar.xz",
                     {
-                        "file_version": "1.3",
+                        "file_version": "1.5",
                         "blinfo": [
                             {
                                 "branch": "lts",
@@ -3614,13 +3883,127 @@
                                 "commit_time": "2025-07-15T08:40:00+00:00",
                                 "custom_name": "",
                                 "is_favorite": false,
-                                "custom_executable": null
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.1-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.1",
+                                "build_hash": null,
+                                "commit_time": "2025-07-29T08:32:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.2-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.2",
+                                "build_hash": null,
+                                "commit_time": "2025-08-20T08:32:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.3-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.3",
+                                "build_hash": null,
+                                "commit_time": "2025-09-09T09:07:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.4-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.4",
+                                "build_hash": null,
+                                "commit_time": "2025-10-28T15:05:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.5-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.5",
+                                "build_hash": null,
+                                "commit_time": "2025-11-18T08:18:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
                             }
                         ]
                     }
                 ]
             ],
-            "modified_date": "2025-07-15T08:40:00"
+            "modified_date": "2025-11-18T08:18:00"
+        },
+        "5.0.0": {
+            "assets": [
+                [
+                    "https://download.blender.org/release/Blender5.0/blender-5.0.0-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "5.0.0",
+                                "build_hash": null,
+                                "commit_time": "2025-11-18T12:00:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "modified_date": "2025-11-18T12:00:00"
         }
     }
 }
