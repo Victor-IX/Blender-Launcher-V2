@@ -794,6 +794,7 @@ class BlenderLauncher(BaseWindow):
     def destroy(self):
         self.quit_signal.emit()
         self.stop_auto_scrape_timer()
+        self.task_queue.fullstop()
         self.tray_icon.hide()
         self.app.quit()
 
