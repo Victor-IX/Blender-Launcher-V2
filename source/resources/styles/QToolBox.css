@@ -6,6 +6,7 @@ QToolBox::tab {
     background-color: #424242;
     color: #E6E6E6;
     font-size: 14px;
+    padding: 8px 16px;
 }
 
 QToolBox::tab:hover {
