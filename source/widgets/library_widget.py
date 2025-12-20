@@ -9,7 +9,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_platform, is_frozen, get_environment
+from modules._platform import (
+    _call,
+    get_blender_config_folder,
+    get_platform,
+    is_frozen,
+    get_environment,
+    open_terminal_in_directory,
+)
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -51,7 +58,6 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
 from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
@@ -78,6 +84,7 @@ class LibraryWidget(BaseBuildWidget):
         self.setMouseTracking(True)
         self.installEventFilter(self)
         self._hovering_and_shifting = False
+        self._hovering_ctrl_shift = False
         self._hovered = False
 
         self.parent: BlenderLauncher = parent
@@ -147,10 +154,9 @@ class LibraryWidget(BaseBuildWidget):
         self.branch = self.build_info.branch
         self.item.date = build_info.commit_time
 
-        self.launchButton = LeftIconButtonWidget("Launch", parent=self)
+        self.launchButton = LeftIconButtonWidget("Launch", self.parent.icons.blender, parent=self)
         self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("LaunchButton", True)
-        self._launch_icon = None
 
         self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
         self.updateButton.setFixedWidth(25)
@@ -192,12 +198,7 @@ class LibraryWidget(BaseBuildWidget):
         self.layout.addWidget(self.commitTimeLabel)
         self.layout.addWidget(self.build_state_widget)
 
-        self.launchButton.clicked.connect(
-            lambda: self.launch(
-                update_selection=True,
-                launch_mode=LaunchOpenLast() if self.hovering_and_shifting else None,
-            )
-        )
+        self.launchButton.clicked.connect(self._on_launch_clicked)
         self.launchButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.updateButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
@@ -228,6 +229,20 @@ class LibraryWidget(BaseBuildWidget):
             "\n(Appends `--open-last` to the execution arguments)"
             "\nSHORTCUT: Shift + Launch or Doubleclick"
         )
+
+        self.renderPreviousFileAction = QAction("Render Previous File", self)
+        self.renderPreviousFileAction.setIcon(self.parent.icons.render)
+        self.renderPreviousFileAction.triggered.connect(self.render_previous_file)
+        self.renderPreviousFileAction.setToolTip(
+            "Open terminal and render the last opened file."
+            "\n(Runs: blender -b --open-last -a)"
+            "\nSHORTCUT: Ctrl + Shift + Launch"
+        )
+
+        self.openInTerminalAction = QAction("Open in Terminal", self)
+        self.openInTerminalAction.setIcon(self.parent.icons.folder)
+        self.openInTerminalAction.triggered.connect(self.open_in_terminal)
+        self.openInTerminalAction.setToolTip("Open a terminal/command prompt in the build directory")
 
         self.addToQuickLaunchAction = QAction("Add To Quick Launch", self)
         self.addToQuickLaunchAction.setIcon(self.parent.icons.quick_launch)
@@ -306,6 +321,7 @@ class LibraryWidget(BaseBuildWidget):
         self.debugMenu.addAction(self.debugGpuGWTemplateAction)
 
         self.menu.addAction(self.openRecentAction)
+        self.menu.addAction(self.renderPreviousFileAction)
         self.menu.addAction(self.addToQuickLaunchAction)
         self.menu.addAction(self.addToFavoritesAction)
         self.menu.addAction(self.removeFromFavoritesAction)
@@ -344,6 +360,7 @@ class LibraryWidget(BaseBuildWidget):
                     self.menu.addAction(self.showReleaseNotesAction)
 
         self.menu.addAction(self.showBuildFolderAction)
+        self.menu.addAction(self.openInTerminalAction)
         self.menu.addAction(self.showConfigFolderAction)
         self.menu.addAction(self.editAction)
         self.menu.addAction(self.deleteAction)
@@ -460,23 +477,41 @@ class LibraryWidget(BaseBuildWidget):
         self.setStyleSheet("background-color:")
 
     def eventFilter(self, obj, event):
-        # For detecting SHIFT
-        if isinstance(event, QHoverEvent):
-            if self._hovered and event.modifiers() & Qt.ShiftModifier:
+        # Detect modifier keys on mouse movement while hovering
+        if isinstance(event, QHoverEvent) and self._hovered:
+            modifiers = QApplication.keyboardModifiers()
+            has_ctrl = modifiers & Qt.KeyboardModifier.ControlModifier
+            has_shift = modifiers & Qt.KeyboardModifier.ShiftModifier
+
+            if has_ctrl and has_shift:
+                self.hovering_and_shifting = False
+                self.hovering_ctrl_shift = True
+            elif has_shift:
+                self.hovering_ctrl_shift = False
                 self.hovering_and_shifting = True
             else:
                 self.hovering_and_shifting = False
+                self.hovering_ctrl_shift = False
         return super().eventFilter(obj, event)
 
     def _shift_hovering(self):
         self.launchButton.set_text("  Previous")
-        self._launch_icon = self.launchButton.icon()
         self.launchButton.setIcon(self.parent.icons.file)
-        self.launchButton.setFont(self.parent.font_8)
+        self.launchButton.setFont(self.parent.font_10)
 
     def _stopped_shift_hovering(self):
         self.launchButton.set_text("Launch")
-        self.launchButton.setIcon(self._launch_icon or self.parent.icons.none)
+        self.launchButton.setIcon(self.parent.icons.blender)
+        self.launchButton.setFont(self.parent.font_10)
+
+    def _ctrl_shift_hovering(self):
+        self.launchButton.set_text("Render")
+        self.launchButton.setIcon(self.parent.icons.render)
+        self.launchButton.setFont(self.parent.font_10)
+
+    def _stopped_ctrl_shift_hovering(self):
+        self.launchButton.set_text("Launch")
+        self.launchButton.setIcon(self.parent.icons.blender)
         self.launchButton.setFont(self.parent.font_10)
 
     def enterEvent(self, _e):
@@ -484,6 +519,8 @@ class LibraryWidget(BaseBuildWidget):
 
     def leaveEvent(self, _e):
         self._hovered = False
+        self.hovering_and_shifting = False
+        self.hovering_ctrl_shift = False
 
     @property
     def hovering_and_shifting(self):
@@ -497,6 +534,19 @@ class LibraryWidget(BaseBuildWidget):
         elif not v and self._hovering_and_shifting:
             self._hovering_and_shifting = False
             self._stopped_shift_hovering()
+
+    @property
+    def hovering_ctrl_shift(self):
+        return self._hovering_ctrl_shift
+
+    @hovering_ctrl_shift.setter
+    def hovering_ctrl_shift(self, v: bool):
+        if v and not self._hovering_ctrl_shift:
+            self._hovering_ctrl_shift = True
+            self._ctrl_shift_hovering()
+        elif not v and self._hovering_ctrl_shift:
+            self._hovering_ctrl_shift = False
+            self._stopped_ctrl_shift_hovering()
 
     def install_template(self):
         self.launchButton.set_text("Updating")
@@ -512,6 +562,15 @@ class LibraryWidget(BaseBuildWidget):
         self.launchButton.setEnabled(True)
         self.deleteAction.setEnabled(True)
         self.installTemplateAction.setEnabled(True)
+
+    def _on_launch_clicked(self):
+        """Handle launch button click with modifier detection."""
+        if self.hovering_ctrl_shift:
+            self.render_previous_file()
+        elif self.hovering_and_shifting:
+            self.launch(update_selection=True, launch_mode=LaunchOpenLast())
+        else:
+            self.launch(update_selection=True)
 
     def launch(self, update_selection=False, exe=None, launch_mode: LaunchMode | None = None):
         assert self.build_info is not None
@@ -1007,12 +1066,51 @@ class LibraryWidget(BaseBuildWidget):
                         return
                 logger.error("No file manager found to open the folder.")
 
-
     @Slot()
     def show_build_folder(self):
         library_folder = Path(get_library_folder())
         path = library_folder / self.link
         self.show_folder(path)
+
+    @Slot()
+    def open_in_terminal(self):
+        """Open a terminal/command prompt in the build directory."""
+        library_folder = Path(get_library_folder())
+        path = library_folder / self.link
+        if not open_terminal_in_directory(path):
+            logger.error(f"Failed to open terminal in {path}")
+
+    @Slot()
+    def render_previous_file(self):
+        """Open a terminal and render the previous file in background mode."""
+        if self.build_info is None:
+            return
+
+        library_folder = Path(get_library_folder())
+        build_path = library_folder / self.link
+
+        # Determine the blender executable
+        platform = get_platform()
+        cexe = self.build_info.custom_executable
+        if cexe:
+            blender_exe = build_path / cexe
+        elif (
+            (build_path / "bforartists.exe").exists()
+            if platform == "Windows"
+            else (build_path / "bforartists").exists()
+        ):
+            blender_exe = build_path / ("bforartists.exe" if platform == "Windows" else "bforartists")
+        else:
+            blender_exe = build_path / ("blender.exe" if platform == "Windows" else "blender")
+
+        # Build the render command
+        if platform == "Windows":
+            render_cmd = f'"{blender_exe}" -b --open-last -a'
+        else:
+            render_cmd = f'"{blender_exe.as_posix()}" -b --open-last -a'
+
+        if not open_terminal_in_directory(build_path, render_cmd):
+            logger.error(f"Failed to open terminal for rendering in {build_path}")
 
     @Slot()
     def show_config_folder(self):
@@ -1070,7 +1168,7 @@ class LibraryWidget(BaseBuildWidget):
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
         """Update column widths to match header splitter."""
-        if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
+        if not hasattr(self, "subversionLabel") or self.subversionLabel is None:
             return
         self.subversionLabel.setFixedWidth(version_width)
         self.branchLabel.setFixedWidth(branch_width)
