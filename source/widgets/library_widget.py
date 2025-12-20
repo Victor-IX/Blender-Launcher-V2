@@ -1068,10 +1068,9 @@ class LibraryWidget(BaseBuildWidget):
             self.parent.favorite = None
 
     @Slot(int, int, int)
-    def _update_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
+    def _update_column_widths(self, version_width: int, _branch_width: int, commit_time_width: int):
         """Update column widths to match header splitter."""
         if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
             return
         self.subversionLabel.setFixedWidth(version_width)
-        self.branchLabel.setFixedWidth(branch_width)
         self.commitTimeLabel.setFixedWidth(commit_time_width)

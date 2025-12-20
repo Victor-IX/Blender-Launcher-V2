@@ -25,7 +25,6 @@ class BaseListWidget(QListWidget):
         self.setAlternatingRowColors(True)
         self.setProperty("HideBorder", True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         if extended_selection is True:
             self.setSelectionMode(QAbstractItemView.ExtendedSelection)
