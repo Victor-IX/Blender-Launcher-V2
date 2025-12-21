@@ -16,8 +16,7 @@ from modules.build_info import BuildInfo, parse_blender_ver
 from modules.scraper_cache import ScraperCache
 from modules.settings import get_minimum_blender_stable_version
 from semver import Version
-
-from source.threads.scraping.base import BuildScraper, regex_filter
+from threads.scraping.base import BuildScraper, regex_filter
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -42,6 +41,7 @@ class ScraperStable(BuildScraper):
         self.cache_path = stable_cache_path()
         self.cache = ScraperCache.from_file_or_default(self.cache_path)
         self.architecture = get_architecture()
+        self.platform = get_platform()
 
     def refresh_cache(self):
         self.cache = ScraperCache.from_file_or_default(self.cache_path)
