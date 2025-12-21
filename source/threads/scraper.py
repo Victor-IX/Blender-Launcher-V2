@@ -19,16 +19,14 @@ from modules.settings import (
     get_show_patch_archive_builds,
 )
 from PySide6.QtCore import QThread, Signal
-
-from source.threads.scraping.automated import ScraperAutomated
-from source.threads.scraping.bfa import ScraperBfa
-from source.threads.scraping.launcher_updates import LauncherDataUpdater
-from source.threads.scraping.stable import ScraperStable
+from threads.scraping.automated import ScraperAutomated
+from threads.scraping.bfa import ScraperBfa
+from threads.scraping.launcher_updates import LauncherDataUpdater
+from threads.scraping.stable import ScraperStable
 
 if TYPE_CHECKING:
     from modules.connection_manager import ConnectionManager
-
-    from source.threads.scraping.base import BuildScraper
+    from threads.scraping.base import BuildScraper
 
 logger = logging.getLogger()
 
