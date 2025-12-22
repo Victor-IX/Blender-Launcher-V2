@@ -800,3 +800,27 @@ def set_column_widths(widths: list[int]):
 
     # Use global key - all lists share the same column widths
     get_settings().setValue("Internal/global_column_widths", json.dumps(widths))
+
+
+def get_purge_temp_on_startup() -> bool:
+    return get_settings().value("purge_temp_on_startup", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_purge_temp_on_startup(is_checked: bool):
+    get_settings().setValue("purge_temp_on_startup", is_checked)
+
+
+def purge_temp_folder():
+    """Purge all files in the temp folder."""
+    temp_folder = Path(get_library_folder()) / ".temp"
+    if temp_folder.exists() and temp_folder.is_dir():
+        try:
+            for item in temp_folder.iterdir():
+                if item.is_file():
+                    item.unlink()
+                elif item.is_dir():
+                    shutil.rmtree(item)
+            return True
+        except Exception:
+            return False
+    return True

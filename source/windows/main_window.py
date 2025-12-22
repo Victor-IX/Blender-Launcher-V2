@@ -36,6 +36,7 @@ from modules.settings import (
     get_library_folder,
     get_make_error_popup,
     get_proxy_type,
+    get_purge_temp_on_startup,
     get_quick_launch_key_seq,
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
@@ -54,6 +55,7 @@ from modules.settings import (
     get_check_for_new_builds_automatically,
     get_new_builds_check_frequency,
     is_library_folder_valid,
+    purge_temp_folder,
     set_dont_show_resource_warning,
     set_last_time_checked_utc,
     set_library_folder,
@@ -231,6 +233,11 @@ class BlenderLauncher(BaseWindow):
             return
 
         create_library_folders(get_library_folder())
+        
+        # Purge temp folder on startup if enabled
+        if get_purge_temp_on_startup():
+            purge_temp_folder()
+        
         self.draw()
 
     def prompt_library_folder(self):

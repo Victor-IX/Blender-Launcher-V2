@@ -12,16 +12,19 @@ from modules.settings import (
     get_launch_when_system_starts,
     get_library_folder,
     get_platform,
+    get_purge_temp_on_startup,
     get_show_tray_icon,
     get_use_pre_release_builds,
     get_worker_thread_count,
     get_default_delete_action,
     migrate_config,
     delete_action,
+    purge_temp_folder,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
     set_launch_when_system_starts,
     set_library_folder,
+    set_purge_temp_on_startup,
     set_show_tray_icon,
     set_use_pre_release_builds,
     set_worker_thread_count,
@@ -207,9 +210,28 @@ class GeneralTabWidget(SettingsFormWidget):
         self.default_delete_action.setCurrentIndex(get_default_delete_action())
         self.default_delete_action.activated[int].connect(self.change_default_delete_action)
 
+        # Purge Temp on Startup
+        self.PurgeTempOnStartupCheckBox = QCheckBox()
+        self.PurgeTempOnStartupCheckBox.setText("Purge Temp Folder on Startup")
+        self.PurgeTempOnStartupCheckBox.setToolTip(
+            "Automatically clear the temporary download folder when Blender Launcher starts.\
+            \nDEFAULT: On"
+        )
+        self.PurgeTempOnStartupCheckBox.setChecked(get_purge_temp_on_startup())
+        self.PurgeTempOnStartupCheckBox.clicked.connect(self.toggle_purge_temp_on_startup)
+
+        # Purge Temp Now Button
+        self.PurgeTempNowButton = QPushButton("Purge Temp Folder Now")
+        self.PurgeTempNowButton.setToolTip(
+            "Immediately clear all files in the temporary download folder"
+        )
+        self.PurgeTempNowButton.clicked.connect(self.purge_temp_now)
+
         self.advanced_layout = QGridLayout()
         self.advanced_layout.addWidget(QLabel("Default Delete Action"), 0, 0, 1, 1)
         self.advanced_layout.addWidget(self.default_delete_action, 0, 1, 1, 1)
+        self.advanced_layout.addWidget(self.PurgeTempOnStartupCheckBox, 1, 0, 1, 2)
+        self.advanced_layout.addWidget(self.PurgeTempNowButton, 2, 0, 1, 2)
         self.advanced_settings.setLayout(self.advanced_layout)
         self.addRow(self.advanced_settings)
 
@@ -298,3 +320,23 @@ class GeneralTabWidget(SettingsFormWidget):
     def change_default_delete_action(self, index: int):
         action = self.default_delete_action.itemText(index)
         set_default_delete_action(action)
+
+    def toggle_purge_temp_on_startup(self, is_checked):
+        set_purge_temp_on_startup(is_checked)
+
+    def purge_temp_now(self):
+        success = purge_temp_folder()
+        if success:
+            dlg = PopupWindow(
+                parent=self.parent,
+                title="Success",
+                message="Temp folder has been purged successfully!",
+                icon=PopupIcon.NONE,
+            )
+        else:
+            dlg = PopupWindow(
+                parent=self.parent,
+                title="Error",
+                message="Failed to purge temp folder. Some files may be in use.",
+                icon=PopupIcon.WARNING,
+            )
