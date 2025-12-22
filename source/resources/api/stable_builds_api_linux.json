@@ -1,5 +1,5 @@
 {
-    "api_file_version": "16.0",
+    "api_file_version": "17.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -4001,9 +4001,27 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "5.0.1",
+                                "build_hash": null,
+                                "commit_time": "2025-12-16T10:15:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2025-11-18T12:00:00"
+            "modified_date": "2025-12-16T10:15:00"
         }
     }
 }
