@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import logging
+
 from typing import TypedDict
 
 import distro
@@ -17,6 +19,8 @@ from windows.base_window import BaseWindow
 
 release_link = "https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/{0}/Blender_Launcher_{0}_{1}_x64.zip"
 api_link = "https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases/tags/{}"
+
+logger = logging.getLogger()
 
 
 # this only shows relevant sections of the response
@@ -120,12 +124,21 @@ class BlenderLauncherUpdater(BaseWindow):
 
     def extract(self, source):
         self.ProgressBar.set_title("Extracting")
+        self.source_zip = source
         a = ExtractTask(source, self.cwd)
         a.progress.connect(self.ProgressBar.set_progress)
         a.finished.connect(self.finish)
         self.queue.append(a)
 
     def finish(self, dist, is_removed):
+        # Clean up the downloaded zip file
+        if self.source_zip.exists():
+            try:
+                self.source_zip.unlink()
+            except Exception as e:
+                logger.warning(f"Failed to remove temporary file {self.source_zip}: {e}")
+                pass
+
         # Launch 'Blender Launcher.exe' and exit
         launcher = str(dist)
         if self.platform == "Windows":
