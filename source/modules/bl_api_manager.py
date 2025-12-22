@@ -15,8 +15,10 @@ BL_API_PATH = CONFIG_PATH / "Blender Launcher API.json"
 STABLE_BUILD_PATH = CONFIG_PATH / "stable_builds.json"
 
 if getattr(sys, "frozen", False):
-    INTERNAL_BL_API_PATH = Path(sys._MEIPASS) / "files/blender_launcher_api.json"  # noqa: SLF001
-    INTERNAL_STABLE_BUILD_PATH = Path(sys._MEIPASS) / f"files/stable_builds_api_{get_platform().lower()}.json"  # noqa: SLF001
+    INTERNAL_BL_API_PATH = Path(getattr(sys, "_MEIPASS", "")) / "files/blender_launcher_api.json"
+    INTERNAL_STABLE_BUILD_PATH = (
+        Path(getattr(sys, "_MEIPASS", "")) / f"files/stable_builds_api_{get_platform().lower()}.json"
+    )
 else:
     INTERNAL_BL_API_PATH = Path("source/resources/api/blender_launcher_api.json").resolve()
     INTERNAL_STABLE_BUILD_PATH = Path(f"source/resources/api/stable_builds_api_{get_platform().lower()}.json").resolve()

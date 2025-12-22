@@ -36,7 +36,7 @@ class BLInstanceHandler(QObject):
     def read_socket_data(self, socket: QLocalSocket):
         data = socket.readAll()
 
-        if str(data, encoding="ascii") != str(self.launcher.version):
+        if str(data.data(), encoding="ascii") != str(self.launcher.version):
             self.dlg = PopupWindow(
                 parent=self.launcher,
                 title="Warning",

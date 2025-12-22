@@ -18,6 +18,7 @@ from modules.settings import (
 from PySide6.QtCore import QObject, Signal
 from urllib3 import PoolManager, ProxyManager, make_headers
 from urllib3.contrib.socks import SOCKSProxyManager
+from pathlib import Path
 
 if TYPE_CHECKING:
     from semver import Version
@@ -56,7 +57,7 @@ class ConnectionManager(QObject):
         logger.info(f"Connection Manager Header: {agent}")
         # Get custom certificates file path
         if is_frozen() is True:
-            self.cacert = sys._MEIPASS + "/files/custom.pem"  # noqa: SLF001
+            self.cacert = (Path(getattr(sys, "_MEIPASS", "")) / "files" / "custom.pem").as_posix()
         else:
             self.cacert = (get_cwd() / "source/resources/certificates/custom.pem").as_posix()
 

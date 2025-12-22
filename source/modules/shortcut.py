@@ -23,7 +23,7 @@ def generate_blender_shortcut(folder, name, destination: Path):
         workingdir = library_folder / folder
 
         if getattr(sys, "frozen", False):
-            icon = sys._MEIPASS + "/files/winblender.ico"  # noqa: SLF001
+            icon = (Path(getattr(sys, "_MEIPASS", "")) / "files" / "winblender.ico").as_posix()
         else:
             icon = Path("./source/resources/icons/winblender.ico").resolve().as_posix()
 

@@ -75,6 +75,6 @@ def get_bl_file_location():
 
     assert sys.platform == "win32"
     if is_frozen():
-        return Path(sys._MEIPASS, "files", "bl_file.ico")  # noqa: SLF001
+        return Path(getattr(sys, "_MEIPASS", "")) / "files" / "bl_file.ico"
 
     return get_cwd() / "source" / "resources" / "icons" / "bl" / "bl_file.ico"

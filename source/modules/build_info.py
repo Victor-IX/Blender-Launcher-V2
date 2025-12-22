@@ -228,7 +228,12 @@ class BuildInfo:
             try:
                 dt = datetime.strptime(blinfo["commit_time"], "%d-%b-%y-%H:%M").astimezone()
             except Exception:
-                dt = dateparser.parse(blinfo["commit_time"]).astimezone()
+                dt = dateparser.parse(blinfo["commit_time"])
+                if dt is None:
+                    dt = datetime.now().astimezone()
+                else:
+                    dt = dt.astimezone()
+
         return cls(
             link,
             blinfo["subversion"],
@@ -286,6 +291,7 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
         raise FileNotFoundError(f"Executable not found: {exe}")
 
     version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
+    strptime = None
     build_hash = ""
     subversion = ""
     custom_name = ""
@@ -302,10 +308,11 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
                 ).astimezone()
             except Exception:
                 strptime = dateparser.parse(f"{cdate[1].rstrip()} {ctime[1].rstrip()}")
-        else:
-            strptime = datetime.now().astimezone()
     else:
         strptime = info.commit_time
+
+    if strptime is None:
+        strptime = datetime.now().astimezone()
 
     if s := re.search("build hash: (.*)", version):
         build_hash = s[1].rstrip()
@@ -386,7 +393,7 @@ def read_blender_version(
             corrected_exe_path = path / blender_exe
 
     # If we're reusing old info and found the correct executable, skip the slow version check
-    if reuse_old_info and corrected_exe_path and corrected_exe_path.exists():
+    if reuse_old_info and old_build_info is not None and corrected_exe_path and corrected_exe_path.exists():
         logger.info(f"Reusing build info, updated executable path to: {corrected_exe_path.relative_to(path)}")
         commit_time = old_build_info.commit_time
         build_hash = old_build_info.build_hash

@@ -16,7 +16,7 @@ def markdown_to_text(markdown_text: str) -> str:
 
     soup = BeautifulSoup(html, "html.parser")
 
-    return "".join(soup.findAll(text=True))
+    return "".join(soup.find_all(string=True))
 
 
 def add_bullet_point(text: str) -> str:
