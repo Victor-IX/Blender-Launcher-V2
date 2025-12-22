@@ -12,7 +12,7 @@
 
 ### For Archlinux Users
 
-Install from AUR [blender-launcher-bin](https://aur.archlinux.org/packages/blender-launcher-bin) or [blender-launcher-git](https://aur.archlinux.org/packages/blender-launcher-git) for experimental features
+Install from AUR [blender-launcher-v2-bin](https://aur.archlinux.org/packages/blender-launcher-v2-bin)
 
 
 ## Updating Blender Launcher
