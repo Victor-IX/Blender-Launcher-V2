@@ -141,15 +141,13 @@ class BasePageWidget(QWidget):
         self.headerSplitter.setStretchFactor(2, 0)  # Commit time
 
         # Load saved column widths or use defaults
-        saved_widths = get_column_widths(self.name)
+        saved_widths = get_column_widths()
         if saved_widths:
             self.headerSplitter.setSizes(saved_widths)
         else:
-            self.headerSplitter.setSizes([
-                self.DEFAULT_VERSION_WIDTH,
-                self.DEFAULT_BRANCH_WIDTH,
-                self.DEFAULT_COMMIT_TIME_WIDTH
-            ])
+            self.headerSplitter.setSizes(
+                [self.DEFAULT_VERSION_WIDTH, self.DEFAULT_BRANCH_WIDTH, self.DEFAULT_COMMIT_TIME_WIDTH]
+            )
 
         # Connect splitter movement to emit signal and save
         self.headerSplitter.splitterMoved.connect(self._on_splitter_moved)
@@ -198,7 +196,7 @@ class BasePageWidget(QWidget):
     def _save_column_widths(self):
         """Save column widths to settings (called after debounce)."""
         sizes = self.headerSplitter.sizes()
-        set_column_widths(self.name, sizes)
+        set_column_widths(sizes)
 
     def resizeEvent(self, event):
         """Emit column width changes when the widget is resized."""

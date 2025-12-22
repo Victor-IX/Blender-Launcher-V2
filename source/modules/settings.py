@@ -5,6 +5,7 @@ import os
 import shutil
 import sys
 import uuid
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -733,8 +734,6 @@ def set_use_system_titlebar(b: bool):
 
 
 def get_version_specific_queries() -> dict[Version, VersionSearchQuery]:
-    import json
-
     dct: str = get_settings().value("version_specific_queries", defaultValue="{}", type=str)  # type: ignore
     if dct is None:  # <-- unreachable?
         return {}
@@ -742,8 +741,6 @@ def get_version_specific_queries() -> dict[Version, VersionSearchQuery]:
 
 
 def set_version_specific_queries(dct: dict[Version, VersionSearchQuery]):
-    import json
-
     v = {str(k): str(v) for k, v in dct.items()}
     j = json.dumps(v)
     get_settings().setValue("version_specific_queries", j)
@@ -784,26 +781,22 @@ def migrate_config(force=False):
         shutil.move(old_config.resolve(), new_config.resolve())
 
 
-def get_column_widths(list_name: str = None) -> list[int] | None:
+def get_column_widths() -> list[int]:
     """Get saved column widths (global, shared across all lists)."""
-    import json
 
     # Use global key - all lists share the same column widths
-    value: str = get_settings().value("Internal/global_column_widths", defaultValue="", type=str)  # type: ignore
-    if not value:
-        return None
+    value: str = get_settings().value("Internal/global_column_widths", defaultValue="[73, 434, 124]", type=str)  # type: ignore
     try:
-        widths = json.loads(value)
+        widths: list[int] = json.loads(value)
         if isinstance(widths, list) and len(widths) == 3:
             return widths
     except json.JSONDecodeError:
         pass
-    return None
+    return [73, 434, 124]
 
 
-def set_column_widths(list_name: str, widths: list[int]):
+def set_column_widths(widths: list[int]):
     """Save column widths (global, shared across all lists)."""
-    import json
 
     # Use global key - all lists share the same column widths
     get_settings().setValue("Internal/global_column_widths", json.dumps(widths))
