@@ -350,6 +350,9 @@ class DownloadWidget(BaseBuildWidget):
             if self.updating_widget is not None and self._is_removed is False:
                 QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
 
+            if widget:
+                widget.initialized.connect(lambda: self.parent.check_library_for_updates())
+
     def remove_old_build(self, widget):
         if hasattr(widget, "confirm_major_version_update_removal"):
             widget.confirm_major_version_update_removal(
