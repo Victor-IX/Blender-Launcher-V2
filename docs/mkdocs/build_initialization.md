@@ -1,4 +1,3 @@
-<style>body {text-align: justify}</style>
 # Build Initialization
 
 ??? image "Screenshots"

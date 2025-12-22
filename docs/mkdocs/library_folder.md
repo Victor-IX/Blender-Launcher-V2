@@ -1,5 +1,3 @@
-<style>body {text-align: justify}</style>
-
 # Library Folder
 
 **Library Folder** - a directory on hard drive where all downloaded builds are stored.

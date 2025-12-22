@@ -1,5 +1,3 @@
-<style>body {text-align: justify}</style>
-
 # File Association
 
 ??? image "Screenshot"

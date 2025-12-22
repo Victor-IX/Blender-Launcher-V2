@@ -1,5 +1,3 @@
-<style>body {text-align: justify}</style>
-
 # User Interface
 
 ## Main Window

@@ -1,5 +1,3 @@
-<style>body {text-align: justify}</style>
-
 # Feature Request
 
 ## How to request a feature

@@ -1,5 +1,3 @@
-<style>body {text-align: justify}</style>
-
 # Introduction
 
 ![Blender Launcher Logo](imgs/bl_logo.png)
