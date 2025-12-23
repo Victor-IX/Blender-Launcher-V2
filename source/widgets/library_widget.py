@@ -83,6 +83,7 @@ class LibraryWidget(BaseBuildWidget):
         self.child_widget = None
         self.parent_widget = parent_widget
         self.is_damaged = False
+        self.move_portable_settings = False
 
         self.destroyed.connect(lambda: self._destroyed())
 
@@ -593,6 +594,43 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self._is_major_version_update = False
 
+        config_path = self.make_portable_path()
+        if config_path.is_dir():
+            self._show_portable_settings_dialog()
+        else:
+            self._proceed_with_update()
+
+    def _show_portable_settings_dialog(self):
+        """Show dialog asking what to do with portable settings."""
+        message = "This build uses portable settings.\n\nWhat would you like to do with the portable settings folder?"
+
+        self._portable_popup = PopupWindow(
+            message=message,
+            title="Portable Settings",
+            icon=PopupIcon.WARNING,
+            buttons=["Move to New Version", "Remove Settings", "Cancel"],
+            parent=self.parent,
+        )
+
+        self._portable_popup.custom_signal.connect(self._handle_portable_choice)
+
+    def _handle_portable_choice(self, choice: str):
+        """Handle the user's choice for portable settings."""
+        if choice == "Move to New Version":
+            self.move_portable_settings = True
+            self._proceed_with_update()
+        elif choice == "Remove Settings":
+            self._proceed_with_update()
+        else:  # Cancel
+            # Reset the UI state
+            self.launchButton.set_text("Launch")
+            self.launchButton.setEnabled(True)
+            if hasattr(self, "_update_download_widget"):
+                if get_show_update_button():
+                    self._show_update_button()
+
+    def _proceed_with_update(self):
+        """Proceed with the actual update download."""
         self._hide_update_button()
         self.launchButton.set_text("Updating")
         self.launchButton.setEnabled(False)
@@ -677,7 +715,11 @@ class LibraryWidget(BaseBuildWidget):
             self.makePortableAction.setText("Unmake Portable")
             self.showConfigFolderAction.setText("Show Portable Config Folder")
 
-    def make_portable_path(self):
+    def make_portable_path(self) -> Path:
+        if self.build_info is None:
+            logger.error("Cannot make portable path: build_info is None")
+            return Path()
+
         version = self.build_info.subversion.rsplit(".", 1)[0]
 
         if version >= "4.2":
@@ -691,10 +733,22 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def copy_build_hash(self):
+        if self.build_info is None:
+            logger.error("Cannot copy build hash: build_info is None")
+            return
+
+        if self.build_info.build_hash is None:
+            logger.error("Cannot copy build hash: build_hash is None")
+            return
+
         QApplication.clipboard().setText(self.build_info.build_hash)
 
     @Slot()
     def freeze_update(self):
+        if self.build_info is None:
+            logger.error("Cannot toggle freeze update: build_info is None")
+            return
+
         if self.build_info.is_frozen:
             self.build_info.is_frozen = False
             self.freezeUpdate.setText("Freeze Update")
