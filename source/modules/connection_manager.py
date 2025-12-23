@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import ssl
 import sys
+from pathlib import Path
 from typing import TYPE_CHECKING, Union
 
 from modules._platform import get_cwd, get_platform_full, is_frozen
@@ -18,7 +19,6 @@ from modules.settings import (
 from PySide6.QtCore import QObject, Signal
 from urllib3 import PoolManager, ProxyManager, make_headers
 from urllib3.contrib.socks import SOCKSProxyManager
-from pathlib import Path
 
 if TYPE_CHECKING:
     from semver import Version

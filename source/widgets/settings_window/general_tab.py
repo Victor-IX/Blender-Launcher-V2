@@ -5,8 +5,10 @@ import sys
 from pathlib import Path
 
 from modules.settings import (
+    delete_action,
     get_actual_library_folder,
     get_config_file,
+    get_default_delete_action,
     get_launch_minimized_to_tray,
     get_launch_timer_duration,
     get_launch_when_system_starts,
@@ -16,10 +18,9 @@ from modules.settings import (
     get_show_tray_icon,
     get_use_pre_release_builds,
     get_worker_thread_count,
-    get_default_delete_action,
     migrate_config,
-    delete_action,
     purge_temp_folder,
+    set_default_delete_action,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
     set_launch_when_system_starts,
@@ -28,24 +29,16 @@ from modules.settings import (
     set_show_tray_icon,
     set_use_pre_release_builds,
     set_worker_thread_count,
-    set_default_delete_action,
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QGridLayout,
-    QLabel,
-    QPushButton,
-    QSpinBox,
-    QComboBox,
-)
+from PySide6.QtWidgets import QCheckBox, QComboBox, QGridLayout, QLabel, QPushButton, QSpinBox
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
-from windows.popup_window import PopupWindow, PopupIcon
 from windows.file_dialog_window import FileDialogWindow
+from windows.popup_window import PopupIcon, PopupWindow
 
 
 class GeneralTabWidget(SettingsFormWidget):
@@ -222,9 +215,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
         # Purge Temp Now Button
         self.PurgeTempNowButton = QPushButton("Purge Temp Folder Now")
-        self.PurgeTempNowButton.setToolTip(
-            "Immediately clear all files in the temporary download folder"
-        )
+        self.PurgeTempNowButton.setToolTip("Immediately clear all files in the temporary download folder")
         self.PurgeTempNowButton.clicked.connect(self.purge_temp_now)
 
         self.advanced_layout = QGridLayout()

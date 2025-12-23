@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
-import os
 import logging
-
+import os
 from typing import TypedDict
 
 import distro
@@ -137,7 +136,6 @@ class BlenderLauncherUpdater(BaseWindow):
                 self.source_zip.unlink()
             except Exception as e:
                 logger.warning(f"Failed to remove temporary file {self.source_zip}: {e}")
-                pass
 
         # Launch 'Blender Launcher.exe' and exit
         launcher = str(dist)

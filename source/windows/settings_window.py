@@ -20,7 +20,7 @@ from widgets.header import WindowHeader
 from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget
 from windows.base_window import BaseWindow
-from windows.popup_window import PopupWindow, PopupIcon
+from windows.popup_window import PopupIcon, PopupWindow
 
 
 class SettingsWindow(BaseWindow):

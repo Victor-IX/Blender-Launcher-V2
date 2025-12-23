@@ -215,8 +215,8 @@ def generate_program_shortcut(destination: Path, exe=sys.executable):
     platform = get_platform()
 
     if sys.platform == "win32":
-        import win32com.client
         import pythoncom
+        import win32com.client
 
         dest = destination.with_suffix(".lnk").as_posix()
         # create the shortcut

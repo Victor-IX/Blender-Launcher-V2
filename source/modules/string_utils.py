@@ -1,7 +1,7 @@
 import re
-
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qs, urlparse
+
 from bs4 import BeautifulSoup
 from markdown import markdown
 

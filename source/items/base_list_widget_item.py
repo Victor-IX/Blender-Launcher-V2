@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from datetime import timezone
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from datetime import UTC
+from typing import TYPE_CHECKING
 
 from PySide6.QtWidgets import QListWidgetItem
 
@@ -32,8 +33,8 @@ class BaseListWidgetItem(QListWidgetItem):
             return False
 
         if self.date.tzinfo is None or other.date.tzinfo is None:
-            self.date = self.date.replace(tzinfo=timezone.utc)
-            other.date = other.date.replace(tzinfo=timezone.utc)
+            self.date = self.date.replace(tzinfo=UTC)
+            other.date = other.date.replace(tzinfo=UTC)
 
         return self.date > other.date
 

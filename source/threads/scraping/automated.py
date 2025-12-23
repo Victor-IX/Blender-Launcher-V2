@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from modules._platform import get_architecture, get_platform
@@ -67,7 +67,7 @@ class ScraperAutomated(BuildScraper):
                     yield self.new_build_from_dict(build, branch, architecture_specific_build)
 
     def new_build_from_dict(self, build, branch_type, architecture_specific_build):
-        dt = datetime.fromtimestamp(build["file_mtime"], tz=timezone.utc)
+        dt = datetime.fromtimestamp(build["file_mtime"], tz=UTC)
 
         subversion = parse_blender_ver(build["version"])
         build_var = ""

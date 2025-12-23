@@ -5,8 +5,8 @@ import os
 import shlex
 import shutil
 import sys
-import webbrowser
 import threading
+import webbrowser
 from datetime import datetime
 from enum import Enum
 from functools import partial
@@ -22,6 +22,7 @@ from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.settings import (
     create_library_folders,
+    get_check_for_new_builds_automatically,
     get_check_for_new_builds_on_startup,
     get_default_downloads_page,
     get_default_library_page,
@@ -35,6 +36,7 @@ from modules.settings import (
     get_launch_minimized_to_tray,
     get_library_folder,
     get_make_error_popup,
+    get_new_builds_check_frequency,
     get_proxy_type,
     get_purge_temp_on_startup,
     get_quick_launch_key_seq,
@@ -52,8 +54,6 @@ from modules.settings import (
     get_use_pre_release_builds,
     get_use_system_titlebar,
     get_worker_thread_count,
-    get_check_for_new_builds_automatically,
-    get_new_builds_check_frequency,
     is_library_folder_valid,
     purge_temp_folder,
     set_dont_show_resource_warning,
@@ -63,7 +63,7 @@ from modules.settings import (
 )
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, Signal, Slot, QTimer
+from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -233,11 +233,11 @@ class BlenderLauncher(BaseWindow):
             return
 
         create_library_folders(get_library_folder())
-        
+
         # Purge temp folder on startup if enabled
         if get_purge_temp_on_startup():
             purge_temp_folder()
-        
+
         self.draw()
 
     def prompt_library_folder(self):

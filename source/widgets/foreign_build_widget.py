@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -26,7 +26,7 @@ class UnrecoBuildWidget(BaseBuildWidget):
             str(path),
             "0.0.0",
             "",
-            datetime.now(tz=timezone.utc),
+            datetime.now(tz=UTC),
             "",
             str(path.name),
             False,

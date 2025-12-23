@@ -1,12 +1,10 @@
 import textwrap
-
 from enum import Enum
 from typing import List, Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QPixmap, QKeyEvent
-from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
-
+from PySide6.QtGui import QKeyEvent, QPixmap
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 from windows.base_window import BaseWindow
 
 
@@ -24,10 +22,10 @@ class PopupWindow(BaseWindow):
     def __init__(
         self,
         message: str,
-        title: Optional[str] = "Info",
-        info_popup: Optional[bool] = False,
+        title: str | None = "Info",
+        info_popup: bool | None = False,
         icon=PopupIcon.INFO,
-        buttons: Optional[List[str]] = None,
+        buttons: list[str] | None = None,
         parent=None,
         app=None,
     ):

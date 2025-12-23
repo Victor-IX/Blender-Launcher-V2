@@ -2,15 +2,7 @@ from __future__ import annotations
 
 from modules.icons import Icons
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QFrame,
-    QGridLayout,
-    QLabel,
-    QLayout,
-    QPushButton,
-    QWidget,
-)
+from PySide6.QtWidgets import QCheckBox, QFrame, QGridLayout, QLabel, QLayout, QPushButton, QWidget
 
 
 class SettingsGroup(QFrame):

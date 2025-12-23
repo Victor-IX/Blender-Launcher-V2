@@ -9,12 +9,7 @@ from modules.settings import (
     get_show_stable_builds,
 )
 from PySide6.QtCore import Slot
-from PySide6.QtWidgets import (
-    QButtonGroup,
-    QFrame,
-    QSizePolicy,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import QButtonGroup, QFrame, QSizePolicy, QVBoxLayout
 from widgets.repo_visibility_view import RepoUserView
 
 

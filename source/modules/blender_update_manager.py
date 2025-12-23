@@ -1,23 +1,22 @@
 from __future__ import annotations
 
 import logging
-
-from semver import Version
-from typing import TYPE_CHECKING, List, Any, Optional
+from typing import TYPE_CHECKING, Any, List, Optional
 
 from modules.settings import (
-    get_use_advanced_update_button,
-    get_update_behavior,
-    get_stable_update_behavior,
+    get_bfa_update_behavior,
     get_daily_update_behavior,
     get_experimental_update_behavior,
-    get_bfa_update_behavior,
-    get_show_update_button,
-    get_show_stable_update_button,
+    get_show_bfa_update_button,
     get_show_daily_update_button,
     get_show_experimental_update_button,
-    get_show_bfa_update_button,
+    get_show_stable_update_button,
+    get_show_update_button,
+    get_stable_update_behavior,
+    get_update_behavior,
+    get_use_advanced_update_button,
 )
+from semver import Version
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -27,7 +26,7 @@ logger = logging.getLogger()
 
 def available_blender_update(
     current_build_info: BuildInfo,
-    available_downloads: List[Any],
+    available_downloads: list[Any],
     widgets: Any,
 ):
     """
@@ -71,9 +70,9 @@ def _branch_visibility(current_branch: str) -> bool:
 
 def _new_version_available(
     current_build_info: BuildInfo,
-    available_downloads: List[Any],
+    available_downloads: list[Any],
     widgets: Any,
-) -> Optional[Any]:
+) -> Any | None:
     """Find available updates based on version or newer builds of same version."""
     current_version = current_build_info.semversion.replace(prerelease=None)
     current_branch = current_build_info.branch

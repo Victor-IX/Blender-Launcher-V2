@@ -6,17 +6,17 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
-from send2trash import send2trash
 
 from modules._platform import _check_call, _check_output
 from modules.enums import MessageType
 from modules.task import Task
 from PySide6.QtCore import Signal
+from send2trash import send2trash
 
 logger = logging.getLogger()
 
 
-def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]) -> Optional[Path]:
+def extract(source: Path, destination: Path, progress_callback: Callable[[int, int], None]) -> Path | None:
     progress_callback(0, 0)
     suffixes = source.suffixes
     if suffixes[-1] == ".zip":
@@ -151,7 +151,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
     return None
 
 
-def _get_build_folder(names: List[str]):
+def _get_build_folder(names: list[str]):
     tops = {n.split("/")[0] for n in names if n and "/" in n}
     folders = {t for t in tops if any(n.startswith(f"{t}/") for n in names)}
 

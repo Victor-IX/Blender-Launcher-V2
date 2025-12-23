@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import os
 import contextlib
 import datetime
+import os
 import re
 from dataclasses import dataclass
 from functools import cache
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
     from modules.build_info import BuildInfo
 
-utc = datetime.timezone.utc
+utc = datetime.UTC
 
 
 @dataclass(frozen=True)

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import os
 import shutil
 import sys
 import uuid
-import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from modules._platform import get_config_file, get_config_path, get_cwd, get_platform, local_config, user_config
@@ -15,7 +15,7 @@ from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings
 from semver import Version
 
-EPOCH = datetime.fromtimestamp(0, tz=timezone.utc)
+EPOCH = datetime.fromtimestamp(0, tz=UTC)
 ISO_EPOCH = EPOCH.isoformat()
 
 # TODO: Simplify this

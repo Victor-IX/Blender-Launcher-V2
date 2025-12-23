@@ -11,11 +11,7 @@ from typing import TYPE_CHECKING
 from modules._platform import get_platform
 from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
-from PySide6.QtWidgets import (
-    QVBoxLayout,
-    QWidget,
-    QWizard,
-)
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QWizard
 from widgets.onboarding_setup.wizard_pages import (
     AppearancePage,
     BackgroundRunningPage,

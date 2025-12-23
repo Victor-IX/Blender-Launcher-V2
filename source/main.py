@@ -1,37 +1,25 @@
 from __future__ import annotations
 
+import argparse
 import gettext
 import logging
 import os
 import sys
-import argparse
 from argparse import ArgumentParser
+from collections.abc import Sequence
 from pathlib import Path
-from typing import NoReturn, Sequence
+from typing import NoReturn
 
 import modules._resources_rc
 from modules import argument_parsing as ap
-from modules._platform import (
-    _popen,
-    get_cache_path,
-    get_cwd,
-    get_launcher_name,
-    get_platform,
-    is_frozen,
-)
+from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
-from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
-from utils.logger import setup_logging
-from modules.version_matcher import (
-    VALID_FULL_QUERIES,
-    VALID_QUERIES,
-    VERSION_SEARCH_SYNTAX,
-)
+from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
 from PySide6.QtWidgets import QApplication
 from semver import Version
-from windows.popup_window import PopupWindow, PopupIcon
-
+from utils.logger import setup_logging
+from windows.popup_window import PopupIcon, PopupWindow
 
 version = Version(
     2,

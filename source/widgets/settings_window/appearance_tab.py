@@ -20,13 +20,7 @@ from modules.settings import (
     set_use_system_titlebar,
     tabs,
 )
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QComboBox,
-    QFormLayout,
-    QLabel,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLabel, QVBoxLayout
 from widgets.settings_form_widget import SettingsFormWidget
 
 from .settings_group import SettingsGroup

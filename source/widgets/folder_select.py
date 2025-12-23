@@ -6,14 +6,9 @@ from typing import TYPE_CHECKING
 
 from modules._platform import get_cwd
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QLineEdit,
-    QPushButton,
-    QWidget,
-)
-from windows.popup_window import PopupWindow, PopupIcon
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
 from windows.file_dialog_window import FileDialogWindow
+from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher

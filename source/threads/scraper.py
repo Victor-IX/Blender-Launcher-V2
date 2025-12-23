@@ -4,10 +4,7 @@ import logging
 from itertools import chain
 from typing import TYPE_CHECKING
 
-from modules._platform import (
-    get_architecture,
-    get_platform,
-)
+from modules._platform import get_architecture, get_platform
 from modules.build_info import BuildInfo
 from modules.settings import (
     get_scrape_bfa_builds,

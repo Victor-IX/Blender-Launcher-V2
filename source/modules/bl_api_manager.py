@@ -1,12 +1,11 @@
-import sys
 import json
 import logging
-
+import sys
 from functools import lru_cache
 from pathlib import Path
-from semver import Version
 
 from modules._platform import get_config_path, get_platform
+from semver import Version
 
 logger = logging.getLogger()
 
@@ -49,7 +48,7 @@ def update_stable_builds_cache(data: dict | None) -> None:
                     logger.info(
                         f"Current {version_current} build cache version is older than the new data ({version_new}). Updating."
                     )
-            except Exception as e:
+            except Exception:
                 logger.exception("Failed to compare build cache versions from existing file. Overwriting file.")
 
         with STABLE_BUILD_PATH.open("w", encoding="utf-8") as f:

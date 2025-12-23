@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+import contextlib
+import logging
 import os
 import re
-import logging
-import contextlib
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_platform, is_frozen, get_environment
+from modules._platform import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
+from modules.blender_update_manager import available_blender_update, is_major_version_update
 from modules.build_info import (
     BuildInfo,
     LaunchMode,
@@ -24,20 +25,12 @@ from modules.settings import (
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
-    set_favorite_path,
     get_show_update_button,
+    set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from modules.blender_update_manager import available_blender_update, is_major_version_update
-from windows.popup_window import PopupIcon, PopupWindow
 from PySide6.QtCore import Qt, Signal, Slot
-from PySide6.QtGui import (
-    QAction,
-    QDragEnterEvent,
-    QDragLeaveEvent,
-    QDropEvent,
-    QHoverEvent,
-)
+from PySide6.QtGui import QAction, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
 from threads.register import Register
@@ -51,8 +44,8 @@ from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
 from windows.file_dialog_window import FileDialogWindow
+from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -1007,7 +1000,6 @@ class LibraryWidget(BaseBuildWidget):
                         return
                 logger.error("No file manager found to open the folder.")
 
-
     @Slot()
     def show_build_folder(self):
         library_folder = Path(get_library_folder())
@@ -1070,7 +1062,7 @@ class LibraryWidget(BaseBuildWidget):
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, _branch_width: int, commit_time_width: int):
         """Update column widths to match header splitter."""
-        if not hasattr(self, 'subversionLabel') or self.subversionLabel is None:
+        if not hasattr(self, "subversionLabel") or self.subversionLabel is None:
             return
         self.subversionLabel.setFixedWidth(version_width)
         self.commitTimeLabel.setFixedWidth(commit_time_width)

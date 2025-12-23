@@ -1,5 +1,4 @@
 import logging
-
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import rmtree
@@ -7,7 +6,6 @@ from shutil import rmtree
 from modules.task import Task
 from PySide6.QtCore import Signal
 from send2trash import send2trash
-
 
 logger = logging.getLogger()
 

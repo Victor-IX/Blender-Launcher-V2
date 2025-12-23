@@ -20,15 +20,7 @@ from modules.version_matcher import VALID_QUERIES, BInfoMatcher, VersionSearchQu
 from modules.version_matcher import BasicBuildInfo as BBI
 from PySide6.QtCore import Qt, QTimer, Slot
 from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
-from PySide6.QtWidgets import (
-    QApplication,
-    QComboBox,
-    QGridLayout,
-    QLabel,
-    QListWidget,
-    QPushButton,
-    QWidget,
-)
+from PySide6.QtWidgets import QApplication, QComboBox, QGridLayout, QLabel, QListWidget, QPushButton, QWidget
 from threads.library_drawer import DrawLibraryTask
 from widgets.lintable_line_edit import LintableLineEdit
 from windows.base_window import BaseWindow

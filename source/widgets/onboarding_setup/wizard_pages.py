@@ -29,18 +29,11 @@ from modules.settings import (
 )
 from modules.shortcut import (
     generate_program_shortcut,
-    get_default_shortcut_folder,
     get_default_program_shortcut_destination,
+    get_default_shortcut_folder,
     register_windows_filetypes,
 )
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QHBoxLayout,
-    QLabel,
-    QTextEdit,
-    QVBoxLayout,
-    QWizardPage,
-)
+from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QWizardPage
 from widgets.folder_select import FolderSelector
 from widgets.repo_group import RepoGroup
 
@@ -140,7 +133,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         if home not in executable_path.parents:
             self.path_warning_label = QLabel(self)
             self.path_warning_label.setText(
-                f"The program's exe is outside of {str(home)}, it may lack the permissions needed to move the executable to the library!"
+                f"The program's exe is outside of {home!s}, it may lack the permissions needed to move the executable to the library!"
             )
             self.path_warning_label.setWordWrap(True)
             self.layout_.addWidget(self.path_warning_label)
