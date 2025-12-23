@@ -519,10 +519,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#catching-application-traceback" class="md-nav__link">
+  <a href="#log-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Catching Application Traceback
+        Log file
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blender-launcher-debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blender Launcher debug mode
       
     </span>
   </a>
@@ -629,6 +640,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -667,10 +705,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#catching-application-traceback" class="md-nav__link">
+  <a href="#log-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Catching Application Traceback
+        Log file
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blender-launcher-debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blender Launcher debug mode
       
     </span>
   </a>
@@ -707,7 +756,7 @@
 
 <h1 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h1>
 <h2 id="first-steps">First steps<a class="headerlink" href="#first-steps" title="Permanent link">&para;</a></h2>
-<p>Before creating an issue, please check the following:</p>
+<p><strong>Before creating an issue, please check the following:</strong></p>
 <ul>
 <li>
 <p>Avoid duplicates - look through <a href="https://github.com/Victor-IX/Blender-Launcher-V2/issues">open</a> and <a href="https://github.com/Victor-IX/Blender-Launcher-V2/issues?q=is%3Aissue+is%3Aclosed">closed</a> issues sections and make sure your problem is not reported by another user</p>
@@ -722,7 +771,28 @@
 <p>For general questions go to <a href="https://blenderartists.org/t/blender-launcher-standalone-software-client">Blender Artists thread</a> or our <a href="https://discord.gg/3jrTZFJkTd">Discord</a></p>
 </li>
 </ul>
-<h2 id="catching-application-traceback">Catching Application Traceback<a class="headerlink" href="#catching-application-traceback" title="Permanent link">&para;</a></h2>
+<h2 id="log-file">Log file<a class="headerlink" href="#log-file" title="Permanent link">&para;</a></h2>
+<p>Blender Launcher keeps a log file named <code>Blender Launcher.log</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Windows</label><label for="__tabbed_1_2">Linux</label><label for="__tabbed_1_3">MacOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>The log file can be found in the <strong>LocalAppdata</strong> folder:
+<div class="highlight"><pre><span></span><code>%localappdata%/Blender Launcher/
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p>The log file can be found in the <strong>.cache</strong> folder:
+<div class="highlight"><pre><span></span><code>~/.cache/Blender Launcher/
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p>The log file can be found in the <strong>Library</strong> folder:
+<div class="highlight"><pre><span></span><code>~/Library/Logs/Blender Launcher/
+</code></pre></div></p>
+</div>
+</div>
+</div>
+<h2 id="blender-launcher-debug-mode">Blender Launcher debug mode<a class="headerlink" href="#blender-launcher-debug-mode" title="Permanent link">&para;</a></h2>
 <p>Blender Launcher logs warnings and errors into <code>Blender Launcher.log</code> by default. To retrieve additional useful debug information use <code>-debug</code> flag:</p>
 <div class="admonition warning">
 <p class="admonition-title">Close Blender Launcher</p>
@@ -733,18 +803,13 @@
 <p>The <strong>log file</strong> can be found in the <strong>LocalAppdata</strong> folder on <strong>Windows</strong>
 <code>%localappdata%/Blender Launcher/</code></p>
 </div>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Windows CMD</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows CMD</label><label for="__tabbed_2_2">Linux</label></div>
 <div class="tabbed-content">
-<div class="tabbed-block"></div>
-</div>
-</div>
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>.\&quot;Blender Launcher.exe&quot; -debug
 </code></pre></div>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Linux</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block"></div>
 </div>
-</div>
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>./Blender\ Launcher -debug
 </code></pre></div>
 <ul>
@@ -755,8 +820,11 @@ run
 </code></pre></div>
 </li>
 </ul>
+</div>
+</div>
+</div>
 <h2 id="how-to-report-a-bug">How to report a bug<a class="headerlink" href="#how-to-report-a-bug" title="Permanent link">&para;</a></h2>
-<p>To report a bug, use an <a href="https://github.com/Victor-IX/Blender-Launcher-V2/issues/new?assignees=Victor-IX&amp;labels=bug&amp;template=bug_report.md&amp;title=">issue template</a>. Consider attaching a <code>BL.log</code> file if it exists near the <code>Blender Launcher</code> executable.</p>
+<p>To report a bug, use an <a href="https://github.com/Victor-IX/Blender-Launcher-V2/issues/new?assignees=Victor-IX&amp;labels=bug&amp;template=bug_report.md&amp;title=">issue template</a>. Consider attaching the <a href="#log-file">Blender Launcher.log</a> file.</p>
 <p><a class="md-button md-button--primary" href="https://github.com/Victor-IX/Blender-Launcher-V2/issues/new?assignees=Victor-IX&amp;labels=bug&amp;template=bug_report.md&amp;title="><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M192 96c0-53 43-96 96-96s96 43 96 96v3.6c0 15.7-12.7 28.4-28.4 28.4H220.5c-15.7 0-28.4-12.7-28.4-28.4V96zm345.6 12.8c10.6 14.1 7.7 34.2-6.4 44.8l-97.8 73.3c5.3 8.9 9.3 18.7 11.8 29.1H544c17.7 0 32 14.3 32 32s-14.3 32-32 32h-96v32c0 2.6-.1 5.3-.2 7.9l83.4 62.5c14.1 10.6 17 30.7 6.4 44.8s-30.7 17-44.8 6.4l-63.1-47.3c-23.2 44.2-66.5 76.2-117.7 83.9V280c0-13.3-10.7-24-24-24s-24 10.7-24 24v230.2c-51.2-7.7-94.5-39.7-117.7-83.9l-63.1 47.3c-14.1 10.6-34.2 7.7-44.8-6.4s-7.7-34.2 6.4-44.8l83.4-62.5c-.1-2.6-.2-5.2-.2-7.9v-32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h98.8c2.5-10.4 6.5-20.2 11.8-29.1l-97.8-73.3c-14.1-10.6-17-30.7-6.4-44.8s30.7-17 44.8-6.4L192 184c12.3-5.1 25.8-8 40-8h112c14.2 0 27.7 2.8 40 8l108.8-81.6c14.1-10.6 34.2-7.7 44.8 6.4"/></svg></span> Submit an issue</a></p>
 
 
