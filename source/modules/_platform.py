@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import os
 import platform
 import sys
@@ -49,10 +50,8 @@ def show_windows_help(parser: argparse.ArgumentParser):
         help_txt_file.close()
 
         call(["cmd", "/c", "type", help_txt_file.name, "&&", "pause"])
-        try:
+        with contextlib.suppress(FileNotFoundError):
             os.unlink(help_txt_file.name)
-        except FileNotFoundError:
-            pass
 
 
 def get_environment():
@@ -273,7 +272,7 @@ def bfa_cache_path() -> Path:
     return get_cache_path() / "bforartists_builds.json"
 
 
-def get_blender_config_folder(custom_folder: str = None):
+def get_blender_config_folder(custom_folder: str | None = None):
     """
     Retrieves the Blender configuration folder.
     :param custom_folder: Optional; a custom folder name use to locate fork blender configuration folder.
@@ -292,3 +291,4 @@ def get_blender_config_folder(custom_folder: str = None):
         return Path(os.environ.get("XDG_CONFIG_HOME", "") or os.path.expanduser("~/.config"), folder_name)
     elif platform == "macOS":
         return Path(os.path.expanduser("~/Library/Application Support"), folder_name)
+    return None

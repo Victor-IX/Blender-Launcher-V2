@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from datetime import UTC
 from typing import TYPE_CHECKING
 
 from PySide6.QtWidgets import QListWidgetItem
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from semver import Version
     from widgets.base_list_widget import BaseListWidget
 

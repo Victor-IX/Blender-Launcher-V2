@@ -318,14 +318,14 @@ class GeneralTabWidget(SettingsFormWidget):
     def purge_temp_now(self):
         success = purge_temp_folder()
         if success:
-            dlg = PopupWindow(
+            PopupWindow(
                 parent=self.parent,
                 title="Success",
                 message="Temp folder has been purged successfully!",
                 icon=PopupIcon.NONE,
             )
         else:
-            dlg = PopupWindow(
+            PopupWindow(
                 parent=self.parent,
                 title="Error",
                 message="Failed to purge temp folder. Some files may be in use.",

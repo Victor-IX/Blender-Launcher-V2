@@ -1,6 +1,6 @@
 import textwrap
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QPixmap

@@ -6,9 +6,11 @@ import logging
 import os
 import sys
 from argparse import ArgumentParser
-from collections.abc import Sequence
 from pathlib import Path
-from typing import NoReturn
+from typing import TYPE_CHECKING, NoReturn
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 import modules._resources_rc
 from modules import argument_parsing as ap

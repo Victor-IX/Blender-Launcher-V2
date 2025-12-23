@@ -5,7 +5,7 @@ import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from modules._platform import _check_call, _check_output
 from modules.enums import MessageType

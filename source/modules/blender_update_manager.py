@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from modules.settings import (
     get_bfa_update_behavior,
@@ -57,7 +57,7 @@ def _branch_visibility(current_branch: str) -> bool:
         get_show_bfa_update_button() if get_use_advanced_update_button() else get_show_update_button()
     )
 
-    if (current_branch == "stable" or current_branch == "lts") and stable_update_button_visibility:
+    if current_branch in {"stable", "lts"} and stable_update_button_visibility:
         return True
     elif current_branch == "daily" and daily_update_button_visibility:
         return True
@@ -201,7 +201,7 @@ def _get_update_behavior(
     )
     bfa_update_behavior = get_bfa_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
 
-    if current_branch == "stable" or current_branch == "lts":
+    if current_branch in {"stable", "lts"}:
         return stable_update_behavior
     elif current_branch == "daily":
         return daily_update_behavior

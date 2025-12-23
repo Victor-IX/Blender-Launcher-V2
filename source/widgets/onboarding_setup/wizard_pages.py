@@ -314,7 +314,7 @@ class ShortcutsPage(BasicOnboardingPage):
                         exe=str(self.prop_settings.exe_location),
                     )
                 except Exception as e:
-                    raise Exception(f"Exceptions raised while generating desktop shortcuts: {e}")
+                    raise Exception(f"Exceptions raised while generating desktop shortcuts: {e}") from e
 
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""

@@ -121,7 +121,7 @@ class LibraryWidget(BaseBuildWidget):
             self.draw(self.parent_widget.build_info)
 
     @Slot()
-    def trigger_damaged(self, exception: Exception = None):
+    def trigger_damaged(self, exception: Exception | None = None):
         if exception:
             logger.error(f"Failed to read build info for {self.link.name}: {exception}")
         self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")

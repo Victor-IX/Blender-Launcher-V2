@@ -5,9 +5,11 @@ import json
 import logging
 import subprocess
 import sys
-from collections.abc import Sequence
 from pathlib import Path
-from typing import NoReturn
+from typing import TYPE_CHECKING, NoReturn
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 from modules.blendfile_reader import read_blendfile_header
 from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args

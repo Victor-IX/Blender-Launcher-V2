@@ -142,7 +142,7 @@ class ScraperStable(BuildScraper):
             # TODO: Make a function to get app file path if not already done
             if self.force_build_cache:
                 cache_path = (
-                    Path(sys._MEIPASS) / f"files/stable_builds_api_{get_platform().lower()}.json"
+                    Path(getattr(sys, "_MEIPASS", "")) / f"files/stable_builds_api_{get_platform().lower()}.json"
                     if getattr(sys, "frozen", False)
                     else Path(f"source/resources/api/stable_builds_api_{get_platform().lower()}.json").resolve()
                 )

@@ -32,7 +32,7 @@ proxy_types_chemes = {
     4: "socks5h://",
 }
 
-REQUEST_MANAGER = Union[PoolManager, ProxyManager, SOCKSProxyManager]
+REQUEST_MANAGER = PoolManager | ProxyManager | SOCKSProxyManager
 
 
 # TODO

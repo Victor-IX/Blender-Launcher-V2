@@ -154,7 +154,7 @@ class SettingsWindow(BaseWindow):
             )
 
         if self.old_proxy_type != proxy_type:
-            r_proxy_types = dict(zip(proxy_types.values(), proxy_types.keys()))
+            r_proxy_types = dict(zip(proxy_types.values(), proxy_types.keys(), strict=True))
 
             pending_to_restart.append(f"Proxy Type: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}")
 
