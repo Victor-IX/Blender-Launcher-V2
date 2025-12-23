@@ -14,18 +14,28 @@ jobs:
   winget-publish:
     name: Publish winget package
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.release.tag_name, '-rc')}}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     steps:
-      - name: Set winget version env
-        env:
-          TAG_NAME: ${{ inputs.tag_name || github.event.release.tag_name }}
-        run: echo "WINGET_TAG_NAME=$(echo ${TAG_NAME#v})" >> $GITHUB_ENV
+      - name: Extract tag name
+        id: extract_tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag_name }}"
+          else
+            TAG="${{ github.event.workflow_run.head_branch }}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+      - name: Wait for release asset
+        run: |
+          echo "Waiting 30 seconds for release assets to be fully published..."
+          sleep 30
       - name: Submit package to Windows Package Manager Community Repository
         uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: VictorIX.BlenderLauncher
           installers-regex: '^Blender_Launcher_v[\d.]+_Windows_x64\.zip$'
-          version: ${{ env.WINGET_TAG_NAME }}
-          release-tag: ${{ inputs.tag_name || github.event.release.tag_name }}
+          version: ${{ steps.extract_tag.outputs.version }}
+          release-tag: ${{ steps.extract_tag.outputs.tag }}
           token: ${{ secrets.WINGET_ACC_TOKEN }}
           # fork-user: Victor-IX
