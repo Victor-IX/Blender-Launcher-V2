@@ -1133,6 +1133,8 @@ class BlenderLauncher(BaseWindow):
             self.latest_tag = latest_tag
             if path_note is not None:
                 path_note_text = patch_note_cleaner(path_note)
+            else:
+                path_note_text = "No release notes available."
             popup = PopupWindow(
                 title=f"New version {latest_tag.replace('v', '')} available",
                 message=path_note_text,
