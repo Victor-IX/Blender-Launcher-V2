@@ -32,6 +32,8 @@
     <file>icons/download_on.svg</file>
     <file>icons/download_off.svg</file>
     <file>icons/update.svg</file>
+    <file>icons/render_animation.svg</file>
+    <file>icons/blender.svg</file>
     <file>styles/global.qss</file>
     <file>fonts/OpenSans-SemiBold.ttf</file>
   </qresource>

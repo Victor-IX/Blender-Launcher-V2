@@ -1,6 +1,7 @@
 import argparse
 import os
 import platform
+import shlex
 import sys
 from functools import cache
 from pathlib import Path
@@ -292,3 +293,74 @@ def get_blender_config_folder(custom_folder: str = None):
         return Path(os.environ.get("XDG_CONFIG_HOME", "") or os.path.expanduser("~/.config"), folder_name)
     elif platform == "macOS":
         return Path(os.path.expanduser("~/Library/Application Support"), folder_name)
+
+
+def open_terminal_in_directory(directory: Path, command: str | None = None) -> bool:
+    """
+    Opens a terminal/command prompt in the specified directory, optionally running a command.
+
+    Args:
+        directory: The path to open the terminal in.
+        command: Optional command to run after changing to the directory.
+
+    Returns:
+        True if successful, False otherwise.
+    """
+    platform = get_platform()
+    env = get_environment()
+
+    if not directory.is_dir():
+        return False
+
+    try:
+        if platform == "Windows":
+            # Open CMD in the directory, optionally running a command
+            if command:
+                cmd_str = f'cd /d "{directory}" && {command}'
+            else:
+                cmd_str = f'cd /d "{directory}"'
+            Popen(
+                ["cmd", "/K", cmd_str],
+                cwd=str(directory),
+                env=env,
+                creationflags=0x00000010,  # CREATE_NEW_CONSOLE
+            )
+            return True
+        if platform == "Linux":
+            # Try common terminal emulators in order of preference
+            if command:
+                shell_cmd = f"cd '{directory.as_posix()}' && {command}; exec $SHELL"
+            else:
+                shell_cmd = f"cd '{directory.as_posix()}' && exec $SHELL"
+
+            quoted_cmd = shlex.quote(shell_cmd)
+            terminals = [
+                ["gnome-terminal", "--", "bash", "-c", shell_cmd],
+                ["konsole", "-e", "bash", "-c", shell_cmd],
+                ["xfce4-terminal", "-e", f"bash -c {quoted_cmd}"],
+                ["mate-terminal", "-e", f"bash -c {quoted_cmd}"],
+                ["tilix", "-e", f"bash -c {quoted_cmd}"],
+                ["terminator", "-e", f"bash -c {quoted_cmd}"],
+                ["xterm", "-e", f"bash -c {quoted_cmd}"],
+            ]
+            for term_cmd in terminals:
+                try:
+                    Popen(term_cmd, env=env, start_new_session=True)
+                    return True
+                except FileNotFoundError:
+                    continue
+            return False
+        if platform == "macOS":
+            # Open Terminal.app in the directory, optionally running a command
+            if command:
+                # Escape double quotes for AppleScript
+                command_escaped = command.replace('"', '\\"')
+                script = f'tell application "Terminal" to do script "cd \'{directory.as_posix()}\' && {command_escaped}"'
+            else:
+                script = f'tell application "Terminal" to do script "cd \'{directory.as_posix()}\'"'
+            Popen(["osascript", "-e", script], env=env)
+            return True
+
+        return False
+    except Exception:
+        return False

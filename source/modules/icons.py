@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from functools import cache
 
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QIcon, QPixmap
 
 base_path = ":resources/icons/"
@@ -25,6 +26,8 @@ class Icons:
     download: QIcon
     update: QIcon
     file: QIcon
+    render: QIcon
+    blender: QIcon
     taskbar: QIcon
     bl_file: QIcon
     none: QIcon
@@ -48,14 +51,21 @@ class Icons:
             load_icon(color, "download"),
             load_icon(color, "update"),
             load_icon(color, "file"),
+            load_icon(color, "render_animation", size=24),
+            load_icon(color, "blender", size=24),
             QIcon(base_path + "bl/bl.ico"),
             QIcon(base_path + "bl/bl_file.ico"),
             QIcon(),
         )
 
 
-def load_icon(color, name):
+def load_icon(color, name, size=None):
     pixmap = QPixmap(base_path + name + "")
+
+    # Scale if size is specified (for large SVGs)
+    if size is not None and not pixmap.isNull():
+        pixmap = pixmap.scaled(size, size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+
     image = pixmap.toImage()
 
     for y in range(image.height()):
