@@ -126,3 +126,14 @@ def read_blendfile_header(pth: Path) -> BlendfileHeader | None:
     version, file_ver = parse_header_version(header)
 
     return BlendfileHeader(version, file_ver, compression_type=compression_type)
+
+
+if __name__ == "__main__":
+    from pathlib import Path
+
+    logging.basicConfig(level=logging.DEBUG)
+
+    # Test .blender file Path
+    pth = Path("Untitled.blend")
+    blend_header = read_blendfile_header(pth)
+    print(blend_header)
