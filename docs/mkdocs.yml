@@ -13,6 +13,7 @@ nav:
     - Known Issues: known_issues.md
     - Feature Request: feature_request.md
     - Development: development.md
+    - FAQ: FAQ.md
 docs_dir: mkdocs
 site_dir: site
 theme:

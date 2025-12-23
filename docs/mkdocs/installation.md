@@ -2,11 +2,18 @@
 
 ## Installing Blender Launcher
 
-1. Download the latest release for your OS from the [releases page](https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest).
-2. Unpack the `Blender Launcher.exe` file and place it somewhere on your drive.
-3. Run `Blender Launcher.exe`.
-4. If this is a first launch, the program will ask you to choose [Library Folder](library_folder.md)
+1. Download the latest release for your **OS** from the [releases page](https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest).
+2. Unpack the `Blender Launcher.exe` file.
+3. Run `Blender Launcher.exe`; for **Windows** users, you might get a security warning, just click on `More info` and then `Run anyway`.
+4. Set your installation preferences, and set the [Library Folder](library_folder.md)
 5. Enjoy!
+
+!!! warning "Windows Users"
+
+    Because the programs is built using [PyInstaller](https://github.com/pyinstaller/pyinstaller), your antivirus software may give a false positive warning. If that happens, you can whitelist the program in your antivirus software and report it as a false positive to your antivirus vendor.
+    
+    The false positives occur because some people use PyInstaller for malware and the only solution to not being flagged is to sign the executable with a code signing certificate (and this costs money 💸).
+    
 
 ### For Archlinux Users
 

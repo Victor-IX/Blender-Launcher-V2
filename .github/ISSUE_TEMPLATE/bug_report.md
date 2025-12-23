@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+title: ""
+labels: ""
+assignees: ""
 
 ---
 
@@ -12,9 +12,9 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Go to "..."
+2. Click on "...."
+3. Scroll down to "...."
 4. See error
 
 **Expected behavior**
@@ -30,3 +30,21 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
+**Log file**
+Please attach the `Blender Launcher.log` file found in the following location:
+- Windows
+    The log file can be found in the **LocalAppdata** folder:
+    ```
+    %localappdata%/Blender Launcher/
+    ```
+- Linux
+    The log file can be found in the **.cache** folder:
+    ```
+    ~/.cache/Blender Launcher/
+    ```
+- MacOS
+    The log file can be found in the **Library** folder:
+    ```
+    ~/Library/Logs/Blender Launcher/
+    ```
