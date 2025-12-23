@@ -18,6 +18,7 @@ from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name
 from modules.cli_launching import cli_launch
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_SEARCH_SYNTAX
+from modules.winget_integration import register_with_winget
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.logger import setup_logging
@@ -205,6 +206,10 @@ def main():
     if not args.instanced:
         check_for_instance()
 
+    # Register with WinGet on startup
+    if get_platform() == "Windows":
+        register_with_winget(sys.executable, str(version))
+
     from windows.main_window import BlenderLauncher
 
     app.setQuitOnLastWindowClosed(False)
@@ -230,7 +235,7 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
             title="Warning",
             message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
             icon=PopupIcon.WARNING,
-            button="Quit",
+            buttons=["Quit"],
             app=app,
         ).show()
         sys.exit(app.exec())

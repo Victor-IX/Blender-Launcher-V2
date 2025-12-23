@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path
 
+from modules._platform import get_platform
 from modules.settings import (
     delete_action,
     get_actual_library_folder,
@@ -13,7 +14,6 @@ from modules.settings import (
     get_launch_timer_duration,
     get_launch_when_system_starts,
     get_library_folder,
-    get_platform,
     get_purge_temp_on_startup,
     get_show_tray_icon,
     get_use_pre_release_builds,
@@ -192,6 +192,35 @@ class GeneralTabWidget(SettingsFormWidget):
         self.file_association_group.setLayout(layout)
         self.addRow(self.file_association_group)
 
+        # WinGet Integration
+        if get_platform() == "Windows":
+            self.winget_group = SettingsGroup("WinGet Integration", parent=self)
+            winget_layout = QGridLayout()
+
+            winget_info = QLabel(
+                "Register Blender Launcher with WinGet package manager to enable automatic updates via 'winget update'."
+            )
+            winget_info.setWordWrap(True)
+
+            self.register_winget_button = QPushButton("Register with WinGet", parent=self.winget_group)
+            self.register_winget_button.setToolTip(
+                "Register this installation with WinGet so it can be updated via 'winget update'"
+            )
+
+            self.unregister_winget_button = QPushButton("Unregister from WinGet", parent=self.winget_group)
+            self.unregister_winget_button.setToolTip("Remove WinGet registration for this installation")
+
+            self.register_winget_button.clicked.connect(self.register_with_winget)
+            self.unregister_winget_button.clicked.connect(self.unregister_from_winget)
+            self.refresh_winget_buttons()
+
+            winget_layout.addWidget(winget_info, 0, 0, 1, 2)
+            winget_layout.addWidget(self.register_winget_button, 1, 0, 1, 1)
+            winget_layout.addWidget(self.unregister_winget_button, 1, 1, 1, 1)
+
+            self.winget_group.setLayout(winget_layout)
+            self.addRow(self.winget_group)
+
         self.advanced_settings = SettingsGroup("Advanced", parent=self)
         self.default_delete_action = QComboBox()
         self.default_delete_action.addItems(delete_action.keys())
@@ -282,7 +311,7 @@ class GeneralTabWidget(SettingsFormWidget):
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
             button = "Overwrite, Cancel"
             icon = PopupIcon.WARNING
-        dlg = PopupWindow(title=title, text=text, button=button, icon=icon, parent=self.parent)
+        dlg = PopupWindow(title=title, message=text, buttons=[button], icon=icon, parent=self.parent)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
@@ -331,3 +360,56 @@ class GeneralTabWidget(SettingsFormWidget):
                 message="Failed to purge temp folder. Some files may be in use.",
                 icon=PopupIcon.WARNING,
             )
+
+    def register_with_winget(self):
+        from modules.winget_integration import register_with_winget
+
+        success = register_with_winget(sys.executable, self.parent.parent.version)
+        if success:
+            self.refresh_winget_buttons()
+            PopupWindow(
+                parent=self.parent,
+                title="Success",
+                message="Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher'",
+                icon=PopupIcon.NONE,
+            )
+        else:
+            PopupWindow(
+                parent=self.parent,
+                title="Error",
+                message="Failed to register with WinGet. Check logs for details.",
+                icon=PopupIcon.WARNING,
+            )
+
+    def unregister_from_winget(self):
+        from modules.winget_integration import unregister_from_winget
+
+        success = unregister_from_winget()
+        if success:
+            self.refresh_winget_buttons()
+            PopupWindow(
+                parent=self.parent,
+                title="Success",
+                message="Successfully unregistered from WinGet.",
+                icon=PopupIcon.NONE,
+            )
+        else:
+            PopupWindow(
+                parent=self.parent,
+                title="Error",
+                message="Failed to unregister from WinGet. Check logs for details.",
+                icon=PopupIcon.WARNING,
+            )
+
+    def refresh_winget_buttons(self):
+        if get_platform() != "Windows":
+            return
+
+        from modules.winget_integration import is_registered_with_winget
+
+        if is_registered_with_winget():
+            self.register_winget_button.setEnabled(False)
+            self.unregister_winget_button.setEnabled(True)
+        else:
+            self.register_winget_button.setEnabled(True)
+            self.unregister_winget_button.setEnabled(False)
