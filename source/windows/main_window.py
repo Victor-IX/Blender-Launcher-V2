@@ -689,7 +689,7 @@ class BlenderLauncher(BaseWindow):
         #     self.toolbar_quit_btn.clicked.connect(self.quit_)
         #     self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
 
-    def show_message(self, message, value=None, message_type=None):
+    def show_message(self, message: str, value=None, message_type: MessageType | None = None):
         if (
             (message_type == MessageType.DOWNLOADFINISHED and not get_enable_download_notifications())
             or (message_type == MessageType.NEWBUILDS and not get_enable_new_builds_notifications())

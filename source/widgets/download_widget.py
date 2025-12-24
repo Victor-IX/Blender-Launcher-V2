@@ -22,6 +22,7 @@ from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from widgets.build_state_widget import BuildStateWidget
 from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
+from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.base_page_widget import BasePageWidget
@@ -392,13 +393,43 @@ class DownloadWidget(BaseBuildWidget):
                         new_widget.initialized.connect(update_portable_ui)
                     else:
                         logger.error(f"New config path parent does not exist: {new_config_path.parent}")
+                        self._show_portable_failure_dialog(old_widget, "The new build directory can't be found.")
+                        return
                 except Exception as e:
                     logger.error(f"Failed to move portable settings: {e}")
+                    self._show_portable_failure_dialog(old_widget, str(e))
+                    return
             else:
                 logger.warning(f"No portable settings found at {old_config_path} to move.")
+                self._show_portable_failure_dialog(old_widget, "No portable settings found to transfer.")
+                return
 
-        # Proceed with removing old build
         self.remove_old_build(old_widget)
+
+    def _show_portable_failure_dialog(self, old_widget: LibraryWidget, error: str) -> None:
+        """Show dialog asking user how to handle portable settings transfer failure."""
+        message = (
+            f"Failed to transfer portable settings:\n{error}\n\nDo you want to continue with the update or cancel?"
+        )
+
+        popup = PopupWindow(
+            message=message,
+            title="Portable Settings Transfer Failed",
+            icon=PopupIcon.WARNING,
+            buttons=["Continue", "Cancel"],
+            parent=self.parent,
+        )
+
+        popup.accepted.connect(lambda: self._handle_portable_failure_choice(old_widget, True))
+        popup.cancelled.connect(lambda: self._handle_portable_failure_choice(old_widget))
+
+    def _handle_portable_failure_choice(self, old_widget: LibraryWidget, continue_update: bool = False) -> None:
+        """Handle the user's choice after portable settings transfer failure."""
+        if continue_update:
+            self.remove_old_build(old_widget)
+        else:
+            old_widget.update_finished()
+            self.updating_widget = None
 
     def remove_old_build(self, widget: LibraryWidget) -> None:
         widget.confirm_major_version_update_removal(
