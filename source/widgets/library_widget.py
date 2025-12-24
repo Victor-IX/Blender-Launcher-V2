@@ -49,6 +49,7 @@ from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
+    from modules.enums import MessageType
 
 logger = logging.getLogger()
 
@@ -539,6 +540,7 @@ class LibraryWidget(BaseBuildWidget):
         self.launchButton.setEnabled(True)
         if hasattr(self, "_update_download_widget"):
             delattr(self, "_update_download_widget")
+        logger.debug(f"Update finished for {self.link.name}")
 
     def _show_update_button(self):
         """Show update button and adjust layout."""
@@ -717,7 +719,11 @@ class LibraryWidget(BaseBuildWidget):
 
     def make_portable_path(self) -> Path:
         if self.build_info is None:
-            logger.error("Cannot make portable path: build_info is None")
+            error_msg = "Cannot make portable path: build_info is None"
+            logger.error(error_msg)
+            self.parent.show_message(
+                "Unable to determine portable path for this build.", message_type=MessageType.ERROR
+            )
             return Path()
 
         version = self.build_info.subversion.rsplit(".", 1)[0]
@@ -734,11 +740,15 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def copy_build_hash(self):
         if self.build_info is None:
-            logger.error("Cannot copy build hash: build_info is None")
+            error_msg = "Unable to copy build hash: build information not available."
+            logger.error(error_msg)
+            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
             return
 
         if self.build_info.build_hash is None:
-            logger.error("Cannot copy build hash: build_hash is None")
+            error_msg = "Unable to copy build hash: hash not available for this build."
+            logger.error(error_msg)
+            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
             return
 
         QApplication.clipboard().setText(self.build_info.build_hash)
@@ -746,7 +756,9 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def freeze_update(self):
         if self.build_info is None:
-            logger.error("Cannot toggle freeze update: build_info is None")
+            error_msg = "Unable to freeze/unfreeze update: build information not available."
+            logger.error(error_msg)
+            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
             return
 
         if self.build_info.is_frozen:
@@ -772,10 +784,18 @@ class LibraryWidget(BaseBuildWidget):
         self.lineEdit.hide()
         name = self.lineEdit.text().strip()
 
-        if name:
+        if name and self.build_info is not None:
             self.branchLabel.set_text(name)
             self.build_info.custom_name = name
             self.write_build_info()
+        elif self.build_info is None:
+            error_msg = "Unable to rename branch: build information is not available."
+            logger.error(error_msg)
+            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
+        else:
+            error_msg = "Branch name cannot be empty."
+            logger.error(error_msg)
+            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
 
         self.branchLabel.show()
 
