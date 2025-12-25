@@ -643,7 +643,7 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
     versions = read_blender_version_list()
     for i, version in enumerate(versions):
-        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}"):
+        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}.{bfa_blender_version.patch}"):
             if i + 1 < len(versions) and i > 0:
                 return versions[i - 1]
             else:
