@@ -111,8 +111,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
                 unknown_widgets.add(widget)
 
         # gather all matching widgets
-        matcher = BInfoMatcher(tuple(binfo_to_widget.keys()))
-        shown_widgets: set[_WT] = {binfo_to_widget[b] for b in matcher.match(search)}
+        shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
 
         # add broken widgets to the filter
         if broken_builds:
@@ -137,7 +136,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def reevaluate_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
         if (widget is None and (widget := self.itemWidget(item)) is None) or widget.build_info is None:
             return
-        item.setHidden(not BInfoMatcher((BasicBuildInfo.from_buildinfo(widget.build_info),)).match(self.search))
+        item.setHidden(not bool(self.search.match([BasicBuildInfo.from_buildinfo(widget.build_info)])))
 
     def clear_by_branch(self, branch: str):
         widgets_to_remove = [widget for widget in self.widgets if widget.build_info.branch == branch]
