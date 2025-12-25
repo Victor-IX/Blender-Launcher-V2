@@ -65,7 +65,10 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.count_changed()
 
     def count_changed(self):
-        if self.count() > 0:
+        self.__show(self.count() > 0)
+
+    def __show(self, b: bool):
+        if b:
             self.show()
             self.parent.HeaderWidget.show()
             self.parent.PlaceholderWidget.hide()
@@ -97,19 +100,20 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.widgets.clear()
         self.count_changed()
 
-    def get_matching_builds(self, search: VersionSearchQuery, broken_builds=True):
+    def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, _WT], set[_WT]]:
         binfo_to_widget: dict[BasicBuildInfo, _WT] = {}
-        binfos: list[BasicBuildInfo] = []
         unknown_widgets: set[_WT] = set()
 
         for widget in self.widgets:
             if widget.build_info is not None:
                 binfo = BasicBuildInfo.from_buildinfo(widget.build_info)
                 binfo_to_widget[binfo] = widget
-                binfos.append(binfo)
             else:
                 unknown_widgets.add(widget)
+        return (binfo_to_widget, unknown_widgets)
 
+    def get_matching_builds(self, search: VersionSearchQuery, broken_builds=True):
+        binfo_to_widget, unknown_widgets = self.basic_build_infos()
         # gather all matching widgets
         shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
 
@@ -132,6 +136,8 @@ class BaseListWidget(Generic[_WT], QListWidget):
             widget.item.setHidden(False)
         for widget in hidden_widgets:
             widget.item.setHidden(True)
+
+        self.__show(len(hidden_widgets) != len(self.items()))
 
     def reevaluate_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
         if (widget is None and (widget := self.itemWidget(item)) is None) or widget.build_info is None:
