@@ -197,6 +197,14 @@ class BuildInfo:
             else:
                 b = subv.split("-", 1)[-1].title()
             return b
+        
+        # Handle UPBGE branches specially
+        if branch.startswith("upbge"):
+            parts = branch.split("-")
+            if len(parts) == 2:
+                return f"UPBGE {parts[1].title()}"
+            return "UPBGE"
+        
         if v.prerelease is not None:
             if v.prerelease.startswith("rc"):
                 return f"Release Candidate {v.prerelease[2:]}"
