@@ -900,3 +900,11 @@ def purge_temp_folder():
         except Exception:
             return False
     return True
+
+
+def get_auto_register_winget() -> bool:
+    return get_settings().value("auto_register_winget", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_auto_register_winget(is_enabled: bool):
+    get_settings().setValue("auto_register_winget", is_enabled)

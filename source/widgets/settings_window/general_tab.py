@@ -20,6 +20,7 @@ from modules.settings import (
     get_worker_thread_count,
     migrate_config,
     purge_temp_folder,
+    set_auto_register_winget,
     set_default_delete_action,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
@@ -32,6 +33,7 @@ from modules.settings import (
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
+from modules.winget_integration import register_with_winget, unregister_from_winget
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox, QComboBox, QGridLayout, QLabel, QPushButton, QSpinBox
 from widgets.folder_select import FolderSelector
@@ -362,10 +364,9 @@ class GeneralTabWidget(SettingsFormWidget):
             )
 
     def register_with_winget(self):
-        from modules.winget_integration import register_with_winget
-
         success = register_with_winget(sys.executable, self.parent.parent.version)
         if success:
+            set_auto_register_winget(True)
             self.refresh_winget_buttons()
             PopupWindow(
                 parent=self.parent,
@@ -382,10 +383,9 @@ class GeneralTabWidget(SettingsFormWidget):
             )
 
     def unregister_from_winget(self):
-        from modules.winget_integration import unregister_from_winget
-
         success = unregister_from_winget()
         if success:
+            set_auto_register_winget(False)
             self.refresh_winget_buttons()
             PopupWindow(
                 parent=self.parent,
