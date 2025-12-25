@@ -1019,7 +1019,7 @@ class BlenderLauncher(BaseWindow):
         elif branch == "bforartists":
             downloads_list_widget = self.DownloadsBFAListWidget
             library_list_widget = self.LibraryBFAListWidget
-        elif branch == "upbge":
+        elif branch.startswith("upbge"):
             downloads_list_widget = self.DownloadsUPBGEListWidget
             library_list_widget = self.LibraryUPBGEListWidget
         else:
@@ -1053,7 +1053,7 @@ class BlenderLauncher(BaseWindow):
             library = self.LibraryExperimentalListWidget
         elif branch == "bforartists":
             library = self.LibraryBFAListWidget
-        elif branch == "upbge":
+        elif branch.startswith("upbge"):
             library = self.LibraryUPBGEListWidget
         elif branch == "custom":
             library = self.UserCustomListWidget
@@ -1094,7 +1094,7 @@ class BlenderLauncher(BaseWindow):
             list_widget = self.LibraryDailyListWidget
         elif branch == "bforartists":
             list_widget = self.LibraryBFAListWidget
-        elif branch == "upbge":
+        elif branch.startswith("upbge"):
             list_widget = self.LibraryUPBGEListWidget
         elif branch == "custom":
             list_widget = self.UserCustomListWidget

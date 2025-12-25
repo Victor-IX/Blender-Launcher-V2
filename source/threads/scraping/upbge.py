@@ -18,15 +18,15 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger()
 
-UPBGE_GITHUB_API_URL = "https://api.github.com/repos/UPBGE/upbge/releases"
+UPBGE_GITHUB_API_URL = "https://api.github.com/repos/UPBGE/upbge/releases?per_page=100"
 
 plat = get_platform()
 if plat == "Windows":
-    upbge_regex_filter = r"upbge-.+windows.+\.zip$"
+    upbge_regex_filter = r"upbge-.+windows.+\.(zip|7z)$"
 elif plat == "macOS":
-    upbge_regex_filter = r"upbge-.+macos.+\.zip$"
+    upbge_regex_filter = r"upbge-.+macos.+\.(zip|dmg)$"
 else:
-    upbge_regex_filter = r"upbge-.+linux.+\.tar\.xz$"
+    upbge_regex_filter = r"upbge-.+linux.+\.(tar\.xz|tar\.gz)$"
 
 upbge_package_file_name_regex = re.compile(upbge_regex_filter, re.IGNORECASE)
 
@@ -74,14 +74,25 @@ class ScraperUpbge(BuildScraper):
                     continue
 
                 try:
-                    version_str = tag_name.lstrip("v")
-                    # Handle UPBGE's weekly-build-XX format
-                    if version_str.startswith("weekly-build-"):
-                        build_num = version_str.replace("weekly-build-", "")
-                        # Create a version like 0.0.XX-weekly where XX is the build number
-                        subversion = Version(0, 0, int(build_num), prerelease="weekly")
+                    # Determine if this is a weekly or stable build
+                    is_weekly = tag_name.startswith("weekly-build-")
+                    
+                    if is_weekly:
+                        # Extract version from asset filename (e.g., "upbge-0.51-alpha-windows...")
+                        version_match = re.search(r'upbge-([0-9.]+(?:-[a-z]+)?)-', asset_name)
+                        if version_match:
+                            version_str = version_match.group(1)
+                            subversion = parse_blender_ver(version_str)
+                        else:
+                            # Fallback to build number if version not found in filename
+                            build_num = tag_name.replace("weekly-build-", "")
+                            subversion = Version(0, 0, int(build_num), prerelease="weekly")
+                        branch = "upbge-weekly"
                     else:
+                        # Stable release - parse version from tag
+                        version_str = tag_name.lstrip("v")
                         subversion = parse_blender_ver(version_str)
+                        branch = "upbge-stable"
                 except (ValueError, AttributeError) as e:
                     logger.warning(f"Failed to parse UPBGE version {tag_name}: {e}")
                     continue
@@ -100,6 +111,6 @@ class ScraperUpbge(BuildScraper):
                     str(subversion),
                     None,
                     commit_time,
-                    "upbge",
+                    branch,
                     custom_executable=exe_name,
                 )
