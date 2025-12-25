@@ -224,44 +224,47 @@ class VersionSearchQuery:
             commit_time=commit_time,
         )
 
+    def match(self, versions: list[BasicBuildInfo]) -> list[BasicBuildInfo]:
+        return match_versions(self, versions)
+
 
 # Examples:
 # VersionSearchQuery("^", "^", "^"): Match the latest version(s)
 # VersionSearchQuery(4, "^", "^"): Match the latest version of major 4
 # VersionSearchQuery("^", "*", "*"): Match any version in the latest major release
 
-
 @dataclass(frozen=True)
 class BInfoMatcher:
     versions: tuple[BasicBuildInfo, ...]
 
     def match(self, s: VersionSearchQuery) -> tuple[BasicBuildInfo, ...]:
-        versions = self.versions
+        return tuple(match_versions(s, list(self.versions)))
 
-        for place in ("build_hash", "major", "minor", "patch", "branch", "commit_time"):
-            getter = attrgetter(place)
-            p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
-            if p == "*" or p is None:
-                continue  # all versions match
-            if p == "^":
-                # get the max number for `place` in version
-                max_p = max(getter(v) for v in versions)
 
-                versions = (v for v in versions if getter(v) == max_p)
-            elif p == "-":
-                # get the min number for `place` in version
-                min_p = min(getter(v) for v in versions)
+def match_versions(s: VersionSearchQuery, versions: list[BasicBuildInfo]) -> list[BasicBuildInfo]:
+    for place in ("build_hash", "major", "minor", "patch", "branch", "commit_time"):
+        getter = attrgetter(place)
+        p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
+        if p == "*" or p is None:
+            continue  # all versions match
+        if p == "^":
+            # get the max number for `place` in version
+            max_p = max(getter(v) for v in versions)
 
-                versions = [v for v in versions if getter(v) == min_p]
-            elif isinstance(p, tuple):
-                versions = [v for v in versions if any(getter(v) == q for q in p)]
-            else:
-                versions = [v for v in versions if getter(v) == p]
+            versions = [v for v in versions if getter(v) == max_p]
+        elif p == "-":
+            # get the min number for `place` in version
+            min_p = min(getter(v) for v in versions)
 
-            if not versions:
-                return ()
+            versions = [v for v in versions if getter(v) == min_p]
+        elif isinstance(p, tuple):
+            versions = [v for v in versions if any(getter(v) == q for q in p)]
+        else:
+            versions = [v for v in versions if getter(v) == p]
 
-        return tuple(versions)
+        if not versions:
+            return versions
+    return versions
 
 
 if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatcher
