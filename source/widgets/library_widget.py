@@ -904,11 +904,11 @@ class LibraryWidget(BaseBuildWidget):
             self.parent,
             item,
             self.link,
-            self.parent.UserFavoritesListWidget,
+            self.parent.FavoritesPage,
             parent_widget=self,
         )
-        if not self.parent.UserFavoritesListWidget.contains_build_info(self.build_info):
-            self.parent.UserFavoritesListWidget.insert_item(item, widget)
+        if not self.parent.FavoritesPage.list_widget.contains_build_info(self.build_info):
+            self.parent.FavoritesPage.list_widget.insert_item(item, widget)
         self.child_widget = widget
 
         self.removeFromFavoritesAction.setVisible(True)
@@ -922,7 +922,7 @@ class LibraryWidget(BaseBuildWidget):
     def remove_from_favorites(self):
         widget = self.parent_widget or self
         assert widget.child_widget is not None
-        self.parent.UserFavoritesListWidget.remove_item(widget.child_widget.item)
+        self.parent.FavoritesPage.list_widget.remove_item(widget.child_widget.item)
 
         widget.child_widget = None
         widget.removeFromFavoritesAction.setVisible(False)

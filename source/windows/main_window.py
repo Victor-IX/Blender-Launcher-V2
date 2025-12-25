@@ -355,20 +355,23 @@ class BlenderLauncher(BaseWindow):
 
         self.update_system_titlebar(get_use_system_titlebar())
         self.LibraryTab = QWidget()
-        self.LibraryTabLayout = QVBoxLayout()
+        self.LibraryTabLayout = QHBoxLayout()
         self.LibraryTabLayout.setContentsMargins(0, 0, 0, 0)
+        self.LibraryTabLayout.setSpacing(0)
         self.LibraryTab.setLayout(self.LibraryTabLayout)
         self.TabWidget.addTab(self.LibraryTab, "Library")
 
         self.DownloadsTab = QWidget()
-        self.DownloadsTabLayout = QVBoxLayout()
+        self.DownloadsTabLayout = QHBoxLayout()
         self.DownloadsTabLayout.setContentsMargins(0, 0, 0, 0)
+        self.DownloadsTabLayout.setSpacing(0)
         self.DownloadsTab.setLayout(self.DownloadsTabLayout)
         self.TabWidget.addTab(self.DownloadsTab, "Downloads")
 
         self.UserTab = QWidget()
-        self.UserTabLayout = QVBoxLayout()
+        self.UserTabLayout = QHBoxLayout()
         self.UserTabLayout.setContentsMargins(0, 0, 0, 0)
+        self.UserTabLayout.setSpacing(0)
         self.UserTab.setLayout(self.UserTabLayout)
         self.TabWidget.addTab(self.UserTab, "Favorites")
 
@@ -382,104 +385,55 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
         self.UserTabLayout.addWidget(self.UserToolBox)
 
-        self.LibraryStablePageWidget = BasePageWidget(
+        self.LibraryPage: BasePageWidget[LibraryWidget] = BasePageWidget(
             parent=self,
-            page_name="LibraryStableListWidget",
+            page_name="LibraryPage",
             time_label="Commit Time",
             info_text="Nothing to show yet",
             extended_selection=True,
-        )
-        self.LibraryStableListWidget = self.LibraryToolBox.add_page_widget(self.LibraryStablePageWidget, "Stable")
-
-        self.LibraryDailyPageWidget = BasePageWidget(
-            parent=self,
-            page_name="LibraryDailyListWidget",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
-            extended_selection=True,
-        )
-        self.LibraryDailyListWidget = self.LibraryToolBox.add_page_widget(self.LibraryDailyPageWidget, "Daily")
-
-        self.LibraryExperimentalPageWidget = BasePageWidget(
-            parent=self,
-            page_name="LibraryExperimentalListWidget",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
-            extended_selection=True,
-        )
-        self.LibraryExperimentalListWidget = self.LibraryToolBox.add_page_widget(
-            self.LibraryExperimentalPageWidget, "Experimental"
-        )
-
-        self.LibraryBFAPageWidget = BasePageWidget(
-            parent=self,
-            page_name="LibraryBFAListWidget",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
-            extended_selection=True,
-        )
-        self.LibraryBFAListWidget = self.LibraryToolBox.add_page_widget(self.LibraryBFAPageWidget, "Bforartists")
-
-        self.DownloadsStablePageWidget = BasePageWidget(
-            parent=self,
-            page_name="DownloadsStableListWidget",
-            time_label="Upload Time",
-            info_text="No new builds available",
-        )
-        self.DownloadsStableListWidget = self.DownloadsToolBox.add_page_widget(self.DownloadsStablePageWidget, "Stable")
-
-        self.DownloadsDailyPageWidget = BasePageWidget(
-            parent=self,
-            page_name="DownloadsDailyListWidget",
-            time_label="Upload Time",
-            info_text="No new builds available",
-        )
-        self.DownloadsDailyListWidget = self.DownloadsToolBox.add_page_widget(self.DownloadsDailyPageWidget, "Daily")
-
-        self.DownloadsExperimentalPageWidget = BasePageWidget(
-            parent=self,
-            page_name="DownloadsExperimentalListWidget",
-            time_label="Upload Time",
-            info_text="No new builds available",
-        )
-        self.DownloadsExperimentalListWidget = self.DownloadsToolBox.add_page_widget(
-            self.DownloadsExperimentalPageWidget, "Experimental"
-        )
-
-        self.DownloadsBFAPageWidget = BasePageWidget(
-            parent=self,
-            page_name="DownloadsBFAListWidget",
-            time_label="Upload Time",
-            info_text="No new builds available",
-        )
-        self.DownloadsBFAListWidget = self.DownloadsToolBox.add_page_widget(self.DownloadsBFAPageWidget, "Bforartists")
-
-        self.UserFavoritesListWidget = BasePageWidget(
-            parent=self, page_name="UserFavoritesListWidget", time_label="Commit Time", info_text="Nothing to show yet"
-        )
-        self.UserFavoritesListWidget = self.UserToolBox.add_page_widget(self.UserFavoritesListWidget, "Favorites")
-
-        self.UserCustomPageWidget = BasePageWidget(
-            parent=self,
-            page_name="UserCustomListWidget",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
             show_reload=True,
-            extended_selection=True,
         )
-        self.UserCustomListWidget = self.LibraryToolBox.add_page_widget(self.UserCustomPageWidget, "Custom")
+        # self.LibraryToolBox.add_tab("All", "_all")
+        self.LibraryToolBox.add_tab("Stable", ("stable", "lts"))
+        self.LibraryToolBox.add_tab("Daily", "daily")
+        self.LibraryToolBox.add_tab("Experimental", "experimental")
+        self.LibraryToolBox.add_tab("Bforartists", "bforartists")
+        self.LibraryToolBox.add_tab("Custom", "custom")
+        self.LibraryTabLayout.addWidget(self.LibraryPage)
+        self.LibraryToolBox.branch_changed.connect(self.LibraryPage.list_widget.update_branch_filter)
+        self.LibraryPage.list_widget.update_branch_filter(self.LibraryToolBox.current_branch())
+
+        self.DownloadsPage: BasePageWidget[DownloadWidget] = BasePageWidget(
+            parent=self,
+            page_name="DownloadsPage",
+            time_label="Upload Time",
+            info_text="No new builds available",
+        )
+        # self.DownloadsToolBox.add_tab("All", "_all")
+        self.DownloadsToolBox.add_tab("Stable", ("stable", "lts"))
+        self.DownloadsToolBox.add_tab("Daily", "daily")
+        self.DownloadsToolBox.add_tab("Experimental", "experimental")
+        self.DownloadsToolBox.add_tab("Bforartists", "bforartists")
+        self.DownloadsTabLayout.addWidget(self.DownloadsPage)
+        self.DownloadsToolBox.branch_changed.connect(self.DownloadsPage.list_widget.update_branch_filter)
+        self.DownloadsPage.list_widget.update_branch_filter(self.DownloadsToolBox.current_branch())
+
+        self.FavoritesPage: BasePageWidget[LibraryWidget] = BasePageWidget(
+            parent=self,
+            page_name="FavoritesPage",
+            time_label="Commit Time",
+            info_text="Nothing to show yet",
+        )
+        self.UserToolBox.add_tab("Favorites", "favorites")
+        self.UserTabLayout.addWidget(self.FavoritesPage)
+        self.UserToolBox.branch_changed.connect(self.FavoritesPage.list_widget.update_branch_filter)
+        self.FavoritesPage.list_widget.update_branch_filter(self.UserToolBox.current_branch())
 
         # Collect all page widgets for column width synchronization
         self._all_page_widgets = [
-            self.LibraryStablePageWidget,
-            self.LibraryDailyPageWidget,
-            self.LibraryExperimentalPageWidget,
-            self.LibraryBFAPageWidget,
-            self.DownloadsStablePageWidget,
-            self.DownloadsDailyPageWidget,
-            self.DownloadsExperimentalPageWidget,
-            self.DownloadsBFAPageWidget,
-            self.UserCustomPageWidget,
+            self.LibraryPage,
+            self.DownloadsPage,
+            self.FavoritesPage,
         ]
         self._syncing_column_widths = False  # Guard against recursion
         # Connect all page widgets to sync column widths
@@ -620,11 +574,7 @@ class BlenderLauncher(BaseWindow):
         webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
 
     def is_downloading_idle(self):
-        download_widgets = []
-
-        download_widgets.extend(self.DownloadsStableListWidget.items())
-        download_widgets.extend(self.DownloadsDailyListWidget.items())
-        download_widgets.extend(self.DownloadsExperimentalListWidget.items())
+        download_widgets = self.DownloadsPage.list_widget.items()
 
         return all(widget.state == DownloadState.IDLE for widget in download_widgets)
 
@@ -717,7 +667,7 @@ class BlenderLauncher(BaseWindow):
 
     def show_favorites(self):
         self.TabWidget.setCurrentWidget(self.UserTab)
-        self.UserToolBox.setCurrentWidget(self.UserFavoritesListWidget)
+        self.UserToolBox.setCurrentWidget(self.FavoritesPage)
         self._show()
 
     def quick_launch(self):
@@ -787,19 +737,13 @@ class BlenderLauncher(BaseWindow):
             self.stop_auto_scrape_timer()
             if self.scraper is not None:
                 self.scraper.quit()
-            self.DownloadsStableListWidget.clear_()
-            self.DownloadsDailyListWidget.clear_()
-            self.DownloadsExperimentalListWidget.clear_()
-            self.DownloadsBFAListWidget.clear_()
+
+            self.DownloadsPage.list_widget.clear_()
             self.started = True
 
         self.favorite = None
 
-        self.LibraryStableListWidget.clear_()
-        self.LibraryDailyListWidget.clear_()
-        self.LibraryExperimentalListWidget.clear_()
-        self.LibraryBFAListWidget.clear_()
-        self.UserCustomListWidget.clear_()
+        self.LibraryPage.list_widget.clear_()
 
         self.library_drawer = DrawLibraryTask()
         self.library_drawer.found.connect(self.draw_to_library)
@@ -810,8 +754,7 @@ class BlenderLauncher(BaseWindow):
         self.task_queue.append(self.library_drawer)
 
     def reload_custom_builds(self):
-        self.UserCustomListWidget.clear_()
-
+        self.LibraryPage.list_widget.clear_by_branch("custom")
         self.library_drawer = DrawLibraryTask(["custom"])
         self.library_drawer.found.connect(self.draw_to_library)
         self.library_drawer.unrecognized.connect(self.draw_unrecognized)
@@ -826,24 +769,14 @@ class BlenderLauncher(BaseWindow):
         self.scraper_finished_signal.connect(self.check_library_for_updates)
 
     def check_library_for_updates(self):
-        all_downloads = []
-        all_downloads.extend(self.DownloadsStableListWidget.findChildren(DownloadWidget))
-        all_downloads.extend(self.DownloadsDailyListWidget.findChildren(DownloadWidget))
-        all_downloads.extend(self.DownloadsExperimentalListWidget.findChildren(DownloadWidget))
-        all_downloads.extend(self.DownloadsBFAListWidget.findChildren(DownloadWidget))
-
-        for library_list in [
-            self.LibraryStableListWidget,
-            self.LibraryDailyListWidget,
-            self.LibraryExperimentalListWidget,
-            self.LibraryBFAListWidget,
-        ]:
-            for item in range(library_list.count()):
-                widget_item = library_list.item(item)
-                if widget_item:
-                    library_widget = library_list.itemWidget(widget_item)
-                    if library_widget and hasattr(library_widget, "check_for_updates"):
-                        library_widget.check_for_updates(all_downloads)
+        all_downloads = self.DownloadsPage.findChildren(DownloadWidget)
+        library_list = self.LibraryPage.list_widget
+        for item in range(library_list.count()):
+            widget_item = library_list.item(item)
+            if widget_item:
+                library_widget = library_list.itemWidget(widget_item)
+                if library_widget and hasattr(library_widget, "check_for_updates"):
+                    library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):
         logger.error("Connection_error")
@@ -857,7 +790,7 @@ class BlenderLauncher(BaseWindow):
 
     @Slot(str)
     def scraper_error(self, s: str):
-        self.DownloadsStablePageWidget.set_info_label_text(s)
+        self.DownloadsPage.set_info_label_text(s)
 
     def force_check(self):
         if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier:  # Shift held while pressing check
@@ -891,31 +824,11 @@ class BlenderLauncher(BaseWindow):
         if scrape_bfa is None:
             scrape_bfa = get_scrape_bfa_builds()
 
-        if scrape_stable:
-            self.DownloadsStablePageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsStablePageWidget.set_info_label_text("Checking for stable builds is disabled")
-
-        if scrape_daily:
-            self.DownloadsDailyPageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsDailyPageWidget.set_info_label_text("Checking for daily builds is disabled")
-
-        if scrape_expatch:
-            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsExperimentalPageWidget.set_info_label_text("Checking for experimental builds is disabled")
-
-        if scrape_bfa:
-            self.DownloadsBFAPageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsBFAPageWidget.set_info_label_text("Checking for Bforartists builds is disabled")
+        self.DownloadsPage.set_info_label_text("Checking for new builds")
 
         # Sometimes these builds end up being invalid, particularly when new builds are available, which, there usually
         # are at least once every two days. They are so easily gathered there's little loss here
-        self.DownloadsDailyListWidget.clear_()
-        self.DownloadsExperimentalListWidget.clear_()
-        self.DownloadsBFAListWidget.clear_()
+        self.DownloadsPage.list_widget.clear_()
 
         self.cashed_builds.clear()
         self.new_downloads = False
@@ -932,10 +845,11 @@ class BlenderLauncher(BaseWindow):
         if self.new_downloads:
             self.show_message("New builds of Blender are available!", message_type=MessageType.NEWBUILDS)
 
-        for list_widget in self.DownloadsToolBox.list_widgets:
-            for widget in list_widget.widgets.copy():
-                if widget.build_info not in self.cashed_builds:
-                    widget.destroy()
+        self.DownloadsPage.set_info_label_text("No builds of this type was found!")
+
+        for widget in self.DownloadsPage.list_widget.widgets.copy():
+            if widget.build_info not in self.cashed_builds:
+                widget.destroy()
 
         utcnow = localtime()
         dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
@@ -971,91 +885,55 @@ class BlenderLauncher(BaseWindow):
         if build_info not in self.cashed_builds:
             self.cashed_builds.append(build_info)
 
-        branch = build_info.branch
-
-        if branch in ("stable", "lts"):
-            downloads_list_widget = self.DownloadsStableListWidget
-            library_list_widget = self.LibraryStableListWidget
-        elif branch == "daily":
-            downloads_list_widget = self.DownloadsDailyListWidget
-            library_list_widget = self.LibraryDailyListWidget
-        elif branch == "bforartists":
-            downloads_list_widget = self.DownloadsBFAListWidget
-            library_list_widget = self.LibraryBFAListWidget
-        else:
-            downloads_list_widget = self.DownloadsExperimentalListWidget
-            library_list_widget = self.LibraryExperimentalListWidget
-
-        if not downloads_list_widget.contains_build_info(build_info):
-            installed = library_list_widget.widget_with_blinfo(build_info)
+        if not self.DownloadsPage.list_widget.contains_build_info(build_info):
+            installed = self.LibraryPage.list_widget.widget_with_blinfo(build_info)
             item = BaseListWidgetItem(build_info.commit_time)
             widget = DownloadWidget(
                 self,
-                downloads_list_widget,
+                self.DownloadsPage.list_widget,
                 item,
                 build_info,
                 installed=installed,
                 show_new=is_new,
             )
             widget.focus_installed_widget.connect(self.focus_widget)
-            downloads_list_widget.add_item(item, widget)
+            self.DownloadsPage.list_widget.add_item(item, widget)
             if is_new:
                 self.new_downloads = True
 
     def draw_to_library(self, path: Path, show_new=False):
         branch = Path(path).parent.name
 
-        if branch in ("stable", "lts"):
-            library = self.LibraryStableListWidget
-            download = self.DownloadsStableListWidget
-        elif branch == "daily":
-            library = self.LibraryDailyListWidget
-            download = self.DownloadsDailyListWidget
-        elif branch == "experimental":
-            library = self.LibraryExperimentalListWidget
-            download = self.DownloadsExperimentalListWidget
-        elif branch == "bforartists":
-            library = self.LibraryBFAListWidget
-            download = self.DownloadsBFAListWidget
-        elif branch == "custom":
-            library = self.UserCustomListWidget
-            download = None
-        else:
+        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
             return None
 
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self, item, path, library, show_new)
+        widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, show_new)
 
-        if download is not None:
+        if self.DownloadsPage.list_widget is not None:
 
             def _initialized():
-                dlw: DownloadWidget | None = download.widget_with_blinfo(widget.build_info)
+                self.LibraryPage.list_widget.reevaluate_visibility(item, widget)
+
+                dlw: DownloadWidget | None = self.DownloadsPage.list_widget.widget_with_blinfo(widget.build_info)
                 if dlw is not None and not dlw.installed:
                     dlw.setInstalled(widget)
 
             widget.initialized.connect(_initialized)
 
-        library.insert_item(item, widget)
+        self.LibraryPage.list_widget.insert_item(item, widget)
         return widget
 
     def draw_unrecognized(self, path):
         branch = Path(path).parent.name
 
-        if branch in ("stable", "lts"):
-            list_widget = self.LibraryStableListWidget
-        elif branch in ("daily", "experimental"):
-            list_widget = self.LibraryDailyListWidget
-        elif branch == "bforartists":
-            list_widget = self.LibraryBFAListWidget
-        elif branch == "custom":
-            list_widget = self.UserCustomListWidget
-        else:
+        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
             return
 
         item = BaseListWidgetItem()
-        widget = UnrecoBuildWidget(self, path, list_widget, item)
+        widget = UnrecoBuildWidget(self, path, self.LibraryPage.list_widget, item)
 
-        list_widget.insert_item(item, widget)
+        self.LibraryPage.list_widget.insert_item(item, widget)
 
     def update_visible_lists(
         self,
@@ -1077,22 +955,15 @@ class BlenderLauncher(BaseWindow):
         scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
         scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
 
-        self.LibraryToolBox.setTabVisible(0, show_stable)
-        self.LibraryToolBox.setTabEnabled(0, show_stable)
-        self.LibraryToolBox.setTabVisible(1, show_daily)
-        self.LibraryToolBox.setTabEnabled(1, show_daily)
-        self.LibraryToolBox.setTabVisible(2, show_expatch)
-        self.LibraryToolBox.setTabEnabled(2, show_expatch)
-        self.LibraryToolBox.setTabVisible(3, show_bfa)
-        self.LibraryToolBox.setTabEnabled(3, show_bfa)
-        self.DownloadsToolBox.setTabVisible(0, scrape_stable)
-        self.DownloadsToolBox.setTabEnabled(0, scrape_stable)
-        self.DownloadsToolBox.setTabVisible(1, scrape_daily)
-        self.DownloadsToolBox.setTabEnabled(1, scrape_daily)
-        self.DownloadsToolBox.setTabVisible(2, scrape_expatch)
-        self.DownloadsToolBox.setTabEnabled(2, scrape_expatch)
-        self.DownloadsToolBox.setTabVisible(3, scrape_bfa)
-        self.DownloadsToolBox.setTabEnabled(3, scrape_bfa)
+        self.LibraryToolBox.update_visibility(0, show_stable)
+        self.LibraryToolBox.update_visibility(1, show_daily)
+        self.LibraryToolBox.update_visibility(2, show_expatch)
+        self.LibraryToolBox.update_visibility(3, show_bfa)
+
+        self.DownloadsToolBox.update_visibility(0, scrape_stable)
+        self.DownloadsToolBox.update_visibility(1, scrape_daily)
+        self.DownloadsToolBox.update_visibility(2, scrape_expatch)
+        self.DownloadsToolBox.update_visibility(3, scrape_bfa)
 
     def focus_widget(self, widget: LibraryWidget):
         tab = self.LibraryTab

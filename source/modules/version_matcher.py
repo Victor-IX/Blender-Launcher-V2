@@ -151,7 +151,7 @@ class VersionSearchQuery:
     patch: int | str
     "A patch release of Blender"
 
-    branch: str | None = None
+    branch: str | tuple[str, ...] | None = None
     "Which branch of Blender this is (stable, daily, experimental, etc.)"
 
     build_hash: str | None = None
@@ -179,6 +179,10 @@ class VersionSearchQuery:
     def default(cls):
         return cls("^", "^", "^", commit_time="^", branch=None)
 
+    @classmethod
+    def any(cls):
+        return cls("*", "*", "*", commit_time="*", branch=None)
+
     def __str__(self) -> str:
         """Returns a string that can be parsed by parse()"""
         s = f"{self.major}.{self.minor}.{self.patch}"
@@ -190,7 +194,7 @@ class VersionSearchQuery:
             s += f"@{self.commit_time}"
         return s
 
-    def with_branch(self, branch: str | None = None):
+    def with_branch(self, branch: str | tuple[str, ...] | None = None):
         return self.__class__(
             major=self.major,
             minor=self.minor,
@@ -236,19 +240,21 @@ class BInfoMatcher:
 
         for place in ("build_hash", "major", "minor", "patch", "branch", "commit_time"):
             getter = attrgetter(place)
-            p: str | int | datetime.datetime | None = getter(s)
+            p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
+            if p == "*" or p is None:
+                continue  # all versions match
             if p == "^":
                 # get the max number for `place` in version
                 max_p = max(getter(v) for v in versions)
 
-                versions = [v for v in versions if getter(v) == max_p]
-            elif p == "*" or p is None:
-                continue  # all versions match
+                versions = (v for v in versions if getter(v) == max_p)
             elif p == "-":
                 # get the min number for `place` in version
                 min_p = min(getter(v) for v in versions)
 
                 versions = [v for v in versions if getter(v) == min_p]
+            elif isinstance(p, tuple):
+                versions = [v for v in versions if any(getter(v) == q for q in p)]
             else:
                 versions = [v for v in versions if getter(v) == p]
 
