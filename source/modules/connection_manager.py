@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Union
 
 from modules._platform import get_cwd, get_platform_full, is_frozen
 from modules.settings import (
+    get_github_token,
     get_proxy_host,
     get_proxy_password,
     get_proxy_port,
@@ -142,6 +143,17 @@ class ConnectionManager(QObject):
             """
             self.request_counter += 1
             logger.debug(f"Request Counter: {self.request_counter}")
+
+            # Add GitHub token to headers if the request is to GitHub API and token is set
+            if "api.github.com" in _url:
+                github_token = get_github_token()
+                if github_token:
+                    if headers is None:
+                        headers = {}
+                    headers["Authorization"] = f"token {github_token}"
+                    logger.debug(f"GitHub API request to: {_url} (with authentication)")
+                else:
+                    logger.debug(f"GitHub API request to: {_url} (no token configured)")
 
             return self.manager.request(_method, _url, fields, headers, **urlopen_kw)
         except Exception:

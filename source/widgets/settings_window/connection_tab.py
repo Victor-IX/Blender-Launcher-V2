@@ -1,4 +1,8 @@
+import webbrowser
+
+from modules.icons import Icons
 from modules.settings import (
+    get_github_token,
     get_proxy_host,
     get_proxy_password,
     get_proxy_port,
@@ -7,6 +11,7 @@ from modules.settings import (
     get_use_custom_tls_certificates,
     get_user_id,
     proxy_types,
+    set_github_token,
     set_proxy_host,
     set_proxy_password,
     set_proxy_port,
@@ -16,9 +21,19 @@ from modules.settings import (
     set_user_id,
 )
 from PySide6 import QtGui
-from PySide6.QtCore import QRegularExpression, Qt
-from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QGridLayout, QHBoxLayout, QLabel, QLineEdit
+from PySide6.QtCore import QRegularExpression, QSize, Qt
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QFormLayout,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+)
 from widgets.settings_form_widget import SettingsFormWidget
+from windows.popup_window import PopupIcon, PopupWindow
 
 from .settings_group import SettingsGroup
 
@@ -26,6 +41,9 @@ from .settings_group import SettingsGroup
 class ConnectionTabWidget(SettingsFormWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+        # Get icons
+        self.icons = Icons.get()
 
         # Proxy Settings
         self.proxy_settings = SettingsGroup("Proxy", parent=self)
@@ -96,7 +114,7 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.ProxyPasswordLineEdit.setText(get_proxy_password())
         self.ProxyPasswordLineEdit.setToolTip("The password to authenticate with the proxy server")
         self.ProxyPasswordLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.ProxyPasswordLineEdit.setEchoMode(QLineEdit.Password)
+        self.ProxyPasswordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.ProxyPasswordLineEdit.editingFinished.connect(self.update_proxy_password)
 
         # Connection Authentication
@@ -118,9 +136,35 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.UserIDLineEdit.setValidator(self.user_id_validator)
         self.UserIDLineEdit.editingFinished.connect(self.update_user_id)
 
+        # GitHub Token
+        self.GitHubTokenLabel = QLabel("GitHub Token")
+        self.GitHubTokenLineEdit = QLineEdit()
+        self.GitHubTokenLineEdit.setText(get_github_token())
+        self.GitHubTokenLineEdit.setToolTip(
+            "Optional: GitHub Personal Access Token to avoid rate limiting\n"
+            "Useful if you're making many requests to GitHub API\n"
+            "Leave empty if not needed"
+        )
+        self.GitHubTokenLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.GitHubTokenLineEdit.editingFinished.connect(self.update_github_token)
+
+        # Info button for GitHub Token
+        self.GitHubTokenInfoButton = QPushButton()
+        self.GitHubTokenInfoButton.setIcon(self.icons.wiki)
+        self.GitHubTokenInfoButton.setFixedSize(QSize(28, 28))
+        self.GitHubTokenInfoButton.setToolTip("Click for GitHub token documentation")
+        self.GitHubTokenInfoButton.clicked.connect(self.open_github_token_docs)
+
+        # Layout for token field with info button
+        github_token_layout = QHBoxLayout()
+        github_token_layout.addWidget(self.GitHubTokenLineEdit)
+        github_token_layout.addWidget(self.GitHubTokenInfoButton)
+
         self.connection_authentication_layout = QGridLayout()
         self.connection_authentication_layout.addWidget(self.UserIDLabel, 0, 0, 1, 1)
         self.connection_authentication_layout.addWidget(self.UserIDLineEdit, 0, 1, 1, 1)
+        self.connection_authentication_layout.addWidget(self.GitHubTokenLabel, 1, 0, 1, 1)
+        self.connection_authentication_layout.addLayout(github_token_layout, 1, 1, 1, 1)
         self.connection_authentication_settings.setLayout(self.connection_authentication_layout)
 
         # Layout
@@ -166,3 +210,25 @@ class ConnectionTabWidget(SettingsFormWidget):
     def update_user_id(self):
         user_id = self.UserIDLineEdit.text()
         set_user_id(user_id)
+
+    def update_github_token(self):
+        token = self.GitHubTokenLineEdit.text()
+        stored_in_keyring = set_github_token(token)
+
+        # Show popup if token was saved but had to fall back to settings file
+        if token and not stored_in_keyring:
+            PopupWindow(
+                title="Keyring Unavailable",
+                message=(
+                    "Failed to store GitHub token in secure system keyring.\n\n"
+                    "The token has been saved to your settings file instead.\n"
+                    "This is less secure than keyring storage.\n\n"
+                    "Consider installing keyring support for your system."
+                ),
+                icon=PopupIcon.WARNING,
+                info_popup=True,
+                parent=self,
+            )
+
+    def open_github_token_docs(self):
+        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2/github_token/")

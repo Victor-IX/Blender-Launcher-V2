@@ -19,6 +19,7 @@ dependencies = [
     "dateparser==1.2.1",
     "pyside6-essentials==6.10.1",
     "markdown>=3.7",
+    "keyring>=25.7.0",
 ]
 requires-python = "<3.15,>=3.10"
 readme = "README.md"

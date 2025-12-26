@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+import logging
 import os
 import shutil
 import sys
@@ -9,14 +10,22 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+import keyring
+from keyring.errors import KeyringError, PasswordDeleteError
 from modules._platform import get_config_file, get_config_path, get_cwd, get_platform, local_config, user_config
 from modules.bl_api_manager import dropdown_blender_version
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings
 from semver import Version
 
+logger = logging.getLogger(__name__)
+
 EPOCH = datetime.fromtimestamp(0, tz=UTC)
 ISO_EPOCH = EPOCH.isoformat()
+
+# Keyring constants for secure token storage
+KEYRING_SERVICE_NAME = "BlenderLauncher"
+KEYRING_TOKEN_USERNAME = "github_token"
 
 # TODO: Simplify this
 
@@ -524,6 +533,73 @@ def get_user_id() -> str:
 
 def set_user_id(user_id):
     get_settings().setValue("user_id", user_id.strip())
+
+
+def get_github_token() -> str:
+    """
+    Get GitHub token from secure system keyring.
+    Falls back to legacy QSettings storage if keyring fails.
+    """
+    try:
+        token = keyring.get_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME)
+        if token:
+            return token.strip()
+    except KeyringError as e:
+        logger.warning(f"Failed to access keyring for GitHub token: {e}")
+    except Exception as e:
+        logger.warning(f"Unexpected error accessing keyring: {e}")
+
+    # Fallback: check legacy QSettings storage and migrate if possible
+    legacy_token = get_settings().value("github_token")
+    if legacy_token and legacy_token.strip():
+        legacy_token = legacy_token.strip()
+        try:
+            keyring.set_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME, legacy_token)
+            get_settings().remove("github_token")
+            logger.info("Migrated GitHub token from legacy storage to secure keyring")
+        except Exception as e:
+            logger.warning(f"Failed to migrate token to keyring: {e}")
+        return legacy_token
+
+    return ""
+
+
+def set_github_token(token: str) -> bool:
+    """
+    Store GitHub token in secure system keyring.
+    Falls back to QSettings if keyring is unavailable.
+
+    Returns:
+        bool: True if stored in keyring successfully, False if fell back to QSettings use to trigger user warning.
+    """
+    token = token.strip()
+
+    try:
+        if token:
+            # Store in secure keyring
+            keyring.set_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME, token)
+            logger.debug("GitHub token stored in secure keyring")
+            # Remove from QSettings if it exists there
+            if get_settings().contains("github_token"):
+                get_settings().remove("github_token")
+        else:
+            # Delete token from keyring if empty
+            try:
+                keyring.delete_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME)
+                logger.debug("GitHub token removed from secure keyring")
+            except PasswordDeleteError:
+                pass  # Token didn't exist, this is fine
+        return True
+    except KeyringError as e:
+        logger.warning(f"Keyring unavailable, falling back to QSettings: {e}")
+        # Fallback to QSettings
+        get_settings().setValue("github_token", token)
+        return False
+    except Exception as e:
+        logger.error(f"Failed to store GitHub token: {e}")
+        # Fallback to QSettings
+        get_settings().setValue("github_token", token)
+        return False
 
 
 # Blender Build Tab
