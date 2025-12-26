@@ -129,5 +129,5 @@ class BaseWindow(QMainWindow):
             event.accept()
 
     def _destroyed(self):
-        if self.launcher is not None and self in self.launcher.windows:
+        if hasattr(self, "launcher") and self.launcher is not None and self in self.launcher.windows:
             self.launcher.windows.remove(self)
