@@ -9,6 +9,7 @@ nav:
     - Manual Blender Installation: manual_build_installation.md
     - Build Initialization: build_initialization.md
     - File Association: file_association.md
+    - GitHub Token: github_token.md
     - Troubleshooting: troubleshooting.md
     - Known Issues: known_issues.md
     - Feature Request: feature_request.md
