@@ -1,5 +1,6 @@
 import logging
 import re
+import shutil
 import tarfile
 import zipfile
 from collections.abc import Callable
@@ -32,15 +33,24 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
                 names = [m.filename for m in members]
                 folder = _get_build_folder(names)
 
-                if folder is None:
+                # Check if this is a UPBGE archive (folder is "bin" with bin/Release structure)
+                is_upbge = (folder == "bin" and any(n.startswith("bin/Release/") for n in names))
+                
+                if is_upbge:
+                    folder = source.stem
+                    logger.info(f"Detected UPBGE archive with bin/Release structure, using: {folder}")
+                elif folder is None:
                     folder = members[0].filename.split("/")[0]
 
                 uncompress_size = sum(member.file_size for member in members)
                 progress_callback(0, uncompress_size)
                 extracted_size = 0
 
+                # For UPBGE flat archives, extract into a subfolder
+                extract_dest = destination / folder if is_upbge else destination
+                
                 for member in members:
-                    zf.extract(member, destination)
+                    zf.extract(member, extract_dest)
                     extracted_size += member.file_size
                     progress_callback(extracted_size, uncompress_size)
             return destination / folder
@@ -161,6 +171,53 @@ def _get_build_folder(names: list[str]):
     return None
 
 
+def _fix_upbge_structure(build_path: Path) -> Path:
+    """
+    Fix UPBGE build structure by moving bin/Release contents up to build root.
+    
+    UPBGE builds have a bin/Release subfolder structure that needs to be flattened
+    to match the standard Blender structure expected by the launcher.
+    
+    Args:
+        build_path: Path to extracted build folder
+        
+    Returns:
+        Path to the fixed build folder (same as input)
+    """
+    bin_release = build_path / "bin" / "Release"
+    
+    if not bin_release.exists():
+        return build_path
+    
+    logger.info(f"Detected UPBGE bin/Release structure in {build_path}")
+    
+    try:
+        # Move all contents from bin/Release to build root
+        for item in bin_release.iterdir():
+            dest = build_path / item.name
+            if dest.exists():
+                # If destination exists, remove it first
+                if dest.is_dir():
+                    shutil.rmtree(dest)
+                else:
+                    dest.unlink()
+            shutil.move(str(item), str(build_path))
+            logger.debug(f"Moved {item.name} to build root")
+        
+        # Remove the now-empty bin directory
+        bin_folder = build_path / "bin"
+        if bin_folder.exists():
+            shutil.rmtree(bin_folder)
+            logger.info(f"Removed empty bin folder from {build_path}")
+        
+        logger.info(f"Successfully fixed UPBGE structure for {build_path}")
+    except Exception as e:
+        logger.error(f"Failed to fix UPBGE structure: {e}")
+        raise
+    
+    return build_path
+
+
 @dataclass
 class ExtractTask(Task):
     file: Path
@@ -193,6 +250,8 @@ class ExtractTask(Task):
 
             result = extract(self.file, self.destination, self.progress.emit)
             if result is not None:
+                # Fix UPBGE structure if needed
+                result = _fix_upbge_structure(result)
                 self.finished.emit(result, is_removed)
         except (zipfile.BadZipFile, tarfile.TarError) as e:
             self._handle_extraction_error(e)
