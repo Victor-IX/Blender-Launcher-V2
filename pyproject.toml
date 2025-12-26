@@ -29,16 +29,6 @@ docs = ["mkdocs", "mkdocs-material>=9.5.10"]
 ruff = ["ruff>=0.3.5"]
 test = ["pytest"]
 
-[build-system]
-build-backend = "pdm.backend"
-requires = ["pdm-backend"]
-
-[tool.pdm]
-[[tool.pdm.source]]
-url = "https://pypi.python.org/simple"
-verify_ssl = true
-name = "pypi"
-
 [tool.ruff]
 line-length = 120
 target-version = "py312"
@@ -83,9 +73,6 @@ extend-select = [
 
 ]
 fixable = ["ALL"]
-
-[tool.pdm.scripts]
-bl = "source/main.py"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]

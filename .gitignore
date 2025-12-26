@@ -34,6 +34,10 @@ MANIFEST
 # PDM Stuff
 __pypackages__
 .pdm-python
+.pdm-build
+
+# RUFF Stuff
+.ruff_cache
 
 # Installer logs
 pip-log.txt
