@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from modules._platform import get_platform
 from modules.bl_api_manager import dropdown_blender_version
 from modules.settings import (
@@ -80,10 +84,14 @@ from widgets.repo_group import RepoGroup
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 
+if TYPE_CHECKING:
+    from windows.main_window import BlenderLauncher
+
 
 class BlenderBuildsTabWidget(SettingsFormWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
+        self.launcher: BlenderLauncher = parent
 
         # Repo visibility and downloading settings
         self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)

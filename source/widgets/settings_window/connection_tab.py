@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import webbrowser
 
 from modules.icons import Icons
@@ -37,10 +41,14 @@ from windows.popup_window import PopupIcon, PopupWindow
 
 from .settings_group import SettingsGroup
 
+if TYPE_CHECKING:
+    from windows.main_window import BlenderLauncher
+
 
 class ConnectionTabWidget(SettingsFormWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
+        self.launcher: BlenderLauncher = parent
 
         # Get icons
         self.icons = Icons.get()

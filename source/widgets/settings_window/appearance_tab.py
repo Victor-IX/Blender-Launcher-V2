@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from modules.settings import (
     downloads_pages,
     get_default_downloads_page,
@@ -25,11 +29,14 @@ from widgets.settings_form_widget import SettingsFormWidget
 
 from .settings_group import SettingsGroup
 
+if TYPE_CHECKING:
+    from windows.main_window import BlenderLauncher
+
 
 class AppearanceTabWidget(SettingsFormWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
+    def __init__(self, parent: BlenderLauncher):
+        super().__init__(parent=parent)
+        self.launcher: BlenderLauncher = parent
 
         # Windows
         self.window_settings = SettingsGroup("Window related", parent=self)
@@ -148,7 +155,7 @@ class AppearanceTabWidget(SettingsFormWidget):
 
     def toggle_system_titlebar(self, is_checked):
         set_use_system_titlebar(is_checked)
-        self.parent.update_system_titlebar(is_checked)
+        self.launcher.update_system_titlebar(is_checked)
 
     def toggle_enable_high_dpi_scaling(self, is_checked):
         set_enable_high_dpi_scaling(is_checked)
@@ -159,7 +166,7 @@ class AppearanceTabWidget(SettingsFormWidget):
 
     def toggle_sync_library_and_downloads_pages(self, is_checked):
         set_sync_library_and_downloads_pages(is_checked)
-        self.parent.toggle_sync_library_and_downloads_pages(is_checked)
+        self.launcher.toggle_sync_library_and_downloads_pages(is_checked)
 
         if is_checked:
             index = self.DefaultLibraryPageComboBox.currentIndex()
