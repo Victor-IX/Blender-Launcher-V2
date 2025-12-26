@@ -3,7 +3,9 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+from modules._platform import get_platform
 from modules.settings import (
     delete_action,
     get_actual_library_folder,
@@ -13,13 +15,13 @@ from modules.settings import (
     get_launch_timer_duration,
     get_launch_when_system_starts,
     get_library_folder,
-    get_platform,
     get_purge_temp_on_startup,
     get_show_tray_icon,
     get_use_pre_release_builds,
     get_worker_thread_count,
     migrate_config,
     purge_temp_folder,
+    set_auto_register_winget,
     set_default_delete_action,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
@@ -32,6 +34,7 @@ from modules.settings import (
     user_config,
 )
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
+from modules.winget_integration import register_with_winget, unregister_from_winget
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox, QComboBox, QGridLayout, QLabel, QPushButton, QSpinBox
 from widgets.folder_select import FolderSelector
@@ -40,11 +43,14 @@ from widgets.settings_window.settings_group import SettingsGroup
 from windows.file_dialog_window import FileDialogWindow
 from windows.popup_window import PopupIcon, PopupWindow
 
+if TYPE_CHECKING:
+    from windows.main_window import BlenderLauncher
+
 
 class GeneralTabWidget(SettingsFormWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent=parent)
-        self.parent = parent
+        self.launcher: BlenderLauncher = parent
 
         # Application Settings
         self.application_settings = SettingsGroup("Application", parent=self)
@@ -192,6 +198,35 @@ class GeneralTabWidget(SettingsFormWidget):
         self.file_association_group.setLayout(layout)
         self.addRow(self.file_association_group)
 
+        # WinGet Integration
+        if get_platform() == "Windows":
+            self.winget_group = SettingsGroup("WinGet Integration", parent=self)
+            winget_layout = QGridLayout()
+
+            winget_info = QLabel(
+                "Register Blender Launcher with WinGet package manager to enable automatic updates via 'winget update'."
+            )
+            winget_info.setWordWrap(True)
+
+            self.register_winget_button = QPushButton("Register with WinGet", parent=self.winget_group)
+            self.register_winget_button.setToolTip(
+                "Register this installation with WinGet so it can be updated via 'winget update'"
+            )
+
+            self.unregister_winget_button = QPushButton("Unregister from WinGet", parent=self.winget_group)
+            self.unregister_winget_button.setToolTip("Remove WinGet registration for this installation")
+
+            self.register_winget_button.clicked.connect(self.register_with_winget)
+            self.unregister_winget_button.clicked.connect(self.unregister_from_winget)
+            self.refresh_winget_buttons()
+
+            winget_layout.addWidget(winget_info, 0, 0, 1, 2)
+            winget_layout.addWidget(self.register_winget_button, 1, 0, 1, 1)
+            winget_layout.addWidget(self.unregister_winget_button, 1, 1, 1, 1)
+
+            self.winget_group.setLayout(winget_layout)
+            self.addRow(self.winget_group)
+
         self.advanced_settings = SettingsGroup("Advanced", parent=self)
         self.default_delete_action = QComboBox()
         self.default_delete_action.addItems(delete_action.keys())
@@ -239,10 +274,10 @@ class GeneralTabWidget(SettingsFormWidget):
     def library_folder_validity_changed(self, v: bool):
         if not v:
             self.dlg = PopupWindow(
-                parent=self.parent,
+                parent=self.launcher,
                 title="Warning",
                 message="Selected folder doesn't have write permissions!",
-                button="Quit",
+                buttons=["Quit"],
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -255,7 +290,7 @@ class GeneralTabWidget(SettingsFormWidget):
     def toggle_show_tray_icon(self, is_checked):
         set_show_tray_icon(is_checked)
         self.LaunchMinimizedToTrayCheckBox.setEnabled(is_checked)
-        self.parent.tray_icon.setVisible(is_checked)
+        self.launcher.tray_icon.setVisible(is_checked)
 
     def set_worker_thread_count(self):
         set_worker_thread_count(self.WorkerThreadCount.value())
@@ -282,7 +317,7 @@ class GeneralTabWidget(SettingsFormWidget):
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
             button = "Overwrite, Cancel"
             icon = PopupIcon.WARNING
-        dlg = PopupWindow(title=title, text=text, button=button, icon=icon, parent=self.parent)
+        dlg = PopupWindow(title=title, message=text, buttons=[button], icon=icon, parent=self.launcher)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
@@ -319,15 +354,66 @@ class GeneralTabWidget(SettingsFormWidget):
         success = purge_temp_folder()
         if success:
             PopupWindow(
-                parent=self.parent,
+                parent=self.launcher,
                 title="Success",
                 message="Temp folder has been purged successfully!",
                 icon=PopupIcon.NONE,
             )
         else:
             PopupWindow(
-                parent=self.parent,
+                parent=self.launcher,
                 title="Error",
                 message="Failed to purge temp folder. Some files may be in use.",
                 icon=PopupIcon.WARNING,
             )
+
+    def register_with_winget(self):
+        success = register_with_winget(sys.executable, str(self.launcher.version))
+        if success:
+            set_auto_register_winget(True)
+            self.refresh_winget_buttons()
+            PopupWindow(
+                parent=self.launcher,
+                title="Success",
+                message="Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher'",
+                icon=PopupIcon.NONE,
+            )
+        else:
+            PopupWindow(
+                parent=self.launcher,
+                title="Error",
+                message="Failed to register with WinGet. Check logs for details.",
+                icon=PopupIcon.WARNING,
+            )
+
+    def unregister_from_winget(self):
+        success = unregister_from_winget()
+        if success:
+            set_auto_register_winget(False)
+            self.refresh_winget_buttons()
+            PopupWindow(
+                parent=self.launcher,
+                title="Success",
+                message="Successfully unregistered from WinGet.",
+                icon=PopupIcon.NONE,
+            )
+        else:
+            PopupWindow(
+                parent=self.launcher,
+                title="Error",
+                message="Failed to unregister from WinGet. Check logs for details.",
+                icon=PopupIcon.WARNING,
+            )
+
+    def refresh_winget_buttons(self):
+        if get_platform() != "Windows":
+            return
+
+        from modules.winget_integration import is_registered_with_winget
+
+        if is_registered_with_winget():
+            self.register_winget_button.setEnabled(False)
+            self.unregister_winget_button.setEnabled(True)
+        else:
+            self.register_winget_button.setEnabled(True)
+            self.unregister_winget_button.setEnabled(False)

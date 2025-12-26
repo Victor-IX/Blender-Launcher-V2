@@ -1,6 +1,6 @@
 import os
-import sys
 import shutil
+import sys
 
 if sys.platform == "win32":
     destination_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Blender Launcher")

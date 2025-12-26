@@ -47,7 +47,6 @@ class CustomBuildDialogWindow(BaseWindow):
         old_build_info: BuildInfo | None = None,
     ):
         super().__init__(parent=parent)
-        self.parent_ = parent
         self.path = path
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
@@ -275,7 +274,7 @@ class CustomBuildDialogWindow(BaseWindow):
         )
         a.finished.connect(self.load_from_build_info)
         a.failure.connect(self.auto_detect_failed)
-        self.parent_.task_queue.append(a)
+        self.launcher.task_queue.append(a)
         self.auto_detect_button.setEnabled(False)
 
     def load_from_build_info(self, binfo: BuildInfo):

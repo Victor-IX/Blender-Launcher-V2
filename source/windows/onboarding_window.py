@@ -67,7 +67,6 @@ class OnboardingWindow(BaseWindow):
         self.setWindowTitle("Blender Launcher First-Time Setup")
         self.setMinimumWidth(768)
         self.setMinimumHeight(512)
-        self.parent_ = parent
         # A wizard showing the settings being configured
         self.wizard = QWizard(self)
         self.wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
@@ -143,7 +142,7 @@ class OnboardingWindow(BaseWindow):
             logging.info(f"Deleting {sys.executable} after restarting")
             if get_platform() == "Windows":
                 self.delete_with_timeout(Path(sys.executable))
-            self.parent_.restart_app(self.prop_settings.exe_location.parent)
+            self.launcher.restart_app(self.prop_settings.exe_location.parent)
         self.close()
 
     def __commiter_errored(self, exc_str):

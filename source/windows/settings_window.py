@@ -76,7 +76,7 @@ class SettingsWindow(BaseWindow):
         self.GeneralScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.GeneralScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.GeneralScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
-        self.GeneralTabWidget = general_tab.GeneralTabWidget(parent=self.parent)
+        self.GeneralTabWidget = general_tab.GeneralTabWidget(parent=self.launcher)
         self.GeneralScrollArea.setWidget(self.GeneralTabWidget)
         self.GeneralTab.layout().addWidget(self.GeneralScrollArea)
 
@@ -87,7 +87,7 @@ class SettingsWindow(BaseWindow):
         self.AppearanceScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.AppearanceScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.AppearanceScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
-        self.AppearanceTabWidget = appearance_tab.AppearanceTabWidget(parent=self.parent)
+        self.AppearanceTabWidget = appearance_tab.AppearanceTabWidget(parent=self.launcher)
         self.AppearanceScrollArea.setWidget(self.AppearanceTabWidget)
         self.AppearanceTab.layout().addWidget(self.AppearanceScrollArea)
 
@@ -98,7 +98,7 @@ class SettingsWindow(BaseWindow):
         self.ConnectionScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.ConnectionScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.ConnectionScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
-        self.ConnectionTabWidget = connection_tab.ConnectionTabWidget(parent=self.parent)
+        self.ConnectionTabWidget = connection_tab.ConnectionTabWidget(parent=self.launcher)
         self.ConnectionScrollArea.setWidget(self.ConnectionTabWidget)
         self.ConnectionTab.layout().addWidget(self.ConnectionScrollArea)
 
@@ -109,7 +109,7 @@ class SettingsWindow(BaseWindow):
         self.BlenderBuildsScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.BlenderBuildsScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.BlenderBuildsScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
-        self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget(parent=self.parent)
+        self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget(parent=self.launcher)
         self.BlenderBuildsScrollArea.setWidget(self.BlenderBuildsTabWidget)
         self.BlenderBuildsTab.layout().addWidget(self.BlenderBuildsScrollArea)
 
@@ -126,14 +126,14 @@ class SettingsWindow(BaseWindow):
         if self.old_enable_quick_launch_key_seq != enable_quick_launch_key_seq:
             # Restart hotkeys listener
             if enable_quick_launch_key_seq is True:
-                self.parent.setup_global_hotkeys_listener()
+                self.launcher.setup_global_hotkeys_listener()
             # Stop hotkeys listener
-            elif self.parent.hk_listener is not None:
-                self.parent.hk_listener.stop()
+            elif self.launcher.hk_listener is not None:
+                self.launcher.hk_listener.stop()
         # Only key sequence was changed
         # Restart hotkeys listener
         elif self.old_quick_launch_key_seq != quick_launch_key_seq and enable_quick_launch_key_seq:
-            self.parent.setup_global_hotkeys_listener()
+            self.launcher.setup_global_hotkeys_listener()
 
         """Update connection"""
         use_custom_tls_certificates = get_use_custom_tls_certificates()
@@ -182,7 +182,7 @@ class SettingsWindow(BaseWindow):
             self.old_check_for_new_builds_automatically != check_for_new_builds_automatically
             or self.old_new_builds_check_frequency != new_builds_check_frequency
         ):
-            self.parent.draw_library(clear=True)
+            self.launcher.draw_library(clear=True)
 
         """Update high DPI scaling"""
         enable_high_dpi_scaling = get_enable_high_dpi_scaling()
@@ -210,7 +210,7 @@ class SettingsWindow(BaseWindow):
             pending_to_restart += "<br>- " + s
 
         self.dlg = PopupWindow(
-            parent=self.parent,
+            parent=self.launcher,
             title="Warning",
             message=f"Restart Blender Launcher in<br> \
                   order to apply following settings:{pending_to_restart}",
@@ -222,7 +222,7 @@ class SettingsWindow(BaseWindow):
         self.close_warning_ignored = True  # if the user tries to restart then the close event won't trigger
 
     def restart_app(self):
-        self.parent.restart_app()
+        self.launcher.restart_app()
 
     def update_system_titlebar(self, b: bool):
         self.header.setHidden(b)
@@ -236,6 +236,6 @@ class SettingsWindow(BaseWindow):
             self.show_dlg_restart_bl(unfinished_business)
             event.ignore()
         else:
-            self.parent.settings_window = None
-            self.parent.update_visible_lists()
+            self.launcher.settings_window = None
+            self.launcher.update_visible_lists()
             event.accept()

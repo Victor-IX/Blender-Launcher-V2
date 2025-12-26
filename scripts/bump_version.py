@@ -2,19 +2,18 @@ import re
 
 
 def update_version_in_main_py(file_path, new_version):
-    with open(file_path, "r") as file:
+    with open(file_path) as file:
         content = file.read()
         lines = content.splitlines()
 
         for i, line in enumerate(lines):
             stripped_line = line.lstrip()
-            if 'prerelease="rc' in stripped_line:
-                if not stripped_line.startswith("#"):
-                    response = input(
-                        "The current version is a prerelease version. This line needs to be commented out, continue? (y/n): "
-                    )
-                    if response.lower() == "y":
-                        lines[i] = "# " + line
+            if 'prerelease="rc' in stripped_line and not stripped_line.startswith("#"):
+                response = input(
+                    "The current version is a prerelease version. This line needs to be commented out, continue? (y/n): "
+                )
+                if response.lower() == "y":
+                    lines[i] = "# " + line
 
     content = "\n".join(lines)
 
@@ -32,7 +31,7 @@ def update_version_in_main_py(file_path, new_version):
 
 
 def update_version_in_pyproject_toml(file_path, new_version):
-    with open(file_path, "r") as file:
+    with open(file_path) as file:
         content = file.read()
 
     new_content = re.sub(r'version = "[0-9]+\.[0-9]+\.[0-9]+"', f'version = "{new_version}"', content)
@@ -48,7 +47,7 @@ def update_version_in_version_txt(file_path, new_version):
     file_version_str = f"StringStruct(u'FileVersion', u'{new_version}')"
     product_version_str = f"StringStruct(u'ProductVersion', u'{new_version}')"
 
-    with open(file_path, "r") as file:
+    with open(file_path) as file:
         content = file.read()
 
     content = re.sub(r"filevers=\([0-9]+, [0-9]+, [0-9]+, 0\),", filevers, content)
@@ -61,7 +60,7 @@ def update_version_in_version_txt(file_path, new_version):
 
 
 def update_version_in_doc(file_path, new_version, old_version):
-    with open(file_path, "r") as file:
+    with open(file_path) as file:
         content = file.read()
 
     content = re.sub(old_version, new_version, content)
@@ -82,11 +81,9 @@ def update_program_version(new_version):
 
 
 def old_version():
-    with open(pyproject_toml_path, "r") as file:
+    with open(pyproject_toml_path) as file:
         pyproject_content = file.read()
-        old_version = re.search(r'version = "([0-9]+\.[0-9]+\.[0-9]+)"', pyproject_content).group(1)
-
-    return old_version
+        return re.search(r'version = "([0-9]+\.[0-9]+\.[0-9]+)"', pyproject_content).group(1)
 
 
 # Path

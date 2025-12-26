@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 
 
 @cache
-def get_platform():
+def get_platform() -> str:
     platforms = {
         "linux": "Linux",
         "linux1": "Linux",
@@ -26,12 +26,12 @@ def get_platform():
 
 
 @cache
-def get_architecture():
+def get_architecture() -> str:
     return platform.machine().lower()
 
 
 @cache
-def get_launcher_name():
+def get_launcher_name() -> tuple[str, str]:
     if sys.platform == "win32":
         return ("Blender Launcher.exe", "Blender Launcher Updater.exe")
 
