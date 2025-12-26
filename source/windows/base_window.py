@@ -110,7 +110,8 @@ class BaseWindow(QMainWindow):
 
     def showEvent(self, event):
 
-        if launcher is not None:
+        if hasattr(self, "launcher") and self.launcher is not None:
+            launcher = self.launcher
             if self not in launcher.windows:
                 launcher.windows.append(self)
                 launcher.show_signal.connect(self.show)
