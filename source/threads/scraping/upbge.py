@@ -49,7 +49,32 @@ class ScraperUpbge(BuildScraper):
             logger.exception(f"Failed to parse UPBGE releases JSON: {e}")
             return
 
+        # Check if response is an error (rate limit or other GitHub API error)
+        if isinstance(releases, dict):
+            if "message" in releases:
+                error_msg = releases.get("message", "Unknown error")
+                
+                # Check for rate limit specifically
+                if "rate limit" in error_msg.lower():
+                    logger.warning("GitHub API rate limit exceeded. UPBGE builds will not be available.")
+                else:
+                    logger.error(f"GitHub API error for UPBGE: {error_msg}")
+                return
+            
+            # If it's a dict but not an error, it's an unexpected response
+            logger.error(f"Unexpected response format from GitHub API: {type(releases)}")
+            return
+
+        # Validate that releases is a list
+        if not isinstance(releases, list):
+            logger.error(f"Expected list of releases, got {type(releases)}")
+            return
+
         for release in releases:
+            if not isinstance(release, dict):
+                logger.warning(f"Skipping invalid release entry: {type(release)}")
+                continue
+                
             if release.get("draft", False):
                 continue
 
@@ -64,6 +89,26 @@ class ScraperUpbge(BuildScraper):
             except (ValueError, AttributeError) as e:
                 logger.warning(f"Failed to parse UPBGE release date {release_date}: {e}")
                 continue
+
+            # Get commit hash from tag
+            build_hash = None
+            try:
+                tag_url = f"https://api.github.com/repos/UPBGE/upbge/git/refs/tags/{tag_name}"
+                tag_response = self.manager.request("GET", tag_url)
+                if tag_response:
+                    tag_data = json.loads(tag_response.data)
+                    
+                    # Check if response is an error (rate limit)
+                    if isinstance(tag_data, dict) and "message" in tag_data:
+                        logger.debug(f"Could not fetch hash for {tag_name}: {tag_data.get('message')}")
+                    else:
+                        commit_sha = tag_data.get("object", {}).get("sha")
+                        if commit_sha:
+                            # Use first 12 characters of commit SHA (standard short hash)
+                            build_hash = commit_sha[:12]
+                            logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
+            except (json.JSONDecodeError, KeyError, AttributeError, TypeError) as e:
+                logger.debug(f"Failed to get commit hash for UPBGE {tag_name}: {e}")
 
             assets = release.get("assets", [])
             for asset in assets:
@@ -109,7 +154,7 @@ class ScraperUpbge(BuildScraper):
                 yield BuildInfo(
                     download_url,
                     str(subversion),
-                    None,
+                    build_hash,
                     commit_time,
                     branch,
                     custom_executable=exe_name,
