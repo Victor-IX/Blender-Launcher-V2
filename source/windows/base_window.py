@@ -109,7 +109,6 @@ class BaseWindow(QMainWindow):
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def showEvent(self, event):
-        launcher = self.launcher
 
         if launcher is not None:
             if self not in launcher.windows:
