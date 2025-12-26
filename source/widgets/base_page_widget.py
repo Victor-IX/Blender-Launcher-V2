@@ -1,10 +1,11 @@
 from enum import Enum
+from typing import Generic
 
 from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSplitter, QVBoxLayout, QWidget
-from widgets.base_list_widget import BaseListWidget
+from widgets.base_list_widget import _WT, BaseListWidget
 
 
 class SortingType(Enum):
@@ -13,7 +14,7 @@ class SortingType(Enum):
     LABEL = 3
 
 
-class BasePageWidget(QWidget):
+class BasePageWidget(QWidget, Generic[_WT]):
     # Signal emitted when column widths change: (version_width, branch_width, commit_time_width)
     column_widths_changed = Signal(int, int, int)
 
@@ -55,7 +56,7 @@ class BasePageWidget(QWidget):
         self.InfoLabel = QLabel(info_text)
         self.InfoLabelLayout.addWidget(self.InfoLabel)
 
-        self.list_widget = BaseListWidget(self, extended_selection=extended_selection)
+        self.list_widget: BaseListWidget[_WT] = BaseListWidget(self, extended_selection=extended_selection)
         self.list_widget.hide()
 
         self.InfoLayout = QHBoxLayout()
