@@ -33,6 +33,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from widgets.settings_form_widget import SettingsFormWidget
+from windows.popup_window import PopupIcon, PopupWindow
 
 from .settings_group import SettingsGroup
 
@@ -212,7 +213,22 @@ class ConnectionTabWidget(SettingsFormWidget):
 
     def update_github_token(self):
         token = self.GitHubTokenLineEdit.text()
-        set_github_token(token)
+        stored_in_keyring = set_github_token(token)
+
+        # Show popup if token was saved but had to fall back to settings file
+        if token and not stored_in_keyring:
+            PopupWindow(
+                title="Keyring Unavailable",
+                message=(
+                    "Failed to store GitHub token in secure system keyring.\n\n"
+                    "The token has been saved to your settings file instead.\n"
+                    "This is less secure than keyring storage.\n\n"
+                    "Consider installing keyring support for your system."
+                ),
+                icon=PopupIcon.WARNING,
+                info_popup=True,
+                parent=self,
+            )
 
     def open_github_token_docs(self):
         webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2/github_token/")

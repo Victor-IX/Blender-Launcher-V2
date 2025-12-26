@@ -564,10 +564,13 @@ def get_github_token() -> str:
     return ""
 
 
-def set_github_token(token: str):
+def set_github_token(token: str) -> bool:
     """
     Store GitHub token in secure system keyring.
     Falls back to QSettings if keyring is unavailable.
+
+    Returns:
+        bool: True if stored in keyring successfully, False if fell back to QSettings use to trigger user warning.
     """
     token = token.strip()
 
@@ -586,14 +589,17 @@ def set_github_token(token: str):
                 logger.debug("GitHub token removed from secure keyring")
             except PasswordDeleteError:
                 pass  # Token didn't exist, this is fine
+        return True
     except KeyringError as e:
         logger.warning(f"Keyring unavailable, falling back to QSettings: {e}")
         # Fallback to QSettings
         get_settings().setValue("github_token", token)
+        return False
     except Exception as e:
         logger.error(f"Failed to store GitHub token: {e}")
         # Fallback to QSettings
         get_settings().setValue("github_token", token)
+        return False
 
 
 # Blender Build Tab

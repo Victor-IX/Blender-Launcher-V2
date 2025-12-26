@@ -56,7 +56,7 @@ If you use the Blender Launcher frequently or check for updates often, you may h
 7. Changes are saved automatically **in your system's secure credential manager**
 
 !!! tip
-    The token is stored securely in your system's credential manager (Windows Credential Manager, macOS Keychain, or Linux Secret Service), NOT in the configuration file. This means you can safely share your Blender Launcher config without exposing your token.
+    The token is stored securely in your system's credential manager (Windows Credential Manager, macOS Keychain, or Linux Secret Service), if it fail to save it in the system's credential manager, it will fall back to the user settings file with a warning.
 
 ## Token Security
 
@@ -64,13 +64,13 @@ If you use the Blender Launcher frequently or check for updates often, you may h
   - **Windows**: Windows Credential Manager (same place Windows stores passwords)
   - **macOS**: macOS Keychain
   - **Linux**: Secret Service API (gnome-keyring, KWallet, etc.)
-- The token is **NOT** stored in the Blender Launcher configuration file (safe to share config)
+  - Falls back to user settings file if system keyring is unavailable
 - The token is only sent to `api.github.com` when the launcher checks for updates or fetches UPBGE builds
 - **Never share your token** with anyone else
 - If you believe your token has been compromised, revoke it on GitHub and create a new one
 
 !!! info
-    If your system's keyring is unavailable, the token will fall back to local storage with a warning. This ensures the feature always works, even in restricted environments.
+    If your system's keyring is unavailable, the token will fall back to user settings with a warning. This ensures the feature always works, even in restricted environments.
 
 ## Revoking a Token
 
