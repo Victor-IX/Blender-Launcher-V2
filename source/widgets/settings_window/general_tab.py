@@ -364,7 +364,7 @@ class GeneralTabWidget(SettingsFormWidget):
             )
 
     def register_with_winget(self):
-        success = register_with_winget(sys.executable, self.parent.parent.version)
+        success = register_with_winget(sys.executable, str(self.parent.version))
         if success:
             set_auto_register_winget(True)
             self.refresh_winget_buttons()
