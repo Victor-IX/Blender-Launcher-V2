@@ -541,7 +541,6 @@ def get_github_token() -> str:
     Falls back to legacy QSettings storage if keyring fails.
     """
     try:
-        # Try to get token from secure keyring
         token = keyring.get_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME)
         if token:
             return token.strip()
@@ -550,19 +549,17 @@ def get_github_token() -> str:
     except Exception as e:
         logger.warning(f"Unexpected error accessing keyring: {e}")
 
-    # Fallback: check legacy QSettings storage
+    # Fallback: check legacy QSettings storage and migrate if possible
     legacy_token = get_settings().value("github_token")
     if legacy_token and legacy_token.strip():
-        # Migrate to secure storage
+        legacy_token = legacy_token.strip()
         try:
-            set_github_token(legacy_token.strip())
-            # Clear from QSettings after successful migration
+            keyring.set_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME, legacy_token)
             get_settings().remove("github_token")
             logger.info("Migrated GitHub token from legacy storage to secure keyring")
-            return legacy_token.strip()
         except Exception as e:
             logger.warning(f"Failed to migrate token to keyring: {e}")
-            return legacy_token.strip()
+        return legacy_token
 
     return ""
 

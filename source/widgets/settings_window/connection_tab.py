@@ -140,9 +140,9 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.GitHubTokenLineEdit = QLineEdit()
         self.GitHubTokenLineEdit.setText(get_github_token())
         self.GitHubTokenLineEdit.setToolTip(
-            "Optional: GitHub Personal Access Token to avoid rate limiting\
-            \nUseful if you're making many requests to GitHub API\
-            \nLeave empty if not needed"
+            "Optional: GitHub Personal Access Token to avoid rate limiting\n"
+            "Useful if you're making many requests to GitHub API\n"
+            "Leave empty if not needed"
         )
         self.GitHubTokenLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.GitHubTokenLineEdit.editingFinished.connect(self.update_github_token)

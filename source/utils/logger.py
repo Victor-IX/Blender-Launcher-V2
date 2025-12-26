@@ -38,12 +38,11 @@ class SensitiveDataFilter(logging.Filter):
 
     def filter(self, record):
         """Redact sensitive data from the log record message."""
-        if hasattr(record, "msg") and isinstance(record.msg, str):
+        if isinstance(record.msg, str):
             for pattern, replacement in self.patterns:
                 record.msg = pattern.sub(replacement, record.msg)
 
-        # Also sanitize args if they exist
-        if hasattr(record, "args") and record.args:
+        if record.args:
             if isinstance(record.args, tuple):
                 record.args = tuple(self._sanitize_value(arg) for arg in record.args)
             elif isinstance(record.args, dict):
