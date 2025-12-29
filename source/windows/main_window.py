@@ -913,7 +913,7 @@ class BlenderLauncher(BaseWindow):
         if self.DownloadsPage.list_widget is not None:
 
             def _initialized():
-                self.LibraryPage.list_widget.reevaluate_visibility(item, widget)
+                self.LibraryPage.list_widget.update_visibility(item, widget)
 
                 dlw: DownloadWidget | None = self.DownloadsPage.list_widget.widget_with_blinfo(widget.build_info)
                 if dlw is not None and not dlw.installed:

@@ -23,6 +23,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.search = VersionSearchQuery.any()
 
         self.widgets: set[_WT] = set()
+        self._query_cache: dict[VersionSearchQuery, set[_WT]] = {}
         self.metrics = QFontMetrics(self.font())
 
         self.setFrameShape(QFrame.Shape.NoFrame)
@@ -47,7 +48,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.setItemWidget(item, widget)
         self.count_changed()
         self.widgets.add(widget)
-        self.reevaluate_visibility(item, widget)
+        self.update_visibility(item, widget)
 
     def insert_item(self, item, widget, index=0):
         item.setSizeHint(widget.sizeHint())
@@ -55,7 +56,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.setItemWidget(item, widget)
         self.count_changed()
         self.widgets.add(widget)
-        self.reevaluate_visibility(item, widget)
+        self.update_visibility(item, widget)
 
     def remove_item(self, item):
         if (w := self.itemWidget(item)) is not None:
@@ -98,6 +99,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def clear_(self):
         self.clear()
         self.widgets.clear()
+        self._query_cache = {}
         self.count_changed()
 
     def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, _WT], set[_WT]]:
@@ -112,16 +114,17 @@ class BaseListWidget(Generic[_WT], QListWidget):
                 unknown_widgets.add(widget)
         return (binfo_to_widget, unknown_widgets)
 
-    def get_matching_builds(self, search: VersionSearchQuery, broken_builds=True):
-        binfo_to_widget, unknown_widgets = self.basic_build_infos()
-        # gather all matching widgets
-        shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
-
-        # add broken widgets to the filter
-        if broken_builds:
+    def get_matching_builds(self, search: VersionSearchQuery):
+        if search not in self._query_cache:
+            binfo_to_widget, unknown_widgets = self.basic_build_infos()
+            # gather all matching widgets
+            shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
+            # add broken widgets to the results
             shown_widgets |= unknown_widgets
 
-        return shown_widgets
+            self._query_cache[search] = shown_widgets
+
+        return self._query_cache[search]
 
     def update_branch_filter(self, branches: tuple[str, ...]):
         self.search = self.search.with_branch(branches)
@@ -139,10 +142,18 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         self.__show(len(hidden_widgets) != len(self.items()))
 
-    def reevaluate_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
+    def update_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
         if (widget is None and (widget := self.itemWidget(item)) is None) or widget.build_info is None:
             return
-        item.setHidden(not bool(self.search.match([BasicBuildInfo.from_buildinfo(widget.build_info)])))
+        success = bool(self.search.match([BasicBuildInfo.from_buildinfo(widget.build_info)]))
+        if (s := self._query_cache.get(self.search)) is not None:
+            if success:
+                s |= {widget}
+            else:
+                s -= {widget}
+
+        item.setHidden(not success)
+
 
     def clear_by_branch(self, branch: str):
         widgets_to_remove = [widget for widget in self.widgets if widget.build_info.branch == branch]
