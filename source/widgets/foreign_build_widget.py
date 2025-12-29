@@ -27,7 +27,7 @@ class UnrecoBuildWidget(BaseBuildWidget):
             "0.0.0",
             "",
             datetime.now(tz=UTC),
-            "",
+            path.parent.name,
             str(path.name),
             False,
             None,
