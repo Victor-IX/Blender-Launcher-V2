@@ -235,7 +235,7 @@ class ConnectionTabWidget(SettingsFormWidget):
                 ),
                 icon=PopupIcon.WARNING,
                 info_popup=True,
-                parent=self,
+                parent=self.launcher,
             )
 
     def open_github_token_docs(self):
