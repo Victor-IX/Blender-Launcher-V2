@@ -296,7 +296,11 @@ class BlenderLauncher(BaseWindow):
 
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
-            self.LibraryToolBox.tab_changed.connect(self.DownloadsToolBox.setCurrentIndex)
+            self.LibraryToolBox.tab_changed.connect(
+                lambda idx: self.DownloadsToolBox.setCurrentIndex(idx)
+                if self.DownloadsToolBox.isTabVisible(idx)
+                else None
+            )
             self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
         else:
             if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
