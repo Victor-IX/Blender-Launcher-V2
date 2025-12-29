@@ -38,3 +38,5 @@ class BaseToolBoxWidget(QTabBar):
     def update_visibility(self, idx: int, b: bool):
         self.setTabVisible(idx, b)
         self.setTabEnabled(idx, b)
+        self.hide()
+        self.show()
