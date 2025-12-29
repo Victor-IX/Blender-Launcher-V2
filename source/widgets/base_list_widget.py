@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from modules.version_matcher import BasicBuildInfo, BInfoMatcher, VersionSearchQuery
+from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFontMetrics
 from PySide6.QtWidgets import QAbstractItemView, QFrame, QListWidget, QListWidgetItem

@@ -5,14 +5,14 @@ import datetime
 import os
 import re
 from dataclasses import dataclass
-from functools import cache
+from functools import cache, lru_cache
 from operator import attrgetter
 from typing import TYPE_CHECKING
 
 from semver import Version
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable
 
     from modules.build_info import BuildInfo
 
@@ -138,7 +138,7 @@ def _parse(s: str) -> tuple[int | str, int | str, int | str, str | None, str | N
     return major, minor, patch, branch, build_hash, commit_time
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
 
@@ -224,7 +224,11 @@ class VersionSearchQuery:
             commit_time=commit_time,
         )
 
-    def match(self, versions: list[BasicBuildInfo]) -> list[BasicBuildInfo]:
+    @lru_cache(16)  # noqa: B019 # VersionSearchQuery is frozen and is small so it shouldn't be too big
+    def relevant_places(self) -> tuple[str, ...]:
+        return tuple(place for place in self.__slots__ if getattr(self, place) != "*")
+
+    def match(self, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
         return match_versions(self, versions)
 
 
@@ -233,20 +237,14 @@ class VersionSearchQuery:
 # VersionSearchQuery(4, "^", "^"): Match the latest version of major 4
 # VersionSearchQuery("^", "*", "*"): Match any version in the latest major release
 
-@dataclass(frozen=True)
-class BInfoMatcher:
-    versions: tuple[BasicBuildInfo, ...]
 
-    def match(self, s: VersionSearchQuery) -> tuple[BasicBuildInfo, ...]:
-        return tuple(match_versions(s, list(self.versions)))
-
-
-def match_versions(s: VersionSearchQuery, versions: list[BasicBuildInfo]) -> list[BasicBuildInfo]:
-    for place in ("build_hash", "major", "minor", "patch", "branch", "commit_time"):
+def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
+    relevant_places = s.relevant_places()
+    for place in relevant_places:
         getter = attrgetter(place)
         p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
         if p == "*" or p is None:
-            continue  # all versions match
+            continue  # all versions match (should be unreachable due to relevant_places)
         if p == "^":
             # get the max number for `place` in version
             max_p = max(getter(v) for v in versions)
@@ -264,11 +262,11 @@ def match_versions(s: VersionSearchQuery, versions: list[BasicBuildInfo]) -> lis
 
         if not versions:
             return versions
-    return versions
+    return list(versions)
 
 
-if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatcher
-    builds = (
+if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test VersionSearchQuery
+    builds = [
         BasicBuildInfo(Version.parse("1.2.3"), "stable", "", datetime.datetime(2020, 5, 4, tzinfo=utc)),
         BasicBuildInfo(Version.parse("1.2.2"), "stable", "", datetime.datetime(2020, 4, 2, tzinfo=utc)),
         BasicBuildInfo(Version.parse("1.2.1"), "daily", "", datetime.datetime(2020, 3, 1, tzinfo=utc)),
@@ -278,42 +276,41 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
         BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
         BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
         BasicBuildInfo(Version.parse("4.3.1"), "daily", "", datetime.datetime(2024, 7, 20, tzinfo=utc)),
-    )
+    ]
 
-    matcher = BInfoMatcher(builds)
-
-    def test_binfo_matcher():
+    def test_matcher():
         # find the latest minor builds with any patch number
-        results = matcher.match(VersionSearchQuery("^", "^", "*", commit_time="*"))
-        assert results == (
+        results = VersionSearchQuery("^", "^", "*", commit_time="*").match(builds)
+        print(results)
+        assert results == [
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
             BasicBuildInfo(Version.parse("4.3.1"), "daily", "", datetime.datetime(2024, 7, 20, tzinfo=utc)),
-        )
+        ]
 
         # find any version with a patch of 14
-        results = matcher.match(VersionSearchQuery("*", "*", 14))
-        assert results == (
+        results = VersionSearchQuery("*", "*", 14).match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("3.6.14"), "lts", "", datetime.datetime(2024, 7, 16, tzinfo=utc)),
-        )
+        ]
 
         # find any version in the lts branch
-        results = matcher.match(VersionSearchQuery("*", "*", "*", branch="lts"))
-        assert results == (
+        results = VersionSearchQuery("*", "*", "*", branch="lts").match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("3.6.14"), "lts", "", datetime.datetime(2024, 7, 16, tzinfo=utc)),
-        )
+        ]
 
         # find the latest daily builds for the latest major release
-        results = matcher.match(VersionSearchQuery("^", "*", "*", branch="daily", commit_time="^"))
-        assert results == (
+        results = VersionSearchQuery("^", "*", "*", branch="daily", commit_time="^").match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
-        )
+        ]
 
         # find oldest major release with any minor and largest patch
-        results = matcher.match(VersionSearchQuery("-", "*", "^"))
-        assert results == (
+        results = VersionSearchQuery("-", "*", "^").match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("1.2.4"), "stable", "", datetime.datetime(2020, 6, 3, tzinfo=utc)),
-        )
+        ]
 
         print("test_binfo_matcher successful!")
 
@@ -330,14 +327,14 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
             VersionSearchQuery(4, "*", "*"),
             VersionSearchQuery("^", "^", "*", branch="stable", commit_time=datetime.datetime(2020, 5, 4, tzinfo=utc)),
         ):
-            result_before_serialization = matcher.match(query)
+            result_before_serialization = query.match(builds)
 
             serialized_query = str(query)
             print(serialized_query)
             deserialized_query = VersionSearchQuery.parse(serialized_query)
             print(deserialized_query)
 
-            result_after_serialization = matcher.match(deserialized_query)
+            result_after_serialization = deserialized_query.match(builds)
 
             assert result_before_serialization == result_after_serialization
 
@@ -366,6 +363,6 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
 
         print("test_search_query_parser successful!")
 
-    test_binfo_matcher()
+    test_matcher()
     test_vsq_serialization()
     test_search_query_parser()

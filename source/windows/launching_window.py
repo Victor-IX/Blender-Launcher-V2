@@ -16,7 +16,7 @@ from modules.settings import (
     set_version_specific_queries,
 )
 from modules.tasks import TaskQueue
-from modules.version_matcher import VALID_QUERIES, BInfoMatcher, VersionSearchQuery
+from modules.version_matcher import VALID_QUERIES, VersionSearchQuery
 from modules.version_matcher import BasicBuildInfo as BBI
 from PySide6.QtCore import Qt, QTimer, Slot
 from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
@@ -346,8 +346,6 @@ class LaunchingWindow(BaseWindow):
                     self.list_items[BBI.from_buildinfo(build)].setSelected(True)
                     self.set_query_from_selected_build()
 
-        self.matcher = self.make_matcher()
-
         all_queries = get_version_specific_queries()
 
         if self.version_query is not None:  # then it was given via the CLI
@@ -391,15 +389,15 @@ class LaunchingWindow(BaseWindow):
             else:
                 self.prepare_launch(build)
 
-    def make_matcher(self):
-        return BInfoMatcher(tuple(map(BBI.from_buildinfo, self.builds.values())))
+    def make_basic_info(self) -> list[BBI]:
+        return list(map(BBI.from_buildinfo, self.builds.values()))
 
-    def update_search(self) -> tuple[tuple[BBI, ...], list[BuildInfo]]:
+    def update_search(self) -> tuple[list[BBI], list[BuildInfo]]:
         """Updates the visibility of each item in the list depending on the search query. returns matches"""
         assert self.version_query is not None
         logger.debug(f"QUERY: {self.version_query!r}")
-        matcher = self.make_matcher()
-        matches = matcher.match(self.version_query)
+        builds = self.make_basic_info()
+        matches = self.version_query.match(builds)
         versions = {b.version for b in matches}
 
         enabled_builds: list[BuildInfo] = []
