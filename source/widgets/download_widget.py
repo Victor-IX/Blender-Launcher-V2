@@ -335,7 +335,7 @@ class DownloadWidget(BaseBuildWidget):
             path = self.build_dir
 
         if path is not None:
-            widget = self.parent.draw_to_library(path, True)
+            self.parent.draw_to_library(path, True, self.successful_read_callback)
 
             assert self.source_file is not None
             self.parent.clear_temp(self.source_file)
@@ -352,19 +352,15 @@ class DownloadWidget(BaseBuildWidget):
                 message_type=MessageType.DOWNLOADFINISHED,
             )
 
-            if widget:
-                self.setInstalled(widget)
-
-            if self.updating_widget is not None and self._is_removed is False:
-                # Handle portable settings before removing old build
-                if widget and self.updating_widget.move_portable_settings:
-                    logger.debug("Transferring portable settings...")
-                    QTimer.singleShot(500, lambda: self.handle_portable_settings(self.updating_widget, widget))
-                else:
-                    QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
-
-            if widget:
-                widget.initialized.connect(lambda: self.parent.check_library_for_updates())
+    def successful_read_callback(self, widget: LibraryWidget):
+        self.setInstalled(widget)
+        if self.updating_widget is not None and not self._is_removed:
+            if self.updating_widget.move_portable_settings:
+                logger.debug("Transferring portable settings...")
+                QTimer.singleShot(500, lambda: self.handle_portable_settings(self.updating_widget, widget))
+            else:
+                QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
+        self.parent.check_library_for_updates()
 
     def handle_portable_settings(self, old_widget: LibraryWidget, new_widget: LibraryWidget) -> None:
         """Handle portable settings transfer based on user choice."""

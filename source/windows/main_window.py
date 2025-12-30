@@ -18,6 +18,7 @@ from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_default_library_folder, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
+from modules.build_info import ReadBuildTask
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.settings import (
@@ -87,6 +88,7 @@ from widgets.datetime_widget import DATETIME_FORMAT
 from widgets.download_widget import DownloadState, DownloadWidget
 from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
+from widgets.library_damaged_widget import LibraryDamagedWidget
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
@@ -1006,38 +1008,43 @@ class BlenderLauncher(BaseWindow):
             if is_new:
                 self.new_downloads = True
 
-    def draw_to_library(self, path: Path, show_new=False):
+    def draw_to_library(self, path: Path, show_new=False, successful_read_callback=None):
         branch = Path(path).parent.name
 
         if branch in ("stable", "lts"):
             library = self.LibraryStableListWidget
-            download = self.DownloadsStableListWidget
         elif branch == "daily":
             library = self.LibraryDailyListWidget
-            download = self.DownloadsDailyListWidget
         elif branch == "experimental":
             library = self.LibraryExperimentalListWidget
-            download = self.DownloadsExperimentalListWidget
         elif branch == "bforartists":
             library = self.LibraryBFAListWidget
-            download = self.DownloadsBFAListWidget
         elif branch == "custom":
             library = self.UserCustomListWidget
-            download = None
         else:
-            return None
+            return
+
+        a = ReadBuildTask(path)
+        a.finished.connect(lambda binfo: self.draw_read_library(library, path, show_new, binfo, successful_read_callback))
+        a.failure.connect(lambda exc: self.draw_damaged_library(library, path, exc))
+        self.task_queue.append(a)
+
+    def draw_read_library(self, library, path, show_new, binfo: BuildInfo, successful_read_callback):
+        item = BaseListWidgetItem()
+        widget = LibraryWidget(self, item, path, library, binfo, show_new=show_new)
+
+        library.insert_item(item, widget)
+        if successful_read_callback is not None:
+            successful_read_callback(widget)
+
+        return widget
+
+    def draw_damaged_library(self, library: BaseListWidget, path: Path, exc: Exception | None = None):
+        if exc:
+            logger.error(f"Failed to read build info for {path}: {exc}")
 
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self, item, path, library, show_new)
-
-        if download is not None:
-
-            def _initialized():
-                dlw: DownloadWidget | None = download.widget_with_blinfo(widget.build_info)
-                if dlw is not None and not dlw.installed:
-                    dlw.setInstalled(widget)
-
-            widget.initialized.connect(_initialized)
+        widget = LibraryDamagedWidget(self, item, path, library)
 
         library.insert_item(item, widget)
         return widget

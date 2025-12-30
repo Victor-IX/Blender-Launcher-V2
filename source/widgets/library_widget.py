@@ -16,10 +16,10 @@ from modules.build_info import (
     LaunchMode,
     LaunchOpenLast,
     LaunchWithBlendFile,
-    ReadBuildTask,
     WriteBuildTask,
     launch_build,
 )
+from modules.enums import MessageType
 from modules.settings import (
     get_default_delete_action,
     get_favorite_path,
@@ -29,7 +29,7 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
@@ -48,28 +48,27 @@ from windows.file_dialog_window import FileDialogWindow
 from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
+    from widgets.base_list_widget import BaseListWidget
     from windows.main_window import BlenderLauncher
-    from modules.enums import MessageType
 
 logger = logging.getLogger()
 
 
 class LibraryWidget(BaseBuildWidget):
-    initialized = Signal()
-
     def __init__(
         self,
         parent: BlenderLauncher,
         item: BaseListWidgetItem,
-        link,
-        list_widget,
+        link: Path,
+        list_widget: BaseListWidget,
+        build_info: BuildInfo,
         show_new=False,
         parent_widget=None,
     ):
         super().__init__(
             parent=parent,
             item=item,
-            build_info=BuildInfo.from_blender_path(link),
+            build_info=build_info,
         )
         self.setAcceptDrops(True)
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
@@ -85,7 +84,6 @@ class LibraryWidget(BaseBuildWidget):
         self.observer = None
         self.child_widget = None
         self.parent_widget = parent_widget
-        self.is_damaged = False
         self.move_portable_settings = False
 
         self.destroyed.connect(lambda: self._destroyed())
@@ -103,44 +101,6 @@ class LibraryWidget(BaseBuildWidget):
         self.outer_layout.addWidget(self.layout_widget)
         self.setLayout(self.outer_layout)
 
-        if self.parent_widget is None:
-            self.setEnabled(False)
-            self.infoLabel = QLabel("Loading build information...")
-            self.infoLabel.setWordWrap(True)
-
-            self.launchButton = LeftIconButtonWidget("", parent=self)
-            self.launchButton.setFixedWidth(95)
-            self.launchButton.setProperty("CancelButton", True)
-
-            self.layout.addWidget(self.launchButton)
-            self.layout.addWidget(self.infoLabel, stretch=1)
-
-            a = ReadBuildTask(link)
-            a.finished.connect(self.draw)
-            a.failure.connect(self.trigger_damaged)
-
-            self.parent.task_queue.append(a)
-
-        else:
-            self.draw(self.parent_widget.build_info)
-
-    @Slot()
-    def trigger_damaged(self, exception: Exception | None = None):
-        if exception:
-            logger.error(f"Failed to read build info for {self.link.name}: {exception}")
-        self.infoLabel.setText(f"Build *{self.link.name}* is damaged!")
-        self.launchButton.set_text("Delete")
-        self.launchButton.clicked.connect(self.ask_remove_from_drive)
-        self.setEnabled(True)
-        self.is_damaged = True
-        # Keep build_info as None to prevent further errors
-
-    def draw(self, build_info: BuildInfo):
-        if self.parent_widget is None:
-            for i in reversed(range(self.layout.count())):
-                self.layout.itemAt(i).widget().setParent(None)
-
-        self.build_info = build_info
         self.branch = self.build_info.branch
         self.item.date = build_info.commit_time
 
@@ -367,12 +327,8 @@ class LibraryWidget(BaseBuildWidget):
         if self.build_info.is_favorite and self.parent_widget is None:
             self.add_to_favorites()
 
-        self.initialized.emit()
 
     def context_menu(self):
-        if self.is_damaged:
-            return
-
         self.update_delete_action(self.hovering_and_shifting)
         self.update_config_action(self.hovering_and_shifting)
 
@@ -968,6 +924,7 @@ class LibraryWidget(BaseBuildWidget):
             item,
             self.link,
             self.parent.UserFavoritesListWidget,
+            build_info=self.build_info,
             parent_widget=self,
         )
         if not self.parent.UserFavoritesListWidget.contains_build_info(self.build_info):
