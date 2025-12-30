@@ -6,7 +6,7 @@ import re
 import shlex
 import sys
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import cache
 from pathlib import Path
 
@@ -262,6 +262,19 @@ class BuildInfo:
                 }
             ],
         }
+
+    @classmethod
+    def from_blender_path(cls, path: Path):
+        return cls(
+            str(path),
+            "0.0.0",
+            "",
+            datetime.now(tz=timezone.utc),
+            path.parent.name,
+            str(path.name),
+            False,
+            None,
+        )
 
     def write_to(self, path: Path):
         data = self.to_dict()
