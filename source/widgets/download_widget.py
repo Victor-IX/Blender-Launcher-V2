@@ -44,11 +44,13 @@ class DownloadWidget(BaseBuildWidget):
     focus_installed_widget = Signal(BaseBuildWidget)
 
     def __init__(self, parent: BlenderLauncher, list_widget, item, build_info, installed, show_new=False):
-        super().__init__(parent=parent)
+        super().__init__(
+            parent=parent,
+            item=item,
+            build_info=build_info,
+        )
         self.parent: BlenderLauncher = parent
         self.list_widget = list_widget
-        self.item = item
-        self.build_info: BuildInfo = build_info
         self.show_new = show_new
         self.installed: LibraryWidget | None = None
         self.state = DownloadState.IDLE

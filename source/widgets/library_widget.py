@@ -66,7 +66,11 @@ class LibraryWidget(BaseBuildWidget):
         show_new=False,
         parent_widget=None,
     ):
-        super().__init__(parent=parent)
+        super().__init__(
+            parent=parent,
+            item=item,
+            build_info=BuildInfo.from_blender_path(link),
+        )
         self.setAcceptDrops(True)
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self.setMouseTracking(True)
@@ -75,12 +79,10 @@ class LibraryWidget(BaseBuildWidget):
         self._hovered = False
 
         self.parent: BlenderLauncher = parent
-        self.item: BaseListWidgetItem = item
         self.link = Path(link)
         self.list_widget = list_widget
         self.show_new = show_new
         self.observer = None
-        self.build_info: BuildInfo | None = None
         self.child_widget = None
         self.parent_widget = parent_widget
         self.is_damaged = False
@@ -406,7 +408,7 @@ class LibraryWidget(BaseBuildWidget):
             self.showConfigFolderAction.setText("Show Config Folder")
 
     def mouseDoubleClickEvent(self, _event):
-        if self.build_info is not None and self.hovering_and_shifting:
+        if self.hovering_and_shifting:
             self.launch(launch_mode=LaunchOpenLast())
 
     def mouseReleaseEvent(self, event):
@@ -509,7 +511,6 @@ class LibraryWidget(BaseBuildWidget):
         self.installTemplateAction.setEnabled(True)
 
     def launch(self, update_selection=False, exe=None, launch_mode: LaunchMode | None = None):
-        assert self.build_info is not None
         if update_selection is True:
             self.list_widget.clearSelection()
             self.item.setSelected(True)
@@ -554,12 +555,6 @@ class LibraryWidget(BaseBuildWidget):
         self.updateBlenderBuildAction.setVisible(False)
 
     def check_for_updates(self, available_downloads):
-        # Skip update check if build_info is not available
-        if self.build_info is None:
-            logger.warning(f"Skipping update check for {self.link}: build_info is None")
-            self._hide_update_button()
-            return False
-
         logger.debug(
             f"Checking for updates for {self.build_info.semversion.replace(prerelease=None)} in {self.build_info.branch} branch."
         )
@@ -799,14 +794,10 @@ class LibraryWidget(BaseBuildWidget):
         self.lineEdit.hide()
         name = self.lineEdit.text().strip()
 
-        if name and self.build_info is not None:
+        if name:
             self.branchLabel.set_text(name)
             self.build_info.custom_name = name
             self.write_build_info()
-        elif self.build_info is None:
-            error_msg = "Unable to rename branch: build information is not available."
-            logger.error(error_msg)
-            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
         else:
             error_msg = "Branch name cannot be empty."
             logger.error(error_msg)
@@ -820,7 +811,6 @@ class LibraryWidget(BaseBuildWidget):
         self.branchLabel.show()
 
     def write_build_info(self):
-        assert self.build_info is not None
         self.build_info_writer = WriteBuildTask(
             self.link,
             self.build_info,
@@ -927,7 +917,6 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def edit_build(self):
-        assert self.build_info is not None
         dlg = CustomBuildDialogWindow(self.parent, Path(self.build_info.link), self.build_info)
         dlg.accepted.connect(self.build_info_edited)
 
@@ -987,7 +976,6 @@ class LibraryWidget(BaseBuildWidget):
 
         self.removeFromFavoritesAction.setVisible(True)
         self.addToFavoritesAction.setVisible(False)
-        assert self.build_info is not None
         if self.build_info.is_favorite is False:
             self.build_info.is_favorite = True
             self.write_build_info()
@@ -1002,7 +990,6 @@ class LibraryWidget(BaseBuildWidget):
         widget.removeFromFavoritesAction.setVisible(False)
         widget.addToFavoritesAction.setVisible(True)
 
-        assert self.build_info is not None
         self.build_info.is_favorite = False
         self.build_info_writer = WriteBuildTask(self.link, self.build_info)
         self.parent.task_queue.append(self.build_info_writer)
@@ -1015,7 +1002,6 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def create_shortcut(self):
-        assert self.build_info is not None
         name = "Blender {} {}".format(
             self.build_info.subversion.replace("(", "").replace(")", ""),
             self.build_info.branch.replace("-", " ").title(),
@@ -1105,15 +1091,6 @@ class LibraryWidget(BaseBuildWidget):
             self.show_folder(config_path)
             return
 
-        if self.build_info is None:
-            PopupWindow(
-                title="Warning",
-                info_popup=True,
-                message="No build information found.",
-                icon=PopupIcon.WARNING,
-                parent=self.parent,
-            ).show()
-            return
         version = self.build_info.semversion
         branch = self.build_info.branch
         custom_folder = None
