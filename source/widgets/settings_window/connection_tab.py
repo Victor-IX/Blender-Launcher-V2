@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import webbrowser
-
 from modules.icons import Icons
 from modules.settings import (
     get_github_token,
@@ -239,4 +237,4 @@ class ConnectionTabWidget(SettingsFormWidget):
             )
 
     def open_github_token_docs(self):
-        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2/github_token/")
+        QtGui.QDesktopServices.openUrl("https://Victor-IX.github.io/Blender-Launcher-V2/github_token/")
