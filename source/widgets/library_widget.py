@@ -29,8 +29,9 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QAction, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
+
+from PySide6.QtCore import Qt, QUrl, Signal, Slot
+from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
 from threads.register import Register
@@ -49,6 +50,7 @@ from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.base_list_widget import BaseListWidget
+    from modules.enums import MessageType
     from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
@@ -997,6 +999,9 @@ class LibraryWidget(BaseBuildWidget):
 
         if not folder_path.is_dir():
             logger.error(f"Path {folder_path} do not exist.")
+            return
+
+        if QDesktopServices.openUrl(QUrl.fromLocalFile(folder_path.as_posix())):
             return
 
         platform = get_platform()

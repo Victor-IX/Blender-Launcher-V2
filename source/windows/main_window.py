@@ -6,7 +6,6 @@ import shlex
 import shutil
 import sys
 import threading
-import webbrowser
 from datetime import datetime
 from enum import Enum
 from functools import partial
@@ -65,7 +64,7 @@ from modules.settings import (
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -620,10 +619,10 @@ class BlenderLauncher(BaseWindow):
 
     def show_changelog(self):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
-        webbrowser.open(url)
+        QDesktopServices.openUrl(url)
 
     def open_docs(self):
-        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
+        QDesktopServices.openUrl("https://Victor-IX.github.io/Blender-Launcher-V2")
 
     def is_downloading_idle(self):
         download_widgets = []
