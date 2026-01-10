@@ -21,7 +21,6 @@ logger = logging.getLogger()
 
 
 class LibraryDamagedWidget(BaseBuildWidget):
-    initialized = Signal()
 
     def __init__(
         self,
@@ -75,7 +74,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
             buttons=["Delete", "Trash", "Cancel"],
         )
 
-        self.dlg.accepted.connect(self.remove_from_drive)
+        self.dlg.custom_signal.connect(self.removal_response)
 
     @Slot(str)
     def removal_response(self, s: str):

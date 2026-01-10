@@ -794,8 +794,7 @@ class LibraryWidget(BaseBuildWidget):
         self.dlg = PopupWindow(
             parent=self.parent,
             title="Warning",
-            message="Are you sure you want to<br> \
-                  delete selected builds?",
+            message="Are you sure you want to<br>delete selected builds?",
             icon=PopupIcon.NONE,
             buttons=["Yes", "No"],
         )
