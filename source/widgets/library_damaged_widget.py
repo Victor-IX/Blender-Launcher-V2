@@ -70,8 +70,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.dlg = PopupWindow(
             parent=self.parent,
             title="Warning",
-            message="Do you want to delete, or<br> \
-                  trash selected builds?",
+            message="Do you want to delete, or<br>trash selected builds?",
             icon=PopupIcon.NONE,
             buttons=["Delete", "Trash", "Cancel"],
         )
