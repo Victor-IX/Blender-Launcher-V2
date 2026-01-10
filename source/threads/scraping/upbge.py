@@ -124,7 +124,7 @@ class ScraperUpbge(BuildScraper):
                     
                     if is_weekly:
                         # Extract version from asset filename (e.g., "upbge-0.51-alpha-windows...")
-                        version_match = re.search(r'upbge-([0-9.]+(?:-[a-z]+)?)-', asset_name)
+                        version_match = re.search(r'upbge-([0-9.]+(?:-alpha)?)-', asset_name, re.IGNORECASE)
                         if version_match:
                             version_str = version_match.group(1)
                             subversion = parse_blender_ver(version_str)
