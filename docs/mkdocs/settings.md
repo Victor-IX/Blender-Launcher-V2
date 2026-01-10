@@ -145,6 +145,21 @@ Default value: `Send to Trash`.
 
 :   Specifies the password required to authenticate with the proxy server, if applicable.
 
+### Connection Authentication
+
+#### User ID
+
+:   Unique identifier used to authenticate with the Blender website for downloading builds. Generated automatically if not set.
+
+#### GitHub Token
+
+:   Optional GitHub Personal Access Token to avoid rate limiting when checking for launcher updates and fetching API data.
+    
+:   For detailed instructions on creating and configuring a GitHub token, see the [GitHub Token](github_token.md) page.
+
+!!! tip
+    Without a token, GitHub limits requests to 60 per hour. With a token, you get 5,000 requests per hour.
+
 ## Blender Builds
 
 ![Blender Builds page of Settings](imgs/settings_window_blenderbuilds.png)

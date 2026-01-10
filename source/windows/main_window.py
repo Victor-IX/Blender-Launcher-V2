@@ -6,7 +6,6 @@ import shlex
 import shutil
 import sys
 import threading
-import webbrowser
 from datetime import datetime
 from enum import Enum
 from functools import partial
@@ -18,6 +17,7 @@ from items.base_list_widget_item import BaseListWidgetItem
 from modules._platform import _popen, get_cwd, get_default_library_folder, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
+from modules.build_info import ReadBuildTask
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.settings import (
@@ -64,7 +64,7 @@ from modules.settings import (
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -87,6 +87,7 @@ from widgets.datetime_widget import DATETIME_FORMAT
 from widgets.download_widget import DownloadState, DownloadWidget
 from widgets.foreign_build_widget import UnrecoBuildWidget
 from widgets.header import WHeaderButton, WindowHeader
+from widgets.library_damaged_widget import LibraryDamagedWidget
 from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
@@ -296,7 +297,11 @@ class BlenderLauncher(BaseWindow):
 
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
-            self.LibraryToolBox.tab_changed.connect(self.DownloadsToolBox.setCurrentIndex)
+            self.LibraryToolBox.tab_changed.connect(
+                lambda idx: self.DownloadsToolBox.setCurrentIndex(idx)
+                if self.DownloadsToolBox.isTabVisible(idx)
+                else None
+            )
             self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
         else:
             if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
@@ -568,10 +573,10 @@ class BlenderLauncher(BaseWindow):
 
     def show_changelog(self):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
-        webbrowser.open(url)
+        QDesktopServices.openUrl(url)
 
     def open_docs(self):
-        webbrowser.open("https://Victor-IX.github.io/Blender-Launcher-V2")
+        QDesktopServices.openUrl("https://Victor-IX.github.io/Blender-Launcher-V2")
 
     def is_downloading_idle(self):
         download_widgets = self.DownloadsPage.list_widget.items()
@@ -639,7 +644,7 @@ class BlenderLauncher(BaseWindow):
         #     self.toolbar_quit_btn.clicked.connect(self.quit_)
         #     self.thumbnail_toolbar.addButton(self.toolbar_quit_btn)
 
-    def show_message(self, message, value=None, message_type=None):
+    def show_message(self, message: str, value=None, message_type: MessageType | None = None):
         if (
             (message_type == MessageType.DOWNLOADFINISHED and not get_enable_download_notifications())
             or (message_type == MessageType.NEWBUILDS and not get_enable_new_builds_notifications())
@@ -901,25 +906,33 @@ class BlenderLauncher(BaseWindow):
             if is_new:
                 self.new_downloads = True
 
-    def draw_to_library(self, path: Path, show_new=False):
+    def draw_to_library(self, path: Path, show_new=False, successful_read_callback=None):
         branch = Path(path).parent.name
 
         if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
             return None
 
+        a = ReadBuildTask(path)
+        a.finished.connect(lambda binfo: self.draw_read_library(library, path, show_new, binfo, successful_read_callback))
+        a.failure.connect(lambda exc: self.draw_damaged_library(library, path, exc))
+        self.task_queue.append(a)
+
+    def draw_read_library(self, library, path, show_new, binfo: BuildInfo, successful_read_callback):
         item = BaseListWidgetItem()
-        widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, show_new)
+        widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
 
-        if self.DownloadsPage.list_widget is not None:
+        library.insert_item(item, widget)
+        if successful_read_callback is not None:
+            successful_read_callback(widget)
 
-            def _initialized():
-                self.LibraryPage.list_widget.update_visibility(item, widget)
+        return widget
 
-                dlw: DownloadWidget | None = self.DownloadsPage.list_widget.widget_with_blinfo(widget.build_info)
-                if dlw is not None and not dlw.installed:
-                    dlw.setInstalled(widget)
+    def draw_damaged_library(self, library: BaseListWidget, path: Path, exc: Exception | None = None):
+        if exc:
+            logger.error(f"Failed to read build info for {path}: {exc}")
 
-            widget.initialized.connect(_initialized)
+        item = BaseListWidgetItem()
+        widget = LibraryDamagedWidget(self, item, path, library)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         return widget

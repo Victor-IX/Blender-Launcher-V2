@@ -8,6 +8,11 @@
     
     All actions should be performed under repository root folder i.e. `./Blender-Launcher-V2`
 
+!!! info "Project Manager"
+    
+    It's recommended to use [UV](https://docs.astral.sh/uv/getting-started/) as the project manager.
+
+
 ## Setting Up Development Environment
 
 === "pip"

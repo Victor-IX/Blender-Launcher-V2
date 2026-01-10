@@ -12,15 +12,20 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 if TYPE_CHECKING:
     from semver import Version
 
+    from windows.main_window import BlenderLauncher
+
 if get_enable_high_dpi_scaling():
     QApplication.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling, True)
     QApplication.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
 
 
 class BaseWindow(QMainWindow):
-    def __init__(self, parent=None, app: QApplication | None = None, version: Version | None = None):
+    def __init__(
+        self, parent: BlenderLauncher | None = None, app: QApplication | None = None, version: Version | None = None
+    ):
         super().__init__()
-        self.parent = parent
+        if parent is not None:
+            self.launcher: BlenderLauncher = parent
 
         # Setup icons
         self.icons = Icons.get()
@@ -104,19 +109,19 @@ class BaseWindow(QMainWindow):
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def showEvent(self, event):
-        parent = self.parent
 
-        if parent is not None:
-            if self not in parent.windows:
-                parent.windows.append(self)
-                parent.show_signal.connect(self.show)
-                parent.close_signal.connect(self.hide)
+        if hasattr(self, "launcher") and self.launcher is not None:
+            launcher = self.launcher
+            if self not in launcher.windows:
+                launcher.windows.append(self)
+                launcher.show_signal.connect(self.show)
+                launcher.close_signal.connect(self.hide)
 
-            if self.parent.isVisible():
-                x = parent.x() + (parent.width() - self.width()) * 0.5
-                y = parent.y() + (parent.height() - self.height()) * 0.5
+            if launcher.isVisible():
+                x = launcher.x() + (launcher.width() - self.width()) * 0.5
+                y = launcher.y() + (launcher.height() - self.height()) * 0.5
             else:
-                size = parent.app.screens()[0].size()
+                size = launcher.app.screens()[0].size()
                 x = (size.width() - self.width()) * 0.5
                 y = (size.height() - self.height()) * 0.5
 
@@ -124,5 +129,5 @@ class BaseWindow(QMainWindow):
             event.accept()
 
     def _destroyed(self):
-        if self.parent is not None and self in self.parent.windows:
-            self.parent.windows.remove(self)
+        if hasattr(self, "launcher") and self.launcher is not None and self in self.launcher.windows:
+            self.launcher.windows.remove(self)

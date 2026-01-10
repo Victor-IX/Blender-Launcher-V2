@@ -22,8 +22,8 @@ class PopupWindow(BaseWindow):
     def __init__(
         self,
         message: str,
-        title: str | None = "Info",
-        info_popup: bool | None = False,
+        title: str = "Info",
+        info_popup: bool = False,
         icon=PopupIcon.INFO,
         buttons: list[str] | None = None,
         parent=None,
@@ -48,7 +48,7 @@ class PopupWindow(BaseWindow):
         self.info_popup = info_popup
         self.buttons = buttons
 
-        self.setWindowModality(Qt.ApplicationModal)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(self.title)
         self.setMinimumSize(200, 100)
 
@@ -88,7 +88,9 @@ class PopupWindow(BaseWindow):
 
         self.PopupLayout.addLayout(self.TextLayout)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinimizeButtonHint & ~Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() & ~Qt.WindowType.WindowMinimizeButtonHint & ~Qt.WindowType.WindowMaximizeButtonHint
+        )
         self._add_buttons()
         self.show()
         self.setFixedSize(self.size())
@@ -102,6 +104,9 @@ class PopupWindow(BaseWindow):
             self._add_default_buttons()
 
     def _add_custom_buttons(self):
+        if self.buttons is None:
+            return
+
         button_layout = QHBoxLayout()
 
         if len(self.buttons) > 2:
@@ -151,7 +156,7 @@ class PopupWindow(BaseWindow):
         self.close()
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Escape and not self.CancelButton.isHidden():
-            self.cancel()
-        if event.key() in {Qt.Key_Return, Qt.Key_Enter}:
-            self.accept()
+        if event.key() == Qt.Key.Key_Escape and not self.info_popup:
+            self._cancel()
+        if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
+            self._accept()

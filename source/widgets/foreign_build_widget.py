@@ -1,4 +1,3 @@
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -17,21 +16,14 @@ if TYPE_CHECKING:
 
 class UnrecoBuildWidget(BaseBuildWidget):
     def __init__(self, parent: "BlenderLauncher", path: Path, list_widget: BaseListWidget, item):
-        super().__init__(parent=parent)
+        super().__init__(
+            parent=parent,
+            item=item,
+            build_info=BuildInfo.from_blender_path(path),
+        )
         self.parent: BlenderLauncher = parent
         self.path = path
         self.list_widget = list_widget
-        self.item = item
-        self.build_info = BuildInfo(
-            str(path),
-            "0.0.0",
-            "",
-            datetime.now(tz=UTC),
-            path.parent.name,
-            str(path.name),
-            False,
-            None,
-        )
 
         self.init_button = QPushButton("Initialize")
         self.init_button.setFixedWidth(85)

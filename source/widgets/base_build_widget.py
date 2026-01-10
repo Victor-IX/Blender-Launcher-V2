@@ -1,13 +1,14 @@
+from __future__ import annotations
+
 import abc
 import logging
 import re
-import webbrowser
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtWidgets import QWidget
 from threads.scraping.bfa import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, get_bfa_nc_https_download_url
 from webdav4.client import Client
@@ -15,14 +16,19 @@ from widgets.base_menu_widget import BaseMenuWidget
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
+    from items.base_list_widget_item import BaseListWidgetItem
+    from modules.build_info import BuildInfo
+    from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
 
 
 class BaseBuildWidget(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo):
         super().__init__(parent)
-        self.parent = parent
+        self.parent: BlenderLauncher = parent
+        self.item = item
+        self.build_info = build_info
 
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
@@ -47,14 +53,15 @@ class BaseBuildWidget(QWidget):
 
         branch = self.build_info.branch
 
+
         if branch in {"stable", "daily"}:
             ver = self.build_info.semversion
-            webbrowser.open(f"https://wiki.blender.org/wiki/Reference/Release_Notes/{ver.major}.{ver.minor}")
+            QDesktopServices.openUrl(f"https://wiki.blender.org/wiki/Reference/Release_Notes/{ver.major}.{ver.minor}")
         elif branch == "lts":
             # Raw numbers from version
             v = re.sub(r"\D", "", str(self.build_info.semversion.finalize_version()))
 
-            webbrowser.open(f"https://www.blender.org/download/lts/#lts-release-{v}")
+            QDesktopServices.openUrl(f"https://www.blender.org/download/lts/#lts-release-{v}")
         elif self.build_info.branch == "bforartists":
             ver = self.build_info.semversion
             client = Client(BFA_NC_WEBDAV_URL, auth=(BFA_NC_WEBDAV_SHARE_TOKEN, ""))
@@ -65,7 +72,7 @@ class BaseBuildWidget(QWidget):
                 for e in entries:
                     path = PurePosixPath(e["name"])
                     if "releasenote" in path.name.lower():
-                        webbrowser.open(get_bfa_nc_https_download_url(path))
+                        QDesktopServices.openUrl(get_bfa_nc_https_download_url(path))
             except Exception:
                 logger.exception("Failed get Bforartists release note")
         else:
@@ -73,7 +80,7 @@ class BaseBuildWidget(QWidget):
             # Extract only D12345 substring
             m = re.search(r"D\d{5}", branch)
             if m is not None:
-                webbrowser.open(f"https://developer.blender.org/{m.group(0)}")
+                QDesktopServices.openUrl(f"https://developer.blender.org/{m.group(0)}")
 
             # Open for builds with pr123456 name pattern
             # Extract only 123456 substring
@@ -82,4 +89,4 @@ class BaseBuildWidget(QWidget):
             else:
                 m = re.search(r"pr(\d+)", self.build_info.branch, flags=re.IGNORECASE)
             if m is not None:
-                webbrowser.open(f"https://projects.blender.org/blender/blender/pulls/{m.group(1)}")
+                QDesktopServices.openUrl(f"https://projects.blender.org/blender/blender/pulls/{m.group(1)}")
