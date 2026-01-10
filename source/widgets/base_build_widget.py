@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import abc
 import logging
 import re
 from pathlib import PurePosixPath
+from typing import TYPE_CHECKING
 
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
@@ -11,13 +14,20 @@ from threads.scraping.bfa import BFA_NC_WEBDAV_SHARE_TOKEN, BFA_NC_WEBDAV_URL, g
 from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
 
+if TYPE_CHECKING:
+    from items.base_list_widget_item import BaseListWidgetItem
+    from modules.build_info import BuildInfo
+    from windows.main_window import BlenderLauncher
+
 logger = logging.getLogger()
 
 
 class BaseBuildWidget(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo):
         super().__init__(parent)
-        self.parent = parent
+        self.parent: BlenderLauncher = parent
+        self.item = item
+        self.build_info = build_info
 
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
