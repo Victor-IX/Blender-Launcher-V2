@@ -15,6 +15,7 @@ from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
 
 if TYPE_CHECKING:
+    from modules.build_info import BuildInfo
     from items.base_list_widget_item import BaseListWidgetItem
     from modules.build_info import BuildInfo
     from windows.main_window import BlenderLauncher
@@ -44,6 +45,12 @@ class BaseBuildWidget(QWidget):
 
     @QtCore.Slot()
     def show_release_notes(self):
+        if not hasattr(self, "build_info") or self.build_info is None:
+            logger.warning(f"show_release_notes called on Build Widget with no build_info: {self}")
+            return
+
+        self.build_info: BuildInfo
+
         branch = self.build_info.branch
 
 

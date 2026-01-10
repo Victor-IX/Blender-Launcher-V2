@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 from modules.blendfile_reader import read_blendfile_header
 from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args
 from modules.settings import get_favorite_path, get_version_specific_queries
-from modules.version_matcher import BasicBuildInfo, BInfoMatcher, VersionSearchQuery
+from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 from threads.library_drawer import get_blender_builds
 
 logger = logging.getLogger()
@@ -54,10 +54,9 @@ def cli_launch(
 
     basics = {BasicBuildInfo.from_buildinfo(b): b for b in builds}
 
-    matcher = BInfoMatcher(tuple(basics.keys()))
-
     all_queries = get_version_specific_queries()
 
+    query: VersionSearchQuery | None = None
     if version_query is not None:
         query = version_query
 
@@ -78,7 +77,7 @@ def cli_launch(
         logger.warning("Could not read file header and no version was provided! defaulting to ^.^.^")
         query = VersionSearchQuery("^", "^", "^")
 
-    matches = matcher.match(query)
+    matches = query.match(basics.keys())
 
     launch_mode: LaunchMode | None = None
     if file is not None:
