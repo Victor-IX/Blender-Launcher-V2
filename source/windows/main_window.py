@@ -910,29 +910,29 @@ class BlenderLauncher(BaseWindow):
         branch = Path(path).parent.name
 
         if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
-            return None
+            return
 
         a = ReadBuildTask(path)
-        a.finished.connect(lambda binfo: self.draw_read_library(library, path, show_new, binfo, successful_read_callback))
-        a.failure.connect(lambda exc: self.draw_damaged_library(library, path, exc))
+        a.finished.connect(lambda binfo: self.draw_read_library(path, show_new, binfo, successful_read_callback))
+        a.failure.connect(lambda exc: self.draw_damaged_library(path, exc))
         self.task_queue.append(a)
 
-    def draw_read_library(self, library, path, show_new, binfo: BuildInfo, successful_read_callback):
+    def draw_read_library(self, path, show_new, binfo: BuildInfo, successful_read_callback):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
 
-        library.insert_item(item, widget)
+        self.LibraryPage.list_widget.insert_item(item, widget)
         if successful_read_callback is not None:
             successful_read_callback(widget)
 
         return widget
 
-    def draw_damaged_library(self, library: BaseListWidget, path: Path, exc: Exception | None = None):
+    def draw_damaged_library(self, path: Path, exc: Exception | None = None):
         if exc:
             logger.error(f"Failed to read build info for {path}: {exc}")
 
         item = BaseListWidgetItem()
-        widget = LibraryDamagedWidget(self, item, path, library)
+        widget = LibraryDamagedWidget(self, item, path, self.LibraryPage.list_widget)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         return widget
