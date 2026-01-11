@@ -394,25 +394,11 @@ def read_blender_version(
             "macOS": "Bforartists/Bforartists.app/Contents/MacOS/Bforartists",
         }.get(platform, "bforartists")
 
-        upbge_exe = {
-            "Windows": "upbge.exe",
-            "Linux": "upbge",
-            "macOS": "UPBGE/UPBGE.app/Contents/MacOS/UPBGE",
-        }.get(platform, "upbge")
-
         # Auto-detect executable path
-        # Priority: UPBGE (macOS DMG) > UPBGE (standard) > Bforartists (macOS DMG) > Bforartists (standard) > Blender (macOS DMG) > Blender (standard)
+        # Priority: Bforartists (macOS DMG) > Bforartists (standard) > Blender (macOS DMG) > Blender (standard)
         bforartists_path = path / bforartists_exe
-        upbge_path = path / upbge_exe
 
-        if platform == "macOS" and (path / "UPBGE.app").is_dir():
-            # macOS: UPBGE DMG extraction places .app directly at root
-            corrected_exe_path = path / "UPBGE.app" / "Contents/MacOS/UPBGE"
-            found_nonstandard_path = True
-        elif upbge_path.is_file():
-            # Standard UPBGE structure
-            corrected_exe_path = upbge_path
-        elif platform == "macOS" and (path / "Bforartists.app").is_dir():
+        if platform == "macOS" and (path / "Bforartists.app").is_dir():
             # macOS: DMG extraction places .app directly at root
             corrected_exe_path = path / "Bforartists.app" / "Contents/MacOS/Bforartists"
             found_nonstandard_path = True
@@ -637,16 +623,12 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
     elif platform == "macOS":
         # Auto-detect .app bundle path
-        # Priority: UPBGE (DMG) > Bforartists (DMG) > Blender (DMG) > Blender (standard)
-        upbge_app = Path(info.link) / "UPBGE.app"
+        # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
         bforartists_app = Path(info.link) / "Bforartists.app"
         blender_app = Path(info.link) / "Blender.app"
         blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
 
-        if upbge_app.is_dir():
-            # macOS: UPBGE from DMG extraction
-            b3d_exe = upbge_app
-        elif bforartists_app.is_dir():
+        if bforartists_app.is_dir():
             # macOS: Bforartists from DMG extraction
             b3d_exe = bforartists_app
         elif blender_app.is_dir():

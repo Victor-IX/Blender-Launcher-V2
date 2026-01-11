@@ -62,7 +62,10 @@ library_subfolders = [
     "stable",
     "daily",
     "experimental",
+    "bforartists",
     "template",
+    "upbge-stable",
+    "upbge-weekly",
 ]
 
 proxy_types = {

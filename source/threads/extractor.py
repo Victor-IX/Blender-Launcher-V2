@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+import py7zr
 from modules._platform import _check_call, _check_output
 from modules.enums import MessageType
 from modules.task import Task
@@ -56,6 +57,44 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             return destination / folder
         except zipfile.BadZipFile as e:
             logger.error(f"Bad zip file: {source} - {e}")
+            raise
+
+    if suffixes[-1] == ".7z":
+        try:
+            with py7zr.SevenZipFile(source, mode="r") as szf:
+                allfiles = szf.getnames()
+                folder = _get_build_folder(allfiles)
+
+                # Check if this is a UPBGE archive with bin/Release structure
+                is_upbge = folder == "bin" and any(n.startswith("bin/Release/") for n in allfiles)
+
+                if is_upbge:
+                    folder = source.stem
+                    logger.info(f"Detected UPBGE 7z archive with bin/Release structure, using: {folder}")
+                elif folder is None:
+                    folder = allfiles[0].split("/")[0]
+
+                # For UPBGE flat archives, extract into a subfolder
+                extract_dest = destination / folder if is_upbge else destination
+                extract_dest.mkdir(parents=True, exist_ok=True)
+
+                # Get file info for progress tracking
+                file_info = szf.list()
+                total_size = sum(f.uncompressed for f in file_info)
+                progress_callback(0, total_size)
+
+                # Extract all files
+                szf.extractall(path=extract_dest)
+
+                # Report completion
+                progress_callback(total_size, total_size)
+
+            return destination / folder
+        except py7zr.Bad7zFile as e:
+            logger.error(f"Bad 7z file: {source} - {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Failed to extract 7z file: {source} - {e}")
             raise
 
     if suffixes[-2] == ".tar":
@@ -173,47 +212,80 @@ def _get_build_folder(names: list[str]):
 
 def _fix_upbge_structure(build_path: Path) -> Path:
     """
-    Fix UPBGE build structure by moving bin/Release contents up to build root.
+    Fix UPBGE build structure by moving contents to the expected location.
 
-    UPBGE builds have a bin/Release subfolder structure that needs to be flattened
-    to match the standard Blender structure expected by the launcher.
+    UPBGE builds can have different structures:
+    1. bin/Release subfolder (daily builds): needs to be flattened
+    2. Nested folder with same name as zip (stable builds): needs unwrapping
 
     Args:
         build_path: Path to extracted build folder
 
     Returns:
-        Path to the fixed build folder (same as input)
+        Path to the fixed build folder (may differ from input)
     """
+    # Handle bin/Release structure (daily builds)
     bin_release = build_path / "bin" / "Release"
 
-    if not bin_release.exists():
+    if bin_release.exists():
+        logger.info(f"Detected UPBGE bin/Release structure in {build_path}")
+
+        try:
+            # Move all contents from bin/Release to build root
+            for item in bin_release.iterdir():
+                dest = build_path / item.name
+                if dest.exists():
+                    # If destination exists, remove it first
+                    if dest.is_dir():
+                        shutil.rmtree(dest)
+                    else:
+                        dest.unlink()
+                shutil.move(str(item), str(build_path))
+                logger.debug(f"Moved {item.name} to build root")
+
+            # Remove the now-empty bin directory
+            bin_folder = build_path / "bin"
+            if bin_folder.exists():
+                shutil.rmtree(bin_folder)
+                logger.info(f"Removed empty bin folder from {build_path}")
+
+            logger.info(f"Successfully fixed UPBGE bin/Release structure for {build_path}")
+        except Exception as e:
+            logger.error(f"Failed to fix UPBGE structure: {e}")
+            raise
+
         return build_path
 
-    logger.info(f"Detected UPBGE bin/Release structure in {build_path}")
+    # Handle nested folder structure (stable builds)
+    # Check if there's a single subfolder with the same name as the build
+    subdirs = [d for d in build_path.iterdir() if d.is_dir()]
 
-    try:
-        # Move all contents from bin/Release to build root
-        for item in bin_release.iterdir():
-            dest = build_path / item.name
-            if dest.exists():
-                # If destination exists, remove it first
-                if dest.is_dir():
-                    shutil.rmtree(dest)
-                else:
-                    dest.unlink()
-            shutil.move(str(item), str(build_path))
-            logger.debug(f"Moved {item.name} to build root")
+    # Look for UPBGE executable to determine if unwrapping is needed
+    # UPBGE uses blender.exe/blender as executable name, not upbge.exe/upbge
+    has_upbge_exe = (build_path / "blender.exe").exists() or (build_path / "blender").exists()
 
-        # Remove the now-empty bin directory
-        bin_folder = build_path / "bin"
-        if bin_folder.exists():
-            shutil.rmtree(bin_folder)
-            logger.info(f"Removed empty bin folder from {build_path}")
+    if not has_upbge_exe and len(subdirs) == 1:
+        nested_folder = subdirs[0]
+        nested_has_upbge = (nested_folder / "blender.exe").exists() or (nested_folder / "blender").exists()
 
-        logger.info(f"Successfully fixed UPBGE structure for {build_path}")
-    except Exception as e:
-        logger.error(f"Failed to fix UPBGE structure: {e}")
-        raise
+        if nested_has_upbge:
+            logger.info(f"Detected UPBGE nested folder structure: {nested_folder.name} inside {build_path.name}")
+
+            try:
+                # Move all contents from nested folder up one level
+                temp_dir = build_path.parent / f"{build_path.name}_temp"
+                shutil.move(str(nested_folder), str(temp_dir))
+
+                # Remove the now-empty parent folder
+                shutil.rmtree(build_path)
+
+                # Rename temp folder to the original name
+                shutil.move(str(temp_dir), str(build_path))
+
+                logger.info(f"Successfully unwrapped UPBGE nested structure for {build_path}")
+            except Exception as e:
+                logger.error(f"Failed to unwrap UPBGE nested structure: {e}")
+                raise
 
     return build_path
 
@@ -249,16 +321,16 @@ class ExtractTask(Task):
                 logger.debug(f"Removed existing file: {self.destination / self.file.stem}")
 
             result = extract(self.file, self.destination, self.progress.emit)
-            if result is not None:
-                # Fix UPBGE structure if needed
-                result = _fix_upbge_structure(result)
-                self.finished.emit(result, is_removed)
-        except (zipfile.BadZipFile, tarfile.TarError) as e:
+            if result is None:
+                raise ValueError(f"Unsupported archive format: {self.file.suffix}")
+
+            # Fix UPBGE structure if needed
+            result = _fix_upbge_structure(result)
+            self.finished.emit(result, is_removed)
+        except (zipfile.BadZipFile, tarfile.TarError, py7zr.Bad7zFile) as e:
             self._handle_extraction_error(e)
-            raise
         except Exception as e:
             self._handle_extraction_error(e, use_exception_log=True)
-            raise
 
     def __str__(self):
         return f"Extract {self.file} to {self.destination}"

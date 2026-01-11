@@ -919,7 +919,14 @@ class BlenderLauncher(BaseWindow):
             show_bfa = get_show_bfa_builds()
             show_upbge = get_show_upbge_builds()
             show_upbge_weekly = get_show_upbge_weekly_builds()
-            self.start_scraper(show_stable, show_daily or show_expatch, show_bfa, show_upbge)
+            self.start_scraper(
+                show_stable,
+                show_daily,
+                show_expatch,
+                show_bfa,
+                show_upbge,
+                show_upbge_weekly,
+            )
             self.update_visible_lists(
                 force_s_stable=show_stable,
                 force_s_daily=show_daily,
