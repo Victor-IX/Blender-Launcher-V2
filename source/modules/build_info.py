@@ -6,7 +6,7 @@ import re
 import shlex
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from functools import cache
 from pathlib import Path
 
@@ -197,14 +197,14 @@ class BuildInfo:
             else:
                 b = subv.split("-", 1)[-1].title()
             return b
-        
+
         # Handle UPBGE branches specially
         if branch.startswith("upbge"):
             parts = branch.split("-")
             if len(parts) == 2:
                 return f"UPBGE {parts[1].title()}"
             return "UPBGE"
-        
+
         if v.prerelease is not None:
             if v.prerelease.startswith("rc"):
                 return f"Release Candidate {v.prerelease[2:]}"
@@ -277,7 +277,7 @@ class BuildInfo:
             str(path),
             "0.0.0",
             "",
-            datetime.now(tz=timezone.utc),
+            datetime.now(tz=UTC),
             path.parent.name,
             str(path.name),
             False,

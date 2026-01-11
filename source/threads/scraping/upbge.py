@@ -49,12 +49,10 @@ class ScraperUpbgeBase(BuildScraper):
     @abstractmethod
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Determine if a release should be processed by this scraper."""
-        pass
 
     @abstractmethod
     def get_branch_name(self) -> str:
         """Get the branch name for the build."""
-        pass
 
     def _fetch_releases(self) -> list[dict] | None:
         """Fetch releases from GitHub API."""
@@ -142,7 +140,13 @@ class ScraperUpbgeBase(BuildScraper):
         return None
 
     def _create_build_info(
-        self, download_url: str, tag_name: str, asset_name: str, is_weekly: bool, build_hash: str | None, commit_time: datetime
+        self,
+        download_url: str,
+        tag_name: str,
+        asset_name: str,
+        is_weekly: bool,
+        build_hash: str | None,
+        commit_time: datetime,
     ) -> BuildInfo | None:
         """Create a BuildInfo object from asset information."""
         subversion = self._parse_version(tag_name, asset_name, is_weekly)
@@ -271,7 +275,9 @@ class ScraperUpbgeBase(BuildScraper):
                     logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
                 yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
             else:
-                builds, was_modified = self._process_cached_release(cache_version, tag_name, assets, is_weekly, commit_time)
+                builds, was_modified = self._process_cached_release(
+                    cache_version, tag_name, assets, is_weekly, commit_time
+                )
                 yield from builds
                 if was_modified:
                     cache_modified = True
