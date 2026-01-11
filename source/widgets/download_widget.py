@@ -292,14 +292,17 @@ class DownloadWidget(BaseBuildWidget):
 
         assert self.build_dir is not None
 
-        # If the returned version from the executable is invalid it might break loading.
-        ver_ = parse_blender_ver(self.build_dir.name, search=True)
-        ver = Version(
-            ver_.major,
-            ver_.minor,
-            ver_.patch,
-            prerelease=ver_.prerelease,
-        )
+        if self.build_info.branch == "upbge-weekly":
+            ver = parse_blender_ver(self.build_info.subversion)
+        else:
+            # If the returned version from the executable is invalid it might break loading.
+            ver_ = parse_blender_ver(self.build_dir.name, search=True)
+            ver = Version(
+                ver_.major,
+                ver_.minor,
+                ver_.patch,
+                prerelease=ver_.prerelease,
+            )
 
         t = ReadBuildTask(
             self.build_dir,

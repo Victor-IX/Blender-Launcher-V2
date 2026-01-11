@@ -109,7 +109,7 @@ class ScraperUpbgeBase(BuildScraper):
             if is_weekly:
                 version_match = re.search(r"upbge-([0-9.]+(?:-alpha)?)-", asset_name, re.IGNORECASE)
                 if version_match:
-                    version_str = version_match.group(1).replace("alpha", "")
+                    version_str = version_match.group(1).replace("-alpha", "")
                     return parse_blender_ver(version_str)
                 else:
                     build_num = tag_name.replace("weekly-build-", "")
