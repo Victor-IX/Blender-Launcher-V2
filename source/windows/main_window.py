@@ -918,6 +918,7 @@ class BlenderLauncher(BaseWindow):
             show_expatch = get_show_experimental_and_patch_builds()
             show_bfa = get_show_bfa_builds()
             show_upbge = get_show_upbge_builds()
+            show_upbge_weekly = get_show_upbge_weekly_builds()
             self.start_scraper(show_stable, show_daily or show_expatch, show_bfa, show_upbge)
             self.update_visible_lists(
                 force_s_stable=show_stable,
@@ -925,6 +926,7 @@ class BlenderLauncher(BaseWindow):
                 force_s_expatch=show_expatch,
                 force_s_bfa=show_bfa,
                 force_s_upbge=show_upbge,
+                force_s_upbge_weekly=show_upbge_weekly,
             )
         else:
             # Use settings
@@ -1164,6 +1166,7 @@ class BlenderLauncher(BaseWindow):
         force_l_expatch=False,
         force_l_bfa=False,
         force_l_upbge=False,
+        force_l_upbge_weekly=False,
         force_s_stable=False,  # Force the scraper visibility of these
         force_s_daily=False,
         force_s_expatch=False,
@@ -1176,6 +1179,7 @@ class BlenderLauncher(BaseWindow):
         show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
         show_bfa = force_l_bfa or get_show_bfa_builds()
         show_upbge = force_l_upbge or get_show_upbge_builds()
+        show_upbge_weekly = force_l_upbge_weekly or get_show_upbge_weekly_builds()
         scrape_stable = force_s_stable or get_scrape_stable_builds()
         scrape_daily = force_s_daily or get_scrape_daily_builds()
         scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
@@ -1193,6 +1197,8 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox.setTabEnabled(3, show_bfa)
         self.LibraryToolBox.setTabVisible(4, show_upbge)
         self.LibraryToolBox.setTabEnabled(4, show_upbge)
+        self.LibraryToolBox.setTabVisible(5, show_upbge_weekly)
+        self.LibraryToolBox.setTabEnabled(5, show_upbge_weekly)
         self.DownloadsToolBox.setTabVisible(0, scrape_stable)
         self.DownloadsToolBox.setTabEnabled(0, scrape_stable)
         self.DownloadsToolBox.setTabVisible(1, scrape_daily)
