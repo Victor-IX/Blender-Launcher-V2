@@ -956,7 +956,7 @@ class BlenderLauncher(BaseWindow):
         if scrape_upbge is None:
             scrape_upbge = get_scrape_upbge_builds()
         if scrape_upbge_weekly is None:
-            scrape_upbge_weekly = get_show_upbge_weekly_builds()
+            scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
 
         if scrape_stable:
             self.DownloadsStablePageWidget.set_info_label_text("Checking for new builds")

@@ -22,7 +22,7 @@ from threads.scraping.automated import ScraperAutomated
 from threads.scraping.bfa import ScraperBfa
 from threads.scraping.launcher_updates import LauncherDataUpdater
 from threads.scraping.stable import ScraperStable
-from threads.scraping.upbge import ScraperUpbge
+from threads.scraping.upbge import ScraperUpbgeStable, ScraperUpbgeWeekly
 
 if TYPE_CHECKING:
     from modules.connection_manager import ConnectionManager
@@ -51,12 +51,13 @@ class Scraper(QThread):
         self.scrape_experimental = get_scrape_experimental_builds()
         self.scrape_bfa = get_scrape_bfa_builds()
         self.scrape_upbge = get_scrape_upbge_builds()
-        self.scrape_upbge_weekly_builds = get_scrape_upbge_weekly_builds()
+        self.scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
 
         # these are saved because they hold caches
         self.scraper_stable = ScraperStable(self.manager, self.stable_error, self.build_cache)
         self.scraper_bfa = ScraperBfa()
-        self.scraper_upbge = ScraperUpbge(self.manager, scrape_weekly_builds=self.scrape_upbge_weekly_builds)
+        self.scraper_upbge_stable = ScraperUpbgeStable(self.manager)
+        self.scraper_upbge_weekly = ScraperUpbgeWeekly(self.manager)
 
         self.launcher_data_updater = LauncherDataUpdater(self.manager)
 
@@ -83,7 +84,9 @@ class Scraper(QThread):
         if self.scrape_bfa:
             scrapers.append(self.scraper_bfa)
         if self.scrape_upbge:
-            scrapers.append(self.scraper_upbge)
+            scrapers.append(self.scraper_upbge_stable)
+        if self.scrape_upbge_weekly:
+            scrapers.append(self.scraper_upbge_weekly)
         return scrapers
 
     def get_download_links(self):
