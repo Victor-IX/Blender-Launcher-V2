@@ -1018,6 +1018,11 @@ class BlenderLauncher(BaseWindow):
                 if widget.build_info not in self.cashed_builds:
                     widget.destroy()
 
+        # Re-sort all download lists after scraping is complete to ensure proper ordering
+        for list_widget in self.DownloadsToolBox.list_widgets:
+            if list_widget.parent is not None:
+                list_widget.sortItems(list_widget.parent.sorting_order)
+
         utcnow = localtime()
         dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
         set_last_time_checked_utc(dt)
