@@ -7,9 +7,8 @@ from abc import abstractmethod
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform, upbge_cache_path, upbge_weekly_cache_path
+from modules._platform import get_platform
 from modules.build_info import BuildInfo, parse_blender_ver
-from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
 
@@ -37,14 +36,10 @@ upbge_package_file_name_regex = re.compile(upbge_regex_filter, re.IGNORECASE)
 class ScraperUpbgeBase(BuildScraper):
     """Base class for UPBGE scrapers with common scraping logic."""
 
-    def __init__(self, man: ConnectionManager, cache_path_func):
+    def __init__(self, man: ConnectionManager):
         super().__init__()
         self.manager = man
-        self.cache_path = cache_path_func()
-        self.cache = ScraperCache.from_file_or_default(self.cache_path)
-
-    def refresh_cache(self):
-        self.cache = ScraperCache.from_file_or_default(self.cache_path)
+        self.tag_commit_map: dict[str, str] = {}
 
     @abstractmethod
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
@@ -85,23 +80,32 @@ class ScraperUpbgeBase(BuildScraper):
 
         return releases
 
-    def _get_commit_hash(self, tag_name: str) -> str | None:
-        """Fetch commit hash for a given tag."""
+    def _fetch_all_tag_commits(self) -> None:
+        """Fetch all tag-to-commit mappings in one batch request."""
+        if self.tag_commit_map:
+            return  # Already fetched
+        
         try:
-            tag_url = f"https://api.github.com/repos/UPBGE/upbge/git/refs/tags/{tag_name}"
+            tag_url = "https://api.github.com/repos/UPBGE/upbge/tags?per_page=100"
             tag_response = self.manager.request("GET", tag_url)
             if tag_response:
-                tag_data = json.loads(tag_response.data)
-
-                if isinstance(tag_data, dict) and "message" in tag_data:
-                    logger.debug(f"Could not fetch hash for {tag_name}: {tag_data.get('message')}")
-                else:
-                    commit_sha = tag_data.get("object", {}).get("sha")
-                    if commit_sha:
-                        return commit_sha[:12]
+                tags_data = json.loads(tag_response.data)
+                
+                if isinstance(tags_data, list):
+                    for tag in tags_data:
+                        tag_name = tag.get("name")
+                        commit_sha = tag.get("commit", {}).get("sha")
+                        if tag_name and commit_sha:
+                            self.tag_commit_map[tag_name] = commit_sha[:12]
+                    logger.debug(f"Fetched {len(self.tag_commit_map)} UPBGE tag commits")
+                elif isinstance(tags_data, dict) and "message" in tags_data:
+                    logger.warning(f"GitHub API error while fetching tags: {tags_data.get('message')}")
         except (json.JSONDecodeError, KeyError, AttributeError, TypeError) as e:
-            logger.debug(f"Failed to get commit hash for UPBGE {tag_name}: {e}")
-        return None
+            logger.debug(f"Failed to fetch UPBGE tag commits: {e}")
+
+    def _get_commit_hash(self, tag_name: str) -> str | None:
+        """Get commit hash for a given tag from the pre-fetched map."""
+        return self.tag_commit_map.get(tag_name)
 
     def _parse_version(self, tag_name: str, asset_name: str, is_weekly: bool) -> Version | None:
         """Parse version from tag or asset name."""
@@ -120,24 +124,6 @@ class ScraperUpbgeBase(BuildScraper):
         except (ValueError, AttributeError) as e:
             logger.warning(f"Failed to parse UPBGE version {tag_name}: {e}")
             return None
-
-    def _get_cache_version(self, tag_name: str, assets: list, is_weekly: bool) -> Version | None:
-        """Determine the cache key version for a release."""
-        for asset in assets:
-            asset_name = asset.get("name", "")
-            if upbge_package_file_name_regex.match(asset_name):
-                # For weekly builds, always use build number as cache key to avoid collisions
-                # Multiple weekly builds can have the same version number but different build numbers
-                if is_weekly:
-                    try:
-                        build_num = tag_name.replace("weekly-build-", "")
-                        return Version(0, 0, int(build_num), prerelease="weekly")
-                    except (ValueError, AttributeError) as e:
-                        logger.warning(f"Failed to parse weekly build number from {tag_name}: {e}")
-                        return None
-                else:
-                    return self._parse_version(tag_name, asset_name, is_weekly)
-        return None
 
     def _create_build_info(
         self,
@@ -185,36 +171,6 @@ class ScraperUpbgeBase(BuildScraper):
             if build_info:
                 yield build_info
 
-    def _process_cached_release(
-        self, cache_version: Version, tag_name: str, assets: list, is_weekly: bool, commit_time: datetime
-    ) -> tuple[list[BuildInfo], bool]:
-        """Process a release using cache. Returns (builds list, cache_was_modified)."""
-        # Check if cache needs updating
-        if cache_version not in self.cache:
-            logger.debug(f"Creating new cache entry for UPBGE version {cache_version}")
-            folder = self.cache.new_build(cache_version)
-        else:
-            folder = self.cache[cache_version]
-
-        if folder.modified_date < commit_time:
-            # Clear existing assets and scrape fresh data
-            folder.assets.clear()
-
-            build_hash = self._get_commit_hash(tag_name)
-            if build_hash:
-                logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
-
-            # Scrape and cache builds
-            builds = list(self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time))
-            folder.assets.extend(builds)
-
-            folder.modified_date = commit_time
-            logger.debug(f"Updated UPBGE cache for version {cache_version}: {commit_time}")
-            return builds, True  # Cache was modified
-        else:
-            logger.debug(f"Skipping UPBGE {tag_name}: {commit_time} (cached)")
-            return folder.assets, False  # Cache not modified
-
     def _should_skip_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Check if a release should be skipped."""
         if not isinstance(release, dict):
@@ -248,7 +204,7 @@ class ScraperUpbgeBase(BuildScraper):
         if releases is None:
             return
 
-        cache_modified = False
+        self._fetch_all_tag_commits()
 
         for release in releases:
             tag_name = release.get("tag_name", "")
@@ -258,6 +214,10 @@ class ScraperUpbgeBase(BuildScraper):
                 continue
 
             release_date = release.get("published_at")
+            if not release_date:
+                logger.warning(f"Missing published_at date for UPBGE release {tag_name}")
+                continue
+            
             try:
                 commit_time = datetime.fromisoformat(release_date.replace("Z", "+00:00"))
             except (ValueError, AttributeError) as e:
@@ -265,33 +225,18 @@ class ScraperUpbgeBase(BuildScraper):
                 continue
 
             assets = release.get("assets", [])
-            cache_version = self._get_cache_version(tag_name, assets, is_weekly)
-
-            if cache_version is None:
-                logger.debug(f"Could not determine version for UPBGE release {tag_name}, scraping without cache")
-                build_hash = self._get_commit_hash(tag_name)
-                if build_hash:
-                    logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
-                yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
-            else:
-                builds, was_modified = self._process_cached_release(
-                    cache_version, tag_name, assets, is_weekly, commit_time
-                )
-                yield from builds
-                if was_modified:
-                    cache_modified = True
-
-        if cache_modified:
-            with self.cache_path.open("w", encoding="utf-8") as f:
-                json.dump(self.cache.to_dict(), f)
-                logger.debug(f"Saved UPBGE cache to {self.cache_path}")
+            build_hash = self._get_commit_hash(tag_name)
+            if build_hash:
+                logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
+            
+            yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
 
 
 class ScraperUpbgeStable(ScraperUpbgeBase):
     """Scraper for UPBGE stable releases only."""
 
     def __init__(self, man: ConnectionManager):
-        super().__init__(man, upbge_cache_path)
+        super().__init__(man)
 
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Only process stable releases (non-weekly)."""
@@ -316,7 +261,7 @@ class ScraperUpbgeWeekly(ScraperUpbgeBase):
     """Scraper for UPBGE weekly/alpha builds."""
 
     def __init__(self, man: ConnectionManager):
-        super().__init__(man, upbge_weekly_cache_path)
+        super().__init__(man)
 
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Only process weekly releases."""

@@ -272,14 +272,6 @@ def bfa_cache_path() -> Path:
     return get_cache_path() / "bforartists_builds.json"
 
 
-def upbge_cache_path() -> Path:
-    return get_cache_path() / "upbge_builds.json"
-
-
-def upbge_weekly_cache_path() -> Path:
-    return get_cache_path() / "upbge_weekly_builds.json"
-
-
 def get_blender_config_folder(custom_folder: str | None = None):
     """
     Retrieves the Blender configuration folder.
