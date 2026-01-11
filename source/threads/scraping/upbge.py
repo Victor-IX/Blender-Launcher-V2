@@ -123,6 +123,125 @@ class ScraperUpbgeBase(BuildScraper):
             logger.warning(f"Failed to parse UPBGE version {tag_name}: {e}")
             return None
 
+    def _get_cache_version(self, tag_name: str, assets: list, is_weekly: bool) -> Version | None:
+        """Determine the cache key version for a release."""
+        for asset in assets:
+            asset_name = asset.get("name", "")
+            if upbge_package_file_name_regex.match(asset_name):
+                # For weekly builds, always use build number as cache key to avoid collisions
+                # Multiple weekly builds can have the same version number but different build numbers
+                if is_weekly:
+                    try:
+                        build_num = tag_name.replace("weekly-build-", "")
+                        return Version(0, 0, int(build_num), prerelease="weekly")
+                    except (ValueError, AttributeError) as e:
+                        logger.warning(f"Failed to parse weekly build number from {tag_name}: {e}")
+                        return None
+                else:
+                    return self._parse_version(tag_name, asset_name, is_weekly)
+        return None
+
+    def _create_build_info(
+        self, download_url: str, tag_name: str, asset_name: str, is_weekly: bool, build_hash: str | None, commit_time: datetime
+    ) -> BuildInfo | None:
+        """Create a BuildInfo object from asset information."""
+        subversion = self._parse_version(tag_name, asset_name, is_weekly)
+        if subversion is None:
+            return None
+
+        branch = self.get_branch_name()
+
+        platform = get_platform()
+        if platform == "macOS":
+            exe_name = None
+        else:
+            exe_name = {
+                "Windows": "upbge.exe",
+                "Linux": "upbge",
+            }.get(platform, "upbge")
+
+        return BuildInfo(
+            download_url,
+            str(subversion),
+            build_hash,
+            commit_time,
+            branch,
+            custom_executable=exe_name,
+        )
+
+    def _scrape_assets(
+        self, assets: list, tag_name: str, is_weekly: bool, build_hash: str | None, commit_time: datetime
+    ) -> Generator[BuildInfo, None, None]:
+        """Scrape assets from a release and yield BuildInfo objects."""
+        for asset in assets:
+            asset_name = asset.get("name", "")
+            download_url = asset.get("browser_download_url")
+
+            if not download_url or not upbge_package_file_name_regex.match(asset_name):
+                continue
+
+            build_info = self._create_build_info(download_url, tag_name, asset_name, is_weekly, build_hash, commit_time)
+            if build_info:
+                yield build_info
+
+    def _process_cached_release(
+        self, cache_version: Version, tag_name: str, assets: list, is_weekly: bool, commit_time: datetime
+    ) -> tuple[list[BuildInfo], bool]:
+        """Process a release using cache. Returns (builds list, cache_was_modified)."""
+        # Check if cache needs updating
+        if cache_version not in self.cache:
+            logger.debug(f"Creating new cache entry for UPBGE version {cache_version}")
+            folder = self.cache.new_build(cache_version)
+        else:
+            folder = self.cache[cache_version]
+
+        if folder.modified_date < commit_time:
+            # Clear existing assets and scrape fresh data
+            folder.assets.clear()
+
+            build_hash = self._get_commit_hash(tag_name)
+            if build_hash:
+                logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
+
+            # Scrape and cache builds
+            builds = list(self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time))
+            folder.assets.extend(builds)
+
+            folder.modified_date = commit_time
+            logger.debug(f"Updated UPBGE cache for version {cache_version}: {commit_time}")
+            return builds, True  # Cache was modified
+        else:
+            logger.debug(f"Skipping UPBGE {tag_name}: {commit_time} (cached)")
+            return folder.assets, False  # Cache not modified
+
+    def _should_skip_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
+        """Check if a release should be skipped."""
+        if not isinstance(release, dict):
+            logger.warning(f"Skipping invalid release entry: {type(release)}")
+            return True
+
+        if release.get("draft", False):
+            return True
+
+        if not tag_name or not release.get("published_at"):
+            return True
+
+        if not self.should_process_release(release, tag_name, is_weekly):
+            return True
+
+        # Check version for non-weekly stable releases
+        if not is_weekly:
+            try:
+                version_str = tag_name.lstrip("v")
+                version = parse_blender_ver(version_str)
+                if version < UPBGE_MINIMUM_VERSION:
+                    logger.debug(f"Skipping old UPBGE release: {tag_name} (< {UPBGE_MINIMUM_VERSION})")
+                    return True
+            except (ValueError, AttributeError) as e:
+                logger.debug(f"Could not parse version for {tag_name}, including it: {e}")
+
+        return False
+
     def scrape(self) -> Generator[BuildInfo, None, None]:
         releases = self._fetch_releases()
         if releases is None:
@@ -131,159 +250,33 @@ class ScraperUpbgeBase(BuildScraper):
         cache_modified = False
 
         for release in releases:
-            if not isinstance(release, dict):
-                logger.warning(f"Skipping invalid release entry: {type(release)}")
-                continue
-
-            if release.get("draft", False):
-                continue
-
             tag_name = release.get("tag_name", "")
-            release_date = release.get("published_at")
-
-            if not tag_name or not release_date:
-                continue
-
             is_weekly = tag_name.startswith("weekly-build-")
 
-            # Let child classes decide if this release should be processed
-            if not self.should_process_release(release, tag_name, is_weekly):
+            if self._should_skip_release(release, tag_name, is_weekly):
                 continue
 
-            # Check version for non-weekly stable releases
-            if not is_weekly:
-                try:
-                    version_str = tag_name.lstrip("v")
-                    version = parse_blender_ver(version_str)
-                    if version < UPBGE_MINIMUM_VERSION:
-                        logger.debug(f"Skipping old UPBGE release: {tag_name} (< {UPBGE_MINIMUM_VERSION})")
-                        continue
-                except (ValueError, AttributeError) as e:
-                    logger.debug(f"Could not parse version for {tag_name}, including it: {e}")
-
+            release_date = release.get("published_at")
             try:
                 commit_time = datetime.fromisoformat(release_date.replace("Z", "+00:00"))
             except (ValueError, AttributeError) as e:
                 logger.warning(f"Failed to parse UPBGE release date {release_date}: {e}")
                 continue
 
-            # Parse the first valid asset to get version for cache key
             assets = release.get("assets", [])
-            cache_version = None
-            for asset in assets:
-                asset_name = asset.get("name", "")
-                if upbge_package_file_name_regex.match(asset_name):
-                    # For weekly builds, always use build number as cache key to avoid collisions
-                    # Multiple weekly builds can have the same version number but different build numbers
-                    if is_weekly:
-                        try:
-                            build_num = tag_name.replace("weekly-build-", "")
-                            cache_version = Version(0, 0, int(build_num), prerelease="weekly")
-                        except (ValueError, AttributeError) as e:
-                            logger.warning(f"Failed to parse weekly build number from {tag_name}: {e}")
-                            cache_version = None
-                    else:
-                        cache_version = self._parse_version(tag_name, asset_name, is_weekly)
-
-                    if cache_version is not None:
-                        break
+            cache_version = self._get_cache_version(tag_name, assets, is_weekly)
 
             if cache_version is None:
-                logger.debug(f"Could not determine version for UPBGE release {tag_name}, skipping cache")
-                # Fall through to scrape without cache
+                logger.debug(f"Could not determine version for UPBGE release {tag_name}, scraping without cache")
+                build_hash = self._get_commit_hash(tag_name)
+                if build_hash:
+                    logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
+                yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
             else:
-                # Check if cache needs updating
-                if cache_version not in self.cache:
-                    logger.debug(f"Creating new cache entry for UPBGE version {cache_version}")
-                    folder = self.cache.new_build(cache_version)
-                else:
-                    folder = self.cache[cache_version]
-
-                if folder.modified_date < commit_time:
-                    # Clear existing assets and scrape fresh data
-                    folder.assets.clear()
-
-                    build_hash = self._get_commit_hash(tag_name)
-                    if build_hash:
-                        logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
-
-                    for asset in assets:
-                        asset_name = asset.get("name", "")
-                        download_url = asset.get("browser_download_url")
-
-                        if not download_url or not upbge_package_file_name_regex.match(asset_name):
-                            continue
-
-                        subversion = self._parse_version(tag_name, asset_name, is_weekly)
-                        if subversion is None:
-                            continue
-
-                        branch = self.get_branch_name()
-
-                        platform = get_platform()
-                        if platform == "macOS":
-                            exe_name = None
-                        else:
-                            exe_name = {
-                                "Windows": "upbge.exe",
-                                "Linux": "upbge",
-                            }.get(platform, "upbge")
-
-                        build_info = BuildInfo(
-                            download_url,
-                            str(subversion),
-                            build_hash,
-                            commit_time,
-                            branch,
-                            custom_executable=exe_name,
-                        )
-                        folder.assets.append(build_info)
-                        yield build_info
-
-                    folder.modified_date = commit_time
+                builds, was_modified = self._process_cached_release(cache_version, tag_name, assets, is_weekly, commit_time)
+                yield from builds
+                if was_modified:
                     cache_modified = True
-                    logger.debug(f"Updated UPBGE cache for version {cache_version}: {commit_time}")
-                else:
-                    logger.debug(f"Skipping UPBGE {tag_name}: {commit_time} (cached)")
-                    yield from folder.assets
-                continue
-
-            # Fallback: scrape without cache (shouldn't normally reach here)
-            build_hash = self._get_commit_hash(tag_name)
-            if build_hash:
-                logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
-
-            for asset in assets:
-                asset_name = asset.get("name", "")
-                download_url = asset.get("browser_download_url")
-
-                if not download_url or not upbge_package_file_name_regex.match(asset_name):
-                    continue
-
-                is_alpha = "-alpha" in asset_name.lower()
-                subversion = self._parse_version(tag_name, asset_name, is_weekly)
-                if subversion is None:
-                    continue
-
-                branch = self.get_branch_name()
-
-                platform = get_platform()
-                if platform == "macOS":
-                    exe_name = None
-                else:
-                    exe_name = {
-                        "Windows": "upbge.exe",
-                        "Linux": "upbge",
-                    }.get(platform, "upbge")
-
-                yield BuildInfo(
-                    download_url,
-                    str(subversion),
-                    build_hash,
-                    commit_time,
-                    branch,
-                    custom_executable=exe_name,
-                )
 
         if cache_modified:
             with self.cache_path.open("w", encoding="utf-8") as f:
