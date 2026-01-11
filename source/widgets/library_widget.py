@@ -29,7 +29,6 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-
 from PySide6.QtCore import Qt, QUrl, Signal, Slot
 from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
@@ -50,7 +49,6 @@ from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.base_list_widget import BaseListWidget
-    from modules.enums import MessageType
     from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
@@ -329,7 +327,6 @@ class LibraryWidget(BaseBuildWidget):
         if self.build_info.is_favorite and self.parent_widget is None:
             self.add_to_favorites()
 
-
     def context_menu(self):
         self.update_delete_action(self.hovering_and_shifting)
         self.update_config_action(self.hovering_and_shifting)
@@ -580,9 +577,8 @@ class LibraryWidget(BaseBuildWidget):
             # Reset the UI state
             self.launchButton.set_text("Launch")
             self.launchButton.setEnabled(True)
-            if hasattr(self, "_update_download_widget"):
-                if get_show_update_button():
-                    self._show_update_button()
+            if hasattr(self, "_update_download_widget") and get_show_update_button():
+                self._show_update_button()
 
     def _proceed_with_update(self):
         """Proceed with the actual update download."""

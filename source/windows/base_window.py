@@ -11,7 +11,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 
 if TYPE_CHECKING:
     from semver import Version
-
     from windows.main_window import BlenderLauncher
 
 if get_enable_high_dpi_scaling():
@@ -109,7 +108,6 @@ class BaseWindow(QMainWindow):
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def showEvent(self, event):
-
         if hasattr(self, "launcher") and self.launcher is not None:
             launcher = self.launcher
             if self not in launcher.windows:

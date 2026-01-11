@@ -50,9 +50,9 @@ from modules.settings import (
     get_show_daily_builds,
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
+    get_show_tray_icon,
     get_show_upbge_builds,
     get_show_upbge_weekly_builds,
-    get_show_tray_icon,
     get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
     get_use_pre_release_builds,
@@ -491,14 +491,14 @@ class BlenderLauncher(BaseWindow):
         )
         self.DownloadsUPBGEListWidget = self.DownloadsToolBox.add_page_widget(self.DownloadsUPBGEPageWidget, "UPBGE")
 
-        self.Downloads_UPBGEWeeklyPageWidget = BasePageWidget(
+        self.DownloadsUPBGEWeeklyPageWidget = BasePageWidget(
             parent=self,
             page_name="DownloadsUPBGEWeeklyListWidget",
             time_label="Upload Time",
             info_text="No new builds available",
         )
         self.DownloadsUPBGEWeeklyListWidget = self.DownloadsToolBox.add_page_widget(
-            self.Downloads_UPBGEWeeklyPageWidget, "UPBGE Weekly"
+            self.DownloadsUPBGEWeeklyPageWidget, "UPBGE Weekly"
         )
 
         self.UserFavoritesListWidget = BasePageWidget(
@@ -529,7 +529,7 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsExperimentalPageWidget,
             self.DownloadsBFAPageWidget,
             self.DownloadsUPBGEPageWidget,
-            self.Downloads_UPBGEWeeklyPageWidget,
+            self.DownloadsUPBGEWeeklyPageWidget,
             self.UserCustomPageWidget,
         ]
         self._syncing_column_widths = False  # Guard against recursion
@@ -984,9 +984,9 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for UPBGE builds is disabled")
 
         if scrape_upbge_weekly:
-            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for new builds")
+            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for new builds")
         else:
-            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for UPBGE weekly builds is disabled")
+            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for UPBGE weekly builds is disabled")
 
         # Sometimes these builds end up being invalid, particularly when new builds are available, which, there usually
         # are at least once every two days. They are so easily gathered there's little loss here
