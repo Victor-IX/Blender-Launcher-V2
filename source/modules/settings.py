@@ -717,6 +717,14 @@ def set_scrape_upbge_builds(b: bool):
     get_settings().setValue("scrape_upbge_builds", b)
 
 
+def get_scrape_upbge_weekly_builds() -> bool:
+    return get_settings().value("scrape_upbge_weekly_builds", defaultValue=False, type=bool)  # type: ignore
+
+
+def set_scrape_upbge_weekly_builds(b: bool):
+    get_settings().setValue("scrape_upbge_weekly_builds", b)
+
+
 def get_show_stable_builds() -> bool:
     return get_settings().value("show_stable_builds", defaultValue=True, type=bool)  # type: ignore
 
@@ -755,6 +763,14 @@ def get_show_upbge_builds() -> bool:
 
 def set_show_upbge_builds(b: bool):
     get_settings().setValue("show_upbge_builds", b)
+
+
+def get_show_upbge_weekly_builds() -> bool:
+    return get_settings().value("show_upbge_weekly_builds", defaultValue=False, type=bool)  # type: ignore
+
+
+def set_show_upbge_weekly_builds(b: bool):
+    get_settings().setValue("show_upbge_weekly_builds", b)
 
 
 def get_show_daily_archive_builds() -> bool:

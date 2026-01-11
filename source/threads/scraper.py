@@ -12,6 +12,7 @@ from modules.settings import (
     get_scrape_experimental_builds,
     get_scrape_stable_builds,
     get_scrape_upbge_builds,
+    get_scrape_upbge_weekly_builds,
     get_show_daily_archive_builds,
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
@@ -50,11 +51,12 @@ class Scraper(QThread):
         self.scrape_experimental = get_scrape_experimental_builds()
         self.scrape_bfa = get_scrape_bfa_builds()
         self.scrape_upbge = get_scrape_upbge_builds()
+        self.scrape_upbge_weekly_builds = get_scrape_upbge_weekly_builds()
 
         # these are saved because they hold caches
         self.scraper_stable = ScraperStable(self.manager, self.stable_error, self.build_cache)
         self.scraper_bfa = ScraperBfa()
-        self.scraper_upbge = ScraperUpbge(self.manager)
+        self.scraper_upbge = ScraperUpbge(self.manager, scrape_weekly_builds=self.scrape_upbge_weekly_builds)
 
         self.launcher_data_updater = LauncherDataUpdater(self.manager)
 
