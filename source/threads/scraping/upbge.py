@@ -152,13 +152,11 @@ class ScraperUpbgeBase(BuildScraper):
         branch = self.get_branch_name()
 
         platform = get_platform()
-        if platform == "macOS":
-            exe_name = None
-        else:
-            exe_name = {
-                "Windows": "upbge.exe",
-                "Linux": "upbge",
-            }.get(platform, "upbge")
+        exe_name = {
+            "Windows": "upbge.exe",
+            "Linux": "upbge",
+            "macOS": "UPBGE.app/Contents/MacOS/UPBGE",
+        }.get(platform, "upbge")
 
         return BuildInfo(
             download_url,
