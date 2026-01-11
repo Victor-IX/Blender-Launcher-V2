@@ -52,6 +52,8 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
                     has_blinfo = (folder / build / ".blinfo").is_file()
                     has_blender_exe = (path / build / blender_exe).is_file()
                     has_bforartists_exe = (path / build / bforartists_exe).is_file()
+                    # UPBGE uses the same executable name as Blender
+                    has_upbge_exe = (path / build / blender_exe).is_file()
 
                     # Also check for macOS DMG extraction format (.app directly at root)
                     if platform == "macOS":
@@ -59,16 +61,26 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
                             has_bforartists_exe = (path / build / "Bforartists.app").is_dir()
                         if not has_blender_exe:
                             has_blender_exe = (path / build / "Blender.app").is_dir()
+                        if not has_upbge_exe:
+                            has_upbge_exe = (path / build / "Blender.app").is_dir()
 
                     yield (
                         folder / build,
-                        has_blinfo or has_blender_exe or has_bforartists_exe,
+                        has_blinfo or has_blender_exe or has_bforartists_exe or has_upbge_exe,
                     )
 
 
 @dataclass
 class DrawLibraryTask(Task):
-    folders: Iterable[str | Path] = ("stable", "daily", "experimental", "bforartists", "custom")
+    folders: Iterable[str | Path] = (
+        "stable",
+        "daily",
+        "experimental",
+        "bforartists",
+        "upbge-stable",
+        "upbge-weekly",
+        "custom",
+    )
     found = Signal(Path)
     unrecognized = Signal(Path)
     finished = Signal()

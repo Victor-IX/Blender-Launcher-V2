@@ -228,8 +228,10 @@ class DownloadWidget(BaseBuildWidget):
             dist = library_folder / "daily"
         elif self.build_info.branch == "bforartists":
             dist = library_folder / "bforartists"
-        elif self.build_info.branch.startswith("upbge"):
-            dist = library_folder / "upbge"
+        elif self.build_info.branch == "upbge-stable":
+            dist = library_folder / "upbge-stable"
+        elif self.build_info.branch == "upbge-weekly":
+            dist = library_folder / "upbge-weekly"
         else:
             dist = library_folder / "experimental"
 

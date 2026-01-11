@@ -20,6 +20,7 @@ dependencies = [
     "pyside6-essentials==6.10.1",
     "markdown>=3.7",
     "keyring>=25.7.0",
+    "py7zr>=0.22.0",
 ]
 requires-python = "<3.15,>=3.11"
 readme = "README.md"
