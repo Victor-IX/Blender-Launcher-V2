@@ -64,6 +64,10 @@ from modules.settings import (
     set_stable_update_behavior,
     set_update_behavior,
     set_use_advanced_update_button,
+    set_show_upbge_builds,
+    set_scrape_upbge_builds,
+    set_show_upbge_weekly_builds,
+    set_scrape_upbge_weekly_builds,
     update_behavior,
 )
 from PySide6 import QtGui
@@ -105,6 +109,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_group.experimental_repo.download_changed.connect(set_scrape_experimental_builds)
         self.repo_group.bforartists_repo.library_changed.connect(set_show_bfa_builds)
         self.repo_group.bforartists_repo.download_changed.connect(set_scrape_bfa_builds)
+        self.repo_group.upbge_repo.library_changed.connect(set_show_upbge_builds)
+        self.repo_group.upbge_repo.download_changed.connect(set_scrape_upbge_builds)
+        self.repo_group.upbge_weekly_repo.library_changed.connect(set_show_upbge_weekly_builds)
+        self.repo_group.upbge_weekly_repo.download_changed.connect(set_scrape_upbge_weekly_builds)
 
         qvl = QVBoxLayout()
         # qvl.setContentsMargins(0, 0, 0, 0)
@@ -583,6 +591,24 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def toggle_check_on_startup(self, is_checked):
         set_check_for_new_builds_on_startup(is_checked)
         self.CheckForNewBuildsOnStartup.setChecked(is_checked)
+
+    def toggle_scrape_stable_builds(self, is_checked):
+        set_scrape_stable_builds(is_checked)
+
+    def toggle_scrape_daily_builds(self, is_checked):
+        set_scrape_daily_builds(is_checked)
+
+    def toggle_scrape_experimental_builds(self, is_checked):
+        set_scrape_experimental_builds(is_checked)
+
+    def toggle_scrape_bfa_builds(self, is_checked):
+        set_scrape_bfa_builds(is_checked)
+
+    def toggle_scrape_upbge_builds(self, is_checked):
+        set_scrape_upbge_builds(is_checked)
+
+    def toggle_scrape_upbge_weekly_builds(self, is_checked):
+        set_scrape_upbge_weekly_builds(is_checked)
 
     def toggle_show_daily_archive_builds(self, is_checked):
         set_show_daily_archive_builds(is_checked)
