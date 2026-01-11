@@ -7,8 +7,9 @@ from abc import abstractmethod
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
+from modules._platform import get_platform, upbge_cache_path, upbge_weekly_cache_path
 from modules.build_info import BuildInfo, parse_blender_ver
+from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
 
@@ -36,9 +37,14 @@ upbge_package_file_name_regex = re.compile(upbge_regex_filter, re.IGNORECASE)
 class ScraperUpbgeBase(BuildScraper):
     """Base class for UPBGE scrapers with common scraping logic."""
 
-    def __init__(self, man: ConnectionManager):
+    def __init__(self, man: ConnectionManager, cache_path_func):
         super().__init__()
         self.manager = man
+        self.cache_path = cache_path_func()
+        self.cache = ScraperCache.from_file_or_default(self.cache_path)
+
+    def refresh_cache(self):
+        self.cache = ScraperCache.from_file_or_default(self.cache_path)
 
     @abstractmethod
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
@@ -46,7 +52,7 @@ class ScraperUpbgeBase(BuildScraper):
         pass
 
     @abstractmethod
-    def get_branch_name(self, is_weekly: bool, is_alpha: bool) -> str:
+    def get_branch_name(self) -> str:
         """Get the branch name for the build."""
         pass
 
@@ -122,6 +128,8 @@ class ScraperUpbgeBase(BuildScraper):
         if releases is None:
             return
 
+        cache_modified = False
+
         for release in releases:
             if not isinstance(release, dict):
                 logger.warning(f"Skipping invalid release entry: {type(release)}")
@@ -159,11 +167,92 @@ class ScraperUpbgeBase(BuildScraper):
                 logger.warning(f"Failed to parse UPBGE release date {release_date}: {e}")
                 continue
 
+            # Parse the first valid asset to get version for cache key
+            assets = release.get("assets", [])
+            cache_version = None
+            for asset in assets:
+                asset_name = asset.get("name", "")
+                if upbge_package_file_name_regex.match(asset_name):
+                    # For weekly builds, always use build number as cache key to avoid collisions
+                    # Multiple weekly builds can have the same version number but different build numbers
+                    if is_weekly:
+                        try:
+                            build_num = tag_name.replace("weekly-build-", "")
+                            cache_version = Version(0, 0, int(build_num), prerelease="weekly")
+                        except (ValueError, AttributeError) as e:
+                            logger.warning(f"Failed to parse weekly build number from {tag_name}: {e}")
+                            cache_version = None
+                    else:
+                        cache_version = self._parse_version(tag_name, asset_name, is_weekly)
+
+                    if cache_version is not None:
+                        break
+
+            if cache_version is None:
+                logger.debug(f"Could not determine version for UPBGE release {tag_name}, skipping cache")
+                # Fall through to scrape without cache
+            else:
+                # Check if cache needs updating
+                if cache_version not in self.cache:
+                    logger.debug(f"Creating new cache entry for UPBGE version {cache_version}")
+                    folder = self.cache.new_build(cache_version)
+                else:
+                    folder = self.cache[cache_version]
+
+                if folder.modified_date < commit_time:
+                    # Clear existing assets and scrape fresh data
+                    folder.assets.clear()
+
+                    build_hash = self._get_commit_hash(tag_name)
+                    if build_hash:
+                        logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
+
+                    for asset in assets:
+                        asset_name = asset.get("name", "")
+                        download_url = asset.get("browser_download_url")
+
+                        if not download_url or not upbge_package_file_name_regex.match(asset_name):
+                            continue
+
+                        subversion = self._parse_version(tag_name, asset_name, is_weekly)
+                        if subversion is None:
+                            continue
+
+                        branch = self.get_branch_name()
+
+                        platform = get_platform()
+                        if platform == "macOS":
+                            exe_name = None
+                        else:
+                            exe_name = {
+                                "Windows": "upbge.exe",
+                                "Linux": "upbge",
+                            }.get(platform, "upbge")
+
+                        build_info = BuildInfo(
+                            download_url,
+                            str(subversion),
+                            build_hash,
+                            commit_time,
+                            branch,
+                            custom_executable=exe_name,
+                        )
+                        folder.assets.append(build_info)
+                        yield build_info
+
+                    folder.modified_date = commit_time
+                    cache_modified = True
+                    logger.debug(f"Updated UPBGE cache for version {cache_version}: {commit_time}")
+                else:
+                    logger.debug(f"Skipping UPBGE {tag_name}: {commit_time} (cached)")
+                    yield from folder.assets
+                continue
+
+            # Fallback: scrape without cache (shouldn't normally reach here)
             build_hash = self._get_commit_hash(tag_name)
             if build_hash:
                 logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
 
-            assets = release.get("assets", [])
             for asset in assets:
                 asset_name = asset.get("name", "")
                 download_url = asset.get("browser_download_url")
@@ -176,7 +265,7 @@ class ScraperUpbgeBase(BuildScraper):
                 if subversion is None:
                     continue
 
-                branch = self.get_branch_name(is_weekly, is_alpha)
+                branch = self.get_branch_name()
 
                 platform = get_platform()
                 if platform == "macOS":
@@ -196,9 +285,17 @@ class ScraperUpbgeBase(BuildScraper):
                     custom_executable=exe_name,
                 )
 
+        if cache_modified:
+            with self.cache_path.open("w", encoding="utf-8") as f:
+                json.dump(self.cache.to_dict(), f)
+                logger.debug(f"Saved UPBGE cache to {self.cache_path}")
+
 
 class ScraperUpbgeStable(ScraperUpbgeBase):
     """Scraper for UPBGE stable releases only."""
+
+    def __init__(self, man: ConnectionManager):
+        super().__init__(man, upbge_cache_path)
 
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Only process stable releases (non-weekly)."""
@@ -214,13 +311,16 @@ class ScraperUpbgeStable(ScraperUpbgeBase):
 
         return True
 
-    def get_branch_name(self, is_weekly: bool, is_alpha: bool) -> str:
+    def get_branch_name(self) -> str:
         """Stable releases always use upbge-stable branch."""
         return "upbge-stable"
 
 
 class ScraperUpbgeWeekly(ScraperUpbgeBase):
     """Scraper for UPBGE weekly/alpha builds."""
+
+    def __init__(self, man: ConnectionManager):
+        super().__init__(man, upbge_weekly_cache_path)
 
     def should_process_release(self, release: dict, tag_name: str, is_weekly: bool) -> bool:
         """Only process weekly releases."""
@@ -236,6 +336,6 @@ class ScraperUpbgeWeekly(ScraperUpbgeBase):
 
         return True
 
-    def get_branch_name(self, is_weekly: bool, is_alpha: bool) -> str:
+    def get_branch_name(self) -> str:
         """Weekly releases use upbge-weekly branch."""
         return "upbge-weekly"
