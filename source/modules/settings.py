@@ -416,6 +416,38 @@ def set_bfa_update_behavior(behavior):
     get_settings().setValue("bfa_update_behavior", update_behavior[behavior])
 
 
+def set_show_upbge_stable_update_button(is_checked):
+    get_settings().setValue("show_upbge_stable_update_button", is_checked)
+
+
+def get_show_upbge_stable_update_button() -> bool:
+    return get_settings().value("show_upbge_stable_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def get_upbge_stable_update_behavior() -> int:
+    return get_settings().value("upbge_stable_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_upbge_stable_update_behavior(behavior):
+    get_settings().setValue("upbge_stable_update_behavior", update_behavior[behavior])
+
+
+def set_show_upbge_weekly_update_button(is_checked):
+    get_settings().setValue("show_upbge_weekly_update_button", is_checked)
+
+
+def get_show_upbge_weekly_update_button() -> bool:
+    return get_settings().value("show_upbge_weekly_update_button", defaultValue=True, type=bool)  # type: ignore
+
+
+def get_upbge_weekly_update_behavior() -> int:
+    return get_settings().value("upbge_weekly_update_behavior", defaultValue=2, type=int)  # type: ignore
+
+
+def set_upbge_weekly_update_behavior(behavior):
+    get_settings().setValue("upbge_weekly_update_behavior", update_behavior[behavior])
+
+
 def get_install_template() -> bool:
     return get_settings().value("install_template", type=bool)  # type: ignore
 
