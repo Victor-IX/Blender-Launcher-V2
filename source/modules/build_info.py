@@ -169,6 +169,10 @@ class BuildInfo:
     def bforartist_version_matcher(self):
         return bfa_version_matcher(self.semversion)
 
+    @property
+    def upbge_version_matcher(self):
+        return upbge_version_matcher(self.semversion)
+
     @staticmethod
     @cache
     def _display_version(v: Version):
@@ -668,11 +672,30 @@ def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
             if i + 1 < len(versions) and i > 0:
                 return versions[i - 1]
             else:
-                # If this code is triggered this usually means that the latest Blender verison in the api file have note been added yet.
-                # Bforartist verison are offset by one minor version compared to Blender versioning but use the Blender versioning for the config file.
+                # If this code is triggered this usually means that the latest Blender version in the api file have note been added yet.
+                # Bforartist version are offset by one minor version compared to Blender versioning but use the Blender versioning for the config file.
                 # Bforartist versioning: 5.0,0 -> Blender versioning: 5.1.0 -> config version file: 5.1
                 logger.warning(
                     "No matching Bforartists version found, if this append on the latest vesrion of bforartists, please report to developer."
                 )
                 return None
     return None
+
+
+def upbge_version_matcher(upbge_blender_version: Version) -> Version | None:
+    versions = read_blender_version_list()
+    upbge_str_version = str(upbge_blender_version.minor)
+
+    if len(upbge_str_version) == 3:
+        matching_version = Version(int(upbge_str_version[:2]), int(upbge_str_version[2]))
+    elif len(upbge_str_version) == 2:
+        matching_version = Version(int(upbge_str_version[0]), int(upbge_str_version[1]))
+    else:
+        logger.error("Fail to generate the UPBGE config version from the main version")
+        return None
+
+    if matching_version in versions:
+        return matching_version
+    else:
+        logger.error("Version not matching a known Blender config version")
+        return None

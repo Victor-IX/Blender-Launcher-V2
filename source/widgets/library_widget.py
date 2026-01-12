@@ -1036,20 +1036,39 @@ class LibraryWidget(BaseBuildWidget):
         version = self.build_info.semversion
         branch = self.build_info.branch
         custom_folder = None
+        custom_subfolder = None
 
         if branch == "bforartists":
             custom_folder = "bforartists"
+            custom_subfolder = "bforartists"
             version = self.build_info.bforartist_version_matcher
+        elif branch.startswith("upbge"):
+            custom_folder = "UPBGE"
+            # Custom subfolder for UPBGE is the same as Blender
+            version = self.build_info.upbge_version_matcher
 
         if version is None:
             version_str = ""
         else:
             version_str = f"{version.major}.{version.minor}"
+        base_config_path = get_blender_config_folder(custom_folder, custom_subfolder)
 
-        path = Path(get_blender_config_folder(custom_folder) / version_str)
-        general_path = Path(get_blender_config_folder(custom_folder))
+        if base_config_path is None:
+            logger.error("Unable to determine base configuration path.")
+            PopupWindow(
+                title="Error",
+                message="Unable to determine configuration folder path.",
+                info_popup=True,
+                icon=PopupIcon.WARNING,
+                parent=self.parent,
+            )
+            return
+
+        path = base_config_path / version_str
+        general_path = base_config_path
 
         if not path.is_dir():
+            logger.warning(f"Config folder {path} do not exist.")
             popup = PopupWindow(
                 title="Warning",
                 message="No config folder found for this version.",
