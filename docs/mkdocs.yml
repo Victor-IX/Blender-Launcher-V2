@@ -6,6 +6,7 @@ nav:
     - User Interface: user_interface.md
     - Library Folder: library_folder.md
     - Settings: settings.md
+    - Blender Forks: blender_forks.md
     - Manual Blender Installation: manual_build_installation.md
     - Build Initialization: build_initialization.md
     - File Association: file_association.md
