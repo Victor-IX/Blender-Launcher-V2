@@ -15,9 +15,9 @@ from modules.settings import (
     get_show_upbge_weekly_update_button,
     get_show_update_button,
     get_stable_update_behavior,
-    get_update_behavior,
     get_upbge_stable_update_behavior,
     get_upbge_weekly_update_behavior,
+    get_update_behavior,
     get_use_advanced_update_button,
 )
 from semver import Version
