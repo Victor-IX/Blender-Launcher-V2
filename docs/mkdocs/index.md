@@ -60,15 +60,18 @@ Core features:
 Compared to its [predecessor](https://github.com/DotBow/Blender-Version-Manager), Blender Launcher introduces a number of major improvements:
 
 * It's rewritten from the ground up for better stability and extensibility.
-* All official builds, as well as the popular fork Bforartists, are available:
+* All official builds, as well as popular Blender forks, are available:
     * [Stable releases](https://download.blender.org/release/)
     * [Daily builds](https://builder.blender.org/download/daily/)
     * [Experimental branches](https://builder.blender.org/download/branches/)
-    * [Bforartists](https://www.bforartists.de/download/)
+    * [Bforartists](https://www.bforartists.de/download/) - UI-focused fork
+    * [UPBGE](https://upbge.org/) - Game engine fork (Stable and Weekly builds)
 * Version consistent .blend file opening
 * Faster starting times by caching data
 * Support for high DPI displays
 * And many new quality of life features!
+
+Learn more about supported forks in the [Blender Forks](blender_forks.md) documentation.
 
 ## How to start using it?
 

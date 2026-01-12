@@ -24,7 +24,10 @@
 
 ## Custom Build
 
-1. Download the Custom Blender Build you want to install (e.g., [Blender For Artists](https://www.bforartists.de)).
+1. Download the Custom Blender Build you want to install.
 2. Extract the version.
 3. Place the extracted folder in the [Custom Folder of the Blender Launcher](library_folder.md#structure).
 4. Initialize the Build in the User->Custom Library.
+
+!!! info "Supported Forks"
+    The launcher officially supports [Bforartists](blender_forks.md#bforartists) and [UPBGE](blender_forks.md#upbge-uchronia-project-blender-game-engine) with automatic downloading and management. See the [Blender Forks](blender_forks.md) documentation for detailed information.
