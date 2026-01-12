@@ -84,13 +84,13 @@ class ScraperUpbgeBase(BuildScraper):
         """Fetch all tag-to-commit mappings in one batch request."""
         if self.tag_commit_map:
             return  # Already fetched
-        
+
         try:
             tag_url = "https://api.github.com/repos/UPBGE/upbge/tags?per_page=100"
             tag_response = self.manager.request("GET", tag_url)
             if tag_response:
                 tags_data = json.loads(tag_response.data)
-                
+
                 if isinstance(tags_data, list):
                     for tag in tags_data:
                         tag_name = tag.get("name")
@@ -214,10 +214,11 @@ class ScraperUpbgeBase(BuildScraper):
                 continue
 
             release_date = release.get("published_at")
+
             if not release_date:
                 logger.warning(f"Missing published_at date for UPBGE release {tag_name}")
                 continue
-            
+
             try:
                 commit_time = datetime.fromisoformat(release_date.replace("Z", "+00:00"))
             except (ValueError, AttributeError) as e:
@@ -228,7 +229,7 @@ class ScraperUpbgeBase(BuildScraper):
             build_hash = self._get_commit_hash(tag_name)
             if build_hash:
                 logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
-            
+
             yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
 
 
