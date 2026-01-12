@@ -1043,14 +1043,26 @@ class LibraryWidget(BaseBuildWidget):
             version = self.build_info.bforartist_version_matcher
         elif branch.startswith("upbge"):
             custom_folder = "UPBGE"
-            # Custom subfolder for UPBGE is the same as Blender
+            # Custom subfolder for UPBGE is the same as Blender on Windows but not on Linux
+            if get_platform() == "Linux":
+                custom_subfolder = "upbge"
             version = self.build_info.upbge_version_matcher
 
         if version is None:
             version_str = ""
         else:
             version_str = f"{version.major}.{version.minor}"
-        base_config_path = get_blender_config_folder(custom_folder, custom_subfolder)
+
+        kwargs = {
+            k: v
+            for k, v in {
+                "config_folder_name": custom_folder,
+                "config_subfolder_name": custom_subfolder,
+            }.items()
+            if v is not None
+        }
+
+        base_config_path = get_blender_config_folder(**kwargs)
 
         if base_config_path is None:
             logger.error("Unable to determine base configuration path.")
