@@ -37,7 +37,6 @@ def copyfileobj(fsrc, fdst, callback, length=0):
         callback(copied)
 
 
-
 def _copyfileobj_readinto(fsrc, fdst, callback, length=0):
     """readinto()/memoryview() based variant of copyfileobj().
     *fsrc* must support readinto() method and both files must be
