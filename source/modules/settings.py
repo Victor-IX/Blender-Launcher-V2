@@ -40,7 +40,9 @@ library_pages = {
     "Daily Builds": 1,
     "Experimental Branches": 2,
     "Bforartists": 3,
-    "Custom": 4,
+    "UPBGE": 4,
+    "UPBGE Weekly": 5,
+    "Custom": 6,
 }
 
 downloads_pages = {
@@ -48,6 +50,8 @@ downloads_pages = {
     "Daily Builds": 1,
     "Experimental Branches": 2,
     "Bforartists": 3,
+    "UPBGE": 4,
+    "UPBGE Weekly": 5,
 }
 
 favorite_pages = {
