@@ -109,8 +109,8 @@ def _new_version_available(
         download_version = build_info.semversion.replace(prerelease=None)
         download_hash = build_info.build_hash
 
-        # Skip already installed versions/hashes
-        if download_hash in installed_hashes:
+        # Skip already installed versions/hashes (only check hash if it's not None)
+        if download_hash is not None and download_hash in installed_hashes:
             continue
 
         if download_version in installed_versions and not _is_newer_build(build_info, current_build_info):
