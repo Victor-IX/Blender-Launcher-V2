@@ -97,14 +97,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)
 
         self.repo_group = RepoGroup(self)
-        self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
-        self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
-        self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
-        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_daily_builds)
-        self.repo_group.experimental_repo.library_changed.connect(lambda b: set_show_experimental_and_patch_builds(b))
-        self.repo_group.experimental_repo.download_changed.connect(self.toggle_scrape_experimental_builds)
-        self.repo_group.bforartists_repo.library_changed.connect(lambda b: set_show_bfa_builds(b))
-        self.repo_group.bforartists_repo.download_changed.connect(self.toggle_scrape_bfa_builds)
+        self.repo_group.stable_repo.library_changed.connect(set_show_stable_builds)
+        self.repo_group.stable_repo.download_changed.connect(set_scrape_stable_builds)
+        self.repo_group.daily_repo.library_changed.connect(set_show_daily_builds)
+        self.repo_group.daily_repo.download_changed.connect(set_scrape_daily_builds)
+        self.repo_group.experimental_repo.library_changed.connect(set_show_experimental_and_patch_builds)
+        self.repo_group.experimental_repo.download_changed.connect(set_scrape_experimental_builds)
+        self.repo_group.bforartists_repo.library_changed.connect(set_show_bfa_builds)
+        self.repo_group.bforartists_repo.download_changed.connect(set_scrape_bfa_builds)
 
         qvl = QVBoxLayout()
         # qvl.setContentsMargins(0, 0, 0, 0)
@@ -583,18 +583,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def toggle_check_on_startup(self, is_checked):
         set_check_for_new_builds_on_startup(is_checked)
         self.CheckForNewBuildsOnStartup.setChecked(is_checked)
-
-    def toggle_scrape_stable_builds(self, is_checked):
-        set_scrape_stable_builds(is_checked)
-
-    def toggle_scrape_daily_builds(self, is_checked):
-        set_scrape_daily_builds(is_checked)
-
-    def toggle_scrape_experimental_builds(self, is_checked):
-        set_scrape_experimental_builds(is_checked)
-
-    def toggle_scrape_bfa_builds(self, is_checked):
-        set_scrape_bfa_builds(is_checked)
 
     def toggle_show_daily_archive_builds(self, is_checked):
         set_show_daily_archive_builds(is_checked)
