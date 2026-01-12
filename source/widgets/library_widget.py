@@ -682,23 +682,8 @@ class LibraryWidget(BaseBuildWidget):
         version = self.build_info.subversion.rsplit(".", 1)[0]
 
         if version >= "4.2":
-            # Check for portable folder first (standard Blender 4.2+)
-            portable_path = self.link / "portable"
-            if portable_path.is_dir():
-                return portable_path
-            subpaths = ["config", "datafiles", "scripts", "extensions"]
-
-            # Check for version folder (X.Y format) used by bforartists
-            if get_platform() == "Windows" and self.link.is_dir():
-                for item in self.link.iterdir():
-                    if (
-                        item.is_dir()
-                        and re.match(r"^\d+\.\d+$", item.name)
-                        and any((item / subpath).is_dir() for subpath in subpaths)
-                    ):
-                        return item
-
-            return portable_path
+            folder_name = "portable"
+            config_path = self.link / folder_name
         else:
             folder_name = "config"
             config_path = self.link / version / folder_name
