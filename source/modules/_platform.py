@@ -273,20 +273,13 @@ def bfa_cache_path() -> Path:
 
 
 def get_blender_config_folder(
-    custom_config_folder_name: str | None = None, custom_config_subfolder_name: str | None = None
+    config_folder_name: str = "Blender Foundation", config_subfolder_name: str = "blender"
 ) -> Path | None:
     """
     Retrieves the Blender configuration folder.
     :param custom_folder: Optional; a custom folder name use to locate fork blender configuration folder.
     """
     platform = get_platform()
-    config_subfolder_name = "blender"
-    config_folder_name = "Blender Foundation"
-
-    if custom_config_folder_name:
-        config_folder_name = custom_config_folder_name
-    if custom_config_subfolder_name:
-        config_subfolder_name = custom_config_subfolder_name
 
     if platform == "Windows":
         return Path(os.environ.get("APPDATA", ""), config_folder_name, config_subfolder_name)
