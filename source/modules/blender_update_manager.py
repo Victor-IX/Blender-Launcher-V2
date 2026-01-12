@@ -11,9 +11,13 @@ from modules.settings import (
     get_show_daily_update_button,
     get_show_experimental_update_button,
     get_show_stable_update_button,
+    get_show_upbge_stable_update_button,
+    get_show_upbge_weekly_update_button,
     get_show_update_button,
     get_stable_update_behavior,
     get_update_behavior,
+    get_upbge_stable_update_behavior,
+    get_upbge_weekly_update_behavior,
     get_use_advanced_update_button,
 )
 from semver import Version
@@ -56,6 +60,12 @@ def _branch_visibility(current_branch: str) -> bool:
     bfa_update_button_visibility = (
         get_show_bfa_update_button() if get_use_advanced_update_button() else get_show_update_button()
     )
+    upbge_stable_update_button_visibility = (
+        get_show_upbge_stable_update_button() if get_use_advanced_update_button() else get_show_update_button()
+    )
+    upbge_weekly_update_button_visibility = (
+        get_show_upbge_weekly_update_button() if get_use_advanced_update_button() else get_show_update_button()
+    )
 
     if current_branch in {"stable", "lts"} and stable_update_button_visibility:
         return True
@@ -64,6 +74,10 @@ def _branch_visibility(current_branch: str) -> bool:
     elif any(current_branch.startswith(prefix) for prefix in ["Pr", "Npr"]) and experimental_update_button_visibility:
         return True
     elif current_branch == "bforartists" and bfa_update_button_visibility:
+        return True
+    elif current_branch == "upbge-stable" and upbge_stable_update_button_visibility:
+        return True
+    elif current_branch == "upbge-weekly" and upbge_weekly_update_button_visibility:
         return True
     return False
 
@@ -200,6 +214,12 @@ def _get_update_behavior(
         get_experimental_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
     )
     bfa_update_behavior = get_bfa_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    upbge_stable_update_behavior = (
+        get_upbge_stable_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    )
+    upbge_weekly_update_behavior = (
+        get_upbge_weekly_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    )
 
     if current_branch in {"stable", "lts"}:
         return stable_update_behavior
@@ -209,5 +229,9 @@ def _get_update_behavior(
         return experimental_update_behavior
     elif current_branch == "bforartists":
         return bfa_update_behavior
+    elif current_branch == "upbge-stable":
+        return upbge_stable_update_behavior
+    elif current_branch == "upbge-weekly":
+        return upbge_weekly_update_behavior
 
     return get_update_behavior()

@@ -882,18 +882,22 @@ class BlenderLauncher(BaseWindow):
         all_downloads.extend(self.DownloadsDailyListWidget.findChildren(DownloadWidget))
         all_downloads.extend(self.DownloadsExperimentalListWidget.findChildren(DownloadWidget))
         all_downloads.extend(self.DownloadsBFAListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsUPBGEListWidget.findChildren(DownloadWidget))
+        all_downloads.extend(self.DownloadsUPBGEWeeklyListWidget.findChildren(DownloadWidget))
 
         for library_list in [
             self.LibraryStableListWidget,
             self.LibraryDailyListWidget,
             self.LibraryExperimentalListWidget,
             self.LibraryBFAListWidget,
+            self.LibraryUPBGEListWidget,
+            self.LibraryUPBGEWeeklyListWidget,
         ]:
             for item in range(library_list.count()):
                 widget_item = library_list.item(item)
                 if widget_item:
                     library_widget = library_list.itemWidget(widget_item)
-                    if library_widget and hasattr(library_widget, "check_for_updates"):
+                    if isinstance(library_widget, LibraryWidget):
                         library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):

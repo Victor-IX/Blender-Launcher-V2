@@ -27,9 +27,13 @@ from modules.settings import (
     get_show_experimental_update_button,
     get_show_patch_archive_builds,
     get_show_stable_update_button,
+    get_show_upbge_stable_update_button,
+    get_show_upbge_weekly_update_button,
     get_show_update_button,
     get_stable_update_behavior,
     get_update_behavior,
+    get_upbge_stable_update_behavior,
+    get_upbge_weekly_update_behavior,
     get_use_advanced_update_button,
     set_bash_arguments,
     set_bfa_update_behavior,
@@ -63,10 +67,14 @@ from modules.settings import (
     set_show_stable_builds,
     set_show_stable_update_button,
     set_show_upbge_builds,
+    set_show_upbge_stable_update_button,
     set_show_upbge_weekly_builds,
+    set_show_upbge_weekly_update_button,
     set_show_update_button,
     set_stable_update_behavior,
     set_update_behavior,
+    set_upbge_stable_update_behavior,
+    set_upbge_weekly_update_behavior,
     set_use_advanced_update_button,
     update_behavior,
 )
@@ -314,6 +322,44 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBFABehavior.activated[int].connect(self.change_update_bfa_behavior)
         self.UpdateBFABehavior.setEnabled(self.ShowBFAUpdateButton.isChecked())
 
+        self.ShowUPBGEStableUpdateButton = QCheckBox()
+        self.ShowUPBGEStableUpdateButton.setText("Show UPBGE Stable Update Button")
+        self.ShowUPBGEStableUpdateButton.setToolTip(
+            "Show the update button to quickly update UPBGE stable builds\
+            \nDEFAULT: On"
+        )
+        self.ShowUPBGEStableUpdateButton.clicked.connect(self.show_upbge_stable_update_button)
+        self.ShowUPBGEStableUpdateButton.setChecked(get_show_upbge_stable_update_button())
+
+        self.UpdateUPBGEStableBehavior = QComboBox()
+        self.UpdateUPBGEStableBehavior.addItems(list(update_behavior.keys()))
+        self.UpdateUPBGEStableBehavior.setToolTip(
+            "Define the update behavior for UPBGE stable builds\
+            \nDEFAULT: Minor"
+        )
+        self.UpdateUPBGEStableBehavior.setCurrentIndex(get_upbge_stable_update_behavior())
+        self.UpdateUPBGEStableBehavior.activated[int].connect(self.change_update_upbge_stable_behavior)
+        self.UpdateUPBGEStableBehavior.setEnabled(self.ShowUPBGEStableUpdateButton.isChecked())
+
+        self.ShowUPBGEWeeklyUpdateButton = QCheckBox()
+        self.ShowUPBGEWeeklyUpdateButton.setText("Show UPBGE Weekly Update Button")
+        self.ShowUPBGEWeeklyUpdateButton.setToolTip(
+            "Show the update button to quickly update UPBGE weekly builds\
+            \nDEFAULT: On"
+        )
+        self.ShowUPBGEWeeklyUpdateButton.clicked.connect(self.show_upbge_weekly_update_button)
+        self.ShowUPBGEWeeklyUpdateButton.setChecked(get_show_upbge_weekly_update_button())
+
+        self.UpdateUPBGEWeeklyBehavior = QComboBox()
+        self.UpdateUPBGEWeeklyBehavior.addItems(list(update_behavior.keys()))
+        self.UpdateUPBGEWeeklyBehavior.setToolTip(
+            "Define the update behavior for UPBGE weekly builds\
+            \nDEFAULT: Minor"
+        )
+        self.UpdateUPBGEWeeklyBehavior.setCurrentIndex(get_upbge_weekly_update_behavior())
+        self.UpdateUPBGEWeeklyBehavior.activated[int].connect(self.change_update_upbge_weekly_behavior)
+        self.UpdateUPBGEWeeklyBehavior.setEnabled(self.ShowUPBGEWeeklyUpdateButton.isChecked())
+
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
         self.EnableMarkAsFavorite.setText("Mark as Favorite")
@@ -356,6 +402,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.advanced_settings_layout.addWidget(self.UpdateExperimentalBehavior, 2, 1, 1, 2)
         self.advanced_settings_layout.addWidget(self.ShowBFAUpdateButton, 3, 0, 1, 1)
         self.advanced_settings_layout.addWidget(self.UpdateBFABehavior, 3, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowUPBGEStableUpdateButton, 4, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateUPBGEStableBehavior, 4, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowUPBGEWeeklyUpdateButton, 5, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateUPBGEWeeklyBehavior, 5, 1, 1, 2)
 
         is_advanced = get_use_advanced_update_button()
         self.advanced_settings_widget.setVisible(is_advanced)
@@ -501,6 +551,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBFABehavior.setEnabled(is_checked)
         set_show_bfa_update_button(is_checked)
 
+    def show_upbge_stable_update_button(self, is_checked):
+        self.UpdateUPBGEStableBehavior.setEnabled(is_checked)
+        set_show_upbge_stable_update_button(is_checked)
+
+    def show_upbge_weekly_update_button(self, is_checked):
+        self.UpdateUPBGEWeeklyBehavior.setEnabled(is_checked)
+        set_show_upbge_weekly_update_button(is_checked)
+
     def change_update_behavior(self, index: int):
         behavior = self.UpdateBehavior.itemText(index)
         set_update_behavior(behavior)
@@ -520,6 +578,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def change_update_bfa_behavior(self, index: int):
         behavior = self.UpdateBFABehavior.itemText(index)
         set_bfa_update_behavior(behavior)
+
+    def change_update_upbge_stable_behavior(self, index: int):
+        behavior = self.UpdateUPBGEStableBehavior.itemText(index)
+        set_upbge_stable_update_behavior(behavior)
+
+    def change_update_upbge_weekly_behavior(self, index: int):
+        behavior = self.UpdateUPBGEWeeklyBehavior.itemText(index)
+        set_upbge_weekly_update_behavior(behavior)
 
     def toggle_install_template(self, is_checked):
         set_install_template(is_checked)

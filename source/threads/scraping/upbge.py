@@ -227,8 +227,6 @@ class ScraperUpbgeBase(BuildScraper):
 
             assets = release.get("assets", [])
             build_hash = self._get_commit_hash(tag_name)
-            if build_hash:
-                logger.debug(f"UPBGE {tag_name} commit hash: {build_hash}")
 
             yield from self._scrape_assets(assets, tag_name, is_weekly, build_hash, commit_time)
 
