@@ -652,8 +652,8 @@ class LibraryWidget(BaseBuildWidget):
     def make_portable(self):
         config_path = self.make_portable_path()
         folder_name = config_path.name
-
         _config_path = config_path.parent / ("_" + folder_name)
+
         if config_path.is_dir():
             config_path.rename(_config_path)
             self.makePortableAction.setText("Make Portable")
@@ -667,17 +667,16 @@ class LibraryWidget(BaseBuildWidget):
             self.showConfigFolderAction.setText("Show Portable Config Folder")
 
     def make_portable_path(self) -> Path:
-        if self.build_info is None:
-            error_msg = "Cannot make portable path: build_info is None"
-            logger.error(error_msg)
-            self.parent.show_message(
-                "Unable to determine portable path for this build.", message_type=MessageType.ERROR
-            )
-            return Path()
-
         version = self.build_info.subversion.rsplit(".", 1)[0]
+        branch = self.build_info.branch
 
-        if version >= "4.2":
+        if branch == "bforartists" and version >= "4.1":
+            folder_name = "portable"
+            config_path = self.link / folder_name
+        elif "upbge" in branch and version >= "0.42":
+            folder_name = "portable"
+            config_path = self.link / folder_name
+        elif version >= "4.2":
             folder_name = "portable"
             config_path = self.link / folder_name
         else:
