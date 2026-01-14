@@ -387,29 +387,51 @@ def fork_version_matcher(self):
 
 ## 10. Handle Config Folders
 
-If fork uses different config folder structure, update `source/widgets/library_widget.py`:
+Fork-specific config paths are centralized in `source/modules/build_info.py` using the `FORK_CONFIG_PATHS` dictionary.
+
+### Add Fork Config to FORK_CONFIG_PATHS
+
+In `source/modules/build_info.py`, add your fork's config paths:
 
 ```python
-def show_config_folder(self):
-    custom_folder = None
-    custom_subfolder = None
-    
-    if branch == "<fork-branch>":
-        custom_folder = "<Fork Foundation>"  # Windows: AppData\<Fork Foundation>\
-        custom_subfolder = "fork"          # Linux: ~/.config/fork/
-        version = self.build_info.fork_version_matcher
-    
-    kwargs = {
-        k: v for k, v in {
-            "config_folder_name": custom_folder,
-            "config_subfolder_name": custom_subfolder,
-        }.items() if v is not None
-    }
-    
-    base_config_path = get_blender_config_folder(**kwargs)
+FORK_CONFIG_PATHS = {
+    "bforartists": {
+        "config_folder": "bforartists",
+        "config_subfolder": "bforartists",
+    },
+    "upbge": {
+        "config_folder": "UPBGE",
+        "config_subfolder": {
+            "Windows": "Blender",
+            "Linux": "upbge",
+            "macOS": "UPBGE",
+        },
+    },
+    "<fork-branch>": {
+        "config_folder": "<Fork Foundation>",     
+        "config_subfolder": "<fork>",             
+        # OR for platform-specific subfolders:
+        # "config_subfolder": {
+        #     "Windows": "<windows-subfolder>",
+        #     "Linux": "<linux-subfolder>",
+        #     "macOS": "<macos-subfolder>",
+        # },
+    },
+}
 ```
 
+**Notes:**
+
+- `config_folder`: Used only on Windows (e.g., `%APPDATA%\<config_folder>\`)
+- `config_subfolder`: 
+    - **Simple string**: Same subfolder for all platforms (Linux: `~/.config/<subfolder>/`, macOS: `~/Library/Application Support/<subfolder>/`)
+    - **Platform dict**: Different subfolder per platform (Windows uses it too: `%APPDATA%\<config_folder>\<subfolder>\`)
+
+The `get_fork_config_paths(branch)` function retrieves these paths automatically.
+
 ### Portable Mode Support
+
+Update `make_portable_path()` in `source/widgets/library_widget.py`:
 
 ```python
 def make_portable_path(self) -> Path:
@@ -536,37 +558,45 @@ Files: [Unix](https://github.com/Bforartists/Bforartists/blob/master/intern/ghos
 
 ### Using This Information in Implementation
 
-When implementing config folder support in step 10, use the extracted values:
+Once you've determined the config paths from the fork's source code (see section 11), add them to `FORK_CONFIG_PATHS` in `source/modules/build_info.py`:
+
+**Example 1 - Same subfolder on all platforms (Bforartists):**
 
 ```python
-def show_config_folder(self):
-    custom_folder = None
-    custom_subfolder = None
-    
-    if branch == "upbge":
-        custom_folder = "UPBGE"         # Windows: %APPDATA%\UPBGE\
-        platform = get_platform()
-        if platform == "Windows":
-            custom_subfolder = "Blender"  # Windows: %APPDATA%\UPBGE\Blender\
-        elif platform == "Linux":
-            custom_subfolder = "upbge"    # Linux: ~/.config/upbge/
-        elif platform == "macOS":
-            custom_subfolder = "UPBGE"    # macOS: ~/Library/Application Support/UPBGE/
-        version = self.build_info.fork_version_matcher
-    elif branch == "bforartists":
-        custom_folder = "Bforartists"   # Windows: %APPDATA%\Bforartists\
-        custom_subfolder = "bforartists" # Linux: ~/.config/bforartists/, macOS: ~/Library/Application Support/bforartists/
-        version = self.build_info.semversion
-    
-    kwargs = {
-        k: v for k, v in {
-            "config_folder_name": custom_folder,
-            "config_subfolder_name": custom_subfolder,
-        }.items() if v is not None
-    }
-    
-    base_config_path = get_blender_config_folder(**kwargs)
+FORK_CONFIG_PATHS = {
+    # ... existing entries
+    "bforartists": {
+        "config_folder": "bforartists",      # Windows: %APPDATA%\bforartists\
+        "config_subfolder": "bforartists",   # All platforms use same subfolder
+    },
+}
 ```
+
+Results in:
+- **Windows**: `%APPDATA%\bforartists\bforartists\5.1\`
+- **Linux**: `~/.config/bforartists/5.1/`
+- **macOS**: `~/Library/Application Support/bforartists/5.1/`
+
+**Example 2 - Platform-specific subfolders (UPBGE):**
+
+```python
+FORK_CONFIG_PATHS = {
+    # ... existing entries
+    "upbge": {
+        "config_folder": "UPBGE",            # Windows: %APPDATA%\UPBGE\
+        "config_subfolder": {
+            "Windows": "Blender",            # Windows uses different subfolder
+            "Linux": "upbge",                # Linux uses lowercase
+            "macOS": "UPBGE",                # macOS uses uppercase
+        },
+    },
+}
+```
+
+Results in:
+- **Windows**: `%APPDATA%\UPBGE\Blender\0.40\`
+- **Linux**: `~/.config/upbge/0.40/`
+- **macOS**: `~/Library/Application Support/UPBGE/0.40/`
 
 
 ## Key Files Reference
@@ -580,7 +610,7 @@ def show_config_folder(self):
 | Settings UI | `source/widgets/settings_window/blender_builds_tab.py` |
 | Repository Group | `source/widgets/repo_group.py` |
 | Library Drawer | `source/threads/library_drawer.py` |
-| Build Info | `source/modules/build_info.py` |
+| Build Info & Config Paths | `source/modules/build_info.py` |
 | Extractor | `source/threads/extractor.py` |
 | Download Widget | `source/widgets/download_widget.py` |
 | Library Widget | `source/widgets/library_widget.py` |
