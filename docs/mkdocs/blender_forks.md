@@ -43,9 +43,9 @@ Bforartists uses different executable names than Blender:
 
 ### Official Resources
 
-- **Website**: [https://www.bforartists.de/](https://www.bforartists.de/)
-- **Downloads**: [https://www.bforartists.de/download/](https://www.bforartists.de/download/)
-- **Documentation**: [https://www.bforartists.de/wiki/](https://www.bforartists.de/wiki/)
+- **Website**: <https://www.bforartists.de/>
+- **Downloads**: <https://www.bforartists.de/download/>
+- **Documentation**: <https://www.bforartists.de/wiki/>
 
 ## UPBGE (Uchronia Project Blender Game Engine)
 
@@ -103,11 +103,11 @@ The launcher automatically identifies UPBGE builds by their directory structure 
 
 ### Official Resources
 
-- **Website**: [https://upbge.org/](https://upbge.org/)
-- **GitHub**: [https://github.com/UPBGE/upbge](https://github.com/UPBGE/upbge)
-- **Documentation**: [https://upbge.org/docs/latest/](https://upbge.org/docs/latest/)
-- **Discord**: [https://discord.gg](https://discord.gg/8PcrtTJW2R)
-- **Forum**: [https://blenderartists.org/c/game-engine](https://blenderartists.org/c/game-engine/10)
+- **Website**: <https://upbge.org/>
+- **GitHub**: <https://github.com/UPBGE/upbge>
+- **Documentation**: <https://upbge.org/docs/latest/>
+- **Discord**: <https://discord.gg/8PcrtTJW2R>
+- **Forum**: <https://blenderartists.org/c/game-engine/10>
 
 ## Configuration and Settings
 
