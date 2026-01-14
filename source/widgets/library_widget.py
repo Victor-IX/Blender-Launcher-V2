@@ -1043,9 +1043,13 @@ class LibraryWidget(BaseBuildWidget):
             version = self.build_info.bforartist_version_matcher
         elif branch.startswith("upbge"):
             custom_folder = "UPBGE"
-            # Custom subfolder for UPBGE is the same as Blender on Windows but not on Linux
-            if get_platform() == "Linux":
+            platform = get_platform()
+            if platform == "Windows":
+                custom_subfolder = "Blender"
+            elif platform == "Linux":
                 custom_subfolder = "upbge"
+            elif platform == "macOS":
+                custom_subfolder = "UPBGE"
             version = self.build_info.upbge_version_matcher
 
         if version is None:
