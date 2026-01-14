@@ -14,7 +14,7 @@
         <link rel="prev" href="../library_folder/">
       
       
-        <link rel="next" href="../manual_build_installation/">
+        <link rel="next" href="../blender_forks/">
       
       
         
@@ -839,6 +839,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#connection-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Authentication
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Connection Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1098,6 +1137,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../blender_forks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blender Forks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../manual_build_installation/" class="md-nav__link">
         
   
@@ -1160,6 +1226,33 @@
     
   
     File Association
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../github_token/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Token
   
 
     
@@ -1259,9 +1352,20 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../development/" class="md-nav__link">
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1275,7 +1379,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../implementing_new_fork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementing New Fork
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1773,6 +1949,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#connection-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Authentication
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Connection Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2166,6 +2381,20 @@ Default value: <code>Send to Trash</code>.</dd>
 <dl>
 <dd>Specifies the password required to authenticate with the proxy server, if applicable.</dd>
 </dl>
+<h3 id="connection-authentication">Connection Authentication<a class="headerlink" href="#connection-authentication" title="Permanent link">&para;</a></h3>
+<h4 id="user-id">User ID<a class="headerlink" href="#user-id" title="Permanent link">&para;</a></h4>
+<dl>
+<dd>Unique identifier used to authenticate with the Blender website for downloading builds. Generated automatically if not set.</dd>
+</dl>
+<h4 id="github-token">GitHub Token<a class="headerlink" href="#github-token" title="Permanent link">&para;</a></h4>
+<dl>
+<dd>Optional GitHub Personal Access Token to avoid rate limiting when checking for launcher updates and fetching API data.</dd>
+<dd>For detailed instructions on creating and configuring a GitHub token, see the <a href="../github_token/">GitHub Token</a> page.</dd>
+</dl>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Without a token, GitHub limits requests to 60 per hour. With a token, you get 5,000 requests per hour.</p>
+</div>
 <h2 id="blender-builds">Blender Builds<a class="headerlink" href="#blender-builds" title="Permanent link">&para;</a></h2>
 <p><img alt="Blender Builds page of Settings" src="../imgs/settings_window_blenderbuilds.png" /></p>
 <h3 id="visibility-and-downloading">Visibility and Downloading<a class="headerlink" href="#visibility-and-downloading" title="Permanent link">&para;</a></h3>
