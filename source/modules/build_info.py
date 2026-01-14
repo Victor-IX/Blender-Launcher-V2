@@ -352,7 +352,21 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
         )
         raise FileNotFoundError(f"Executable not found: {exe}")
 
-    version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
+    version = None
+    try:
+        version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
+    except Exception as e:
+        # If exe -v fails (e.g., crashes with SIGSEGV) and we have info from scraper, use that
+        if info is not None:
+            logger.warning(f"Failed to run '{exe} -v': {e}. Using scraper info as fallback.")
+            return (
+                info.commit_time,
+                info.build_hash or "",
+                info.subversion or "",
+                info.custom_name or "",
+            )
+        raise
+
     strptime = None
     build_hash = ""
     subversion = ""
@@ -663,21 +677,37 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
 
     elif platform == "macOS":
-        # Auto-detect .app bundle path
-        # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
-        bforartists_app = Path(info.link) / "Bforartists.app"
-        blender_app = Path(info.link) / "Blender.app"
-        blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
-
-        if bforartists_app.is_dir():
-            # macOS: Bforartists from DMG extraction
-            b3d_exe = bforartists_app
-        elif blender_app.is_dir():
-            # macOS: Blender from DMG extraction
-            b3d_exe = blender_app
+        # Check custom_executable first (for UPBGE, etc.)
+        cexe = info.custom_executable
+        if cexe:
+            # custom_executable contains path like "Blenderplayer.app/Contents/MacOS/Blenderplayer"
+            # Extract the .app bundle path for 'open' command
+            cexe_path = Path(cexe)
+            app_bundle = None
+            for part in cexe_path.parts:
+                if part.endswith(".app"):
+                    app_bundle = part
+                    break
+            if app_bundle:
+                b3d_exe = Path(info.link) / app_bundle
+            else:
+                b3d_exe = Path(info.link) / cexe
         else:
-            # macOS: Standard Blender structure (fallback)
-            b3d_exe = blender_standard_app
+            # Auto-detect .app bundle path
+            # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
+            bforartists_app = Path(info.link) / "Bforartists.app"
+            blender_app = Path(info.link) / "Blender.app"
+            blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
+
+            if bforartists_app.is_dir():
+                # macOS: Bforartists from DMG extraction
+                b3d_exe = bforartists_app
+            elif blender_app.is_dir():
+                # macOS: Blender from DMG extraction
+                b3d_exe = blender_app
+            else:
+                # macOS: Standard Blender structure (fallback)
+                b3d_exe = blender_standard_app
 
         args = f"open -W -n {shlex.quote(b3d_exe.as_posix())} --args"
 

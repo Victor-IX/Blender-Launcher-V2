@@ -61,8 +61,6 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
                             has_bforartists_exe = (path / build / "Bforartists.app").is_dir()
                         if not has_blender_exe:
                             has_blender_exe = (path / build / "Blender.app").is_dir()
-                        if not has_upbge_exe:
-                            has_upbge_exe = (path / build / "Blender.app").is_dir()
 
                     yield (
                         folder / build,

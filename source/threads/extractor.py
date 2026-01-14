@@ -137,17 +137,16 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
         try:
             mount_path = Path(mount_point)
 
-            # Find .app file in the mounted volume
+            # Find all .app files in the mounted volume (e.g., UPBGE has Blender.app and Blenderplayer.app)
             app_files = list(mount_path.glob("*.app"))
 
             if not app_files:
                 raise RuntimeError(f"No .app file found in {mount_point}")
 
-            app_file = app_files[0]
-
-            # Calculate approximate size for progress reporting
-            # Note: This is approximate as we use ditto which doesn't provide progress
-            total_size = sum(f.stat().st_size for f in app_file.rglob("*") if f.is_file())
+            # Calculate approximate total size for progress reporting
+            total_size = sum(
+                f.stat().st_size for app_file in app_files for f in app_file.rglob("*") if f.is_file()
+            )
             progress_callback(0, total_size)
 
             # Create destination directory
@@ -155,27 +154,41 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             if not dist.is_dir():
                 dist.mkdir(parents=True)
 
-            # Copy the .app bundle to destination using ditto
+            # Copy all .app bundles to destination using ditto
             # ditto is the recommended way to copy .app bundles on macOS
             # as it preserves resource forks, extended attributes, and permissions
-            dest_app = dist / app_file.name
+            copied_size = 0
+            for app_file in app_files:
+                dest_app = dist / app_file.name
 
-            logger.info(f"Copying {app_file} to {dest_app} using ditto")
-            try:
-                _check_call(["ditto", app_file.as_posix(), dest_app.as_posix()])
-                logger.info(f"Successfully copied {app_file.name} to {dest_app}")
+                logger.info(f"Copying {app_file} to {dest_app} using ditto")
+                try:
+                    _check_call(["ditto", app_file.as_posix(), dest_app.as_posix()])
+                    logger.info(f"Successfully copied {app_file.name} to {dest_app}")
 
-                # Verify the copy was successful by checking if the destination exists
-                if not dest_app.exists():
-                    raise RuntimeError(f"Copy completed but destination not found: {dest_app}")
+                    # Verify the copy was successful by checking if the destination exists
+                    if not dest_app.exists():
+                        raise RuntimeError(f"Copy completed but destination not found: {dest_app}")
 
-                # On macOS, ensure file system buffers are flushed
-                _check_call(["sync"])
-                logger.info("File system buffers flushed")
+                    # Remove quarantine attribute to allow unsigned apps (like UPBGE) to run
+                    try:
+                        _check_call(["xattr", "-cr", dest_app.as_posix()])
+                        logger.info(f"Removed quarantine attribute from {dest_app}")
+                    except Exception as e:
+                        logger.warning(f"Failed to remove quarantine attribute: {e}")
 
-            except Exception as e:
-                logger.error(f"Failed to copy {app_file} with ditto: {e}")
-                raise
+                    # Update progress
+                    app_size = sum(f.stat().st_size for f in app_file.rglob("*") if f.is_file())
+                    copied_size += app_size
+                    progress_callback(copied_size, total_size)
+
+                except Exception as e:
+                    logger.error(f"Failed to copy {app_file} with ditto: {e}")
+                    raise
+
+            # On macOS, ensure file system buffers are flushed
+            _check_call(["sync"])
+            logger.info("File system buffers flushed")
 
             # Report completion
             progress_callback(total_size, total_size)
