@@ -26,6 +26,43 @@ from semver import Version
 logger = logging.getLogger()
 
 
+# Fork-specific configuration paths
+# Check the coc for more info:
+# https://victor-ix.github.io/Blender-Launcher-V2/implementing_new_fork/#10-handle-config-folders
+
+FORK_CONFIG_PATHS = {
+    "bforartists": {
+        "config_folder": "bforartists",
+        "config_subfolder": "bforartists",
+    },
+    "upbge": {
+        "config_folder": "UPBGE",
+        "config_subfolder": {
+            "Windows": "Blender",
+            "Linux": "upbge",
+            "macOS": "UPBGE",
+        },
+    },
+}
+
+
+def get_fork_config_paths(branch: str) -> dict[str, str | None] | None:
+    """
+    Get config folder paths for a specific fork branch.
+
+    Args:
+        branch: The branch name (e.g., "upbge", "bforartists")
+
+    Returns:
+        Dictionary with 'config_folder' and 'config_subfolder' keys, or None if not a fork.
+        config_subfolder may be platform-specific (dict) or a single string.
+    """
+    for fork_branch, config in FORK_CONFIG_PATHS.items():
+        if branch.startswith(fork_branch):
+            return config
+    return None
+
+
 # TODO: Combine some of these
 matchers = tuple(
     map(

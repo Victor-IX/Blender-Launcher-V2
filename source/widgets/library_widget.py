@@ -17,6 +17,7 @@ from modules.build_info import (
     LaunchOpenLast,
     LaunchWithBlendFile,
     WriteBuildTask,
+    get_fork_config_paths,
     launch_build,
 )
 from modules.enums import MessageType
@@ -1037,20 +1038,23 @@ class LibraryWidget(BaseBuildWidget):
         custom_folder = None
         custom_subfolder = None
 
-        if branch == "bforartists":
-            custom_folder = "bforartists"
-            custom_subfolder = "bforartists"
-            version = self.build_info.bforartist_version_matcher
-        elif branch.startswith("upbge"):
-            custom_folder = "UPBGE"
-            platform = get_platform()
-            if platform == "Windows":
-                custom_subfolder = "Blender"
-            elif platform == "Linux":
-                custom_subfolder = "upbge"
-            elif platform == "macOS":
-                custom_subfolder = "UPBGE"
-            version = self.build_info.upbge_version_matcher
+        fork_config = get_fork_config_paths(branch)
+        if fork_config:
+            custom_folder = fork_config.get("config_folder")
+            subfolder_config = fork_config.get("config_subfolder")
+
+            # Handle platform-specific subfolder
+            if isinstance(subfolder_config, dict):
+                platform = get_platform()
+                custom_subfolder = subfolder_config.get(platform)
+            else:
+                custom_subfolder = subfolder_config
+
+            # Get version from version matcher
+            if branch == "bforartists":
+                version = self.build_info.bforartist_version_matcher
+            elif branch.startswith("upbge"):
+                version = self.build_info.upbge_version_matcher
 
         if version is None:
             version_str = ""
