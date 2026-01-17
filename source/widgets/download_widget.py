@@ -317,7 +317,7 @@ class DownloadWidget(BaseBuildWidget):
             archive_name=archive_name,
         )
         t.finished.connect(self.download_rename)
-        t.failure.connect(lambda: print("Reading failed"))
+        t.failure.connect(lambda e: logger.error(f"ReadBuildTask failed for {self.build_dir}: {e}"))
         self.parent.task_queue.append(t)
 
     def download_rename(self, build_info: BuildInfo) -> None:
