@@ -2,13 +2,13 @@
 
 ![Blender Launcher Logo](imgs/bl_logo.png)
 
-[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 49.75%; text-align: center;"}
-[:fontawesome-brands-apple: Get for MacOS](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_macos_arm64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 49.75%; text-align: center;"}
+[:fontawesome-brands-windows: Get for Windows](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.6.0/Blender_Launcher_v2.6.0_Windows_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 49.75%; text-align: center;"}
+[:fontawesome-brands-apple: Get for MacOS](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.6.0/Blender_Launcher_v2.6.0_macos_arm64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 49.75%; text-align: center;"}
 
 <div style="padding-top: 43px;"></div>
 
-[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 33%; text-align: center;"}
-[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.5.3/Blender_Launcher_v2.5.3_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 33%; text-align: center;"}
+[:fontawesome-brands-linux: Get for Linux](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.6.0/Blender_Launcher_v2.6.0_Linux_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; width: 33%; text-align: center;"}
+[:fontawesome-brands-ubuntu: Get for Ubuntu](https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/v2.6.0/Blender_Launcher_v2.6.0_Ubuntu_x64.zip){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 33%; text-align: center;"}
 [:fontawesome-solid-download: All Releases](https://github.com/Victor-IX/Blender-Launcher-V2/releases){: .md-button .md-button--primary style="display: inline-block; float: left; margin-left: 0.5%; width: 33%; text-align: center;"}
 
 <br/>
