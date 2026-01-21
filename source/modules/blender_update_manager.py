@@ -121,6 +121,12 @@ def _new_version_available(
             if download_version.compare(str(best_version)) > 0:
                 best_version = download_version
                 best_version_download = download
+            elif download_version.compare(str(best_version)) == 0:
+                if (
+                    best_version_download is None
+                    or build_info.commit_time > best_version_download.build_info.commit_time
+                ):
+                    best_version_download = download
 
         # Check for hash updates for same version
         elif (
