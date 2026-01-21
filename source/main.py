@@ -29,7 +29,7 @@ version = Version(
     2,
     6,
     0,
-    prerelease="rc.1",
+    prerelease="rc.2",
 )
 
 
