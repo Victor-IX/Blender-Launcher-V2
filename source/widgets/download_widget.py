@@ -283,6 +283,15 @@ class DownloadWidget(BaseBuildWidget):
         self.parent.task_queue.remove_task(self.dl_task)
         self.build_state_widget.setDownload(False)
 
+        # Reset the widget's button states if this was an update download
+        if self.updating_widget is not None:
+            self.updating_widget.launchButton.set_text("Launch")
+            self.updating_widget.launchButton.setEnabled(True)
+            if hasattr(self.updating_widget, "_update_download_widget"):
+                self.updating_widget._show_update_button()
+                self.updating_widget.updateButton.clicked.connect(self.updating_widget._trigger_update_download)
+            self.updating_widget = None
+
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)
         if self.parent.platform == "Linux":
