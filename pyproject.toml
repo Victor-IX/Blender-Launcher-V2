@@ -1,6 +1,6 @@
 [project]
 name = "Blender-Launcher-V2"
-version = "2.5.3"
+version = "2.6.0"
 description = ""
 authors = []
 dependencies = [
@@ -20,6 +20,7 @@ dependencies = [
     "pyside6-essentials==6.10.1",
     "markdown>=3.7",
     "keyring>=25.7.0",
+    "py7zr>=0.22.0",
 ]
 requires-python = "<3.15,>=3.11"
 readme = "README.md"

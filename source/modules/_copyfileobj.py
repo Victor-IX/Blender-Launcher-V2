@@ -1,8 +1,10 @@
 import os
-import shutil
 
-# Differs from shutil.COPY_BUFSIZE on platforms != Windows
-READINTO_BUFSIZE = 1024 * 1024
+# pulled from `shutil` but with callback options
+
+# `shutil` does not expose this variable
+# NOTICE: it's 256 * 1024 in 3.14 but is 64 * 1024 in 3.11
+COPY_BUFSIZE = 1024 * 1024 if os.name == "nt" else 256 * 1024
 
 
 def copyfileobj(fsrc, fdst, callback, length=0):
@@ -15,23 +17,21 @@ def copyfileobj(fsrc, fdst, callback, length=0):
     try:
         # Check for optimization opportunity
         if "b" in fsrc.mode and "b" in fdst.mode and fsrc.readinto:
-            return _copyfileobj_readinto(fsrc, fdst, callback, length)
+            _copyfileobj_readinto(fsrc, fdst, callback, length)
     except AttributeError:
         # One or both file objects do not
         # support a .mode or .readinto attribute
         pass
 
     if not length:
-        length = shutil.COPY_BUFSIZE
+        length = COPY_BUFSIZE
 
+    # Localize variable access to minimize overhead.
     fsrc_read = fsrc.read
     fdst_write = fdst.write
 
     copied = 0
-    while True:
-        buf = fsrc_read(length)
-        if not buf:
-            break
+    while buf := fsrc_read(length):
         fdst_write(buf)
         copied += len(buf)
         callback(copied)
@@ -49,8 +49,8 @@ def _copyfileobj_readinto(fsrc, fdst, callback, length=0):
         try:
             file_size = os.stat(fsrc.fileno()).st_size
         except OSError:
-            file_size = READINTO_BUFSIZE
-        length = min(file_size, READINTO_BUFSIZE)
+            file_size = COPY_BUFSIZE
+        length = min(file_size, COPY_BUFSIZE)
 
     copied = 0
     with memoryview(bytearray(length)) as mv:
@@ -61,8 +61,11 @@ def _copyfileobj_readinto(fsrc, fdst, callback, length=0):
 
             if n < length:
                 with mv[:n] as smv:
-                    fdst.write(smv)
-            else:
-                fdst_write(mv)
+                    fdst_write(smv)
+
+                callback(copied + n)
+                break
+
+            fdst_write(mv)
             copied += n
             callback(copied)

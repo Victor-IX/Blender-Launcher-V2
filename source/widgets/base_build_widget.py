@@ -53,7 +53,6 @@ class BaseBuildWidget(QWidget):
 
         branch = self.build_info.branch
 
-
         if branch in {"stable", "daily"}:
             ver = self.build_info.semversion
             QDesktopServices.openUrl(f"https://wiki.blender.org/wiki/Reference/Release_Notes/{ver.major}.{ver.minor}")

@@ -272,23 +272,19 @@ def bfa_cache_path() -> Path:
     return get_cache_path() / "bforartists_builds.json"
 
 
-def get_blender_config_folder(custom_folder: str | None = None):
+def get_blender_config_folder(
+    config_folder_name: str = "Blender Foundation", config_subfolder_name: str = "blender"
+) -> Path | None:
     """
     Retrieves the Blender configuration folder.
     :param custom_folder: Optional; a custom folder name use to locate fork blender configuration folder.
     """
     platform = get_platform()
-    folder_name = "blender"
-    parent_folder_name = "Blender Foundation"
-
-    if custom_folder:
-        folder_name = custom_folder
-        parent_folder_name = custom_folder
 
     if platform == "Windows":
-        return Path(os.environ.get("APPDATA"), parent_folder_name, folder_name)
+        return Path(os.environ.get("APPDATA", ""), config_folder_name, config_subfolder_name)
     elif platform == "Linux":
-        return Path(os.environ.get("XDG_CONFIG_HOME", "") or os.path.expanduser("~/.config"), folder_name)
+        return Path(os.environ.get("XDG_CONFIG_HOME", "") or os.path.expanduser("~/.config"), config_subfolder_name)
     elif platform == "macOS":
-        return Path(os.path.expanduser("~/Library/Application Support"), folder_name)
+        return Path(os.path.expanduser("~/Library/Application Support"), config_subfolder_name)
     return None

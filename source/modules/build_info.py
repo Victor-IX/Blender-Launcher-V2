@@ -6,7 +6,7 @@ import re
 import shlex
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from functools import cache
 from pathlib import Path
 
@@ -24,6 +24,43 @@ from PySide6.QtCore import Signal
 from semver import Version
 
 logger = logging.getLogger()
+
+
+# Fork-specific configuration paths
+# Check the coc for more info:
+# https://victor-ix.github.io/Blender-Launcher-V2/implementing_new_fork/#10-handle-config-folders
+
+FORK_CONFIG_PATHS = {
+    "bforartists": {
+        "config_folder": "bforartists",
+        "config_subfolder": "bforartists",
+    },
+    "upbge": {
+        "config_folder": "UPBGE",
+        "config_subfolder": {
+            "Windows": "Blender",
+            "Linux": "upbge",
+            "macOS": "UPBGE",
+        },
+    },
+}
+
+
+def get_fork_config_paths(branch: str) -> dict[str, str | None] | None:
+    """
+    Get config folder paths for a specific fork branch.
+
+    Args:
+        branch: The branch name (e.g., "upbge", "bforartists")
+
+    Returns:
+        Dictionary with 'config_folder' and 'config_subfolder' keys, or None if not a fork.
+        config_subfolder may be platform-specific (dict) or a single string.
+    """
+    for fork_branch, config in FORK_CONFIG_PATHS.items():
+        if branch.startswith(fork_branch):
+            return config
+    return None
 
 
 # TODO: Combine some of these
@@ -169,6 +206,10 @@ class BuildInfo:
     def bforartist_version_matcher(self):
         return bfa_version_matcher(self.semversion)
 
+    @property
+    def upbge_version_matcher(self):
+        return upbge_version_matcher(self.semversion)
+
     @staticmethod
     @cache
     def _display_version(v: Version):
@@ -197,6 +238,14 @@ class BuildInfo:
             else:
                 b = subv.split("-", 1)[-1].title()
             return b
+
+        # Handle UPBGE branches specially
+        if branch.startswith("upbge"):
+            parts = branch.split("-")
+            if len(parts) == 2:
+                return f"UPBGE {parts[1].title()}"
+            return "UPBGE"
+
         if v.prerelease is not None:
             if v.prerelease.startswith("rc"):
                 return f"Release Candidate {v.prerelease[2:]}"
@@ -269,7 +318,7 @@ class BuildInfo:
             str(path),
             "0.0.0",
             "",
-            datetime.now(tz=timezone.utc),
+            datetime.now(tz=UTC),
             path.parent.name,
             str(path.name),
             False,
@@ -303,7 +352,21 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
         )
         raise FileNotFoundError(f"Executable not found: {exe}")
 
-    version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
+    version = None
+    try:
+        version = _check_output([exe.as_posix(), "-v"]).decode("UTF-8")
+    except Exception as e:
+        # If exe -v fails (e.g., crashes with SIGSEGV) and we have info from scraper, use that
+        if info is not None:
+            logger.warning(f"Failed to run '{exe} -v': {e}. Using scraper info as fallback.")
+            return (
+                info.commit_time,
+                info.build_hash or "",
+                info.subversion or "",
+                info.custom_name or "",
+            )
+        raise
+
     strptime = None
     build_hash = ""
     subversion = ""
@@ -614,21 +677,37 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
 
     elif platform == "macOS":
-        # Auto-detect .app bundle path
-        # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
-        bforartists_app = Path(info.link) / "Bforartists.app"
-        blender_app = Path(info.link) / "Blender.app"
-        blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
-
-        if bforartists_app.is_dir():
-            # macOS: Bforartists from DMG extraction
-            b3d_exe = bforartists_app
-        elif blender_app.is_dir():
-            # macOS: Blender from DMG extraction
-            b3d_exe = blender_app
+        # Check custom_executable first (for UPBGE, etc.)
+        cexe = info.custom_executable
+        if cexe:
+            # custom_executable contains path like "Blenderplayer.app/Contents/MacOS/Blenderplayer"
+            # Extract the .app bundle path for 'open' command
+            cexe_path = Path(cexe)
+            app_bundle = None
+            for part in cexe_path.parts:
+                if part.endswith(".app"):
+                    app_bundle = part
+                    break
+            if app_bundle:
+                b3d_exe = Path(info.link) / app_bundle
+            else:
+                b3d_exe = Path(info.link) / cexe
         else:
-            # macOS: Standard Blender structure (fallback)
-            b3d_exe = blender_standard_app
+            # Auto-detect .app bundle path
+            # Priority: Bforartists (DMG) > Blender (DMG) > Blender (standard)
+            bforartists_app = Path(info.link) / "Bforartists.app"
+            blender_app = Path(info.link) / "Blender.app"
+            blender_standard_app = Path(info.link) / "Blender" / "Blender.app"
+
+            if bforartists_app.is_dir():
+                # macOS: Bforartists from DMG extraction
+                b3d_exe = bforartists_app
+            elif blender_app.is_dir():
+                # macOS: Blender from DMG extraction
+                b3d_exe = blender_app
+            else:
+                # macOS: Standard Blender structure (fallback)
+                b3d_exe = blender_standard_app
 
         args = f"open -W -n {shlex.quote(b3d_exe.as_posix())} --args"
 
@@ -656,9 +735,34 @@ def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = Non
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
     versions = read_blender_version_list()
     for i, version in enumerate(versions):
-        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}.{bfa_blender_version.patch}"):
+        if version.match(f"{bfa_blender_version.major}.{bfa_blender_version.minor}.0"):
             if i + 1 < len(versions) and i > 0:
                 return versions[i - 1]
             else:
+                # If this code is triggered this usually means that the latest Blender version in the api file have note been added yet.
+                # Bforartist version are offset by one minor version compared to Blender versioning but use the Blender versioning for the config file.
+                # Bforartist versioning: 5.0,0 -> Blender versioning: 5.1.0 -> config version file: 5.1
+                logger.warning(
+                    "No matching Bforartists version found, if this append on the latest vesrion of bforartists, please report to developer."
+                )
                 return None
     return None
+
+
+def upbge_version_matcher(upbge_blender_version: Version) -> Version | None:
+    versions = read_blender_version_list()
+    upbge_str_version = str(upbge_blender_version.minor)
+
+    if len(upbge_str_version) == 3:
+        matching_version = Version(int(upbge_str_version[:2]), int(upbge_str_version[2]))
+    elif len(upbge_str_version) == 2:
+        matching_version = Version(int(upbge_str_version[0]), int(upbge_str_version[1]))
+    else:
+        logger.error("Fail to generate the UPBGE config version from the main version")
+        return None
+
+    if matching_version in versions:
+        return matching_version
+    else:
+        logger.error("Version not matching a known Blender config version")
+        return None

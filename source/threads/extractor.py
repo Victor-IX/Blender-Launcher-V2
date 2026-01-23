@@ -1,5 +1,6 @@
 import logging
 import re
+import shutil
 import tarfile
 import zipfile
 from collections.abc import Callable
@@ -7,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+import py7zr
 from modules._platform import _check_call, _check_output
 from modules.enums import MessageType
 from modules.task import Task
@@ -32,20 +34,67 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
                 names = [m.filename for m in members]
                 folder = _get_build_folder(names)
 
-                if folder is None:
+                # Check if this is a UPBGE archive (folder is "bin" with bin/Release structure)
+                is_upbge = folder == "bin" and any(n.startswith("bin/Release/") for n in names)
+
+                if is_upbge:
+                    folder = source.stem
+                    logger.info(f"Detected UPBGE archive with bin/Release structure, using: {folder}")
+                elif folder is None:
                     folder = members[0].filename.split("/")[0]
 
                 uncompress_size = sum(member.file_size for member in members)
                 progress_callback(0, uncompress_size)
                 extracted_size = 0
 
+                # For UPBGE flat archives, extract into a subfolder
+                extract_dest = destination / folder if is_upbge else destination
+
                 for member in members:
-                    zf.extract(member, destination)
+                    zf.extract(member, extract_dest)
                     extracted_size += member.file_size
                     progress_callback(extracted_size, uncompress_size)
             return destination / folder
         except zipfile.BadZipFile as e:
             logger.error(f"Bad zip file: {source} - {e}")
+            raise
+
+    if suffixes[-1] == ".7z":
+        try:
+            with py7zr.SevenZipFile(source, mode="r") as szf:
+                allfiles = szf.getnames()
+                folder = _get_build_folder(allfiles)
+
+                # Check if this is a UPBGE archive with bin/Release structure
+                is_upbge = folder == "bin" and any(n.startswith("bin/Release/") for n in allfiles)
+
+                if is_upbge:
+                    folder = source.stem
+                    logger.info(f"Detected UPBGE 7z archive with bin/Release structure, using: {folder}")
+                elif folder is None:
+                    folder = allfiles[0].split("/")[0]
+
+                # For UPBGE flat archives, extract into a subfolder
+                extract_dest = destination / folder if is_upbge else destination
+                extract_dest.mkdir(parents=True, exist_ok=True)
+
+                # Get file info for progress tracking
+                file_info = szf.list()
+                total_size = sum(f.uncompressed for f in file_info)
+                progress_callback(0, total_size)
+
+                # Extract all files
+                szf.extractall(path=extract_dest)
+
+                # Report completion
+                progress_callback(total_size, total_size)
+
+            return destination / folder
+        except py7zr.Bad7zFile as e:
+            logger.error(f"Bad 7z file: {source} - {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Failed to extract 7z file: {source} - {e}")
             raise
 
     if suffixes[-2] == ".tar":
@@ -88,17 +137,16 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
         try:
             mount_path = Path(mount_point)
 
-            # Find .app file in the mounted volume
+            # Find all .app files in the mounted volume (e.g., UPBGE has Blender.app and Blenderplayer.app)
             app_files = list(mount_path.glob("*.app"))
 
             if not app_files:
                 raise RuntimeError(f"No .app file found in {mount_point}")
 
-            app_file = app_files[0]
-
-            # Calculate approximate size for progress reporting
-            # Note: This is approximate as we use ditto which doesn't provide progress
-            total_size = sum(f.stat().st_size for f in app_file.rglob("*") if f.is_file())
+            # Calculate approximate total size for progress reporting
+            total_size = sum(
+                f.stat().st_size for app_file in app_files for f in app_file.rglob("*") if f.is_file()
+            )
             progress_callback(0, total_size)
 
             # Create destination directory
@@ -106,27 +154,41 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             if not dist.is_dir():
                 dist.mkdir(parents=True)
 
-            # Copy the .app bundle to destination using ditto
+            # Copy all .app bundles to destination using ditto
             # ditto is the recommended way to copy .app bundles on macOS
             # as it preserves resource forks, extended attributes, and permissions
-            dest_app = dist / app_file.name
+            copied_size = 0
+            for app_file in app_files:
+                dest_app = dist / app_file.name
 
-            logger.info(f"Copying {app_file} to {dest_app} using ditto")
-            try:
-                _check_call(["ditto", app_file.as_posix(), dest_app.as_posix()])
-                logger.info(f"Successfully copied {app_file.name} to {dest_app}")
+                logger.info(f"Copying {app_file} to {dest_app} using ditto")
+                try:
+                    _check_call(["ditto", app_file.as_posix(), dest_app.as_posix()])
+                    logger.info(f"Successfully copied {app_file.name} to {dest_app}")
 
-                # Verify the copy was successful by checking if the destination exists
-                if not dest_app.exists():
-                    raise RuntimeError(f"Copy completed but destination not found: {dest_app}")
+                    # Verify the copy was successful by checking if the destination exists
+                    if not dest_app.exists():
+                        raise RuntimeError(f"Copy completed but destination not found: {dest_app}")
 
-                # On macOS, ensure file system buffers are flushed
-                _check_call(["sync"])
-                logger.info("File system buffers flushed")
+                    # Remove quarantine attribute to allow unsigned apps (like UPBGE) to run
+                    try:
+                        _check_call(["xattr", "-cr", dest_app.as_posix()])
+                        logger.info(f"Removed quarantine attribute from {dest_app}")
+                    except Exception as e:
+                        logger.warning(f"Failed to remove quarantine attribute: {e}")
 
-            except Exception as e:
-                logger.error(f"Failed to copy {app_file} with ditto: {e}")
-                raise
+                    # Update progress
+                    app_size = sum(f.stat().st_size for f in app_file.rglob("*") if f.is_file())
+                    copied_size += app_size
+                    progress_callback(copied_size, total_size)
+
+                except Exception as e:
+                    logger.error(f"Failed to copy {app_file} with ditto: {e}")
+                    raise
+
+            # On macOS, ensure file system buffers are flushed
+            _check_call(["sync"])
+            logger.info("File system buffers flushed")
 
             # Report completion
             progress_callback(total_size, total_size)
@@ -161,6 +223,86 @@ def _get_build_folder(names: list[str]):
     return None
 
 
+def _fix_upbge_structure(build_path: Path) -> Path:
+    """
+    Fix UPBGE build structure by moving contents to the expected location.
+
+    UPBGE builds can have different structures:
+    1. bin/Release subfolder (daily builds): needs to be flattened
+    2. Nested folder with same name as zip (stable builds): needs unwrapping
+
+    Args:
+        build_path: Path to extracted build folder
+
+    Returns:
+        Path to the fixed build folder (may differ from input)
+    """
+    # Handle bin/Release structure (daily builds)
+    bin_release = build_path / "bin" / "Release"
+
+    if bin_release.exists():
+        logger.info(f"Detected UPBGE bin/Release structure in {build_path}")
+
+        try:
+            # Move all contents from bin/Release to build root
+            for item in bin_release.iterdir():
+                dest = build_path / item.name
+                if dest.exists():
+                    # If destination exists, remove it first
+                    if dest.is_dir():
+                        shutil.rmtree(dest)
+                    else:
+                        dest.unlink()
+                shutil.move(str(item), str(build_path))
+                logger.debug(f"Moved {item.name} to build root")
+
+            # Remove the now-empty bin directory
+            bin_folder = build_path / "bin"
+            if bin_folder.exists():
+                shutil.rmtree(bin_folder)
+                logger.info(f"Removed empty bin folder from {build_path}")
+
+            logger.info(f"Successfully fixed UPBGE bin/Release structure for {build_path}")
+        except Exception as e:
+            logger.error(f"Failed to fix UPBGE structure: {e}")
+            raise
+
+        return build_path
+
+    # Handle nested folder structure (stable builds)
+    # Check if there's a single subfolder with the same name as the build
+    subdirs = [d for d in build_path.iterdir() if d.is_dir()]
+
+    # Look for UPBGE executable to determine if unwrapping is needed
+    # UPBGE uses blender.exe/blender as executable name, not upbge.exe/upbge
+    has_upbge_exe = (build_path / "blender.exe").exists() or (build_path / "blender").exists()
+
+    if not has_upbge_exe and len(subdirs) == 1:
+        nested_folder = subdirs[0]
+        nested_has_upbge = (nested_folder / "blender.exe").exists() or (nested_folder / "blender").exists()
+
+        if nested_has_upbge:
+            logger.info(f"Detected UPBGE nested folder structure: {nested_folder.name} inside {build_path.name}")
+
+            try:
+                # Move all contents from nested folder up one level
+                temp_dir = build_path.parent / f"{build_path.name}_temp"
+                shutil.move(str(nested_folder), str(temp_dir))
+
+                # Remove the now-empty parent folder
+                shutil.rmtree(build_path)
+
+                # Rename temp folder to the original name
+                shutil.move(str(temp_dir), str(build_path))
+
+                logger.info(f"Successfully unwrapped UPBGE nested structure for {build_path}")
+            except Exception as e:
+                logger.error(f"Failed to unwrap UPBGE nested structure: {e}")
+                raise
+
+    return build_path
+
+
 @dataclass
 class ExtractTask(Task):
     file: Path
@@ -192,14 +334,16 @@ class ExtractTask(Task):
                 logger.debug(f"Removed existing file: {self.destination / self.file.stem}")
 
             result = extract(self.file, self.destination, self.progress.emit)
-            if result is not None:
-                self.finished.emit(result, is_removed)
-        except (zipfile.BadZipFile, tarfile.TarError) as e:
+            if result is None:
+                raise ValueError(f"Unsupported archive format: {self.file.suffix}")
+
+            # Fix UPBGE structure if needed
+            result = _fix_upbge_structure(result)
+            self.finished.emit(result, is_removed)
+        except (zipfile.BadZipFile, tarfile.TarError, py7zr.Bad7zFile) as e:
             self._handle_extraction_error(e)
-            raise
         except Exception as e:
             self._handle_extraction_error(e, use_exception_log=True)
-            raise
 
     def __str__(self):
         return f"Extract {self.file} to {self.destination}"

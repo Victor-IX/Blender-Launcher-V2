@@ -11,8 +11,12 @@ from modules.settings import (
     get_show_daily_update_button,
     get_show_experimental_update_button,
     get_show_stable_update_button,
+    get_show_upbge_stable_update_button,
+    get_show_upbge_weekly_update_button,
     get_show_update_button,
     get_stable_update_behavior,
+    get_upbge_stable_update_behavior,
+    get_upbge_weekly_update_behavior,
     get_update_behavior,
     get_use_advanced_update_button,
 )
@@ -56,6 +60,12 @@ def _branch_visibility(current_branch: str) -> bool:
     bfa_update_button_visibility = (
         get_show_bfa_update_button() if get_use_advanced_update_button() else get_show_update_button()
     )
+    upbge_stable_update_button_visibility = (
+        get_show_upbge_stable_update_button() if get_use_advanced_update_button() else get_show_update_button()
+    )
+    upbge_weekly_update_button_visibility = (
+        get_show_upbge_weekly_update_button() if get_use_advanced_update_button() else get_show_update_button()
+    )
 
     if current_branch in {"stable", "lts"} and stable_update_button_visibility:
         return True
@@ -64,6 +74,10 @@ def _branch_visibility(current_branch: str) -> bool:
     elif any(current_branch.startswith(prefix) for prefix in ["Pr", "Npr"]) and experimental_update_button_visibility:
         return True
     elif current_branch == "bforartists" and bfa_update_button_visibility:
+        return True
+    elif current_branch == "upbge-stable" and upbge_stable_update_button_visibility:
+        return True
+    elif current_branch == "upbge-weekly" and upbge_weekly_update_button_visibility:
         return True
     return False
 
@@ -95,8 +109,8 @@ def _new_version_available(
         download_version = build_info.semversion.replace(prerelease=None)
         download_hash = build_info.build_hash
 
-        # Skip already installed versions/hashes
-        if download_hash in installed_hashes:
+        # Skip already installed versions/hashes (only check hash if it's not None)
+        if download_hash is not None and download_hash in installed_hashes:
             continue
 
         if download_version in installed_versions and not _is_newer_build(build_info, current_build_info):
@@ -107,6 +121,12 @@ def _new_version_available(
             if download_version.compare(str(best_version)) > 0:
                 best_version = download_version
                 best_version_download = download
+            elif download_version.compare(str(best_version)) == 0:
+                if (
+                    best_version_download is None
+                    or build_info.commit_time > best_version_download.build_info.commit_time
+                ):
+                    best_version_download = download
 
         # Check for hash updates for same version
         elif (
@@ -200,6 +220,12 @@ def _get_update_behavior(
         get_experimental_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
     )
     bfa_update_behavior = get_bfa_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    upbge_stable_update_behavior = (
+        get_upbge_stable_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    )
+    upbge_weekly_update_behavior = (
+        get_upbge_weekly_update_behavior() if get_use_advanced_update_button() else get_update_behavior()
+    )
 
     if current_branch in {"stable", "lts"}:
         return stable_update_behavior
@@ -209,5 +235,9 @@ def _get_update_behavior(
         return experimental_update_behavior
     elif current_branch == "bforartists":
         return bfa_update_behavior
+    elif current_branch == "upbge-stable":
+        return upbge_stable_update_behavior
+    elif current_branch == "upbge-weekly":
+        return upbge_weekly_update_behavior
 
     return get_update_behavior()

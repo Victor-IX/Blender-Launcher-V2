@@ -21,7 +21,6 @@ logger = logging.getLogger()
 
 
 class LibraryDamagedWidget(BaseBuildWidget):
-
     def __init__(
         self,
         parent: BlenderLauncher,

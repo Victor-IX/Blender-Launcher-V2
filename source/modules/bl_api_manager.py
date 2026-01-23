@@ -100,8 +100,7 @@ def update_local_api_files(data: dict) -> None:
 
 def read_blender_version_list() -> list[Version]:
     return [
-        Version.parse(version, optional_minor_and_patch=True)
-        for version in read_bl_api().get("blender_versions", {})
+        Version.parse(version, optional_minor_and_patch=True) for version in read_bl_api().get("blender_versions", {})
     ]
 
 

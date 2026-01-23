@@ -43,7 +43,7 @@ for source_file, destination_file in files.items():
             with open(destination_file_path, "w") as dest_file:
                 json.dump(destination_data, dest_file, indent=4)
 
-            # Use git to check if the file has been modified (not only the file verison)
+            # Use git to check if the file has been modified (not only the file version)
             result = subprocess.run(["git", "diff", "--numstat", destination_file_path], capture_output=True, text=True)
             modified_lines = sum(int(line.split()[0]) for line in result.stdout.splitlines())
 

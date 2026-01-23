@@ -228,6 +228,10 @@ class DownloadWidget(BaseBuildWidget):
             dist = library_folder / "daily"
         elif self.build_info.branch == "bforartists":
             dist = library_folder / "bforartists"
+        elif self.build_info.branch == "upbge-stable":
+            dist = library_folder / "upbge-stable"
+        elif self.build_info.branch == "upbge-weekly":
+            dist = library_folder / "upbge-weekly"
         else:
             dist = library_folder / "experimental"
 
@@ -279,6 +283,15 @@ class DownloadWidget(BaseBuildWidget):
         self.parent.task_queue.remove_task(self.dl_task)
         self.build_state_widget.setDownload(False)
 
+        # Reset the widget's button states if this was an update download
+        if self.updating_widget is not None:
+            self.updating_widget.launchButton.set_text("Launch")
+            self.updating_widget.launchButton.setEnabled(True)
+            if hasattr(self.updating_widget, "_update_download_widget"):
+                self.updating_widget._show_update_button()
+                self.updating_widget.updateButton.clicked.connect(self.updating_widget._trigger_update_download)
+            self.updating_widget = None
+
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)
         if self.parent.platform == "Linux":
@@ -288,14 +301,17 @@ class DownloadWidget(BaseBuildWidget):
 
         assert self.build_dir is not None
 
-        # If the returned version from the executable is invalid it might break loading.
-        ver_ = parse_blender_ver(self.build_dir.name, search=True)
-        ver = Version(
-            ver_.major,
-            ver_.minor,
-            ver_.patch,
-            prerelease=ver_.prerelease,
-        )
+        if self.build_info.branch == "upbge-weekly":
+            ver = parse_blender_ver(self.build_info.subversion)
+        else:
+            # If the returned version from the executable is invalid it might break loading.
+            ver_ = parse_blender_ver(self.build_dir.name, search=True)
+            ver = Version(
+                ver_.major,
+                ver_.minor,
+                ver_.patch,
+                prerelease=ver_.prerelease,
+            )
 
         t = ReadBuildTask(
             self.build_dir,
@@ -310,7 +326,7 @@ class DownloadWidget(BaseBuildWidget):
             archive_name=archive_name,
         )
         t.finished.connect(self.download_rename)
-        t.failure.connect(lambda: print("Reading failed"))
+        t.failure.connect(lambda e: logger.error(f"ReadBuildTask failed for {self.build_dir}: {e}"))
         self.parent.task_queue.append(t)
 
     def download_rename(self, build_info: BuildInfo) -> None:

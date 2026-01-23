@@ -44,11 +44,15 @@ from modules.settings import (
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
     get_scrape_stable_builds,
+    get_scrape_upbge_builds,
+    get_scrape_upbge_weekly_builds,
     get_show_bfa_builds,
     get_show_daily_builds,
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
     get_show_tray_icon,
+    get_show_upbge_builds,
+    get_show_upbge_weekly_builds,
     get_sync_library_and_downloads_pages,
     get_tray_icon_notified,
     get_use_pre_release_builds,
@@ -403,6 +407,8 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox.add_tab("Daily", "daily")
         self.LibraryToolBox.add_tab("Experimental", ("experimental", "patch"))
         self.LibraryToolBox.add_tab("Bforartists", "bforartists")
+        self.LibraryToolBox.add_tab("UPBGE", "upbge-stable")
+        self.LibraryToolBox.add_tab("UPBGE Weekly", "upbge-weekly")
         self.LibraryToolBox.add_tab("Custom", "custom")
         self.LibraryTabLayout.addWidget(self.LibraryPage)
         self.LibraryToolBox.branch_changed.connect(self.LibraryPage.list_widget.update_branch_filter)
@@ -419,6 +425,8 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox.add_tab("Daily", "daily")
         self.DownloadsToolBox.add_tab("Experimental", ("experimental", "patch"))
         self.DownloadsToolBox.add_tab("Bforartists", "bforartists")
+        self.DownloadsToolBox.add_tab("UPBGE", "upbge-stable")
+        self.DownloadsToolBox.add_tab("UPBGE Weekly", "upbge-weekly")
         self.DownloadsTabLayout.addWidget(self.DownloadsPage)
         self.DownloadsToolBox.branch_changed.connect(self.DownloadsPage.list_widget.update_branch_filter)
         self.DownloadsPage.list_widget.update_branch_filter(self.DownloadsToolBox.current_branch())
@@ -780,7 +788,7 @@ class BlenderLauncher(BaseWindow):
             widget_item = library_list.item(item)
             if widget_item:
                 library_widget = library_list.itemWidget(widget_item)
-                if library_widget and hasattr(library_widget, "check_for_updates"):
+                if isinstance(library_widget, LibraryWidget):
                     library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):
@@ -804,19 +812,38 @@ class BlenderLauncher(BaseWindow):
             show_daily = get_show_daily_builds()
             show_expatch = get_show_experimental_and_patch_builds()
             show_bfa = get_show_bfa_builds()
-            self.start_scraper(show_stable, show_daily or show_expatch, show_bfa)
+            show_upbge = get_show_upbge_builds()
+            show_upbge_weekly = get_show_upbge_weekly_builds()
+            self.start_scraper(
+                show_stable,
+                show_daily,
+                show_expatch,
+                show_bfa,
+                show_upbge,
+                show_upbge_weekly,
+            )
             self.update_visible_lists(
                 force_s_stable=show_stable,
                 force_s_daily=show_daily,
                 force_s_expatch=show_expatch,
                 force_s_bfa=show_bfa,
+                force_s_upbge=show_upbge,
+                force_s_upbge_weekly=show_upbge_weekly,
             )
         else:
             # Use settings
             self.start_scraper()
             self.update_visible_lists()
 
-    def start_scraper(self, scrape_stable=None, scrape_daily=None, scrape_expatch=None, scrape_bfa=None):
+    def start_scraper(
+        self,
+        scrape_stable=None,
+        scrape_daily=None,
+        scrape_expatch=None,
+        scrape_bfa=None,
+        scrape_upbge=None,
+        scrape_upbge_weekly=None,
+    ):
         self.set_status("Checking for new builds", False)
         self.stop_auto_scrape_timer()
 
@@ -828,8 +855,22 @@ class BlenderLauncher(BaseWindow):
             scrape_expatch = get_scrape_experimental_builds()
         if scrape_bfa is None:
             scrape_bfa = get_scrape_bfa_builds()
+        if scrape_upbge is None:
+            scrape_upbge = get_scrape_upbge_builds()
+        if scrape_upbge_weekly is None:
+            scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
 
         self.DownloadsPage.set_info_label_text("Checking for new builds")
+
+        if scrape_upbge:
+            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for new builds")
+        else:
+            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for UPBGE builds is disabled")
+
+        if scrape_upbge_weekly:
+            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for new builds")
+        else:
+            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for UPBGE weekly builds is disabled")
 
         # Sometimes these builds end up being invalid, particularly when new builds are available, which, there usually
         # are at least once every two days. They are so easily gathered there's little loss here
@@ -843,6 +884,8 @@ class BlenderLauncher(BaseWindow):
         self.scraper.scrape_daily = scrape_daily
         self.scraper.scrape_experimental = scrape_expatch
         self.scraper.scrape_bfa = scrape_bfa
+        self.scraper.scrape_upbge = scrape_upbge
+        self.scraper.scrape_upbge_weekly = scrape_upbge_weekly
         self.scraper.manager = self.cm
         self.scraper.start()
 
@@ -855,6 +898,11 @@ class BlenderLauncher(BaseWindow):
         for widget in self.DownloadsPage.list_widget.widgets.copy():
             if widget.build_info not in self.cashed_builds:
                 widget.destroy()
+
+        # Re-sort all download lists after scraping is complete to ensure proper ordering
+        for list_widget in self.DownloadsToolBox.list_widgets:
+            if list_widget.parent is not None:
+                list_widget.sortItems(list_widget.parent.sorting_order)
 
         utcnow = localtime()
         dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
@@ -909,7 +957,7 @@ class BlenderLauncher(BaseWindow):
     def draw_to_library(self, path: Path, show_new=False, successful_read_callback=None):
         branch = Path(path).parent.name
 
-        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
+        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "upbge-stable", "upbge-weekly", "custom"):
             return
 
         a = ReadBuildTask(path)
@@ -940,7 +988,7 @@ class BlenderLauncher(BaseWindow):
     def draw_unrecognized(self, path):
         branch = Path(path).parent.name
 
-        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "custom"):
+        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "upbge-stable", "upbge-weekly", "custom"):
             return
 
         item = BaseListWidgetItem()
@@ -954,29 +1002,41 @@ class BlenderLauncher(BaseWindow):
         force_l_daily=False,
         force_l_expatch=False,
         force_l_bfa=False,
+        force_l_upbge=False,
+        force_l_upbge_weekly=False,
         force_s_stable=False,  # Force the scraper visibility of these
         force_s_daily=False,
         force_s_expatch=False,
         force_s_bfa=False,
+        force_s_upbge=False,
+        force_s_upbge_weekly=False,
     ):
         show_stable = force_l_stable or get_show_stable_builds()
         show_daily = force_l_daily or get_show_daily_builds()
         show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
         show_bfa = force_l_bfa or get_show_bfa_builds()
+        show_upbge = force_l_upbge or get_show_upbge_builds()
+        show_upbge_weekly = force_l_upbge_weekly or get_show_upbge_weekly_builds()
         scrape_stable = force_s_stable or get_scrape_stable_builds()
         scrape_daily = force_s_daily or get_scrape_daily_builds()
         scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
         scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
+        scrape_upbge = force_s_upbge or get_scrape_upbge_builds()
+        scrape_upbge_weekly = force_s_upbge_weekly or get_scrape_upbge_weekly_builds()
 
         self.LibraryToolBox.update_visibility(0, show_stable)
         self.LibraryToolBox.update_visibility(1, show_daily)
         self.LibraryToolBox.update_visibility(2, show_expatch)
         self.LibraryToolBox.update_visibility(3, show_bfa)
+        self.LibraryToolBox.update_visibility(4, show_upbge)
+        self.LibraryToolBox.update_visibility(5, show_upbge_weekly)
 
         self.DownloadsToolBox.update_visibility(0, scrape_stable)
         self.DownloadsToolBox.update_visibility(1, scrape_daily)
         self.DownloadsToolBox.update_visibility(2, scrape_expatch)
         self.DownloadsToolBox.update_visibility(3, scrape_bfa)
+        self.DownloadsToolBox.update_visibility(4, scrape_upbge)
+        self.DownloadsToolBox.update_visibility(5, scrape_upbge_weekly)
 
     def focus_widget(self, widget: LibraryWidget):
         tab = self.LibraryTab
@@ -1003,7 +1063,7 @@ class BlenderLauncher(BaseWindow):
             return
         latest = Version.parse(latest_tag[1:])
 
-        # Set the verison to 0.0.0 to force update to the latest stable version
+        # Set the version to 0.0.0 to force update to the latest stable version
         if not get_use_pre_release_builds() and self.version.prerelease is not None and "rc" in self.version.prerelease:
             current = Version(0, 0, 0)
         else:

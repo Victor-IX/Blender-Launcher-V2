@@ -14,6 +14,7 @@ GitHub limits the number of API requests that can be made without authentication
 The Blender Launcher uses GitHub's API to:
 
 - Check for new launcher updates
+- Fetch UPBGE builds (both stable and weekly releases)
 - Download API data files
 - Fetch release notes and patch information
 

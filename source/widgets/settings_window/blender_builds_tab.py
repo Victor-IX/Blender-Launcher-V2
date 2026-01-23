@@ -27,8 +27,12 @@ from modules.settings import (
     get_show_experimental_update_button,
     get_show_patch_archive_builds,
     get_show_stable_update_button,
+    get_show_upbge_stable_update_button,
+    get_show_upbge_weekly_update_button,
     get_show_update_button,
     get_stable_update_behavior,
+    get_upbge_stable_update_behavior,
+    get_upbge_weekly_update_behavior,
     get_update_behavior,
     get_use_advanced_update_button,
     set_bash_arguments,
@@ -49,6 +53,8 @@ from modules.settings import (
     set_scrape_daily_builds,
     set_scrape_experimental_builds,
     set_scrape_stable_builds,
+    set_scrape_upbge_builds,
+    set_scrape_upbge_weekly_builds,
     set_show_bfa_builds,
     set_show_bfa_update_button,
     set_show_daily_archive_builds,
@@ -60,8 +66,14 @@ from modules.settings import (
     set_show_patch_archive_builds,
     set_show_stable_builds,
     set_show_stable_update_button,
+    set_show_upbge_builds,
+    set_show_upbge_stable_update_button,
+    set_show_upbge_weekly_builds,
+    set_show_upbge_weekly_update_button,
     set_show_update_button,
     set_stable_update_behavior,
+    set_upbge_stable_update_behavior,
+    set_upbge_weekly_update_behavior,
     set_update_behavior,
     set_use_advanced_update_button,
     update_behavior,
@@ -97,14 +109,18 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)
 
         self.repo_group = RepoGroup(self)
-        self.repo_group.stable_repo.library_changed.connect(lambda b: set_show_stable_builds(b))
-        self.repo_group.stable_repo.download_changed.connect(self.toggle_scrape_stable_builds)
-        self.repo_group.daily_repo.library_changed.connect(lambda b: set_show_daily_builds(b))
-        self.repo_group.daily_repo.download_changed.connect(self.toggle_scrape_daily_builds)
-        self.repo_group.experimental_repo.library_changed.connect(lambda b: set_show_experimental_and_patch_builds(b))
-        self.repo_group.experimental_repo.download_changed.connect(self.toggle_scrape_experimental_builds)
-        self.repo_group.bforartists_repo.library_changed.connect(lambda b: set_show_bfa_builds(b))
-        self.repo_group.bforartists_repo.download_changed.connect(self.toggle_scrape_bfa_builds)
+        self.repo_group.stable_repo.library_changed.connect(set_show_stable_builds)
+        self.repo_group.stable_repo.download_changed.connect(set_scrape_stable_builds)
+        self.repo_group.daily_repo.library_changed.connect(set_show_daily_builds)
+        self.repo_group.daily_repo.download_changed.connect(set_scrape_daily_builds)
+        self.repo_group.experimental_repo.library_changed.connect(set_show_experimental_and_patch_builds)
+        self.repo_group.experimental_repo.download_changed.connect(set_scrape_experimental_builds)
+        self.repo_group.bforartists_repo.library_changed.connect(set_show_bfa_builds)
+        self.repo_group.bforartists_repo.download_changed.connect(set_scrape_bfa_builds)
+        self.repo_group.upbge_repo.library_changed.connect(set_show_upbge_builds)
+        self.repo_group.upbge_repo.download_changed.connect(set_scrape_upbge_builds)
+        self.repo_group.upbge_weekly_repo.library_changed.connect(set_show_upbge_weekly_builds)
+        self.repo_group.upbge_weekly_repo.download_changed.connect(set_scrape_upbge_weekly_builds)
 
         qvl = QVBoxLayout()
         # qvl.setContentsMargins(0, 0, 0, 0)
@@ -306,6 +322,44 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBFABehavior.activated[int].connect(self.change_update_bfa_behavior)
         self.UpdateBFABehavior.setEnabled(self.ShowBFAUpdateButton.isChecked())
 
+        self.ShowUPBGEStableUpdateButton = QCheckBox()
+        self.ShowUPBGEStableUpdateButton.setText("Show UPBGE Stable Update Button")
+        self.ShowUPBGEStableUpdateButton.setToolTip(
+            "Show the update button to quickly update UPBGE stable builds\
+            \nDEFAULT: On"
+        )
+        self.ShowUPBGEStableUpdateButton.clicked.connect(self.show_upbge_stable_update_button)
+        self.ShowUPBGEStableUpdateButton.setChecked(get_show_upbge_stable_update_button())
+
+        self.UpdateUPBGEStableBehavior = QComboBox()
+        self.UpdateUPBGEStableBehavior.addItems(list(update_behavior.keys()))
+        self.UpdateUPBGEStableBehavior.setToolTip(
+            "Define the update behavior for UPBGE stable builds\
+            \nDEFAULT: Minor"
+        )
+        self.UpdateUPBGEStableBehavior.setCurrentIndex(get_upbge_stable_update_behavior())
+        self.UpdateUPBGEStableBehavior.activated[int].connect(self.change_update_upbge_stable_behavior)
+        self.UpdateUPBGEStableBehavior.setEnabled(self.ShowUPBGEStableUpdateButton.isChecked())
+
+        self.ShowUPBGEWeeklyUpdateButton = QCheckBox()
+        self.ShowUPBGEWeeklyUpdateButton.setText("Show UPBGE Weekly Update Button")
+        self.ShowUPBGEWeeklyUpdateButton.setToolTip(
+            "Show the update button to quickly update UPBGE weekly builds\
+            \nDEFAULT: On"
+        )
+        self.ShowUPBGEWeeklyUpdateButton.clicked.connect(self.show_upbge_weekly_update_button)
+        self.ShowUPBGEWeeklyUpdateButton.setChecked(get_show_upbge_weekly_update_button())
+
+        self.UpdateUPBGEWeeklyBehavior = QComboBox()
+        self.UpdateUPBGEWeeklyBehavior.addItems(list(update_behavior.keys()))
+        self.UpdateUPBGEWeeklyBehavior.setToolTip(
+            "Define the update behavior for UPBGE weekly builds\
+            \nDEFAULT: Minor"
+        )
+        self.UpdateUPBGEWeeklyBehavior.setCurrentIndex(get_upbge_weekly_update_behavior())
+        self.UpdateUPBGEWeeklyBehavior.activated[int].connect(self.change_update_upbge_weekly_behavior)
+        self.UpdateUPBGEWeeklyBehavior.setEnabled(self.ShowUPBGEWeeklyUpdateButton.isChecked())
+
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
         self.EnableMarkAsFavorite.setText("Mark as Favorite")
@@ -348,6 +402,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.advanced_settings_layout.addWidget(self.UpdateExperimentalBehavior, 2, 1, 1, 2)
         self.advanced_settings_layout.addWidget(self.ShowBFAUpdateButton, 3, 0, 1, 1)
         self.advanced_settings_layout.addWidget(self.UpdateBFABehavior, 3, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowUPBGEStableUpdateButton, 4, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateUPBGEStableBehavior, 4, 1, 1, 2)
+        self.advanced_settings_layout.addWidget(self.ShowUPBGEWeeklyUpdateButton, 5, 0, 1, 1)
+        self.advanced_settings_layout.addWidget(self.UpdateUPBGEWeeklyBehavior, 5, 1, 1, 2)
 
         is_advanced = get_use_advanced_update_button()
         self.advanced_settings_widget.setVisible(is_advanced)
@@ -493,6 +551,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBFABehavior.setEnabled(is_checked)
         set_show_bfa_update_button(is_checked)
 
+    def show_upbge_stable_update_button(self, is_checked):
+        self.UpdateUPBGEStableBehavior.setEnabled(is_checked)
+        set_show_upbge_stable_update_button(is_checked)
+
+    def show_upbge_weekly_update_button(self, is_checked):
+        self.UpdateUPBGEWeeklyBehavior.setEnabled(is_checked)
+        set_show_upbge_weekly_update_button(is_checked)
+
     def change_update_behavior(self, index: int):
         behavior = self.UpdateBehavior.itemText(index)
         set_update_behavior(behavior)
@@ -512,6 +578,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def change_update_bfa_behavior(self, index: int):
         behavior = self.UpdateBFABehavior.itemText(index)
         set_bfa_update_behavior(behavior)
+
+    def change_update_upbge_stable_behavior(self, index: int):
+        behavior = self.UpdateUPBGEStableBehavior.itemText(index)
+        set_upbge_stable_update_behavior(behavior)
+
+    def change_update_upbge_weekly_behavior(self, index: int):
+        behavior = self.UpdateUPBGEWeeklyBehavior.itemText(index)
+        set_upbge_weekly_update_behavior(behavior)
 
     def toggle_install_template(self, is_checked):
         set_install_template(is_checked)
@@ -595,6 +669,12 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
     def toggle_scrape_bfa_builds(self, is_checked):
         set_scrape_bfa_builds(is_checked)
+
+    def toggle_scrape_upbge_builds(self, is_checked):
+        set_scrape_upbge_builds(is_checked)
+
+    def toggle_scrape_upbge_weekly_builds(self, is_checked):
+        set_scrape_upbge_weekly_builds(is_checked)
 
     def toggle_show_daily_archive_builds(self, is_checked):
         set_show_daily_archive_builds(is_checked)

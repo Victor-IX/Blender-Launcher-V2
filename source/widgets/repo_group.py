@@ -3,10 +3,14 @@ from modules.settings import (
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
     get_scrape_stable_builds,
+    get_scrape_upbge_builds,
+    get_scrape_upbge_weekly_builds,
     get_show_bfa_builds,
     get_show_daily_builds,
     get_show_experimental_and_patch_builds,
     get_show_stable_builds,
+    get_show_upbge_builds,
+    get_show_upbge_weekly_builds,
 )
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QButtonGroup, QFrame, QSizePolicy, QVBoxLayout
@@ -48,12 +52,28 @@ class RepoGroup(QFrame):
             download=get_scrape_bfa_builds(),
             parent=self,
         )
+        self.upbge_repo = RepoUserView(
+            "UPBGE",
+            "UPBGE stable builds - fork of Blender for game development.",
+            library=get_show_upbge_builds(),
+            download=get_scrape_upbge_builds(),
+            parent=self,
+        )
+        self.upbge_weekly_repo = RepoUserView(
+            "UPBGE Weekly",
+            "UPBGE weekly builds with latest features.",
+            library=get_show_upbge_weekly_builds(),
+            download=get_scrape_upbge_weekly_builds(),
+            parent=self,
+        )
 
         self.repos = [
             self.stable_repo,
             self.daily_repo,
             self.experimental_repo,
             self.bforartists_repo,
+            self.upbge_repo,
+            self.upbge_weekly_repo,
         ]
 
         self.layout_ = QVBoxLayout(self)

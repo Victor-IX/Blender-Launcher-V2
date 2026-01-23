@@ -17,6 +17,7 @@ from modules.build_info import (
     LaunchOpenLast,
     LaunchWithBlendFile,
     WriteBuildTask,
+    get_fork_config_paths,
     launch_build,
 )
 from modules.enums import MessageType
@@ -29,7 +30,6 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-
 from PySide6.QtCore import Qt, QUrl, Signal, Slot
 from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
@@ -50,7 +50,6 @@ from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.base_list_widget import BaseListWidget
-    from modules.enums import MessageType
     from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
@@ -329,7 +328,6 @@ class LibraryWidget(BaseBuildWidget):
         if self.build_info.is_favorite and self.parent_widget is None:
             self.add_to_favorites()
 
-
     def context_menu(self):
         self.update_delete_action(self.hovering_and_shifting)
         self.update_config_action(self.hovering_and_shifting)
@@ -580,9 +578,8 @@ class LibraryWidget(BaseBuildWidget):
             # Reset the UI state
             self.launchButton.set_text("Launch")
             self.launchButton.setEnabled(True)
-            if hasattr(self, "_update_download_widget"):
-                if get_show_update_button():
-                    self._show_update_button()
+            if hasattr(self, "_update_download_widget") and get_show_update_button():
+                self._show_update_button()
 
     def _proceed_with_update(self):
         """Proceed with the actual update download."""
@@ -656,8 +653,8 @@ class LibraryWidget(BaseBuildWidget):
     def make_portable(self):
         config_path = self.make_portable_path()
         folder_name = config_path.name
-
         _config_path = config_path.parent / ("_" + folder_name)
+
         if config_path.is_dir():
             config_path.rename(_config_path)
             self.makePortableAction.setText("Make Portable")
@@ -671,34 +668,18 @@ class LibraryWidget(BaseBuildWidget):
             self.showConfigFolderAction.setText("Show Portable Config Folder")
 
     def make_portable_path(self) -> Path:
-        if self.build_info is None:
-            error_msg = "Cannot make portable path: build_info is None"
-            logger.error(error_msg)
-            self.parent.show_message(
-                "Unable to determine portable path for this build.", message_type=MessageType.ERROR
-            )
-            return Path()
-
         version = self.build_info.subversion.rsplit(".", 1)[0]
+        branch = self.build_info.branch
 
-        if version >= "4.2":
-            # Check for portable folder first (standard Blender 4.2+)
-            portable_path = self.link / "portable"
-            if portable_path.is_dir():
-                return portable_path
-            subpaths = ["config", "datafiles", "scripts", "extensions"]
-
-            # Check for version folder (X.Y format) used by bforartists
-            if get_platform() == "Windows" and self.link.is_dir():
-                for item in self.link.iterdir():
-                    if (
-                        item.is_dir()
-                        and re.match(r"^\d+\.\d+$", item.name)
-                        and any((item / subpath).is_dir() for subpath in subpaths)
-                    ):
-                        return item
-
-            return portable_path
+        if branch == "bforartists" and version >= "4.1":
+            folder_name = "portable"
+            config_path = self.link / folder_name
+        elif "upbge" in branch and version >= "0.42":
+            folder_name = "portable"
+            config_path = self.link / folder_name
+        elif version >= "4.2":
+            folder_name = "portable"
+            config_path = self.link / folder_name
         else:
             folder_name = "config"
             config_path = self.link / version / folder_name
@@ -1055,20 +1036,58 @@ class LibraryWidget(BaseBuildWidget):
         version = self.build_info.semversion
         branch = self.build_info.branch
         custom_folder = None
+        custom_subfolder = None
 
-        if branch == "bforartists":
-            custom_folder = "bforartists"
-            version = self.build_info.bforartist_version_matcher
+        fork_config = get_fork_config_paths(branch)
+        if fork_config:
+            custom_folder = fork_config.get("config_folder")
+            subfolder_config = fork_config.get("config_subfolder")
+
+            # Handle platform-specific subfolder
+            if isinstance(subfolder_config, dict):
+                platform = get_platform()
+                custom_subfolder = subfolder_config.get(platform)
+            else:
+                custom_subfolder = subfolder_config
+
+            # Get version from version matcher
+            if branch == "bforartists":
+                version = self.build_info.bforartist_version_matcher
+            elif branch.startswith("upbge"):
+                version = self.build_info.upbge_version_matcher
 
         if version is None:
             version_str = ""
         else:
             version_str = f"{version.major}.{version.minor}"
 
-        path = Path(get_blender_config_folder(custom_folder) / version_str)
-        general_path = Path(get_blender_config_folder(custom_folder))
+        kwargs = {
+            k: v
+            for k, v in {
+                "config_folder_name": custom_folder,
+                "config_subfolder_name": custom_subfolder,
+            }.items()
+            if v is not None
+        }
+
+        base_config_path = get_blender_config_folder(**kwargs)
+
+        if base_config_path is None:
+            logger.error("Unable to determine base configuration path.")
+            PopupWindow(
+                title="Error",
+                message="Unable to determine configuration folder path.",
+                info_popup=True,
+                icon=PopupIcon.WARNING,
+                parent=self.parent,
+            )
+            return
+
+        path = base_config_path / version_str
+        general_path = base_config_path
 
         if not path.is_dir():
+            logger.warning(f"Config folder {path} do not exist.")
             popup = PopupWindow(
                 title="Warning",
                 message="No config folder found for this version.",
