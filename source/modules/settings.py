@@ -25,6 +25,8 @@ ISO_EPOCH = EPOCH.isoformat()
 
 # Keyring constants for secure token storage
 KEYRING_SERVICE_NAME = "BlenderLauncher"
+KEYRING_PROXY_HOST = "proxy_host"
+KEYRING_PROXY_PORT = "proxy_port"
 KEYRING_PROXY_USER = "proxy_user"
 KEYRING_PROXY_PASSWORD = "proxy_password"
 KEYRING_TOKEN_USERNAME = "github_token"
@@ -508,27 +510,21 @@ def set_proxy_type(proxy_type):
 
 
 def get_proxy_host() -> str:
-    host = get_settings().value("proxy/host")
-
-    if host is None:
-        return "255.255.255.255"
-    return host.strip()
+    host = _get_keyring_value(KEYRING_PROXY_HOST)
+    return host if host else "255.255.255.255"
 
 
 def set_proxy_host(args):
-    get_settings().setValue("proxy/host", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_HOST, args.strip())
 
 
 def get_proxy_port() -> str:
-    port = get_settings().value("proxy/port")
-
-    if port is None:
-        return "9999"
-    return port.strip()
+    port = _get_keyring_value(KEYRING_PROXY_PORT)
+    return port if port else "9999"
 
 
 def set_proxy_port(args):
-    get_settings().setValue("proxy/port", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_PORT, args.strip())
 
 
 def get_proxy_user() -> str:
