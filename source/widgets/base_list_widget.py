@@ -103,40 +103,46 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self._query_cache = {}
         self.count_changed()
 
-    def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, _WT], set[_WT]]:
-        binfo_to_widget: dict[BasicBuildInfo, _WT] = {}
+    def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, list[_WT]], set[_WT]]:
+        binfo_to_widgets: dict[BasicBuildInfo, list[_WT]] = {}
         unknown_widgets: set[_WT] = set()
 
         for widget in self.widgets:
             if widget.build_info is not None:
                 binfo = BasicBuildInfo.from_buildinfo(widget.build_info)
-                binfo_to_widget[binfo] = widget
+                lst = binfo_to_widgets.get(binfo, [])
+                lst.append(widget)
+                binfo_to_widgets[binfo] = lst
             else:
                 unknown_widgets.add(widget)
-        return (binfo_to_widget, unknown_widgets)
+        return (binfo_to_widgets, unknown_widgets)
 
     def get_matching_builds(self, search: VersionSearchQuery):
         if search not in self._query_cache:
             binfo_to_widget, unknown_widgets = self.basic_build_infos()
             # gather all matching widgets
-            shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
+            shown_widgets: set[_WT] = {w for b in search.match(list(binfo_to_widget)) for w in binfo_to_widget[b]}
 
             # special handling for "custom": if the build is in the custom folder, add them
             # needs to be done because "custom" builds probably don't have a branch called "custom"
             if search.branch == ("custom",) or (search.branch is not None and "custom" in search.branch):
                 shown_widgets |= {
-                    widget
+                    w
                     for widget in binfo_to_widget.values()
-                    if Path(widget.build_info.link).parent.name == "custom"
+                    for w in widget
+                    if Path(w.build_info.link).parent.name == "custom"
                 }
 
             # special handling for "experimental" and "patch": if the build is in the experimental folder, add them
             # needs to be done because "experimental" builds probably don't have a branch called "experimental"
-            if search.branch == ("experimental", "patch") or (search.branch is not None and "experimental" in search.branch):
+            elif search.branch == ("experimental", "patch") or (
+                search.branch is not None and "experimental" in search.branch
+            ):
                 shown_widgets |= {
-                    widget
+                    w
                     for widget in binfo_to_widget.values()
-                    if Path(widget.build_info.link).parent.name == "experimental"
+                    for w in widget
+                    if Path(w.build_info.link).parent.name == "experimental"
                 }
 
             # add broken widgets to the results
