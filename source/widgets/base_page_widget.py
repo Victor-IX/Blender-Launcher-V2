@@ -14,6 +14,11 @@ class SortingType(Enum):
     LABEL = 3
 
 
+SHOW_RELOAD_ON = {
+    "custom",
+}
+
+
 class BasePageWidget(QWidget, Generic[_WT]):
     # Signal emitted when column widths change: (version_width, branch_width, commit_time_width)
     column_widths_changed = Signal(int, int, int)
@@ -70,18 +75,17 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.PlaceholderLayout.addStretch()
         self.PlaceholderLayout.addLayout(self.InfoLayout)
 
-        if show_reload is True:
-            self.ReloadBtn = QPushButton("Reload")
-            self.ReloadBtn.setToolTip("Reload Custom builds from disk")
-            self.ReloadBtn.clicked.connect(parent.reload_custom_builds)
+        self.EmptyReloadButton = QPushButton("Reload")
+        self.EmptyReloadButton.setToolTip("Reload Custom builds from disk")
+        self.EmptyReloadButton.clicked.connect(parent.reload_custom_builds)
+        self.EmptyReloadButton.hide()
 
-            self.ReloadBtnLayout = QHBoxLayout()
-            self.ReloadBtnLayout.addStretch()
-            self.ReloadBtnLayout.addWidget(self.ReloadBtn)
-            self.ReloadBtnLayout.addStretch()
+        self.ReloadBtnLayout = QHBoxLayout()
+        self.ReloadBtnLayout.addStretch()
+        self.ReloadBtnLayout.addWidget(self.EmptyReloadButton)
+        self.ReloadBtnLayout.addStretch()
 
-            self.PlaceholderLayout.addLayout(self.ReloadBtnLayout)
-
+        self.PlaceholderLayout.addLayout(self.ReloadBtnLayout)
         self.PlaceholderLayout.addStretch()
 
         # Header Widget
@@ -92,15 +96,11 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.HeaderLayout.setContentsMargins(2, 0, 0, 0)
         self.HeaderLayout.setSpacing(0)
 
-        if show_reload is True:
-            self.fakeLabel = QPushButton("Reload")
-            self.fakeLabel.setToolTip("Reload Custom builds from disk")
-            self.fakeLabel.setProperty("ListHeader", True)
-            self.fakeLabel.clicked.connect(parent.reload_custom_builds)
-        else:
-            self.fakeLabel = QLabel()
-
-        self.fakeLabel.setFixedWidth(95)  # Match launchButton width in list items
+        self.HeaderReloadButton = QPushButton("Reload")
+        self.HeaderReloadButton.setToolTip("Reload Custom builds from disk")
+        self.HeaderReloadButton.setProperty("ListHeader", True)
+        self.HeaderReloadButton.clicked.connect(parent.reload_custom_builds)
+        self.HeaderReloadButton.setFixedWidth(95)  # Match launchButton width in list items
 
         # Create splitter for resizable columns
         self.headerSplitter = QSplitter(Qt.Orientation.Horizontal)
@@ -146,7 +146,7 @@ class BasePageWidget(QWidget, Generic[_WT]):
         # Connect splitter movement to emit signal and save
         self.headerSplitter.splitterMoved.connect(self._on_splitter_moved)
 
-        self.HeaderLayout.addWidget(self.fakeLabel)
+        self.HeaderLayout.addWidget(self.HeaderReloadButton)
         self.HeaderLayout.addWidget(self.headerSplitter, stretch=1)
         self.HeaderLayout.addSpacing(34)
 
@@ -180,6 +180,12 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.branchLabel.setChecked(sorting_type == SortingType.LABEL)
 
         set_list_sorting_type(self.name, sorting_type)
+
+    def update_reload(self, branch: tuple[str, ...]):
+        visible = len(set(branch) & SHOW_RELOAD_ON) > 0
+        self.EmptyReloadButton.setVisible(visible)
+        self.HeaderReloadButton.setText("Reload" * visible)
+        self.HeaderReloadButton.setEnabled(visible)
 
     def _on_splitter_moved(self, pos, index):
         """Handle splitter movement - debounce save and emit signal."""

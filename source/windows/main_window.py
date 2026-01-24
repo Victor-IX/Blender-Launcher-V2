@@ -412,6 +412,7 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox.add_tab("Custom", "custom")
         self.LibraryTabLayout.addWidget(self.LibraryPage)
         self.LibraryToolBox.branch_changed.connect(self.LibraryPage.list_widget.update_branch_filter)
+        self.LibraryToolBox.branch_changed.connect(self.LibraryPage.update_reload)
         self.LibraryPage.list_widget.update_branch_filter(self.LibraryToolBox.current_branch())
 
         self.DownloadsPage: BasePageWidget[DownloadWidget] = BasePageWidget(
@@ -862,16 +863,6 @@ class BlenderLauncher(BaseWindow):
 
         self.DownloadsPage.set_info_label_text("Checking for new builds")
 
-        if scrape_upbge:
-            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsUPBGEPageWidget.set_info_label_text("Checking for UPBGE builds is disabled")
-
-        if scrape_upbge_weekly:
-            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for new builds")
-        else:
-            self.DownloadsUPBGEWeeklyPageWidget.set_info_label_text("Checking for UPBGE weekly builds is disabled")
-
         # Sometimes these builds end up being invalid, particularly when new builds are available, which, there usually
         # are at least once every two days. They are so easily gathered there's little loss here
         self.DownloadsPage.list_widget.clear_()
@@ -900,9 +891,7 @@ class BlenderLauncher(BaseWindow):
                 widget.destroy()
 
         # Re-sort all download lists after scraping is complete to ensure proper ordering
-        for list_widget in self.DownloadsToolBox.list_widgets:
-            if list_widget.parent is not None:
-                list_widget.sortItems(list_widget.parent.sorting_order)
+        self.DownloadsPage.list_widget.sortItems(self.DownloadsPage.sorting_order)
 
         utcnow = localtime()
         dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
