@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
@@ -119,6 +120,16 @@ class BaseListWidget(Generic[_WT], QListWidget):
             binfo_to_widget, unknown_widgets = self.basic_build_infos()
             # gather all matching widgets
             shown_widgets: set[_WT] = {binfo_to_widget[b] for b in search.match(list(binfo_to_widget))}
+
+            # condition for "custom": if the build is in the custom folder, add them
+            # needs to be done because "custom" builds probably don't have a branch called "custom"
+            if search.branch == "custom" or (search.branch is not None and "custom" in search.branch):
+                shown_widgets |= {
+                    widget
+                    for widget in binfo_to_widget.values()
+                    if Path(widget.build_info.link).parent.name == "custom"
+                }
+
             # add broken widgets to the results
             shown_widgets |= unknown_widgets
 
