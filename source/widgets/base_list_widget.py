@@ -154,7 +154,6 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         item.setHidden(not success)
 
-
     def clear_by_branch(self, branch: str):
         widgets_to_remove = [widget for widget in self.widgets if widget.build_info.branch == branch]
         for widget in widgets_to_remove:

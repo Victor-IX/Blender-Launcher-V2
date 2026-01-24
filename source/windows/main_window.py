@@ -957,7 +957,16 @@ class BlenderLauncher(BaseWindow):
     def draw_to_library(self, path: Path, show_new=False, successful_read_callback=None):
         branch = Path(path).parent.name
 
-        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "upbge-stable", "upbge-weekly", "custom"):
+        if branch not in (
+            "stable",
+            "lts",
+            "daily",
+            "experimental",
+            "bforartists",
+            "upbge-stable",
+            "upbge-weekly",
+            "custom",
+        ):
             return
 
         a = ReadBuildTask(path)
@@ -988,7 +997,16 @@ class BlenderLauncher(BaseWindow):
     def draw_unrecognized(self, path):
         branch = Path(path).parent.name
 
-        if branch not in ("stable", "lts", "daily", "experimental", "bforartists", "upbge-stable", "upbge-weekly", "custom"):
+        if branch not in (
+            "stable",
+            "lts",
+            "daily",
+            "experimental",
+            "bforartists",
+            "upbge-stable",
+            "upbge-weekly",
+            "custom",
+        ):
             return
 
         item = BaseListWidgetItem()
