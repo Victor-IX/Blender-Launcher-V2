@@ -227,7 +227,7 @@ class VersionSearchQuery:
     @lru_cache(16)  # noqa: B019 # VersionSearchQuery is frozen and is small so it shouldn't be too big
     def relevant_places(self) -> tuple[str, ...]:
         priority_order = ("build_hash", "major", "minor", "patch", "branch", "commit_time")
-        return tuple(place for place in priority_order if getattr(self, place) != "*")
+        return tuple(place for place in priority_order if getattr(self, place) not in {"*", None})
 
     def match(self, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
         return match_versions(self, versions)
