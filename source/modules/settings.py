@@ -25,6 +25,10 @@ ISO_EPOCH = EPOCH.isoformat()
 
 # Keyring constants for secure token storage
 KEYRING_SERVICE_NAME = "BlenderLauncher"
+KEYRING_PROXY_HOST = "proxy/host"
+KEYRING_PROXY_PORT = "proxy/port"
+KEYRING_PROXY_USER = "proxy/user"
+KEYRING_PROXY_PASSWORD = "proxy/password"
 KEYRING_TOKEN_USERNAME = "github_token"
 
 # TODO: Simplify this
@@ -506,51 +510,35 @@ def set_proxy_type(proxy_type):
 
 
 def get_proxy_host() -> str:
-    host = get_settings().value("proxy/host")
-
-    if host is None:
-        return "255.255.255.255"
-    return host.strip()
+    return _get_keyring_value(KEYRING_PROXY_HOST, default="255.255.255.255")
 
 
 def set_proxy_host(args):
-    get_settings().setValue("proxy/host", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_HOST, args.strip())
 
 
 def get_proxy_port() -> str:
-    port = get_settings().value("proxy/port")
-
-    if port is None:
-        return "9999"
-    return port.strip()
+    return _get_keyring_value(KEYRING_PROXY_PORT, default="9999")
 
 
 def set_proxy_port(args):
-    get_settings().setValue("proxy/port", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_PORT, args.strip())
 
 
 def get_proxy_user() -> str:
-    user = get_settings().value("proxy/user")
-
-    if user is None:
-        return ""
-    return user.strip()
+    return _get_keyring_value(KEYRING_PROXY_USER)
 
 
 def set_proxy_user(args):
-    get_settings().setValue("proxy/user", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_USER, args.strip())
 
 
 def get_proxy_password() -> str:
-    password = get_settings().value("proxy/password")
-
-    if password is None:
-        return ""
-    return password.strip()
+    return _get_keyring_value(KEYRING_PROXY_PASSWORD)
 
 
 def set_proxy_password(args):
-    get_settings().setValue("proxy/password", args.strip())
+    return _set_keyring_value(KEYRING_PROXY_PASSWORD, args.strip())
 
 
 def get_use_custom_tls_certificates() -> bool:
@@ -575,70 +563,79 @@ def set_user_id(user_id):
 
 
 def get_github_token() -> str:
+    return _get_keyring_value(KEYRING_TOKEN_USERNAME)
+
+
+def set_github_token(token: str) -> bool:
+    return _set_keyring_value(KEYRING_TOKEN_USERNAME, token.strip())
+
+
+def _get_keyring_value(key: str, default="") -> str:
     """
-    Get GitHub token from secure system keyring.
+    Get a value from secure system keyring.
     Falls back to legacy QSettings storage if keyring fails.
     """
     try:
-        token = keyring.get_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME)
+        token = keyring.get_password(KEYRING_SERVICE_NAME, key)
         if token:
             return token.strip()
     except KeyringError as e:
-        logger.warning(f"Failed to access keyring for GitHub token: {e}")
+        logger.warning(f"Failed to access keyring for key {key}: {e}")
     except Exception as e:
         logger.warning(f"Unexpected error accessing keyring: {e}")
 
     # Fallback: check legacy QSettings storage and migrate if possible
-    legacy_token = get_settings().value("github_token")
-    if legacy_token and legacy_token.strip():
-        legacy_token = legacy_token.strip()
+    legacy_value = get_settings().value(key)
+    if legacy_value and legacy_value.strip():
+        legacy_value = legacy_value.strip()
         try:
-            keyring.set_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME, legacy_token)
-            get_settings().remove("github_token")
-            logger.info("Migrated GitHub token from legacy storage to secure keyring")
+            keyring.set_password(KEYRING_SERVICE_NAME, key, legacy_value)
+            get_settings().remove(key)
+            logger.info(f"Migrated {key} from legacy storage to secure keyring")
         except Exception as e:
-            logger.warning(f"Failed to migrate token to keyring: {e}")
-        return legacy_token
+            logger.warning(f"Failed to migrate {key} to keyring: {e}")
+        return legacy_value
 
-    return ""
+    return default
 
 
-def set_github_token(token: str) -> bool:
+
+def _set_keyring_value(key: str, val: str) -> bool:
     """
-    Store GitHub token in secure system keyring.
+    Stores key/value pair in secure system keyring.
     Falls back to QSettings if keyring is unavailable.
+
 
     Returns:
         bool: True if stored in keyring successfully, False if fell back to QSettings use to trigger user warning.
     """
-    token = token.strip()
-
+    settings = get_settings()
     try:
-        if token:
+        if val:
             # Store in secure keyring
-            keyring.set_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME, token)
-            logger.debug("GitHub token stored in secure keyring")
+            keyring.set_password(KEYRING_SERVICE_NAME, key, val)
+            logger.debug(f"{key} stored in secure keyring")
             # Remove from QSettings if it exists there
-            if get_settings().contains("github_token"):
-                get_settings().remove("github_token")
+            if settings.contains(key):
+                settings.remove(key)
         else:
             # Delete token from keyring if empty
             try:
-                keyring.delete_password(KEYRING_SERVICE_NAME, KEYRING_TOKEN_USERNAME)
-                logger.debug("GitHub token removed from secure keyring")
+                keyring.delete_password(KEYRING_SERVICE_NAME, key)
+                logger.debug(f"{key} removed from secure keyring")
             except PasswordDeleteError:
-                pass  # Token didn't exist, this is fine
+                pass  # Given key didn't exist, this is fine
         return True
     except KeyringError as e:
         logger.warning(f"Keyring unavailable, falling back to QSettings: {e}")
         # Fallback to QSettings
-        get_settings().setValue("github_token", token)
-        return False
+        settings.setValue(key, val)
     except Exception as e:
-        logger.error(f"Failed to store GitHub token: {e}")
+        logger.error(f"Failed to store hidden settings: {e}")
         # Fallback to QSettings
-        get_settings().setValue("github_token", token)
-        return False
+        settings.setValue(key, val)
+
+    return False
 
 
 # Blender Build Tab
