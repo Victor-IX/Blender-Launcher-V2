@@ -25,10 +25,10 @@ ISO_EPOCH = EPOCH.isoformat()
 
 # Keyring constants for secure token storage
 KEYRING_SERVICE_NAME = "BlenderLauncher"
-KEYRING_PROXY_HOST = "proxy_host"
-KEYRING_PROXY_PORT = "proxy_port"
-KEYRING_PROXY_USER = "proxy_user"
-KEYRING_PROXY_PASSWORD = "proxy_password"
+KEYRING_PROXY_HOST = "proxy/host"
+KEYRING_PROXY_PORT = "proxy/port"
+KEYRING_PROXY_USER = "proxy/user"
+KEYRING_PROXY_PASSWORD = "proxy/password"
 KEYRING_TOKEN_USERNAME = "github_token"
 
 # TODO: Simplify this
@@ -510,8 +510,7 @@ def set_proxy_type(proxy_type):
 
 
 def get_proxy_host() -> str:
-    host = _get_keyring_value(KEYRING_PROXY_HOST)
-    return host if host else "255.255.255.255"
+    return _get_keyring_value(KEYRING_PROXY_HOST, default="255.255.255.255")
 
 
 def set_proxy_host(args):
@@ -519,8 +518,7 @@ def set_proxy_host(args):
 
 
 def get_proxy_port() -> str:
-    port = _get_keyring_value(KEYRING_PROXY_PORT)
-    return port if port else "9999"
+    return _get_keyring_value(KEYRING_PROXY_PORT, default="9999")
 
 
 def set_proxy_port(args):
@@ -572,7 +570,7 @@ def set_github_token(token: str) -> bool:
     return _set_keyring_value(KEYRING_TOKEN_USERNAME, token.strip())
 
 
-def _get_keyring_value(key: str) -> str:
+def _get_keyring_value(key: str, default="") -> str:
     """
     Get a value from secure system keyring.
     Falls back to legacy QSettings storage if keyring fails.
@@ -598,7 +596,7 @@ def _get_keyring_value(key: str) -> str:
             logger.warning(f"Failed to migrate {key} to keyring: {e}")
         return legacy_value
 
-    return ""
+    return default
 
 
 
