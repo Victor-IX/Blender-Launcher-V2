@@ -71,11 +71,11 @@ def cli_launch(
             if v in all_queries:
                 query = all_queries[v]
             else:
-                query = VersionSearchQuery(v.major, v.minor, "^")
+                query = VersionSearchQuery.version(v.major, v.minor, "^")
 
     if query is None:
         logger.warning("Could not read file header and no version was provided! defaulting to ^.^.^")
-        query = VersionSearchQuery("^", "^", "^")
+        query = VersionSearchQuery.default()
 
     matches = query.match(basics.keys())
 

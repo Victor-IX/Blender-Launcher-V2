@@ -175,6 +175,8 @@ class LaunchingWindow(BaseWindow):
         branch = self.branch_edit.text()
         if branch == "":
             branch = None
+        else:
+            branch = tuple(branch.split(","))
 
         build_hash = self.build_hash_edit.text()
         if build_hash == "":
@@ -211,7 +213,7 @@ class LaunchingWindow(BaseWindow):
         logger.debug("Updating query boxes...")
 
         self.version_query_edit.setText(f"{query.major}.{query.minor}.{query.patch}")
-        self.branch_edit.setText(query.branch or "")
+        self.branch_edit.setText(",".join(query.branch) if query.branch is not None else "")
         self.build_hash_edit.setText(query.build_hash or "")
         if query.commit_time == "^":
             self.date_range_combo.setCurrentIndex(0)
@@ -231,7 +233,7 @@ class LaunchingWindow(BaseWindow):
                 major=version.major,
                 minor=version.minor,
                 patch=version.patch,
-                branch=build.branch,
+                branch=(build.branch,),
                 build_hash=build.build_hash,
                 commit_time=build.commit_time,
             )
@@ -370,7 +372,7 @@ class LaunchingWindow(BaseWindow):
                 self.version_query = all_queries[v]
                 self.update_query_boxes(self.version_query)
             else:
-                vsq = VersionSearchQuery(v.major, v.minor, "^")
+                vsq = VersionSearchQuery.version(v.major, v.minor, "^")
                 if self.version_query is None:
                     self.update_query_boxes(vsq)
 
