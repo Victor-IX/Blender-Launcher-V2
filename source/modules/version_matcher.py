@@ -240,6 +240,7 @@ class VersionSearchQuery:
 
 
 def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
+    versions = list(versions)
     relevant_places = s.relevant_places()
     for place in relevant_places:
         getter = attrgetter(place)
