@@ -4,10 +4,10 @@ import contextlib
 import datetime
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cache, lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from semver import Version
 
@@ -25,6 +25,7 @@ class BasicBuildInfo:
     branch: str
     build_hash: str
     commit_time: datetime.datetime
+    folder: str | None = None
 
     @property
     def major(self):
@@ -45,14 +46,14 @@ class BasicBuildInfo:
         return self.version < other.version
 
     @classmethod
-    def from_buildinfo(cls, buildinfo: BuildInfo):
+    def from_buildinfo(cls, buildinfo: BuildInfo, folder: str | None = None):
         return BasicBuildInfo(
             version=buildinfo.full_semversion,
             branch=buildinfo.branch,
             build_hash=buildinfo.build_hash if buildinfo.build_hash is not None else "",
             commit_time=buildinfo.commit_time.astimezone(utc),
+            folder=folder,
         )
-
 
 # VersionSearchQuerySyntax (NOT SEMVER COMPATIBLE!):
 
@@ -145,9 +146,21 @@ def _parse(s: str) -> dict:
     }
 
 
+class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
+    folder: str | None
+    build_hash: str | None
+    major: int | str
+    minor: int | str
+    patch: int | str
+    branch: tuple[str, ...] | None
+    commit_time: datetime.datetime | str | None
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
+
+    folder: str | None = None
 
     build_hash: str | None = None
     "The git hash of the build that this is"
@@ -188,12 +201,14 @@ class VersionSearchQuery:
         major: int | str,
         minor: int | str,
         patch: int | str,
+        folder: str | None = None,
         build_hash: str | None = None,
         branch: tuple[str, ...] | None = None,
         commit_time: datetime.datetime | str | None = None,
     ):
         """A constructor with major, minor, and patch at the front"""
         return cls(
+            folder=folder,
             build_hash=build_hash,
             major=major,
             minor=minor,
@@ -205,24 +220,15 @@ class VersionSearchQuery:
     @classmethod
     def default(cls):
         return cls(
-            build_hash=None,
             major="^",
             minor="^",
             patch="^",
             commit_time="^",
-            branch=None,
         )
 
     @classmethod
     def any(cls):
-        return cls(
-            build_hash=None,
-            major="*",
-            minor="*",
-            patch="*",
-            commit_time=None,
-            branch=None,
-        )
+        return cls()
 
     def __str__(self) -> str:
         """Returns a string that can be parsed by parse()"""
@@ -235,35 +241,22 @@ class VersionSearchQuery:
             s += f"@{self.commit_time}"
         return s
 
+    def __or__(self, other: VersionSearchQuery) -> VersionSearchQuery:
+        d = {place: getattr(self, place) for place in self.__slots__}
+        d.update({place: getattr(other, place) for place in other.relevant_places()})
+        return self.__class__(**d)
+
+    def with_folder(self, folder: str | None = None):
+        return replace(self, folder=folder)
+
     def with_branch(self, branch: tuple[str, ...] | None = None):
-        return self.__class__(
-            build_hash=self.build_hash,
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=branch,
-            commit_time=self.commit_time,
-        )
+        return replace(self, branch=branch)
 
     def with_build_hash(self, build_hash: str | None = None):
-        return self.__class__(
-            build_hash=build_hash,
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=self.branch,
-            commit_time=self.commit_time,
-        )
+        return replace(self, build_hash=build_hash)
 
-    def with_commit_time(self, commit_time: datetime.datetime | str):
-        return self.__class__(
-            build_hash=self.build_hash,
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=self.branch,
-            commit_time=commit_time,
-        )
+    def with_commit_time(self, commit_time: datetime.datetime | str | None = None):
+        return replace(self, commit_time=commit_time)
 
     def relevant_places(self) -> tuple[str, ...]:
         return _relevant_places(self)

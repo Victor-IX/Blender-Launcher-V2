@@ -402,18 +402,18 @@ class BlenderLauncher(BaseWindow):
             extended_selection=True,
             show_reload=True,
         )
-        # self.LibraryToolBox.add_tab("All", "_all")
-        self.LibraryToolBox.add_tab("Stable", ("stable", "lts"))
-        self.LibraryToolBox.add_tab("Daily", "daily")
-        self.LibraryToolBox.add_tab("Experimental", ("experimental", "patch"))
-        self.LibraryToolBox.add_tab("Bforartists", "bforartists")
-        self.LibraryToolBox.add_tab("UPBGE", "upbge-stable")
-        self.LibraryToolBox.add_tab("UPBGE Weekly", "upbge-weekly")
-        self.LibraryToolBox.add_tab("Custom", "custom")
+        # self.LibraryToolBox.add_tab("All")
+        self.LibraryToolBox.add_tab("Stable", branch=("stable", "lts"))
+        self.LibraryToolBox.add_tab("Daily", branch=("daily",))
+        self.LibraryToolBox.add_tab("Experimental", folder="experimental")
+        self.LibraryToolBox.add_tab("Bforartists", branch=("bforartists",))
+        self.LibraryToolBox.add_tab("UPBGE", branch=("upbge-stable",))
+        self.LibraryToolBox.add_tab("UPBGE Weekly", branch=("upbge-weekly",))
+        self.LibraryToolBox.add_tab("Custom", folder="custom")
         self.LibraryTabLayout.addWidget(self.LibraryPage)
-        self.LibraryToolBox.branch_changed.connect(self.LibraryPage.list_widget.update_branch_filter)
-        self.LibraryToolBox.branch_changed.connect(self.LibraryPage.update_reload)
-        self.LibraryPage.list_widget.update_branch_filter(self.LibraryToolBox.current_branch())
+        self.LibraryToolBox.query_changed.connect(self.LibraryPage.list_widget.update_tab_filter)
+        self.LibraryToolBox.query_changed.connect(self.LibraryPage.update_reload)
+        self.LibraryPage.list_widget.update_tab_filter(self.LibraryToolBox.current_query())
 
         self.DownloadsPage: BasePageWidget[DownloadWidget] = BasePageWidget(
             parent=self,
@@ -421,16 +421,16 @@ class BlenderLauncher(BaseWindow):
             time_label="Upload Time",
             info_text="No new builds available",
         )
-        # self.DownloadsToolBox.add_tab("All", "_all")
-        self.DownloadsToolBox.add_tab("Stable", ("stable", "lts"))
-        self.DownloadsToolBox.add_tab("Daily", "daily")
-        self.DownloadsToolBox.add_tab("Experimental", ("experimental", "patch"))
-        self.DownloadsToolBox.add_tab("Bforartists", "bforartists")
-        self.DownloadsToolBox.add_tab("UPBGE", "upbge-stable")
-        self.DownloadsToolBox.add_tab("UPBGE Weekly", "upbge-weekly")
+        # self.DownloadsToolBox.add_tab("All")
+        self.DownloadsToolBox.add_tab("Stable", branch=("stable", "lts"))
+        self.DownloadsToolBox.add_tab("Daily", branch=("daily",))
+        self.DownloadsToolBox.add_tab("Experimental", folder="experimental")
+        self.DownloadsToolBox.add_tab("Bforartists", branch=("bforartists",))
+        self.DownloadsToolBox.add_tab("UPBGE", branch=("upbge-stable",))
+        self.DownloadsToolBox.add_tab("UPBGE Weekly", branch=("upbge-weekly",))
         self.DownloadsTabLayout.addWidget(self.DownloadsPage)
-        self.DownloadsToolBox.branch_changed.connect(self.DownloadsPage.list_widget.update_branch_filter)
-        self.DownloadsPage.list_widget.update_branch_filter(self.DownloadsToolBox.current_branch())
+        self.DownloadsToolBox.query_changed.connect(self.DownloadsPage.list_widget.update_tab_filter)
+        self.DownloadsPage.list_widget.update_tab_filter(self.DownloadsToolBox.current_query())
 
         self.FavoritesPage: BasePageWidget[LibraryWidget] = BasePageWidget(
             parent=self,
@@ -438,10 +438,10 @@ class BlenderLauncher(BaseWindow):
             time_label="Commit Time",
             info_text="Nothing to show yet",
         )
-        self.UserToolBox.add_tab("Favorites", "favorites")
+        self.UserToolBox.add_tab("Favorites")
         self.UserTabLayout.addWidget(self.FavoritesPage)
-        self.UserToolBox.branch_changed.connect(self.FavoritesPage.list_widget.update_branch_filter)
-        self.FavoritesPage.list_widget.update_branch_filter(self.UserToolBox.current_branch())
+        # self.UserToolBox.folder_changed.connect(self.FavoritesPage.list_widget.update_folder_filter)
+        # self.FavoritesPage.list_widget.update_folder_filter(self.UserToolBox.current_branch())
 
         # Collect all page widgets for column width synchronization
         self._all_page_widgets = [

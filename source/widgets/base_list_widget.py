@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFontMetrics
 from PySide6.QtWidgets import QAbstractItemView, QFrame, QListWidget, QListWidgetItem
 from widgets.base_build_widget import BaseBuildWidget
+from widgets.library_widget import LibraryWidget
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -18,13 +19,15 @@ _WT = TypeVar("_WT", bound=BaseBuildWidget)
 
 
 class BaseListWidget(Generic[_WT], QListWidget):
-    def __init__(self, parent: BasePageWidget | None = None, extended_selection=False):
+    def __init__(self, parent: BasePageWidget, extended_selection=False):
         super().__init__(parent)
-        self.parent: BasePageWidget | None = parent
-        self.search = VersionSearchQuery.any()
+        self.parent: BasePageWidget = parent
+        self.tab_filter = VersionSearchQuery.any()
+        self.user_given_searcher = None
 
         self.widgets: set[_WT] = set()
         self._query_cache: dict[VersionSearchQuery, set[_WT]] = {}
+        self._binfos_cache: tuple[dict[BasicBuildInfo, list[_WT]], set[_WT]] | None = None
         self.metrics = QFontMetrics(self.font())
 
         self.setFrameShape(QFrame.Shape.NoFrame)
@@ -35,6 +38,13 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         if extended_selection is True:
             self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+
+    @property
+    def query(self) -> VersionSearchQuery:
+        q = self.tab_filter
+        if self.user_given_searcher is not None:
+            q |= self.user_given_searcher
+        return q
 
     def __str__(self):
         widget = [widget.build_info for widget in self.widgets]
@@ -49,6 +59,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.setItemWidget(item, widget)
         self.count_changed()
         self.widgets.add(widget)
+        self._binfos_cache = None
         self.update_visibility(item, widget)
 
     def insert_item(self, item, widget, index=0):
@@ -57,11 +68,13 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.setItemWidget(item, widget)
         self.count_changed()
         self.widgets.add(widget)
+        self._binfos_cache = None
         self.update_visibility(item, widget)
 
     def remove_item(self, item):
         if (w := self.itemWidget(item)) is not None:
             self.widgets.remove(w)
+            self._binfos_cache = None
         row = self.row(item)
         self.takeItem(row)
         self.count_changed()
@@ -100,50 +113,54 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def clear_(self):
         self.clear()
         self.widgets.clear()
+        self._binfos_cache = None
         self._query_cache = {}
         self.count_changed()
 
+    @staticmethod
+    def basic_from_widget(widget: _WT) -> BasicBuildInfo | None:
+        build_info = widget.build_info
+        if build_info.subversion == "0.0.0" and build_info.build_hash == "":
+            # likely a template build with BuildInfo.from_blender_path
+            return None
+
+        # BuildInfo.branch is an unreliable source of filtering for the major categories,
+        # BuildInfo.link is either a URL or a filepath depending on what widget
+        # we're storing, so it's not feasible to make assumptions of the foldername
+        # just from the link, and some builds branches differ from the folder so we
+        # need to categorize the folders separately from branch
+        if isinstance(widget, LibraryWidget):
+            folder = widget.link.parent.name
+        else:
+            folder = widget.build_info.branch
+        return BasicBuildInfo.from_buildinfo(build_info, folder=folder)
+
     def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, list[_WT]], set[_WT]]:
+        if self._binfos_cache is not None:
+            return self._binfos_cache
+
         binfo_to_widgets: dict[BasicBuildInfo, list[_WT]] = {}
         unknown_widgets: set[_WT] = set()
 
         for widget in self.widgets:
-            if widget.build_info is not None:
-                binfo = BasicBuildInfo.from_buildinfo(widget.build_info)
-                lst = binfo_to_widgets.get(binfo, [])
+            binfo = self.basic_from_widget(widget)
+            if binfo is None:
+                continue
+
+            if (lst := binfo_to_widgets.get(binfo)) is not None:
                 lst.append(widget)
-                binfo_to_widgets[binfo] = lst
             else:
-                unknown_widgets.add(widget)
-        return (binfo_to_widgets, unknown_widgets)
+                binfo_to_widgets[binfo] = [widget]
+
+        self._binfos_cache = (binfo_to_widgets, unknown_widgets)
+
+        return self._binfos_cache
 
     def get_matching_builds(self, search: VersionSearchQuery):
         if search not in self._query_cache:
             binfo_to_widget, unknown_widgets = self.basic_build_infos()
             # gather all matching widgets
             shown_widgets: set[_WT] = {w for b in search.match(list(binfo_to_widget)) for w in binfo_to_widget[b]}
-
-            # special handling for "custom": if the build is in the custom folder, add them
-            # needs to be done because "custom" builds probably don't have a branch called "custom"
-            if search.branch == ("custom",) or (search.branch is not None and "custom" in search.branch):
-                shown_widgets |= {
-                    w
-                    for widget in binfo_to_widget.values()
-                    for w in widget
-                    if Path(w.build_info.link).parent.name == "custom"
-                }
-
-            # special handling for "experimental" and "patch": if the build is in the experimental folder, add them
-            # needs to be done because "experimental" builds probably don't have a branch called "experimental"
-            elif search.branch == ("experimental", "patch") or (
-                search.branch is not None and "experimental" in search.branch
-            ):
-                shown_widgets |= {
-                    w
-                    for widget in binfo_to_widget.values()
-                    for w in widget
-                    if Path(w.build_info.link).parent.name == "experimental"
-                }
 
             # add broken widgets to the results
             shown_widgets |= unknown_widgets
@@ -152,12 +169,12 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         return self._query_cache[search]
 
-    def update_branch_filter(self, branches: tuple[str, ...]):
-        self.search = self.search.with_branch(branches)
+    def update_tab_filter(self, tab_filter: VersionSearchQuery):
+        self.tab_filter = tab_filter
         self.update_all_visibility()
 
     def update_all_visibility(self):
-        visible_builds = self.get_matching_builds(self.search)
+        visible_builds = self.get_matching_builds(self.query)
 
         hidden_widgets = self.widgets - visible_builds
 
@@ -169,10 +186,14 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.__show(len(hidden_widgets) != len(self.items()))
 
     def update_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
-        if (widget is None and (widget := self.itemWidget(item)) is None) or widget.build_info is None:
+        if widget is None and (widget := self.itemWidget(item)) is None:
             return
-        success = bool(self.search.match([BasicBuildInfo.from_buildinfo(widget.build_info)]))
-        if (s := self._query_cache.get(self.search)) is not None:
+        if (binfo := self.basic_from_widget(widget)) is None:
+            return
+
+        q = self.query
+        success = bool(q.match([binfo]))
+        if (s := self._query_cache.get(q)) is not None:
             if success:
                 s |= {widget}
             else:

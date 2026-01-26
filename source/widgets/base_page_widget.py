@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Generic
 
 from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
+from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSplitter, QVBoxLayout, QWidget
@@ -182,8 +183,8 @@ class BasePageWidget(QWidget, Generic[_WT]):
 
         set_list_sorting_type(self.name, sorting_type)
 
-    def update_reload(self, branch: tuple[str, ...]):
-        visible = len(set(branch) & SHOW_RELOAD_ON) > 0
+    def update_reload(self, query: VersionSearchQuery):
+        visible = query.folder in SHOW_RELOAD_ON
         self.EmptyReloadButton.setVisible(visible)
         self.HeaderReloadButton.setText("Reload" * visible)
         self.HeaderReloadButton.setEnabled(visible)
