@@ -905,7 +905,7 @@ class LibraryWidget(BaseBuildWidget):
             self.parent,
             item,
             self.link,
-            self.parent.FavoritesPage,
+            self.parent.FavoritesPage.list_widget,
             build_info=self.build_info,
             parent_widget=self,
         )
