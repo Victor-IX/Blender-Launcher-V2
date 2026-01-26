@@ -75,7 +75,7 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.PlaceholderLayout.addStretch()
         self.PlaceholderLayout.addLayout(self.InfoLayout)
 
-        self.EmptyReloadButton = QPushButton("Reload")
+        self.EmptyReloadButton = QPushButton("Reload" * show_reload)
         self.EmptyReloadButton.setToolTip("Reload Custom builds from disk")
         self.EmptyReloadButton.clicked.connect(parent.reload_custom_builds)
         self.EmptyReloadButton.hide()
@@ -96,11 +96,12 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.HeaderLayout.setContentsMargins(2, 0, 0, 0)
         self.HeaderLayout.setSpacing(0)
 
-        self.HeaderReloadButton = QPushButton("Reload")
+        self.HeaderReloadButton = QPushButton("Reload" * show_reload)
         self.HeaderReloadButton.setToolTip("Reload Custom builds from disk")
         self.HeaderReloadButton.setProperty("ListHeader", True)
         self.HeaderReloadButton.clicked.connect(parent.reload_custom_builds)
         self.HeaderReloadButton.setFixedWidth(95)  # Match launchButton width in list items
+        self.HeaderReloadButton.setEnabled(show_reload)
 
         # Create splitter for resizable columns
         self.headerSplitter = QSplitter(Qt.Orientation.Horizontal)
