@@ -33,16 +33,7 @@ from modules.shortcut import (
     get_default_shortcut_folder,
     register_windows_filetypes,
 )
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QDoubleSpinBox,
-    QFormLayout,
-    QHBoxLayout,
-    QLabel,
-    QTextEdit,
-    QVBoxLayout,
-    QWizardPage,
-)
+from PySide6.QtWidgets import QCheckBox, QDoubleSpinBox, QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QWizardPage
 from utils.dpi import DPI_OVERRIDDEN
 from widgets.folder_select import FolderSelector
 from widgets.repo_group import RepoGroup
@@ -346,7 +337,7 @@ class AppearancePage(BasicOnboardingPage):
         super().__init__(prop_settings, parent=parent)
         self.setTitle("Blender Launcher appearance")
         self.setSubTitle("Configure how Blender Launcher Looks")
-        self.layout_ = QFormLayout(self)
+        self.layout_ = QVBoxLayout(self)
 
         self.titlebar = QCheckBox("Use System Titlebar", self)
         self.titlebar.setChecked(get_use_system_titlebar())
