@@ -3,10 +3,20 @@ import os
 import sys
 from pathlib import Path
 
-from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args, parse_blender_ver
+import pytest
+from modules._platform import get_platform
+from modules.build_info import (
+    BuildInfo,
+    LaunchMode,
+    LaunchOpenLast,
+    LaunchWithBlendFile,
+    get_args,
+    parse_blender_ver,
+)
+from modules.settings import get_bash_arguments, set_bash_arguments
 from semver import Version
 
-from source.modules._platform import get_platform
+from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 
 def test_parser():
@@ -35,6 +45,10 @@ def test_parser():
 
 
 # TODO: Make all branches of this test, and get_args, OS-agnostic
+@pytest.mark.skipif(
+    SKIP_TESTS_THAT_MODIFY_CONFIG and get_platform() == "Linux",
+    reason="get_args() changes its output based on the config",
+)
 def test_get_args():
     root = os.path.abspath(os.sep)
     win_root = root.replace("\\", "")
@@ -49,6 +63,10 @@ def test_get_args():
     )
 
     idx = ["Windows", "Linux", "macOS"].index(get_platform())
+
+    if idx == 1:
+        bargs = get_bash_arguments()
+        set_bash_arguments("")
 
     x = [
         (
@@ -93,3 +111,6 @@ def test_get_args():
     for i in x:
         pprint(i)
         assert i[0] == i[idx + 1]
+
+    if idx == 1:
+        set_bash_arguments(bargs)
