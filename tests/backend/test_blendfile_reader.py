@@ -16,7 +16,7 @@ ZSTD = b"(\xb5/\xfd \x0ca\x00\x00BLENDER-v404"
 
 
 def test_header_parser():
-    assert parse_header_version(BASIC) == Version(4, 4, 0)
+    assert parse_header_version(BASIC) == (Version(4, 4, 0), 0)
     with tempfile.TemporaryDirectory() as tmpdir_:
         tmpdir = Path(tmpdir_)
         gb = tmpdir / "gzip.blend"
@@ -25,5 +25,5 @@ def test_header_parser():
             g.write(GZIP)
             z.write(ZSTD)
 
-        assert read_blendfile_header(gb) == BlendfileHeader(Version(4, 4, 0), CompressionType.GZIP)
-        assert read_blendfile_header(zb) == BlendfileHeader(Version(4, 4, 0), CompressionType.ZSTD)
+        assert read_blendfile_header(gb) == BlendfileHeader(Version(4, 4, 0), 0, CompressionType.GZIP)
+        assert read_blendfile_header(zb) == BlendfileHeader(Version(4, 4, 0), 0, CompressionType.ZSTD)
