@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QEvent, Qt
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
 if TYPE_CHECKING:
     from datetime import datetime

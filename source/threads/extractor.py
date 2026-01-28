@@ -6,7 +6,6 @@ import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import py7zr
 from modules._platform import _check_call, _check_output

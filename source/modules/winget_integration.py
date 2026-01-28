@@ -1,6 +1,5 @@
 import contextlib
 import logging
-import sys
 from pathlib import Path
 
 from modules._platform import get_platform

@@ -110,9 +110,6 @@ except Exception as e:
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
-    from PySide6.QtGui import QDragEnterEvent, QDragMoveEvent
-    from widgets.base_build_widget import BaseBuildWidget
-    from widgets.base_list_widget import BaseListWidget
 
 # if get_platform() == "Windows":
 #     from PySide6.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton

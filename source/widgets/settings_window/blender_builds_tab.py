@@ -88,7 +88,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QSpinBox,
-    QStackedWidget,
     QVBoxLayout,
     QWidget,
 )

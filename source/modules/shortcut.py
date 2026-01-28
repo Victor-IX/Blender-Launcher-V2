@@ -17,7 +17,6 @@ def generate_blender_shortcut(folder, name, destination: Path):
 
     if sys.platform == "win32":
         import win32com.client
-        from win32comext.shell import shell, shellcon
 
         targetpath = library_folder / folder / "blender.exe"
         workingdir = library_folder / folder

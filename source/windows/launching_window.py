@@ -4,7 +4,6 @@ import contextlib
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from items.enablable_list_widget_item import EnablableListWidgetItem
 from modules.blendfile_reader import BlendfileHeader, read_blendfile_header
@@ -24,9 +23,6 @@ from PySide6.QtWidgets import QApplication, QComboBox, QGridLayout, QLabel, QLis
 from threads.library_drawer import DrawLibraryTask
 from widgets.lintable_line_edit import LintableLineEdit
 from windows.base_window import BaseWindow
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 logger = logging.getLogger()
 
