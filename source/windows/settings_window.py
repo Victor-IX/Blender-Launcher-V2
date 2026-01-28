@@ -1,6 +1,6 @@
 from modules.settings import (
     get_check_for_new_builds_automatically,
-    get_enable_high_dpi_scaling,
+    get_dpi_scale_factor,
     get_enable_quick_launch_key_seq,
     get_new_builds_check_frequency,
     get_proxy_host,
@@ -53,7 +53,7 @@ class SettingsWindow(BaseWindow):
         self.old_check_for_new_builds_automatically = get_check_for_new_builds_automatically()
         self.old_new_builds_check_frequency = get_new_builds_check_frequency()
 
-        self.old_enable_high_dpi_scaling = get_enable_high_dpi_scaling()
+        self.old_dpi_scale_factor = get_dpi_scale_factor()
         self.old_thread_count = get_worker_thread_count()
 
         # Header layout
@@ -184,15 +184,12 @@ class SettingsWindow(BaseWindow):
         ):
             self.launcher.draw_library(clear=True)
 
-        """Update high DPI scaling"""
-        enable_high_dpi_scaling = get_enable_high_dpi_scaling()
+        """Update DPI Scale Factor"""
+        dpi_scale_factor = get_dpi_scale_factor()
 
-        if self.old_enable_high_dpi_scaling != enable_high_dpi_scaling:
+        if self.old_dpi_scale_factor != dpi_scale_factor:
             pending_to_restart.append(
-                "High DPI Scaling: "
-                + checkdct[self.old_enable_high_dpi_scaling]
-                + "🠆"
-                + checkdct[enable_high_dpi_scaling],
+                f"DPI Scale Factor: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
             )
 
         """Update worker thread count"""

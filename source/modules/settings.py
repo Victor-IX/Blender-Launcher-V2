@@ -242,12 +242,12 @@ def set_launch_minimized_to_tray(is_checked):
     get_settings().setValue("launch_minimized_to_tray", is_checked)
 
 
-def get_enable_high_dpi_scaling() -> bool:
-    return get_settings().value("enable_high_dpi_scaling", defaultValue=True, type=bool)  # type: ignore
+def get_dpi_scale_factor() -> float:
+    return get_settings().value("dpi_scale_factor", defaultValue=1.0, type=float)  # type: ignore
 
 
-def set_enable_high_dpi_scaling(is_checked):
-    get_settings().setValue("enable_high_dpi_scaling", is_checked)
+def set_dpi_scale_factor(val: float):
+    get_settings().setValue("dpi_scale_factor", val)
 
 
 def get_sync_library_and_downloads_pages() -> bool:
@@ -597,7 +597,6 @@ def _get_keyring_value(key: str, default="") -> str:
         return legacy_value
 
     return default
-
 
 
 def _set_keyring_value(key: str, val: str) -> bool:

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from modules.connection_manager import ConnectionManager
 from modules.icons import Icons
-from modules.settings import get_enable_high_dpi_scaling, get_use_system_titlebar
+from modules.settings import get_use_system_titlebar
 from PySide6.QtCore import QFile, QPoint, Qt, QTextStream
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QMainWindow
@@ -12,11 +12,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 if TYPE_CHECKING:
     from semver import Version
     from windows.main_window import BlenderLauncher
-
-if get_enable_high_dpi_scaling():
-    QApplication.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling, True)
-    QApplication.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
-
 
 class BaseWindow(QMainWindow):
     def __init__(

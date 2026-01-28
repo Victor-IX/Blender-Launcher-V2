@@ -22,6 +22,7 @@ from modules.version_matcher import VALID_FULL_QUERIES, VALID_QUERIES, VERSION_S
 from modules.winget_integration import register_with_winget
 from PySide6.QtWidgets import QApplication
 from semver import Version
+from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
 from windows.popup_window import PopupIcon, PopupWindow
 
@@ -172,11 +173,12 @@ def main():
     # Log Blender Launcher version
     logger.info(f"Blender Launcher Version: {version}")
 
-    # Create an instance of application and set its core properties
-    app = QApplication(["blender-launcher-v2"])
-    app.setApplicationName("blender-launcher-v2")
-    app.setStyle("Fusion")
-    app.setApplicationVersion(str(version))
+    with apply_scale_factor():
+        # Create an instance of application and set its core properties
+        app = QApplication(["blender-launcher-v2"])
+        app.setApplicationName("blender-launcher-v2")
+        app.setStyle("Fusion")
+        app.setApplicationVersion(str(version))
 
     set_lib_folder: Path | None = args.set_library_folder
     if set_lib_folder is not None:

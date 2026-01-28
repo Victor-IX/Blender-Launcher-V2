@@ -11,10 +11,10 @@ from modules._platform import find_app_bundle, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
-    get_enable_high_dpi_scaling,
+    get_dpi_scale_factor,
     get_show_tray_icon,
     get_use_system_titlebar,
-    set_enable_high_dpi_scaling,
+    set_dpi_scale_factor,
     set_library_folder,
     set_scrape_bfa_builds,
     set_scrape_daily_builds,
@@ -33,7 +33,17 @@ from modules.shortcut import (
     get_default_shortcut_folder,
     register_windows_filetypes,
 )
-from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QWizardPage
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QHBoxLayout,
+    QLabel,
+    QTextEdit,
+    QVBoxLayout,
+    QWizardPage,
+)
+from utils.dpi import DPI_OVERRIDDEN
 from widgets.folder_select import FolderSelector
 from widgets.repo_group import RepoGroup
 
@@ -326,8 +336,9 @@ Our main method of moving and resizing works best on X11."""
 
 TITLEBAR_LABEL_TEXT = """This disables the custom title bar and uses the OS's default titlebar."""
 
-HIGH_DPI_TEXT = """This enables high DPI scaling for the program.
-automatically scales the user interface based on the monitor's pixel density."""
+DPI_SCALING_TEXT = """This changes the DPI factor of the program.
+automatically scales the user interface based on the monitor's pixel density, multiplied by this value.
+Helps when things are too small to read on screens like MacOS"""
 
 
 class AppearancePage(BasicOnboardingPage):
@@ -335,7 +346,7 @@ class AppearancePage(BasicOnboardingPage):
         super().__init__(prop_settings, parent=parent)
         self.setTitle("Blender Launcher appearance")
         self.setSubTitle("Configure how Blender Launcher Looks")
-        self.layout_ = QVBoxLayout(self)
+        self.layout_ = QFormLayout(self)
 
         self.titlebar = QCheckBox("Use System Titlebar", self)
         self.titlebar.setChecked(get_use_system_titlebar())
@@ -343,18 +354,27 @@ class AppearancePage(BasicOnboardingPage):
             titlebar_label = QLabel(TITLEBAR_LABEL_TEXT_LINUX, self)
         else:
             titlebar_label = QLabel(TITLEBAR_LABEL_TEXT, self)
-        self.highdpiscaling = QCheckBox("High DPI Scaling")
-        self.highdpiscaling.setChecked(get_enable_high_dpi_scaling())
-        highdpiscaling_label = QLabel(HIGH_DPI_TEXT)
+        self.dpi_scale_factor = QDoubleSpinBox(self)
+        self.dpi_scale_factor.setRange(0.25, 10.0)
+        self.dpi_scale_factor.setSingleStep(0.25)
+        self.dpi_scale_factor.setValue(get_dpi_scale_factor())
+        if DPI_OVERRIDDEN:
+            label = "DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)"
+            self.dpi_scale_factor.setEnabled(False)
+        else:
+            label = "DPI Scale Factor"
+        self.dpi_scale_label = QLabel(label)
+        dpi_scale_desc = QLabel(DPI_SCALING_TEXT)
 
         self.layout_.addWidget(titlebar_label)
         self.layout_.addWidget(self.titlebar)
-        self.layout_.addWidget(highdpiscaling_label)
-        self.layout_.addWidget(self.highdpiscaling)
+        self.layout_.addWidget(dpi_scale_desc)
+        self.layout_.addWidget(self.dpi_scale_label)
+        self.layout_.addWidget(self.dpi_scale_factor)
 
     def evaluate(self):
         set_use_system_titlebar(self.titlebar.isChecked())
-        set_enable_high_dpi_scaling(self.highdpiscaling.isChecked())
+        set_dpi_scale_factor(self.dpi_scale_factor.value())
 
 
 BACKGROUND_SUBTITLE = """Blender Launcher can be kept alive in the background with a system tray icon.\
