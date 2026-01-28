@@ -38,7 +38,6 @@ target-version = "py311" # our minimum supported version
 
 [tool.ruff.lint]
 extend-ignore = [
-  "F401",   # unused-import -- Certain imports need to be explicitly made, even though they are unused
   "E501",   # line-too-long -- Unavoidable in some cases, but it should still be followed everywhere else
   "SIM114", # if-with-same-arms -- This can make the code harder to read and understand in some places
   "SIM108", # if-else-block-instead-of-if-exp -- Same as above, but this is more common

@@ -35,7 +35,6 @@ from modules.settings import (
 )
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
 from modules.winget_integration import register_with_winget, unregister_from_winget
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox, QComboBox, QGridLayout, QLabel, QPushButton, QSpinBox
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget

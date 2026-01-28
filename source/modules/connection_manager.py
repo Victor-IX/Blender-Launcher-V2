@@ -4,7 +4,7 @@ import logging
 import ssl
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from modules._platform import get_cwd, get_platform_full, is_frozen
 from modules.settings import (

@@ -5,7 +5,7 @@ import re
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
@@ -25,7 +25,6 @@ from widgets.elided_text_label import ElidedTextLabel
 from windows.popup_window import PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
-    from widgets.base_page_widget import BasePageWidget
     from widgets.library_widget import LibraryWidget
     from windows.main_window import BlenderLauncher
 

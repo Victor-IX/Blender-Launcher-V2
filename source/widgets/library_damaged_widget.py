@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
 from modules.settings import get_library_folder
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget

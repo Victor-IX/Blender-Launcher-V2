@@ -12,7 +12,7 @@ from pathlib import Path
 
 import keyring
 from keyring.errors import KeyringError, PasswordDeleteError
-from modules._platform import get_config_file, get_config_path, get_cwd, get_platform, local_config, user_config
+from modules._platform import get_config_file, get_config_path, get_cwd, local_config, user_config
 from modules.bl_api_manager import dropdown_blender_version
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings

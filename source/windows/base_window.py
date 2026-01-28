@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from modules.connection_manager import ConnectionManager
 from modules.icons import Icons
 from modules.settings import get_use_system_titlebar
-from PySide6.QtCore import QFile, QPoint, Qt, QTextStream
+from PySide6.QtCore import QFile, Qt, QTextStream
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QMainWindow
 

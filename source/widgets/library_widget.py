@@ -30,7 +30,7 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6.QtCore import Qt, QUrl, Signal, Slot
+from PySide6.QtCore import Qt, QUrl, Slot
 from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer

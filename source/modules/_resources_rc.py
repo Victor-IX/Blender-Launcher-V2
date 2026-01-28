@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 # resources_rc needs to be imported after PySide6 because
 # if there are any errors importing PySide6
 # it would be registered as an issue fetching the resources instead
-import PySide6
+import PySide6  # noqa: F401
 from modules._platform import is_frozen
 
 try:
-    import resources_rc
+    import resources_rc  # noqa: F401
 
     # Upon importing resources_rc, the :resources QIODevice should be open,
     # and the contained styles should be available for use.
