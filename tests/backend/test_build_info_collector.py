@@ -56,6 +56,6 @@ def test_display_label_variants():
     )
     # Build variant case -- this could possibly be removed
     p = sys.platform
-    sys.platform = "darwin"
+    sys.platform = "darwin"  # type: ignore
     assert BuildInfo._display_label("stable", Version(2, 80, 0, prerelease="intel"), "2.80.0-rc2") == "Stable - intel"
     sys.platform = p

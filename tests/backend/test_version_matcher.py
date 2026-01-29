@@ -1,7 +1,8 @@
 import datetime
 
-from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 from semver import Version
+
+from source.modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 
 utc = datetime.timezone.utc  # noqa: UP017
 

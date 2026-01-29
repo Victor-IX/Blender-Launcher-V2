@@ -1,6 +1,7 @@
-from modules.icons import Icons
 from PySide6.QtWidgets import QApplication
-from widgets.build_state_widget import BuildStateWidget
+
+from source.modules.icons import Icons
+from source.widgets.build_state_widget import BuildStateWidget
 
 
 def test_build_state_widget(qapplication: QApplication):

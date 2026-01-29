@@ -1,13 +1,14 @@
 import tempfile
 from pathlib import Path
 
-from modules.blendfile_reader import (
+from semver import Version
+
+from source.modules.blendfile_reader import (
     BlendfileHeader,
     CompressionType,
     parse_header_version,
     read_blendfile_header,
 )
-from semver import Version
 
 # This is inaccurate to a normal scenario but they should scale properly
 v0_BASIC = b"BLENDER-v404"

@@ -1,7 +1,7 @@
 import datetime
 
-from modules.build_info import BuildInfo
-from modules.scraper_cache import ScraperCache, StableFolder
+from source.modules.build_info import BuildInfo
+from source.modules.scraper_cache import ScraperCache, StableFolder
 
 STABLE_FOLDER_CACHE = {
     "assets": [

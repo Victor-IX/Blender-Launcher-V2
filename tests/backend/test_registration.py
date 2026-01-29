@@ -1,8 +1,8 @@
 import sys
 
 import pytest
-from modules.shortcut import association_is_registered, register_windows_filetypes, unregister_windows_filetypes
 
+from source.modules.shortcut import association_is_registered, register_windows_filetypes, unregister_windows_filetypes
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 

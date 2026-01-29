@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass, replace
 from functools import cache, lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, TypedDict, Unpack
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -200,20 +200,14 @@ class VersionSearchQuery:
         major: int | str,
         minor: int | str,
         patch: int | str,
-        folder: str | None = None,
-        build_hash: str | None = None,
-        branch: tuple[str, ...] | None = None,
-        commit_time: datetime.datetime | str | None = None,
+        **extra_args: Unpack[VSQKwargs],
     ):
         """A constructor with major, minor, and patch at the front"""
         return cls(
-            folder=folder,
-            build_hash=build_hash,
             major=major,
             minor=minor,
             patch=patch,
-            branch=branch,
-            commit_time=commit_time,
+            **extra_args
         )
 
     @classmethod

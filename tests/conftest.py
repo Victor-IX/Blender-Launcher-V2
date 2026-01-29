@@ -1,8 +1,8 @@
 import shutil
 
 import pytest
-from modules._platform import get_config_file
 
+from source.modules.platform_utils import get_config_file
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 cfg = get_config_file()

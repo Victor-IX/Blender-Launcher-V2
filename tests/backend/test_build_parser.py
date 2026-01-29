@@ -3,17 +3,17 @@ import os
 from pathlib import Path
 
 import pytest
-from modules._platform import get_platform
-from modules.build_info import (
+from semver import Version
+
+from source.modules.build_info import (
     BuildInfo,
     LaunchOpenLast,
     LaunchWithBlendFile,
     get_args,
     parse_blender_ver,
 )
-from modules.settings import get_bash_arguments, set_bash_arguments
-from semver import Version
-
+from source.modules.platform_utils import get_platform
+from source.modules.settings import get_bash_arguments, set_bash_arguments
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 
