@@ -7,8 +7,8 @@ from modules.settings import (
     get_default_downloads_page,
     get_default_library_page,
     get_default_tab,
+    get_dpi_scale_factor,
     get_enable_download_notifications,
-    get_enable_high_dpi_scaling,
     get_enable_new_builds_notifications,
     get_sync_library_and_downloads_pages,
     get_use_system_titlebar,
@@ -16,15 +16,25 @@ from modules.settings import (
     set_default_downloads_page,
     set_default_library_page,
     set_default_tab,
+    set_dpi_scale_factor,
     set_enable_download_notifications,
-    set_enable_high_dpi_scaling,
     set_enable_new_builds_notifications,
     set_make_error_notifications,
     set_sync_library_and_downloads_pages,
     set_use_system_titlebar,
     tabs,
 )
-from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLabel, QVBoxLayout
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QGridLayout,
+    QLabel,
+    QSizePolicy,
+    QVBoxLayout,
+)
+from utils.dpi import DPI_OVERRIDDEN
 from widgets.settings_form_widget import SettingsFormWidget
 
 from .settings_group import SettingsGroup
@@ -50,20 +60,31 @@ class AppearanceTabWidget(SettingsFormWidget):
         )
         self.UseSystemTitleBar.setChecked(get_use_system_titlebar())
         self.UseSystemTitleBar.clicked.connect(self.toggle_system_titlebar)
-        # High Dpi Scaling
-        self.EnableHighDpiScalingCheckBox = QCheckBox()
-        self.EnableHighDpiScalingCheckBox.setText("Enable High DPI Scaling")
-        self.EnableHighDpiScalingCheckBox.setToolTip(
-            "Enable high DPI scaling for the application\
-            \nautomatically scale the user interface based on the monitor's pixel density\
-            \nDEFAULT: True"
+        # DPI Scale Factor
+        self.DpiScaleFactorSpinBox = QDoubleSpinBox()
+        self.DpiScaleFactorSpinBox.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        if DPI_OVERRIDDEN:
+            label = "DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)"
+            self.DpiScaleFactorSpinBox.setEnabled(False)
+        else:
+            label = "DPI Scale Factor"
+        self.DpiScaleFactorLabel = QLabel(label)
+        self.DpiScaleFactorSpinBox.setToolTip(
+            "change DPI scaling for the application\
+            \nScale the user interface by a factor to make things more readable & comfortable\
+            \nDEFAULT: 1.0"
         )
-        self.EnableHighDpiScalingCheckBox.clicked.connect(self.toggle_enable_high_dpi_scaling)
-        self.EnableHighDpiScalingCheckBox.setChecked(get_enable_high_dpi_scaling())
+        self.DpiScaleFactorSpinBox.setRange(0.25, 10.0)
+        self.DpiScaleFactorSpinBox.setSingleStep(0.05)
+        self.DpiScaleFactorSpinBox.setValue(get_dpi_scale_factor())
+        self.DpiScaleFactorSpinBox.valueChanged.connect(self.set_dpi_scale_factor)
 
-        self.window_layout = QVBoxLayout()
-        self.window_layout.addWidget(self.UseSystemTitleBar)
-        self.window_layout.addWidget(self.EnableHighDpiScalingCheckBox)
+        self.window_layout = QGridLayout()
+        self.window_layout.addWidget(self.UseSystemTitleBar, 0, 0, 1, 2)
+        self.window_layout.addWidget(self.DpiScaleFactorSpinBox, 1, 0)
+        self.window_layout.addWidget(self.DpiScaleFactorLabel, 1, 1)
+        self.window_layout.setColumnStretch(1, 1)
+
         self.window_settings.setLayout(self.window_layout)
 
         # Notifications
@@ -157,8 +178,8 @@ class AppearanceTabWidget(SettingsFormWidget):
         set_use_system_titlebar(is_checked)
         self.launcher.update_system_titlebar(is_checked)
 
-    def toggle_enable_high_dpi_scaling(self, is_checked):
-        set_enable_high_dpi_scaling(is_checked)
+    def set_dpi_scale_factor(self, value: float):
+        set_dpi_scale_factor(value)
 
     def change_default_tab(self, index: int):
         tab = self.DefaultTabComboBox.itemText(index)
