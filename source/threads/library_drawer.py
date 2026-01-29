@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
+from modules.platform_utils import get_platform
 from modules.settings import get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal

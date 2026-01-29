@@ -7,8 +7,8 @@ from abc import abstractmethod
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
 from modules.build_info import BuildInfo, parse_blender_ver
+from modules.platform_utils import get_platform
 from semver import Version
 from threads.scraping.base import BuildScraper
 

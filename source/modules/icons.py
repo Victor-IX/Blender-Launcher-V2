@@ -71,7 +71,7 @@ def get_bl_file_location():
     import sys
     from pathlib import Path
 
-    from modules._platform import get_cwd, is_frozen
+    from modules.platform_utils import get_cwd, is_frozen
 
     assert sys.platform == "win32"
     if is_frozen():

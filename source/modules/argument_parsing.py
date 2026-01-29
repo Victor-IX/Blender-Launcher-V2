@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser, Namespace
 
-from modules._platform import is_frozen, show_windows_help
+from modules.platform_utils import is_frozen, show_windows_help
 
 # These custom handlings are necessary for frozen Windows builds to show
 # argparse help messages properly

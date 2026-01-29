@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 import modules._resources_rc  # noqa: F401
 from modules import argument_parsing as ap
-from modules._platform import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.cli_launching import cli_launch
+from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.settings import get_auto_register_winget
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX

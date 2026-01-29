@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
+from modules.platform_utils import get_platform
 from modules.settings import (
     delete_action,
     get_actual_library_folder,

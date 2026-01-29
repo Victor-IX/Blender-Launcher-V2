@@ -6,7 +6,7 @@ from pathlib import Path
 # if there are any errors importing PySide6
 # it would be registered as an issue fetching the resources instead
 import PySide6  # noqa: F401
-from modules._platform import is_frozen
+from modules.platform_utils import is_frozen
 
 try:
     import resources_rc  # noqa: F401

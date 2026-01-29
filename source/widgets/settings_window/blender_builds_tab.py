@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
 from modules.bl_api_manager import dropdown_blender_version
+from modules.platform_utils import get_platform
 from modules.settings import (
     favorite_pages,
     get_bash_arguments,
