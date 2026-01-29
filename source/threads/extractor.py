@@ -144,9 +144,7 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
                 raise RuntimeError(f"No .app file found in {mount_point}")
 
             # Calculate approximate total size for progress reporting
-            total_size = sum(
-                f.stat().st_size for app_file in app_files for f in app_file.rglob("*") if f.is_file()
-            )
+            total_size = sum(f.stat().st_size for app_file in app_files for f in app_file.rglob("*") if f.is_file())
             progress_callback(0, total_size)
 
             # Create destination directory

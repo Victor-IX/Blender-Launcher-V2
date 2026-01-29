@@ -55,6 +55,7 @@ class BasicBuildInfo:
             folder=folder,
         )
 
+
 # VersionSearchQuerySyntax (NOT SEMVER COMPATIBLE!):
 
 # ^   | match the largest/newest item in that column

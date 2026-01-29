@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from semver import Version
     from windows.main_window import BlenderLauncher
 
+
 class BaseWindow(QMainWindow):
     def __init__(
         self, parent: BlenderLauncher | None = None, app: QApplication | None = None, version: Version | None = None
