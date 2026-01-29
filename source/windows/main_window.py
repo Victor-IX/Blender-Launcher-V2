@@ -785,12 +785,9 @@ class BlenderLauncher(BaseWindow):
     def check_library_for_updates(self):
         all_downloads = self.DownloadsPage.findChildren(DownloadWidget)
         library_list = self.LibraryPage.list_widget
-        for item in range(library_list.count()):
-            widget_item = library_list.item(item)
-            if widget_item:
-                library_widget = library_list.itemWidget(widget_item)
-                if isinstance(library_widget, LibraryWidget):
-                    library_widget.check_for_updates(all_downloads)
+        for library_widget in library_list.widgets:
+            if isinstance(library_widget, LibraryWidget) and library_widget.link.parent.name != "custom":
+                library_widget.check_for_updates(all_downloads)
 
     def connection_error(self):
         logger.error("Connection_error")
