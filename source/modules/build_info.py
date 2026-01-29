@@ -11,8 +11,8 @@ from functools import cache
 from pathlib import Path
 
 import dateparser
-from modules._platform import _check_output, _popen, get_platform
 from modules.bl_api_manager import lts_blender_version, read_blender_version_list
+from modules.platform_utils import _check_output, _popen, get_platform
 from modules.settings import (
     get_bash_arguments,
     get_blender_startup_arguments,

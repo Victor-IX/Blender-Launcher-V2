@@ -4,7 +4,7 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-from modules._platform import get_config_path, get_platform
+from modules.platform_utils import get_config_path, get_platform
 from semver import Version
 
 logger = logging.getLogger()

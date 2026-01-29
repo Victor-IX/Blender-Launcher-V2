@@ -5,8 +5,8 @@ import os
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from modules._platform import get_platform
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
+from modules.platform_utils import get_platform
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,

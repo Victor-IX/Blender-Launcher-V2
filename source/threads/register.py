@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT
 
-from modules._platform import get_platform
+from modules.platform_utils import get_platform
 from PySide6.QtCore import QThread
 
 if get_platform() == "Windows":
