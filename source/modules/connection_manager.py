@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules._platform import get_cwd, get_platform_full, is_frozen
+from modules.platform_utils import get_cwd, get_platform_full, is_frozen
 from modules.settings import (
     get_github_token,
     get_proxy_host,

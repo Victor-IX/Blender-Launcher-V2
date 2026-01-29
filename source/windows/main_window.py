@@ -14,12 +14,19 @@ from time import localtime, mktime, strftime
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _popen, get_cwd, get_default_library_folder, get_launcher_name, get_platform, is_frozen
 from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
 from modules.build_info import ReadBuildTask
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
+from modules.platform_utils import (
+    _popen,
+    get_cwd,
+    get_default_library_folder,
+    get_launcher_name,
+    get_platform,
+    is_frozen,
+)
 from modules.settings import (
     create_library_folders,
     get_check_for_new_builds_automatically,

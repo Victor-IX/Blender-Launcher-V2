@@ -6,13 +6,13 @@ import logging
 from typing import TYPE_CHECKING
 
 import distro
-from modules._platform import get_platform
 from modules.bl_api_manager import (
     dropdown_blender_version,
     lts_blender_version,
     update_local_api_files,
     update_stable_builds_cache,
 )
+from modules.platform_utils import get_platform
 from modules.settings import get_use_pre_release_builds
 from semver import Version
 

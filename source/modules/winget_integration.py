@@ -2,7 +2,7 @@ import contextlib
 import logging
 from pathlib import Path
 
-from modules._platform import get_platform
+from modules.platform_utils import get_platform
 
 logger = logging.getLogger(__name__)
 

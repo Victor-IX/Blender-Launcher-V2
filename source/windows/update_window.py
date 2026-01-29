@@ -6,7 +6,7 @@ import os
 from typing import TypedDict
 
 import distro
-from modules._platform import _popen, get_cwd, get_platform
+from modules.platform_utils import _popen, get_cwd, get_platform
 from modules.tasks import TaskQueue
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget

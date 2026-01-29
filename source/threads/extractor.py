@@ -8,8 +8,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import py7zr
-from modules._platform import _check_call, _check_output
 from modules.enums import MessageType
+from modules.platform_utils import _check_call, _check_output
 from modules.task import Task
 from PySide6.QtCore import Signal
 from send2trash import send2trash

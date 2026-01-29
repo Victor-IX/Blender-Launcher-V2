@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from items.base_list_widget_item import BaseListWidgetItem
-from modules._platform import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.blender_update_manager import available_blender_update, is_major_version_update
 from modules.build_info import (
     BuildInfo,
@@ -21,6 +20,7 @@ from modules.build_info import (
     launch_build,
 )
 from modules.enums import MessageType
+from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.settings import (
     get_default_delete_action,
     get_favorite_path,

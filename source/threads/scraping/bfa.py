@@ -7,8 +7,8 @@ from datetime import datetime
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
-from modules._platform import bfa_cache_path, get_platform
 from modules.build_info import BuildInfo
+from modules.platform_utils import bfa_cache_path, get_platform
 from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
