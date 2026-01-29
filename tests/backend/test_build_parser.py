@@ -1,13 +1,11 @@
 import datetime
 import os
-import sys
 from pathlib import Path
 
 import pytest
 from modules._platform import get_platform
 from modules.build_info import (
     BuildInfo,
-    LaunchMode,
     LaunchOpenLast,
     LaunchWithBlendFile,
     get_args,

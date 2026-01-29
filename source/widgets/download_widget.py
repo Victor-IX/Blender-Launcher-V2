@@ -287,8 +287,8 @@ class DownloadWidget(BaseBuildWidget):
             self.updating_widget.launchButton.set_text("Launch")
             self.updating_widget.launchButton.setEnabled(True)
             if hasattr(self.updating_widget, "_update_download_widget"):
-                self.updating_widget._show_update_button()
-                self.updating_widget.updateButton.clicked.connect(self.updating_widget._trigger_update_download)
+                self.updating_widget.show_update_button()
+                self.updating_widget.updateButton.clicked.connect(self.updating_widget.trigger_update_download)
             self.updating_widget = None
 
     def download_get_info(self) -> None:

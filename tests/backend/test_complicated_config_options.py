@@ -1,9 +1,5 @@
-import uuid
-
 import pytest
 from modules.settings import (
-    get_default_worker_thread_count,
-    get_user_id,
     get_version_specific_queries,
     set_version_specific_queries,
 )

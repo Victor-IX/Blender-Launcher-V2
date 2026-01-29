@@ -499,7 +499,7 @@ class LibraryWidget(BaseBuildWidget):
             delattr(self, "_update_download_widget")
         logger.debug(f"Update finished for {self.link.name}")
 
-    def _show_update_button(self):
+    def show_update_button(self):
         """Show update button and adjust layout."""
         self.updateButton.show()
         self.launchButton.setFixedWidth(70)
@@ -523,7 +523,7 @@ class LibraryWidget(BaseBuildWidget):
         update = available_blender_update(self.build_info, available_downloads, self.list_widget.items())
         if update:
             if get_show_update_button():
-                self._show_update_button()
+                self.show_update_button()
                 self.updateBlenderBuildAction.setVisible(True)
             else:
                 self._hide_update_button()
@@ -535,13 +535,13 @@ class LibraryWidget(BaseBuildWidget):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", RuntimeWarning)
                 self.updateButton.clicked.disconnect()
-            self.updateButton.clicked.connect(self._trigger_update_download)
+            self.updateButton.clicked.connect(self.trigger_update_download)
             return True
 
         self._hide_update_button()
         return False
 
-    def _trigger_update_download(self):
+    def trigger_update_download(self):
         if hasattr(self, "_update_download_widget"):
             self._is_major_version_update = is_major_version_update(self.build_info, self._update_download_widget)
         else:

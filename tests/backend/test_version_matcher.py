@@ -1,8 +1,7 @@
 import datetime
 
-from semver import Version
-
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
+from semver import Version
 
 utc = datetime.timezone.utc  # noqa: UP017
 
@@ -17,6 +16,7 @@ builds = (
     BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
     BasicBuildInfo(Version.parse("4.3.1"), "daily", "", datetime.datetime(2024, 7, 20, tzinfo=utc)),
 )
+
 
 def test_matcher():
     # find the latest minor builds with any patch number
@@ -54,9 +54,8 @@ def test_matcher():
 
     print("test_binfo_matcher successful!")
 
-def test_vsq_serialization():
-    import json
 
+def test_vsq_serialization():
     for query in (
         VersionSearchQuery.any(),
         VersionSearchQuery.default(),
@@ -85,6 +84,7 @@ def test_vsq_serialization():
         assert result_before_serialization == result_after_serialization
 
     print("test_vsq_serialization successful!")
+
 
 def test_search_query_parser():
     # Test parsing of search query strings

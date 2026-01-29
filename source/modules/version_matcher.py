@@ -2,19 +2,17 @@ from __future__ import annotations
 
 import contextlib
 import datetime
-import os
 import re
 from dataclasses import dataclass, replace
 from functools import cache, lru_cache
 from operator import attrgetter
 from typing import TYPE_CHECKING, TypedDict
 
-from semver import Version
-
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from modules.build_info import BuildInfo
+    from semver import Version
 
 utc = datetime.UTC
 
