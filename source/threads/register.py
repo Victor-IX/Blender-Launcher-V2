@@ -1,11 +1,12 @@
 import subprocess
+import sys
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT
 
 from modules.platform_utils import get_platform
 from PySide6.QtCore import QThread
 
-if get_platform() == "Windows":
+if sys.platform == "win32":
     from subprocess import CREATE_NO_WINDOW
 
 

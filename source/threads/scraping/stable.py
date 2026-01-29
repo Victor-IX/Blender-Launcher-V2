@@ -95,7 +95,10 @@ class ScraperStable(BuildScraper):
         cache_modified = False
         for release in releases:
             href = release["href"]
-            match = re.search(BLENDER_X_X, href)
+            if not isinstance(href, str):
+                logger.warning("Unexpected type for href: %s", href)
+                continue
+            match = re.search(pattern=BLENDER_X_X, string=href)
             if match is None:
                 continue
 

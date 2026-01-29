@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import binascii
 import json
 import logging
 from typing import TYPE_CHECKING
@@ -120,7 +121,7 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> dict | Non
             json_data = json.loads(file_content)
             logger.info(f"API data form {file} have been loaded successfully")
             return json_data
-        except (base64.binascii.Error, json.JSONDecodeError) as e:
+        except (binascii.Error, json.JSONDecodeError) as e:
             logger.exception(f"Failed to decode or parse JSON data: {e}")
             return None
     else:
