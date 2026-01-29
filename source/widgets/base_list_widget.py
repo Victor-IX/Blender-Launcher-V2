@@ -21,6 +21,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def __init__(self, parent: BasePageWidget, extended_selection=False):
         super().__init__(parent)
         self.parent: BasePageWidget = parent
+        self.page = parent
         self.tab_filter = VersionSearchQuery.any()
         self.user_given_searcher = None
 

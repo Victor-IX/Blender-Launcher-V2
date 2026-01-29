@@ -1,12 +1,6 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
+from modules.build_info import BuildInfo
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QListWidgetItem
-
-if TYPE_CHECKING:
-    from modules.build_info import BuildInfo
-    from PySide6.QtGui import QFont
 
 
 class EnablableListWidgetItem(QListWidgetItem):
@@ -29,5 +23,7 @@ class EnablableListWidgetItem(QListWidgetItem):
         else:
             self.setFont(self.__disable_font)
 
-    def __lt__(self, other: EnablableListWidgetItem):
+    def __lt__(self, other: QListWidgetItem):
+        if not isinstance(other, EnablableListWidgetItem):
+            return False
         return self.enabled < other.enabled if self.enabled != other.enabled else self.build < other.build

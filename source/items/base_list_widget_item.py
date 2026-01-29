@@ -1,25 +1,26 @@
 from __future__ import annotations
 
 from datetime import UTC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic
 
 from PySide6.QtWidgets import QListWidgetItem
+from widgets.base_list_widget import _WT
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
     from semver import Version
     from widgets.base_list_widget import BaseListWidget
 
 
-class BaseListWidgetItem(QListWidgetItem):
+class BaseListWidgetItem(QListWidgetItem, Generic[_WT]):
     def __init__(self, date=None):
         super().__init__()
         self.date = date
-        self.listWidget: Callable[[], BaseListWidget | None]
+
+    def list_widget(self) -> BaseListWidget[_WT]:
+        return self.listWidget()  # type: ignore
 
     def __lt__(self, other):
-        sorting_type = self.listWidget().parent.sorting_type
+        sorting_type = self.list_widget().page.sorting_type
 
         if sorting_type.name == "DATETIME":
             return self.compare_datetime(other)
@@ -40,7 +41,7 @@ class BaseListWidgetItem(QListWidgetItem):
         return self.date > other.date
 
     def compare_version(self, other):
-        list_widget = self.listWidget()
+        list_widget = self.list_widget()
 
         this_widget = list_widget.itemWidget(self)
         other_widget = list_widget.itemWidget(other)
@@ -62,7 +63,7 @@ class BaseListWidgetItem(QListWidgetItem):
         return this_version > other_version
 
     def compare_label(self, other):
-        list_widget = self.listWidget()
+        list_widget = self.list_widget()
 
         this_widget = list_widget.itemWidget(self)
         other_widget = list_widget.itemWidget(other)
