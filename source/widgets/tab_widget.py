@@ -5,10 +5,10 @@ class TabWidget(QWidget):
     def __init__(self, parent, label="New Tab"):
         super().__init__(parent)
 
-        layout = QHBoxLayout()
-        layout.setContentsMargins(6, 6, 6, 6)
-        self.setLayout(layout)
+        self._layout = QHBoxLayout()
+        self._layout.setContentsMargins(6, 6, 6, 6)
+        self.setLayout(self._layout)
         parent.addTab(self, label)
 
     def _add_widget(self, widget):
-        self.layout().addWidget(widget)
+        self._layout.addWidget(widget)

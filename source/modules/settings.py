@@ -12,8 +12,8 @@ from pathlib import Path
 
 import keyring
 from keyring.errors import KeyringError, PasswordDeleteError
-from modules.platform_utils import get_config_file, get_config_path, get_cwd, local_config, user_config
 from modules.bl_api_manager import dropdown_blender_version
+from modules.platform_utils import get_config_file, get_config_path, get_cwd, local_config, user_config
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings
 from semver import Version

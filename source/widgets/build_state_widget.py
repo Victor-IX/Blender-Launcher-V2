@@ -10,7 +10,7 @@ class BuildStateWidget(QWidget):
         super().__init__(parent)
         self.anim = None
 
-        self.layout = QHBoxLayout(self)
+        self.layout: QHBoxLayout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 4, 0)
         self.layout.setSpacing(0)
 
@@ -115,7 +115,7 @@ class BuildStateWidget(QWidget):
         self.anim = QPropertyAnimation(self.extractIcon, b"geometry")
         self.anim.setDuration(1000)
         self.anim.setLoopCount(-1)
-        self.anim.setEasingCurve(QEasingCurve.OutCubic)
+        self.anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         geometry = self.extractIcon.geometry()
         self.anim.setStartValue(QRect(geometry.x(), int(geometry.height() * 1.25), geometry.width(), geometry.height()))
         self.anim.setKeyValueAt(

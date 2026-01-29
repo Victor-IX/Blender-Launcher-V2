@@ -370,11 +370,12 @@ class DownloadWidget(BaseBuildWidget):
     def successful_read_callback(self, widget: LibraryWidget):
         self.setInstalled(widget)
         if self.updating_widget is not None and not self._is_removed:
-            if self.updating_widget.move_portable_settings:
+            updating_widget = self.updating_widget
+            if updating_widget.move_portable_settings:
                 logger.debug("Transferring portable settings...")
-                QTimer.singleShot(500, lambda: self.handle_portable_settings(self.updating_widget, widget))
+                QTimer.singleShot(500, lambda: self.handle_portable_settings(updating_widget, widget))
             else:
-                QTimer.singleShot(500, lambda: self.remove_old_build(self.updating_widget))
+                QTimer.singleShot(500, lambda: self.remove_old_build(updating_widget))
         self.parent.check_library_for_updates()
 
     def handle_portable_settings(self, old_widget: LibraryWidget, new_widget: LibraryWidget) -> None:
@@ -397,13 +398,9 @@ class DownloadWidget(BaseBuildWidget):
                         shutil.copytree(old_config_path, new_config_path, dirs_exist_ok=True)
                         logger.info(f"Portable settings moved from {old_config_path} to {new_config_path}")
 
-                        # Update the new widget to reflect portable status once it's fully initialized
-                        def update_portable_ui() -> None:
-                            new_widget.makePortableAction.setText("Unmake Portable")
-                            new_widget.showConfigFolderAction.setText("Show Portable Config Folder")
-
-                        # Use the initialized signal to ensure UI elements are ready
-                        new_widget.initialized.connect(update_portable_ui)
+                        # Update the new widget to reflect portable status
+                        new_widget.makePortableAction.setText("Unmake Portable")
+                        new_widget.showConfigFolderAction.setText("Show Portable Config Folder")
                     else:
                         logger.error(f"New config path parent does not exist: {new_config_path.parent}")
                         self._show_portable_failure_dialog(old_widget, "The new build directory can't be found.")

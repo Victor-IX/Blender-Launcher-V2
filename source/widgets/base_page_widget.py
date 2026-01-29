@@ -41,7 +41,7 @@ class BasePageWidget(QWidget, Generic[_WT]):
 
         self.sort_order_asc = True
 
-        self.layout = QVBoxLayout(self)
+        self.layout: QVBoxLayout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
 

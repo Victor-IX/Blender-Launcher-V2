@@ -206,7 +206,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.updateBlenderBuildAction = QAction("Update Blender Build")
         self.updateBlenderBuildAction.setIcon(self.parent.icons.update)
-        self.updateBlenderBuildAction.triggered.connect(self._trigger_update_download)
+        self.updateBlenderBuildAction.triggered.connect(self.trigger_update_download)
         self.updateBlenderBuildAction.setToolTip("Update this build to the latest version")
         self.updateBlenderBuildAction.setVisible(False)
 
@@ -415,7 +415,7 @@ class LibraryWidget(BaseBuildWidget):
     def eventFilter(self, obj, event):
         # For detecting SHIFT
         if isinstance(event, QHoverEvent):
-            if self._hovered and event.modifiers() & Qt.ShiftModifier:
+            if self._hovered and event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
                 self.hovering_and_shifting = True
             else:
                 self.hovering_and_shifting = False
@@ -579,7 +579,7 @@ class LibraryWidget(BaseBuildWidget):
             self.launchButton.set_text("Launch")
             self.launchButton.setEnabled(True)
             if hasattr(self, "_update_download_widget") and get_show_update_button():
-                self._show_update_button()
+                self.show_update_button()
 
     def _proceed_with_update(self):
         """Proceed with the actual update download."""
@@ -788,7 +788,9 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def remove_from_drive_extended(self):
         for item in self.list_widget.selectedItems():
-            self.list_widget.itemWidget(item).remove_from_drive()
+            widget = self.list_widget.itemWidget(item)
+            if widget is not None and isinstance(widget, LibraryWidget):
+                widget.remove_from_drive()
 
     @Slot()
     def remove_from_drive(self, trash=False):
@@ -822,7 +824,9 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def send_to_trash_extended(self):
         for item in self.list_widget.selectedItems():
-            self.list_widget.itemWidget(item).remove_from_drive(trash=True)
+            widget = self.list_widget.itemWidget(item)
+            if widget is not None and isinstance(widget, LibraryWidget):
+                widget.remove_from_drive(trash=True)
 
     @Slot()
     def send_to_trash(self):
@@ -832,7 +836,7 @@ class LibraryWidget(BaseBuildWidget):
     def remover_started(self):
         self.launchButton.set_text("Deleting")
         self.setEnabled(False)
-        self.item.setFlags(self.item.flags() & ~Qt.ItemIsSelectable)
+        self.item.setFlags(self.item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
 
         if self.child_widget is not None:
             self.child_widget.remover_started()

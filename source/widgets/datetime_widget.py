@@ -8,6 +8,8 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from PySide6.QtGui import QEnterEvent
+
 
 DATETIME_FORMAT = "%d %b %Y, %H:%M"
 
@@ -65,7 +67,7 @@ class DateTimeWidget(QPushButton):
         else:
             self.setToolTip("Press to show build hash number")
 
-    def enterEvent(self, event: QEvent) -> None:
+    def enterEvent(self, event: QEnterEvent) -> None:
         if self.build_hash is not None:
             self.LeftArrowLabel.setVisible(True)
             self.RightArrowLabel.setVisible(True)

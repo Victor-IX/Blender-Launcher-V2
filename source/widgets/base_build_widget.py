@@ -23,11 +23,11 @@ logger = logging.getLogger()
 
 
 class BaseBuildWidget(QWidget):
-    def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo):
+    def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo) -> None:
         super().__init__(parent)
         self.parent: BlenderLauncher = parent
-        self.item = item
-        self.build_info = build_info
+        self.item: BaseListWidgetItem = item
+        self.build_info: BuildInfo = build_info
 
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
@@ -39,11 +39,11 @@ class BaseBuildWidget(QWidget):
         self.showReleaseNotesAction.triggered.connect(self.show_release_notes)
 
     @abc.abstractmethod
-    def context_menu(self):
+    def context_menu(self) -> None:
         pass
 
     @QtCore.Slot()
-    def show_release_notes(self):
+    def show_release_notes(self) -> None:
         branch = self.build_info.branch
 
         if branch in {"stable", "daily"}:
@@ -62,9 +62,10 @@ class BaseBuildWidget(QWidget):
                     f"/Bforartists {ver.major}.{ver.minor}.{ver.patch}", detail=True, allow_listing_resource=True
                 )
                 for e in entries:
-                    path = PurePosixPath(e["name"])
-                    if "releasenote" in path.name.lower():
-                        QDesktopServices.openUrl(get_bfa_nc_https_download_url(path))
+                    if isinstance(e, dict) and "name" in e:
+                        path = PurePosixPath(e["name"])
+                        if "releasenote" in path.name.lower():
+                            QDesktopServices.openUrl(get_bfa_nc_https_download_url(path))
             except Exception:
                 logger.exception("Failed get Bforartists release note")
         else:
