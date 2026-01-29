@@ -72,7 +72,7 @@ class AppearanceTabWidget(SettingsFormWidget):
         self.DpiScaleFactorSpinBox.setToolTip(
             "change DPI scaling for the application\
             \nScale the user interface by a factor to make things more readable & comfortable\
-            \nDEFAULT: True"
+            \nDEFAULT: 1.0"
         )
         self.DpiScaleFactorSpinBox.setRange(0.25, 10.0)
         self.DpiScaleFactorSpinBox.setSingleStep(0.05)
