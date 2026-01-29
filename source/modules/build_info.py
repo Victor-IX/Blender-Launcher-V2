@@ -185,11 +185,11 @@ class BuildInfo:
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, BuildInfo):
-            return NotImplemented
-
+    def __eq__(self, other: BuildInfo) -> bool:
         if other is None:
+            return False
+
+        if (self.build_hash is None) != (other.build_hash is None):
             return False
 
         if (self.build_hash is not None) and (other.build_hash is not None):
