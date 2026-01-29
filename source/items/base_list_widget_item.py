@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from datetime import UTC
-from typing import TYPE_CHECKING, Generic
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from PySide6.QtWidgets import QListWidgetItem
-from widgets.base_list_widget import _WT
+from widgets.base_build_widget import BaseBuildWidget
 
 if TYPE_CHECKING:
     from semver import Version
     from widgets.base_list_widget import BaseListWidget
+
+_WT = TypeVar("_WT", bound=BaseBuildWidget)
 
 
 class BaseListWidgetItem(QListWidgetItem, Generic[_WT]):
