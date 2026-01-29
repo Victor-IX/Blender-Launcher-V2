@@ -15,6 +15,7 @@ from webdav4.client import Client
 from widgets.base_menu_widget import BaseMenuWidget
 
 if TYPE_CHECKING:
+    from modules.build_info import BuildInfo
     from items.base_list_widget_item import BaseListWidgetItem
     from modules.build_info import BuildInfo
     from windows.main_window import BlenderLauncher

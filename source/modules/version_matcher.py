@@ -4,15 +4,15 @@ import contextlib
 import datetime
 import os
 import re
-from dataclasses import dataclass
-from functools import cache
+from dataclasses import dataclass, replace
+from functools import cache, lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from semver import Version
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable
 
     from modules.build_info import BuildInfo
 
@@ -25,6 +25,7 @@ class BasicBuildInfo:
     branch: str
     build_hash: str
     commit_time: datetime.datetime
+    folder: str | None = None
 
     @property
     def major(self):
@@ -45,14 +46,14 @@ class BasicBuildInfo:
         return self.version < other.version
 
     @classmethod
-    def from_buildinfo(cls, buildinfo: BuildInfo):
+    def from_buildinfo(cls, buildinfo: BuildInfo, folder: str | None = None):
         return BasicBuildInfo(
             version=buildinfo.full_semversion,
             branch=buildinfo.branch,
             build_hash=buildinfo.build_hash if buildinfo.build_hash is not None else "",
             commit_time=buildinfo.commit_time.astimezone(utc),
+            folder=folder,
         )
-
 
 # VersionSearchQuerySyntax (NOT SEMVER COMPATIBLE!):
 
@@ -100,7 +101,7 @@ VALID_QUERIES = """^.^.*
 4.^.^"""
 VALID_FULL_QUERIES = """*.*.*
 1.2.3-master
-4.^,^-stable@^
+4.^.^-stable@^
 4.3.^+cb886aba06d5@^
 4.3.^@2024-07-31T23:53:51+00:00
 4.3.^-stable+cb886aba06d5@2024-07-31T23:53:51+00:00
@@ -108,7 +109,7 @@ VALID_FULL_QUERIES = """*.*.*
 
 
 @cache
-def _parse(s: str) -> tuple[int | str, int | str, int | str, str | None, str | None, datetime.datetime | str]:
+def _parse(s: str) -> dict:
     """Parse a query from a string. does not support branch and commit_time"""
     match = VERSION_SEARCH_REGEX.match(s)
     if not match:
@@ -120,8 +121,6 @@ def _parse(s: str) -> tuple[int | str, int | str, int | str, str | None, str | N
     branch = match.group(4)
     build_hash = match.group(5)
     commit_time = match.group(6)
-    if commit_time is None:
-        commit_time = "^"
 
     if major.isnumeric():
         major = int(major)
@@ -129,35 +128,56 @@ def _parse(s: str) -> tuple[int | str, int | str, int | str, str | None, str | N
         minor = int(minor)
     if patch.isnumeric():
         patch = int(patch)
+    if branch is not None:
+        branch = tuple(branch.split(","))
 
     if commit_time is not None and commit_time not in ("^", "*", "-"):
         # Try to convert it to a datetime, and just passing it upon failure
         with contextlib.suppress(ValueError):
             commit_time = datetime.datetime.fromisoformat(commit_time)
 
-    return major, minor, patch, branch, build_hash, commit_time
+    return {
+        "build_hash": build_hash,
+        "major": major,
+        "minor": minor,
+        "patch": patch,
+        "branch": branch,
+        "commit_time": commit_time,
+    }
 
 
-@dataclass(frozen=True)
+class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
+    folder: str | None
+    build_hash: str | None
+    major: int | str
+    minor: int | str
+    patch: int | str
+    branch: tuple[str, ...] | None
+    commit_time: datetime.datetime | str | None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
 
-    major: int | str
-    "A major release of Blender"
-
-    minor: int | str
-    "A minor release of Blender"
-
-    patch: int | str
-    "A patch release of Blender"
-
-    branch: str | None = None
-    "Which branch of Blender this is (stable, daily, experimental, etc.)"
+    folder: str | None = None
 
     build_hash: str | None = None
     "The git hash of the build that this is"
 
-    commit_time: datetime.datetime | str = "^"
+    major: int | str = "*"
+    "A major release of Blender"
+
+    minor: int | str = "*"
+    "A minor release of Blender"
+
+    patch: int | str = "*"
+    "A patch release of Blender"
+
+    branch: tuple[str, ...] | None = None
+    "Which branch of Blender this is (stable, daily, experimental, etc.)"
+
+    commit_time: datetime.datetime | str | None = None
     "When the build was made (in UTC)"
 
     def __post_init__(self):
@@ -173,52 +193,81 @@ class VersionSearchQuery:
     def parse(cls, s: str):
         """Parse a query from a string. does not support branch and commit_time"""
 
-        return cls(*_parse(s))
+        return cls(**_parse(s))
+
+    @classmethod
+    def version(
+        cls,
+        major: int | str,
+        minor: int | str,
+        patch: int | str,
+        folder: str | None = None,
+        build_hash: str | None = None,
+        branch: tuple[str, ...] | None = None,
+        commit_time: datetime.datetime | str | None = None,
+    ):
+        """A constructor with major, minor, and patch at the front"""
+        return cls(
+            folder=folder,
+            build_hash=build_hash,
+            major=major,
+            minor=minor,
+            patch=patch,
+            branch=branch,
+            commit_time=commit_time,
+        )
 
     @classmethod
     def default(cls):
-        return cls("^", "^", "^", commit_time="^", branch=None)
+        return cls(
+            major="^",
+            minor="^",
+            patch="^",
+            commit_time="^",
+        )
+
+    @classmethod
+    def any(cls):
+        return cls()
 
     def __str__(self) -> str:
         """Returns a string that can be parsed by parse()"""
         s = f"{self.major}.{self.minor}.{self.patch}"
         if self.branch:
-            s += f"-{self.branch}"
+            s += f"-{','.join(self.branch)}"
         if self.build_hash:
             s += f"+{self.build_hash}"
-        if self.commit_time:
+        if self.commit_time is not None and self.commit_time != "*":
             s += f"@{self.commit_time}"
         return s
 
-    def with_branch(self, branch: str | None = None):
-        return self.__class__(
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=branch,
-            build_hash=self.build_hash,
-            commit_time=self.commit_time,
-        )
+    def __or__(self, other: VersionSearchQuery) -> VersionSearchQuery:
+        d = {place: getattr(self, place) for place in self.__slots__}
+        d.update({place: getattr(other, place) for place in other.relevant_places()})
+        return self.__class__(**d)
+
+    def with_folder(self, folder: str | None = None):
+        return replace(self, folder=folder)
+
+    def with_branch(self, branch: tuple[str, ...] | None = None):
+        return replace(self, branch=branch)
 
     def with_build_hash(self, build_hash: str | None = None):
-        return self.__class__(
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=self.branch,
-            build_hash=build_hash,
-            commit_time=self.commit_time,
-        )
+        return replace(self, build_hash=build_hash)
 
-    def with_commit_time(self, commit_time: datetime.datetime | str):
-        return self.__class__(
-            major=self.major,
-            minor=self.minor,
-            patch=self.patch,
-            branch=self.branch,
-            build_hash=self.build_hash,
-            commit_time=commit_time,
-        )
+    def with_commit_time(self, commit_time: datetime.datetime | str | None = None):
+        return replace(self, commit_time=commit_time)
+
+    def relevant_places(self) -> tuple[str, ...]:
+        return _relevant_places(self)
+
+    def match(self, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
+        return match_versions(self, versions)
+
+
+@lru_cache(16)
+def _relevant_places(vsq: VersionSearchQuery) -> tuple[str, ...]:
+    return tuple(place for place in vsq.__slots__ if getattr(vsq, place) not in {"*", None})
 
 
 # Examples:
@@ -227,39 +276,36 @@ class VersionSearchQuery:
 # VersionSearchQuery("^", "*", "*"): Match any version in the latest major release
 
 
-@dataclass(frozen=True)
-class BInfoMatcher:
-    versions: tuple[BasicBuildInfo, ...]
+def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
+    versions = list(versions)
+    relevant_places = s.relevant_places()
+    for place in relevant_places:
+        getter = attrgetter(place)
+        p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
+        if p == "*" or p is None:
+            continue  # all versions match (should be unreachable due to relevant_places)
+        if p == "^":
+            # get the max number for `place` in version
+            max_p = max(getter(v) for v in versions)
 
-    def match(self, s: VersionSearchQuery) -> tuple[BasicBuildInfo, ...]:
-        versions = self.versions
+            versions = [v for v in versions if getter(v) == max_p]
+        elif p == "-":
+            # get the min number for `place` in version
+            min_p = min(getter(v) for v in versions)
 
-        for place in ("build_hash", "major", "minor", "patch", "branch", "commit_time"):
-            getter = attrgetter(place)
-            p: str | int | datetime.datetime | None = getter(s)
-            if p == "^":
-                # get the max number for `place` in version
-                max_p = max(getter(v) for v in versions)
+            versions = [v for v in versions if getter(v) == min_p]
+        elif isinstance(p, tuple):
+            versions = [v for v in versions if any(getter(v) == q for q in p)]
+        else:
+            versions = [v for v in versions if getter(v) == p]
 
-                versions = [v for v in versions if getter(v) == max_p]
-            elif p == "*" or p is None:
-                continue  # all versions match
-            elif p == "-":
-                # get the min number for `place` in version
-                min_p = min(getter(v) for v in versions)
-
-                versions = [v for v in versions if getter(v) == min_p]
-            else:
-                versions = [v for v in versions if getter(v) == p]
-
-            if not versions:
-                return ()
-
-        return tuple(versions)
+        if not versions:
+            return versions
+    return list(versions)
 
 
-if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatcher
-    builds = (
+if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test VersionSearchQuery
+    builds = [
         BasicBuildInfo(Version.parse("1.2.3"), "stable", "", datetime.datetime(2020, 5, 4, tzinfo=utc)),
         BasicBuildInfo(Version.parse("1.2.2"), "stable", "", datetime.datetime(2020, 4, 2, tzinfo=utc)),
         BasicBuildInfo(Version.parse("1.2.1"), "daily", "", datetime.datetime(2020, 3, 1, tzinfo=utc)),
@@ -269,42 +315,41 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
         BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
         BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
         BasicBuildInfo(Version.parse("4.3.1"), "daily", "", datetime.datetime(2024, 7, 20, tzinfo=utc)),
-    )
+    ]
 
-    matcher = BInfoMatcher(builds)
-
-    def test_binfo_matcher():
+    def test_matcher():
         # find the latest minor builds with any patch number
-        results = matcher.match(VersionSearchQuery("^", "^", "*", commit_time="*"))
-        assert results == (
+        results = VersionSearchQuery.version("^", "^", "*").match(builds)
+        print(results)
+        assert results == [
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 28, tzinfo=utc)),
             BasicBuildInfo(Version.parse("4.3.1"), "daily", "", datetime.datetime(2024, 7, 20, tzinfo=utc)),
-        )
+        ]
 
         # find any version with a patch of 14
-        results = matcher.match(VersionSearchQuery("*", "*", 14))
-        assert results == (
+        results = VersionSearchQuery.version("*", "*", 14).match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("3.6.14"), "lts", "", datetime.datetime(2024, 7, 16, tzinfo=utc)),
-        )
+        ]
 
         # find any version in the lts branch
-        results = matcher.match(VersionSearchQuery("*", "*", "*", branch="lts"))
-        assert results == (
+        results = VersionSearchQuery.version("*", "*", "*", branch=("lts",)).match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("3.6.14"), "lts", "", datetime.datetime(2024, 7, 16, tzinfo=utc)),
-        )
+        ]
 
         # find the latest daily builds for the latest major release
-        results = matcher.match(VersionSearchQuery("^", "*", "*", branch="daily", commit_time="^"))
-        assert results == (
+        results = VersionSearchQuery.version("^", "*", "*", branch=("daily",), commit_time="^").match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("4.3.0"), "daily", "", datetime.datetime(2024, 7, 30, tzinfo=utc)),
-        )
+        ]
 
         # find oldest major release with any minor and largest patch
-        results = matcher.match(VersionSearchQuery("-", "*", "^"))
-        assert results == (
+        results = VersionSearchQuery.version("-", "*", "^").match(builds)
+        assert results == [
             BasicBuildInfo(Version.parse("1.2.4"), "stable", "", datetime.datetime(2020, 6, 3, tzinfo=utc)),
-        )
+        ]
 
         print("test_binfo_matcher successful!")
 
@@ -312,40 +357,48 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
         import json
 
         for query in (
-            VersionSearchQuery("^", "^", "*"),
-            VersionSearchQuery("*", "*", 14),
-            VersionSearchQuery("*", "*", "*", branch="lts"),
-            VersionSearchQuery("^", "*", "*", branch="daily", commit_time="^"),
-            VersionSearchQuery("-", "*", "^"),
-            VersionSearchQuery(4, 0, 0),
-            VersionSearchQuery(4, "*", "*"),
-            VersionSearchQuery("^", "^", "*", branch="stable", commit_time=datetime.datetime(2020, 5, 4, tzinfo=utc)),
+            VersionSearchQuery.any(),
+            VersionSearchQuery.default(),
+            VersionSearchQuery.version("^", "^", "*"),
+            VersionSearchQuery.version("*", "*", 14),
+            VersionSearchQuery.version("*", "*", "*", branch=("lts",)),
+            VersionSearchQuery.version("^", "*", "*", branch=("daily",), commit_time="^"),
+            VersionSearchQuery.version("-", "*", "^"),
+            VersionSearchQuery.version(4, 0, 0),
+            VersionSearchQuery.version(4, "*", "*"),
+            VersionSearchQuery.version(
+                "^",
+                "^",
+                "*",
+                branch=("stable",),
+                commit_time=datetime.datetime(2020, 5, 4, tzinfo=utc),
+            ),
         ):
-            result_before_serialization = matcher.match(query)
+            result_before_serialization = query.match(builds)
 
             serialized_query = str(query)
-            print(serialized_query)
             deserialized_query = VersionSearchQuery.parse(serialized_query)
-            print(deserialized_query)
-
-            result_after_serialization = matcher.match(deserialized_query)
-
+            print(f"{serialized_query} -> {deserialized_query}")
+            result_after_serialization = deserialized_query.match(builds)
+            assert query == deserialized_query
             assert result_before_serialization == result_after_serialization
 
         print("test_vsq_serialization successful!")
 
     def test_search_query_parser():
         # Test parsing of search query strings
-        assert VersionSearchQuery.parse("1.2.3") == VersionSearchQuery(1, 2, 3)
-        assert VersionSearchQuery.parse("^.*.-") == VersionSearchQuery("^", "*", "-")
-        assert VersionSearchQuery.parse("*.*.*-daily") == VersionSearchQuery("*", "*", "*", branch="daily")
-        assert VersionSearchQuery.parse("*.*.*+cb886aba06d5") == VersionSearchQuery(
+        assert VersionSearchQuery.parse("1.2.3") == VersionSearchQuery(major=1, minor=2, patch=3)
+        assert VersionSearchQuery.parse("^.*.-") == VersionSearchQuery(major="^", patch="-")
+        assert VersionSearchQuery.parse("*.*.*-daily") == VersionSearchQuery(
+            major="*", minor="*", patch="*", branch=("daily",)
+        )
+        assert VersionSearchQuery.parse("*.*.*+cb886aba06d5") == VersionSearchQuery.version(
             "*", "*", "*", build_hash="cb886aba06d5"
         )
-        assert VersionSearchQuery.parse("*.*.*@2024-07-31T23:53:51+00:00") == VersionSearchQuery(
+        assert VersionSearchQuery.parse("*.*.*@2024-07-31T23:53:51+00:00") == VersionSearchQuery.version(
             "*", "*", "*", commit_time=datetime.datetime(2024, 7, 31, 23, 53, 51, tzinfo=utc)
         )
-        assert VersionSearchQuery.parse("*.*.*@2024-07-31 23:53:51+00:00") == VersionSearchQuery(
+        assert VersionSearchQuery.parse("*.*.*@2024-07-31 23:53:51+00:00") == VersionSearchQuery.version(
             "*", "*", "*", commit_time=datetime.datetime(2024, 7, 31, 23, 53, 51, tzinfo=utc)
         )
         # Test parsing of search query strings that are not valid
@@ -357,6 +410,6 @@ if __name__ == "__main__" or "PYTEST_VERSION" in os.environ:  # Test BInfoMatche
 
         print("test_search_query_parser successful!")
 
-    test_binfo_matcher()
+    test_matcher()
     test_vsq_serialization()
     test_search_query_parser()

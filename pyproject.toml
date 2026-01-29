@@ -33,7 +33,7 @@ test = ["pytest"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+target-version = "py311" # our minimum supported version
 
 [tool.ruff.lint]
 extend-ignore = [

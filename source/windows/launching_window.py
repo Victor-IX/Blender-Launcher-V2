@@ -16,7 +16,7 @@ from modules.settings import (
     set_version_specific_queries,
 )
 from modules.tasks import TaskQueue
-from modules.version_matcher import VALID_QUERIES, BInfoMatcher, VersionSearchQuery
+from modules.version_matcher import VALID_QUERIES, VersionSearchQuery
 from modules.version_matcher import BasicBuildInfo as BBI
 from PySide6.QtCore import Qt, QTimer, Slot
 from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
@@ -175,6 +175,8 @@ class LaunchingWindow(BaseWindow):
         branch = self.branch_edit.text()
         if branch == "":
             branch = None
+        else:
+            branch = tuple(branch.split(","))
 
         build_hash = self.build_hash_edit.text()
         if build_hash == "":
@@ -211,7 +213,7 @@ class LaunchingWindow(BaseWindow):
         logger.debug("Updating query boxes...")
 
         self.version_query_edit.setText(f"{query.major}.{query.minor}.{query.patch}")
-        self.branch_edit.setText(query.branch or "")
+        self.branch_edit.setText(",".join(query.branch) if query.branch is not None else "")
         self.build_hash_edit.setText(query.build_hash or "")
         if query.commit_time == "^":
             self.date_range_combo.setCurrentIndex(0)
@@ -231,7 +233,7 @@ class LaunchingWindow(BaseWindow):
                 major=version.major,
                 minor=version.minor,
                 patch=version.patch,
-                branch=build.branch,
+                branch=(build.branch,),
                 build_hash=build.build_hash,
                 commit_time=build.commit_time,
             )
@@ -346,8 +348,6 @@ class LaunchingWindow(BaseWindow):
                     self.list_items[BBI.from_buildinfo(build)].setSelected(True)
                     self.set_query_from_selected_build()
 
-        self.matcher = self.make_matcher()
-
         all_queries = get_version_specific_queries()
 
         if self.version_query is not None:  # then it was given via the CLI
@@ -372,7 +372,7 @@ class LaunchingWindow(BaseWindow):
                 self.version_query = all_queries[v]
                 self.update_query_boxes(self.version_query)
             else:
-                vsq = VersionSearchQuery(v.major, v.minor, "^")
+                vsq = VersionSearchQuery.version(v.major, v.minor, "^")
                 if self.version_query is None:
                     self.update_query_boxes(vsq)
 
@@ -391,15 +391,15 @@ class LaunchingWindow(BaseWindow):
             else:
                 self.prepare_launch(build)
 
-    def make_matcher(self):
-        return BInfoMatcher(tuple(map(BBI.from_buildinfo, self.builds.values())))
+    def make_basic_info(self) -> list[BBI]:
+        return list(map(BBI.from_buildinfo, self.builds.values()))
 
-    def update_search(self) -> tuple[tuple[BBI, ...], list[BuildInfo]]:
+    def update_search(self) -> tuple[list[BBI], list[BuildInfo]]:
         """Updates the visibility of each item in the list depending on the search query. returns matches"""
         assert self.version_query is not None
         logger.debug(f"QUERY: {self.version_query!r}")
-        matcher = self.make_matcher()
-        matches = matcher.match(self.version_query)
+        builds = self.make_basic_info()
+        matches = self.version_query.match(builds)
         versions = {b.version for b in matches}
 
         enabled_builds: list[BuildInfo] = []
