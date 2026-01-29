@@ -105,15 +105,13 @@ def _popen(args):
         stdout=None,
         stderr=None,
         close_fds=True,
-        preexec_fn=os.setpgrp,  # type: ignore
+        preexec_fn=os.setpgrp,
         env=env,
     )
 
 
 def _check_call(args):
-    platform = get_platform()
-
-    if platform == "Windows":
+    if sys.platform == "win32":
         from subprocess import CREATE_NO_WINDOW
 
         return check_call(args, creationflags=CREATE_NO_WINDOW, shell=True, stderr=DEVNULL, stdin=DEVNULL)
@@ -122,9 +120,7 @@ def _check_call(args):
 
 
 def _call(args):
-    platform = get_platform()
-
-    if platform == "Windows":
+    if sys.platform == "win32":
         from subprocess import CREATE_NO_WINDOW
 
         call(args, creationflags=CREATE_NO_WINDOW, shell=True, stdout=PIPE, stderr=STDOUT, stdin=DEVNULL)
@@ -133,9 +129,7 @@ def _call(args):
 
 
 def _check_output(args):
-    platform = get_platform()
-
-    if platform == "Windows":
+    if sys.platform == "win32":
         from subprocess import CREATE_NO_WINDOW
 
         return check_output(args, creationflags=CREATE_NO_WINDOW, shell=True, stderr=DEVNULL, stdin=DEVNULL)

@@ -1,8 +1,7 @@
 import contextlib
 import logging
+import sys
 from pathlib import Path
-
-from modules.platform_utils import get_platform
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ def register_with_winget(exe_path: str | Path, version: str) -> bool:
     Returns:
         True if registration was successful, False otherwise
     """
-    if get_platform() != "Windows":
+    if sys.platform != "win32":
         logger.debug("WinGet registration is only supported on Windows")
         return False
 
@@ -67,7 +66,7 @@ def register_with_winget(exe_path: str | Path, version: str) -> bool:
 
 
 def unregister_from_winget() -> bool:
-    if get_platform() != "Windows":
+    if sys.platform != "win32":
         logger.debug("WinGet unregistration is only supported on Windows")
         return False
 
@@ -88,7 +87,7 @@ def unregister_from_winget() -> bool:
 
 
 def is_registered_with_winget() -> bool:
-    if get_platform() != "Windows":
+    if sys.platform != "win32":
         return False
 
     try:
