@@ -170,7 +170,7 @@ def create_library_folders(library_folder):
 
 
 def get_favorite_path() -> str | None:
-    return get_settings().value("Internal/favorite_path")  # type: ignore
+    return get_settings().value("Internal/favorite_path")
 
 
 def set_favorite_path(path):

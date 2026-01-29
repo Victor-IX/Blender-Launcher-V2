@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
+from typing import TypedDict
 
 import dateparser
 from modules.bl_api_manager import lts_blender_version, read_blender_version_list
@@ -29,8 +30,12 @@ logger = logging.getLogger()
 # Fork-specific configuration paths
 # Check the coc for more info:
 # https://victor-ix.github.io/Blender-Launcher-V2/implementing_new_fork/#10-handle-config-folders
+class ConfigFolder(TypedDict):
+    config_folder: str
+    config_subfolder: str | dict[str, str]
 
-FORK_CONFIG_PATHS = {
+
+FORK_CONFIG_PATHS: dict[str, ConfigFolder] = {
     "bforartists": {
         "config_folder": "bforartists",
         "config_subfolder": "bforartists",
@@ -46,7 +51,7 @@ FORK_CONFIG_PATHS = {
 }
 
 
-def get_fork_config_paths(branch: str) -> dict[str, str | None] | None:
+def get_fork_config_paths(branch: str) -> ConfigFolder | None:
     """
     Get config folder paths for a specific fork branch.
 
@@ -64,18 +69,16 @@ def get_fork_config_paths(branch: str) -> dict[str, str | None] | None:
 
 
 # TODO: Combine some of these
-matchers = tuple(
-    map(
-        re.compile,
-        (  #                                                                                     format                                 examples
-            r"(?P<ma>\d+)\.(?P<mi>\d+)(?:\.(?P<pa>\d+))?[ \-](?P<pre>[^\+]*)",  #                <major>.<minor>.<patch> <Prerelease>   2.80.0 Alpha  -> 2.80.0-alpha
-            r"(?P<ma>\d+)\.(?P<mi>\d+) \(sub (?P<pa>\d+)\)",  #                                  <major>.<minor> (sub <patch>)          2.80 (sub 75) -> 2.80.75
-            r"(?P<ma>\d+)\.(?P<mi>\d+)$",  #                                                     <major>.<minor>                        2.79          -> 2.79.0
-            r"(?P<ma>\d+)\.(?P<mi>\d+)(?P<pre>[^-]{0,3})",  #                                    <major>.<minor><[chars]*(1-3)>         2.79rc1       -> 2.79.0-rc1
-            r"(?P<ma>\d+)\.(?P<mi>\d+)(?P<pre>\D[^\.\s]*)?",  #                                  <major>.<minor><patch?>                2.79          -> 2.79.0       | 2.79b -> 2.79.0-b
-        ),
-    )
-)
+
+patterns: list[str] = [
+    #                                                                                    format                                 examples
+    r"(?P<ma>\d+)\.(?P<mi>\d+)(?:\.(?P<pa>\d+))?[ \-](?P<pre>[^\+]*)",  #                <major>.<minor>.<patch> <Prerelease>   2.80.0 Alpha  -> 2.80.0-alpha
+    r"(?P<ma>\d+)\.(?P<mi>\d+) \(sub (?P<pa>\d+)\)",  #                                  <major>.<minor> (sub <patch>)          2.80 (sub 75) -> 2.80.75
+    r"(?P<ma>\d+)\.(?P<mi>\d+)$",  #                                                     <major>.<minor>                        2.79          -> 2.79.0
+    r"(?P<ma>\d+)\.(?P<mi>\d+)(?P<pre>[^-]{0,3})",  #                                    <major>.<minor><[chars]*(1-3)>         2.79rc1       -> 2.79.0-rc1
+    r"(?P<ma>\d+)\.(?P<mi>\d+)(?P<pre>\D[^\.\s]*)?",  #                                  <major>.<minor><patch?>                2.79          -> 2.79.0       | 2.79b -> 2.79.0-b
+]
+matchers = tuple(re.compile(p) for p in patterns)
 initial_cleaner = re.compile(r"(?:blender|v)-?(\d.*)", flags=re.IGNORECASE)
 
 
@@ -182,9 +185,13 @@ class BuildInfo:
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
 
-    def __eq__(self, other: BuildInfo):
-        if (self is None) or (other is None):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BuildInfo):
+            return NotImplemented
+
+        if other is None:
             return False
+
         if (self.build_hash is not None) and (other.build_hash is not None):
             return self.build_hash == other.build_hash
 

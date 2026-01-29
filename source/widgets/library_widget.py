@@ -1043,9 +1043,9 @@ class LibraryWidget(BaseBuildWidget):
         custom_subfolder = None
 
         fork_config = get_fork_config_paths(branch)
-        if fork_config:
-            custom_folder = fork_config.get("config_folder")
-            subfolder_config = fork_config.get("config_subfolder")
+        if fork_config is not None:
+            custom_folder = fork_config["config_folder"]
+            subfolder_config = fork_config["config_subfolder"]
 
             # Handle platform-specific subfolder
             if isinstance(subfolder_config, dict):
