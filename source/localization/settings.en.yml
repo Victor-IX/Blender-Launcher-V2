@@ -9,11 +9,11 @@ en:
       Use the system title bar instead of the custom one
       DEFAULT: False
     dpi_scale_factor: DPI Scale Factor
+    dpi_scale_factor_overridden: DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)
     dpi_scale_factor_tooltip: |
       change DPI scaling for the application
       Scale the user interface by a factor to make things more readable & comfortable
       DEFAULT: 1.0
-    dpi_scale_factor_overridden_tooltip: DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)
     notifications:
       label: Notifications
       new_builds: New Available Build

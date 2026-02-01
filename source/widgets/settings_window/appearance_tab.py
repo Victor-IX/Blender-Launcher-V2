@@ -66,7 +66,7 @@ class AppearanceTabWidget(SettingsFormWidget):
 
         dpi_scale_label_text = "settings.appearance.dpi_scale_factor"
         if DPI_OVERRIDDEN:
-            dpi_scale_label_text = "settings.appearance.dpi_scale_factor_overridden_tooltip"
+            dpi_scale_label_text = "settings.appearance.dpi_scale_factor_overridden"
             self.DpiScaleFactorSpinBox.setEnabled(False)
 
         self.DpiScaleFactorLabel = QLabel(t(dpi_scale_label_text))

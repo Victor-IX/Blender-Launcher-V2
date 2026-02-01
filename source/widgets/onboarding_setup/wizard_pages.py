@@ -202,8 +202,8 @@ class RepoSelectPage(BasicOnboardingPage):
 class ShortcutsPage(BasicOnboardingPage):
     def __init__(self, prop_settings: PropogatedSettings, parent: BlenderLauncher):
         super().__init__(prop_settings, parent=parent)
-        self.setTitle(t("wizards.shortcuts.title"))
-        self.setSubTitle(t("wizards.shortcuts.subtitle"))
+        self.setTitle(t("wizard.shortcuts.title"))
+        self.setSubTitle(t("wizard.shortcuts.subtitle"))
 
         self.platform = get_platform()
         self.layout_ = QVBoxLayout(self)
