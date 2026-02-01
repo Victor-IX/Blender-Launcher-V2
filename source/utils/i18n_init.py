@@ -29,5 +29,7 @@ else:
 
 loc = loc.split("_", 1)[0]
 
+i18n.set("plural_few", 1)
+i18n.set("enable_memoization", True)
 i18n.set("locale", loc)
 i18n.set("fallback", "en")

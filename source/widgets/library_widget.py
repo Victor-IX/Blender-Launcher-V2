@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from items.base_list_widget_item import BaseListWidgetItem
 from modules.blender_update_manager import available_blender_update, is_major_version_update
 from modules.build_info import (
@@ -105,7 +106,7 @@ class LibraryWidget(BaseBuildWidget):
         self.branch = self.build_info.branch
         self.item.date = build_info.commit_time
 
-        self.launchButton = LeftIconButtonWidget("Launch", parent=self)
+        self.launchButton = LeftIconButtonWidget(t("act.launch"), parent=self)
         self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("LaunchButton", True)
         self._launch_icon = None
@@ -170,32 +171,28 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.holding_shift.connect(self.update_config_action)
         self.menu_extended.holding_shift.connect(self.update_delete_action)
 
-        self.deleteAction = QAction("Delete From Drive", self)
+        self.deleteAction = QAction(t("act.a.delete"), self)
         self.deleteAction.setIcon(self.parent.icons.delete)
         self.deleteAction.triggered.connect(self.ask_remove_from_drive)
 
-        self.editAction = QAction("Edit Build...", self)
+        self.editAction = QAction(t("act.a.edit"), self)
         self.editAction.setIcon(self.parent.icons.settings)
         self.editAction.triggered.connect(self.edit_build)
 
-        self.openRecentAction = QAction("Open Previous File", self)
+        self.openRecentAction = QAction(t("act.a.prev"), self)
         self.openRecentAction.setIcon(self.parent.icons.file)
         self.openRecentAction.triggered.connect(lambda: self.launch(launch_mode=LaunchOpenLast()))
-        self.openRecentAction.setToolTip(
-            "This action opens the last file used in this build."
-            "\n(Appends `--open-last` to the execution arguments)"
-            "\nSHORTCUT: Shift + Launch or Doubleclick"
-        )
+        self.openRecentAction.setToolTip(t("act.a.prev_tooltip"))
 
-        self.addToQuickLaunchAction = QAction("Add To Quick Launch", self)
+        self.addToQuickLaunchAction = QAction(t("act.a.quick_launch"), self)
         self.addToQuickLaunchAction.setIcon(self.parent.icons.quick_launch)
         self.addToQuickLaunchAction.triggered.connect(self.add_to_quick_launch)
 
-        self.addToFavoritesAction = QAction("Add To Favorites", self)
+        self.addToFavoritesAction = QAction(t("act.a.fav.add"), self)
         self.addToFavoritesAction.setIcon(self.parent.icons.favorite)
         self.addToFavoritesAction.triggered.connect(self.add_to_favorites)
 
-        self.removeFromFavoritesAction = QAction("Remove From Favorites", self)
+        self.removeFromFavoritesAction = QAction(t("act.fav.rem"), self)
         self.removeFromFavoritesAction.setIcon(self.parent.icons.favorite)
         self.removeFromFavoritesAction.triggered.connect(self.remove_from_favorites)
 
@@ -204,56 +201,54 @@ class LibraryWidget(BaseBuildWidget):
         else:
             self.removeFromFavoritesAction.setVisible(False)
 
-        self.updateBlenderBuildAction = QAction("Update Blender Build")
+        self.updateBlenderBuildAction = QAction(t("act.a.update"))
         self.updateBlenderBuildAction.setIcon(self.parent.icons.update)
         self.updateBlenderBuildAction.triggered.connect(self.trigger_update_download)
-        self.updateBlenderBuildAction.setToolTip("Update this build to the latest version")
+        self.updateBlenderBuildAction.setToolTip(t("act.a.update_tooltip"))
         self.updateBlenderBuildAction.setVisible(False)
 
-        self.registerExtentionAction = QAction("Register Extension")
-        self.registerExtentionAction.setToolTip("Use this build for .blend files and to display thumbnails")
+        self.registerExtentionAction = QAction(t("act.a.register"))
+        self.registerExtentionAction.setToolTip(t("act.a.register_tooltip"))
         self.registerExtentionAction.triggered.connect(self.register_extension)
 
-        self.createShortcutAction = QAction("Create Shortcut")
+        self.createShortcutAction = QAction(t("act.a.shortcut"))
         self.createShortcutAction.triggered.connect(self.create_shortcut)
 
-        self.showBuildFolderAction = QAction("Show Build Folder")
+        self.showBuildFolderAction = QAction(t("act.a.folder_build"))
         self.showBuildFolderAction.setIcon(self.parent.icons.folder)
         self.showBuildFolderAction.triggered.connect(self.show_build_folder)
 
         config_path = self.make_portable_path()
 
-        self.showConfigFolderAction = QAction(
-            "Show Portable Config Folder" if config_path.is_dir() else "Show Config Folder"
-        )
+        self.showConfigFolderAction = QAction(t("act.a.config_portable") if config_path.is_dir() else t("act.a.config"))
         self.showConfigFolderAction.setIcon(self.parent.icons.folder)
         self.showConfigFolderAction.triggered.connect(self.show_config_folder)
 
-        self.createSymlinkAction = QAction("Create Symlink")
+        self.createSymlinkAction = QAction(t("act.a.symlink"))
         self.createSymlinkAction.triggered.connect(self.create_symlink)
 
-        self.installTemplateAction = QAction("Install Template")
+        self.installTemplateAction = QAction(t("act.a.template"))
         self.installTemplateAction.triggered.connect(self.install_template)
 
-        self.makePortableAction = QAction("Unmake Portable" if config_path.is_dir() else "Make Portable")
+        self.makePortableAction = QAction(t("act.a.port.rem") if config_path.is_dir() else t("act.a.port.add"))
         self.makePortableAction.triggered.connect(self.make_portable)
 
-        self.copyBuildHash = QAction("Copy Build Hash")
+        self.copyBuildHash = QAction(t("act.a.hash"))
         self.copyBuildHash.triggered.connect(self.copy_build_hash)
 
-        self.freezeUpdate = QAction("Unfreeze Update" if self.build_info.is_frozen else "Freeze Update")
+        self.freezeUpdate = QAction(t("act.a.freeze.rem") if self.build_info.is_frozen else t("act.a.freeze.add"))
         self.freezeUpdate.triggered.connect(self.freeze_update)
 
-        self.debugMenu = BaseMenuWidget("Debug", parent=self)
+        self.debugMenu = BaseMenuWidget(t("act.a.d.d"), parent=self)
         self.debugMenu.setFont(self.parent.font_10)
 
-        self.debugLogAction = QAction("Debug Log")
+        self.debugLogAction = QAction(t("act.a.d.log"))
         self.debugLogAction.triggered.connect(lambda: self.launch(exe="blender_debug_log.cmd"))
-        self.debugFactoryStartupAction = QAction("Factory Startup")
+        self.debugFactoryStartupAction = QAction(t("act.a.d.factory"))
         self.debugFactoryStartupAction.triggered.connect(lambda: self.launch(exe="blender_factory_startup.cmd"))
-        self.debugGpuTemplateAction = QAction("Debug GPU")
+        self.debugGpuTemplateAction = QAction(t("act.a.d.gpu"))
         self.debugGpuTemplateAction.triggered.connect(lambda: self.launch(exe="blender_debug_gpu.cmd"))
-        self.debugGpuGWTemplateAction = QAction("Debug GPU Glitch Workaround")
+        self.debugGpuGWTemplateAction = QAction(t("act.a.d.glitch"))
         self.debugGpuGWTemplateAction.triggered.connect(
             lambda: self.launch(exe="blender_debug_gpu_glitchworkaround.cmd")
         )
@@ -271,7 +266,7 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addMenu(self.debugMenu)
 
         if self.parent_widget is not None:
-            self.renameBranchAction = QAction("Rename Branch")
+            self.renameBranchAction = QAction(t("act.a.rename"))
             self.renameBranchAction.triggered.connect(self.rename_branch)
             self.menu.addAction(self.renameBranchAction)
 
@@ -293,12 +288,12 @@ class LibraryWidget(BaseBuildWidget):
         else:
             exp = re.compile(r"D\d{5}")
             if exp.search(self.build_info.branch):
-                self.showReleaseNotesAction.setText("Show Patch Details")
+                self.showReleaseNotesAction.setText(t("act.a.release_notes_patch"))
                 self.menu.addAction(self.showReleaseNotesAction)
             else:
                 exp = re.compile(r"pr\d+", flags=re.IGNORECASE)
                 if exp.search(self.build_info.branch):
-                    self.showReleaseNotesAction.setText("Show PR Details")
+                    self.showReleaseNotesAction.setText(t("act.a.release_notes_pr"))
                     self.menu.addAction(self.showReleaseNotesAction)
 
         self.menu.addAction(self.showBuildFolderAction)
@@ -350,18 +345,18 @@ class LibraryWidget(BaseBuildWidget):
         delete_from_drive = not reverted_behavior if shifting else reverted_behavior
 
         if delete_from_drive:
-            self.deleteAction.setText("Delete from Drive")
+            self.deleteAction.setText(t("act.a.delete"))
         else:
-            self.deleteAction.setText("Send to Trash")
+            self.deleteAction.setText(t("act.a.trash"))
 
     @Slot(bool)
     def update_config_action(self, shifting: bool):
         config_path = self.make_portable_path()
 
         if config_path.is_dir() and not shifting:
-            self.showConfigFolderAction.setText("Show Portable Config Folder")
+            self.showConfigFolderAction.setText(t("act.a.config_portable"))
         else:
-            self.showConfigFolderAction.setText("Show Config Folder")
+            self.showConfigFolderAction.setText(t("act.a.config"))
 
     def mouseDoubleClickEvent(self, _event):
         if self.hovering_and_shifting:
@@ -422,13 +417,13 @@ class LibraryWidget(BaseBuildWidget):
         return super().eventFilter(obj, event)
 
     def _shift_hovering(self):
-        self.launchButton.set_text("  Previous")
+        self.launchButton.set_text(t("act.lprev"))
         self._launch_icon = self.launchButton.icon()
         self.launchButton.setIcon(self.parent.icons.file)
         self.launchButton.setFont(self.parent.font_8)
 
     def _stopped_shift_hovering(self):
-        self.launchButton.set_text("Launch")
+        self.launchButton.set_text(t("act.launch"))
         self.launchButton.setIcon(self._launch_icon or self.parent.icons.none)
         self.launchButton.setFont(self.parent.font_10)
 
@@ -452,7 +447,7 @@ class LibraryWidget(BaseBuildWidget):
             self._stopped_shift_hovering()
 
     def install_template(self):
-        self.launchButton.set_text("Updating")
+        self.launchButton.set_text(t("act.updating"))
         self.launchButton.setEnabled(False)
         self.deleteAction.setEnabled(False)
         self.installTemplateAction.setEnabled(False)
@@ -461,7 +456,7 @@ class LibraryWidget(BaseBuildWidget):
         self.parent.task_queue.append(a)
 
     def install_template_finished(self):
-        self.launchButton.set_text("Launch")
+        self.launchButton.set_text(t("act.launch"))
         self.launchButton.setEnabled(True)
         self.deleteAction.setEnabled(True)
         self.installTemplateAction.setEnabled(True)
@@ -493,7 +488,7 @@ class LibraryWidget(BaseBuildWidget):
 
     def update_finished(self):
         """Reset the widget state after update completion."""
-        self.launchButton.set_text("Launch")
+        self.launchButton.set_text(t("act.launch"))
         self.launchButton.setEnabled(True)
         if hasattr(self, "_update_download_widget"):
             delattr(self, "_update_download_widget")
@@ -576,7 +571,7 @@ class LibraryWidget(BaseBuildWidget):
             self._proceed_with_update()
         else:  # Cancel
             # Reset the UI state
-            self.launchButton.set_text("Launch")
+            self.launchButton.set_text(t("act.launch"))
             self.launchButton.setEnabled(True)
             if hasattr(self, "_update_download_widget") and get_show_update_button():
                 self.show_update_button()
@@ -584,7 +579,7 @@ class LibraryWidget(BaseBuildWidget):
     def _proceed_with_update(self):
         """Proceed with the actual update download."""
         self._hide_update_button()
-        self.launchButton.set_text("Updating")
+        self.launchButton.set_text(t("act.updating"))
         self.launchButton.setEnabled(False)
 
         if hasattr(self, "_update_download_widget"):
@@ -657,15 +652,15 @@ class LibraryWidget(BaseBuildWidget):
 
         if config_path.is_dir():
             config_path.rename(_config_path)
-            self.makePortableAction.setText("Make Portable")
-            self.showConfigFolderAction.setText("Show Config Folder")
+            self.makePortableAction.setText(t("act.a.port.add"))
+            self.showConfigFolderAction.setText(t("act.a.config"))
         else:
             if _config_path.is_dir():
                 _config_path.rename(config_path)
             else:
                 config_path.mkdir(parents=False, exist_ok=True)
-            self.makePortableAction.setText("Unmake Portable")
-            self.showConfigFolderAction.setText("Show Portable Config Folder")
+            self.makePortableAction.setText(t("act.a.port.rem"))
+            self.showConfigFolderAction.setText(t("act.a.config_portable"))
 
     def make_portable_path(self) -> Path:
         version = self.build_info.subversion.rsplit(".", 1)[0]
@@ -712,10 +707,10 @@ class LibraryWidget(BaseBuildWidget):
 
         if self.build_info.is_frozen:
             self.build_info.is_frozen = False
-            self.freezeUpdate.setText("Freeze Update")
+            self.freezeUpdate.setText(t("act.a.freeze.add"))
         else:
             self.build_info.is_frozen = True
-            self.freezeUpdate.setText("Unfreeze Update")
+            self.freezeUpdate.setText(t("act.a.freeze.rem"))
             self._hide_update_button()
 
         self.write_build_info()
@@ -834,7 +829,7 @@ class LibraryWidget(BaseBuildWidget):
 
     # TODO Clear icon if build in quick launch
     def remover_started(self):
-        self.launchButton.set_text("Deleting")
+        self.launchButton.set_text(t("act.deleting"))
         self.setEnabled(False)
         self.item.setFlags(self.item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
 
