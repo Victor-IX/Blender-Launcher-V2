@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.bl_api_manager import dropdown_blender_version
 from modules.platform_utils import get_platform
 from modules.settings import (
@@ -105,7 +106,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.launcher: BlenderLauncher = parent
 
         # Repo visibility and downloading settings
-        self.repo_settings = SettingsGroup("Visibility and Downloading", parent=self)
+        self.repo_settings = SettingsGroup(t("settings.blender_builds.visibility_and_downloading"), parent=self)
 
         self.repo_group = RepoGroup(self)
         self.repo_group.stable_repo.library_changed.connect(set_show_stable_builds)
@@ -127,17 +128,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.repo_settings.setLayout(qvl)
 
         # Checking for builds settings
-        self.buildcheck_settings = SettingsGroup("Checking For Builds", parent=self)
+        self.buildcheck_settings = SettingsGroup(t("settings.blender_builds.checking_for_builds"), parent=self)
 
         # Minimum stable blender download version (this is mainly for cleanliness and speed)
         self.MinStableBlenderVer = QComboBox()
         # TODO: Add a "custom" key with a new section for custom min version input (useful if you want to fetch very old versions)
         keys = list(dropdown_blender_version().keys())
         self.MinStableBlenderVer.addItems(keys)
-        self.MinStableBlenderVer.setToolTip(
-            "Minimum stable Blender version to scrape\
-            \nDEFAULT: 3.2"
-        )
+        self.MinStableBlenderVer.setToolTip(t("settings.blender_builds.minimum_stable_blender_version_tooltip"))
         self.MinStableBlenderVer.setCurrentText(get_minimum_blender_stable_version())
         self.MinStableBlenderVer.activated[int].connect(self.change_minimum_blender_stable_version)
 
@@ -146,18 +144,16 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.CheckForNewBuildsAutomatically.setChecked(get_check_for_new_builds_automatically())
         self.CheckForNewBuildsAutomatically.setEnabled(True)
         self.CheckForNewBuildsAutomatically.clicked.connect(self.toggle_check_for_new_builds_automatically)
-        self.CheckForNewBuildsAutomatically.setText("Check automatically")
-        self.CheckForNewBuildsAutomatically.setToolTip("Check for new Blender builds automatically\nDEFAULT: Off")
+        self.CheckForNewBuildsAutomatically.setText(t("settings.blender_builds.check_automatically"))
+        self.CheckForNewBuildsAutomatically.setToolTip(t("settings.blender_builds.check_automatically_tooltip"))
 
         self.NewBuildsCheckFrequency = QSpinBox()
         self.NewBuildsCheckFrequency.setEnabled(get_check_for_new_builds_automatically())
         self.NewBuildsCheckFrequency.setContextMenuPolicy(Qt.NoContextMenu)
-        self.NewBuildsCheckFrequency.setToolTip(
-            "Time in hours between new Blender builds check\nDEFAULT: 12h\nMINIMUM: 6h"
-        )
+        self.NewBuildsCheckFrequency.setToolTip(t("settings.blender_builds.new_builds_check_frequency_tooltip"))
         self.NewBuildsCheckFrequency.setMaximum(24 * 7 * 4)  # 4 weeks?
         self.NewBuildsCheckFrequency.setMinimum(6)  # Set minimum to 6h
-        self.NewBuildsCheckFrequency.setPrefix("Interval: ")
+        self.NewBuildsCheckFrequency.setPrefix(t("settings.blender_builds.interval_prefix"))
         self.NewBuildsCheckFrequency.setSuffix("h")
         self.NewBuildsCheckFrequency.setValue(get_new_builds_check_frequency())
         self.NewBuildsCheckFrequency.editingFinished.connect(self.new_builds_check_frequency_changed)
@@ -166,35 +162,25 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.CheckForNewBuildsOnStartup = QCheckBox()
         self.CheckForNewBuildsOnStartup.setChecked(get_check_for_new_builds_on_startup())
         self.CheckForNewBuildsOnStartup.clicked.connect(self.toggle_check_on_startup)
-        self.CheckForNewBuildsOnStartup.setText("On startup")
-        self.CheckForNewBuildsOnStartup.setToolTip(
-            "Check for new Blender builds on Blender Launcher startup\
-            \nDEFAULT: On"
-        )
+        self.CheckForNewBuildsOnStartup.setText(t("settings.blender_builds.on_startup"))
+        self.CheckForNewBuildsOnStartup.setToolTip(t("settings.blender_builds.on_startup_tooltip"))
 
         # Show Archive Builds
         self.show_daily_archive_builds = QCheckBox(self)
-        self.show_daily_archive_builds.setText("Show Daily Archived Builds")
-        self.show_daily_archive_builds.setToolTip(
-            "Show Daily Archived Builds\
-            \nDEFAULT: Off"
-        )
+        self.show_daily_archive_builds.setText(t("settings.blender_builds.show_daily_archive_builds"))
+        self.show_daily_archive_builds.setToolTip(t("settings.blender_builds.show_daily_archive_builds_tooltip"))
         self.show_daily_archive_builds.setChecked(get_show_daily_archive_builds())
         self.show_daily_archive_builds.clicked.connect(self.toggle_show_daily_archive_builds)
         self.show_experimental_archive_builds = QCheckBox(self)
-        self.show_experimental_archive_builds.setText("Show Experimental Archived Builds")
+        self.show_experimental_archive_builds.setText(t("settings.blender_builds.show_experimental_archive_builds"))
         self.show_experimental_archive_builds.setToolTip(
-            "Show Experimental Archived Builds\
-            \nDEFAULT: Off"
+            t("settings.blender_builds.show_experimental_archive_builds_tooltip")
         )
         self.show_experimental_archive_builds.setChecked(get_show_experimental_archive_builds())
         self.show_experimental_archive_builds.clicked.connect(self.toggle_show_experimental_archive_builds)
         self.show_patch_archive_builds = QCheckBox(self)
-        self.show_patch_archive_builds.setText("Show Patch Archived Builds")
-        self.show_patch_archive_builds.setToolTip(
-            "Show Patch Archived Builds\
-            \nDEFAULT: Off"
-        )
+        self.show_patch_archive_builds.setText(t("settings.blender_builds.show_patch_archive_builds"))
+        self.show_patch_archive_builds.setToolTip(t("settings.blender_builds.show_patch_archive_builds_tooltip"))
         self.show_patch_archive_builds.setChecked(get_show_patch_archive_builds())
         self.show_patch_archive_builds.clicked.connect(self.toggle_show_patch_archive_builds)
 
@@ -203,7 +189,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.scraping_builds_layout.addWidget(self.CheckForNewBuildsAutomatically, 0, 0, 1, 1)
         self.scraping_builds_layout.addWidget(self.NewBuildsCheckFrequency, 0, 1, 1, 1)
         self.scraping_builds_layout.addWidget(self.CheckForNewBuildsOnStartup, 1, 0, 1, 2)
-        self.scraping_builds_layout.addWidget(QLabel("Minimum stable build to scrape", self), 2, 0, 1, 1)
+        self.scraping_builds_layout.addWidget(
+            QLabel(t("settings.blender_builds.minimum_stable_build_to_scrape"), self), 2, 0, 1, 1
+        )
         self.scraping_builds_layout.addWidget(self.MinStableBlenderVer, 2, 1, 1, 1)
         self.scraping_builds_layout.addWidget(self.show_daily_archive_builds, 3, 0, 1, 2)
         self.scraping_builds_layout.addWidget(self.show_experimental_archive_builds, 4, 0, 1, 2)
@@ -211,180 +199,131 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.buildcheck_settings.setLayout(self.scraping_builds_layout)
 
         # Downloading builds settings
-        self.download_settings = SettingsGroup("Downloading & Saving Builds", parent=self)
+        self.download_settings = SettingsGroup(t("settings.blender_builds.downloading_and_saving_builds"), parent=self)
 
         # Update button
         self.ShowUpdateButton = QCheckBox()
-        self.ShowUpdateButton.setText("Show Update Button")
+        self.ShowUpdateButton.setText(t("settings.blender_builds.show_update_button"))
         self.ShowUpdateButton.clicked.connect(self.show_update_button)
         self.ShowUpdateButton.setChecked(get_show_update_button())
 
         self.UpdateBehavior = QComboBox()
         self.UpdateBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateBehavior.setToolTip(
-            "Define the update behavior\
-            \nDEFAULT: Patch"
-        )
+        self.UpdateBehavior.setToolTip(t("settings.blender_builds.update_behavior_tooltip"))
         self.UpdateBehavior.setCurrentIndex(get_update_behavior())
         self.UpdateBehavior.activated[int].connect(self.change_update_behavior)
         self.UpdateBehavior.setEnabled(self.ShowUpdateButton.isChecked())
 
         self.UseAdvancedUpdateButton = QCheckBox()
-        self.UseAdvancedUpdateButton.setText("Use Advanced Update Button")
-        self.UseAdvancedUpdateButton.setToolTip(
-            "Enable advanced update settings to customize the update behavior of each blender branch\
-            \nDEFAULT: Off"
-        )
+        self.UseAdvancedUpdateButton.setText(t("settings.blender_builds.use_advanced_update_button"))
+        self.UseAdvancedUpdateButton.setToolTip(t("settings.blender_builds.use_advanced_update_button_tooltip"))
         self.UseAdvancedUpdateButton.clicked.connect(self.use_advanced_update_button)
         self.UseAdvancedUpdateButton.setChecked(get_use_advanced_update_button())
 
-        self.show_update_button_tooltip_normal = "Show the update button to quickly update Blender builds\
-            \nDEFAULT: On"
-        self.show_update_button_tooltip_disabled = "Show the update button to quickly update Blender builds\
-            \nThis option is disabled because Advanced Update Button is enabled\
-            \nDisable 'Use Advanced Update Button' to use this option\
-            \nDEFAULT: On"
+        self.show_update_button_tooltip_normal = t("settings.blender_builds.show_update_button_tooltip_normal")
+        self.show_update_button_tooltip_disabled = t("settings.blender_builds.show_update_button_tooltip_disabled")
 
         self.ShowStableUpdateButton = QCheckBox()
-        self.ShowStableUpdateButton.setText("Show Stable Update Button")
-        self.ShowStableUpdateButton.setToolTip(
-            "Show the update button to quickly update stable builds\
-            \nDEFAULT: On"
-        )
+        self.ShowStableUpdateButton.setText(t("settings.blender_builds.show_stable_update_button"))
+        self.ShowStableUpdateButton.setToolTip(t("settings.blender_builds.show_stable_update_button_tooltip"))
         self.ShowStableUpdateButton.clicked.connect(self.show_stable_update_button)
         self.ShowStableUpdateButton.setChecked(get_show_stable_update_button())
 
         self.UpdateStableBehavior = QComboBox()
         self.UpdateStableBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateStableBehavior.setToolTip(
-            "Define the update behavior for stable builds\
-            \nDEFAULT: Patch"
-        )
+        self.UpdateStableBehavior.setToolTip(t("settings.blender_builds.update_stable_behavior_tooltip"))
         self.UpdateStableBehavior.setCurrentIndex(get_stable_update_behavior())
         self.UpdateStableBehavior.activated[int].connect(self.change_update_stable_behavior)
         self.UpdateStableBehavior.setEnabled(self.ShowStableUpdateButton.isChecked())
 
         self.ShowDailyUpdateButton = QCheckBox()
-        self.ShowDailyUpdateButton.setText("Show Daily Update Button")
-        self.ShowDailyUpdateButton.setToolTip(
-            "Show the update button to quickly update daily builds\
-            \nDEFAULT: On"
-        )
+        self.ShowDailyUpdateButton.setText(t("settings.blender_builds.show_daily_update_button"))
+        self.ShowDailyUpdateButton.setToolTip(t("settings.blender_builds.show_daily_update_button_tooltip"))
         self.ShowDailyUpdateButton.clicked.connect(self.show_daily_update_button)
         self.ShowDailyUpdateButton.setChecked(get_show_daily_update_button())
 
         self.UpdateDailyBehavior = QComboBox()
         self.UpdateDailyBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateDailyBehavior.setToolTip(
-            "Define the update behavior for daily builds\
-            \nDEFAULT: Patch"
-        )
+        self.UpdateDailyBehavior.setToolTip(t("settings.blender_builds.update_daily_behavior_tooltip"))
         self.UpdateDailyBehavior.setCurrentIndex(get_daily_update_behavior())
         self.UpdateDailyBehavior.activated[int].connect(self.change_update_daily_behavior)
         self.UpdateDailyBehavior.setEnabled(self.ShowDailyUpdateButton.isChecked())
 
         self.ShowExperimentalUpdateButton = QCheckBox()
-        self.ShowExperimentalUpdateButton.setText("Show Experimental Update")
+        self.ShowExperimentalUpdateButton.setText(t("settings.blender_builds.show_experimental_update_button"))
         self.ShowExperimentalUpdateButton.setToolTip(
-            "Show the update button to quickly update experimental builds\
-            \nDEFAULT: On"
+            t("settings.blender_builds.show_experimental_update_button_tooltip")
         )
         self.ShowExperimentalUpdateButton.clicked.connect(self.show_experimental_update_button)
         self.ShowExperimentalUpdateButton.setChecked(get_show_experimental_update_button())
 
         self.UpdateExperimentalBehavior = QComboBox()
         self.UpdateExperimentalBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateExperimentalBehavior.setToolTip(
-            "Define the update behavior for experimental builds\
-            \nDEFAULT: Patch"
-        )
+        self.UpdateExperimentalBehavior.setToolTip(t("settings.blender_builds.update_experimental_behavior_tooltip"))
         self.UpdateExperimentalBehavior.setCurrentIndex(get_experimental_update_behavior())
         self.UpdateExperimentalBehavior.activated[int].connect(self.change_update_experimental_behavior)
         self.UpdateExperimentalBehavior.setEnabled(self.ShowExperimentalUpdateButton.isChecked())
 
         self.ShowBFAUpdateButton = QCheckBox()
-        self.ShowBFAUpdateButton.setText("Show BFA Update Button")
-        self.ShowBFAUpdateButton.setToolTip(
-            "Show the update button to quickly update BFA builds\
-            \nDEFAULT: On"
-        )
+        self.ShowBFAUpdateButton.setText(t("settings.blender_builds.show_bfa_update_button"))
+        self.ShowBFAUpdateButton.setToolTip(t("settings.blender_builds.show_bfa_update_button_tooltip"))
         self.ShowBFAUpdateButton.clicked.connect(self.show_bfa_update_button)
         self.ShowBFAUpdateButton.setChecked(get_show_bfa_update_button())
 
         self.UpdateBFABehavior = QComboBox()
         self.UpdateBFABehavior.addItems(list(update_behavior.keys()))
-        self.UpdateBFABehavior.setToolTip(
-            "Define the update behavior for BFA builds\
-            \nDEFAULT: Patch"
-        )
+        self.UpdateBFABehavior.setToolTip(t("settings.blender_builds.update_bfa_behavior_tooltip"))
         self.UpdateBFABehavior.setCurrentIndex(get_bfa_update_behavior())
         self.UpdateBFABehavior.activated[int].connect(self.change_update_bfa_behavior)
         self.UpdateBFABehavior.setEnabled(self.ShowBFAUpdateButton.isChecked())
 
         self.ShowUPBGEStableUpdateButton = QCheckBox()
-        self.ShowUPBGEStableUpdateButton.setText("Show UPBGE Stable Update Button")
+        self.ShowUPBGEStableUpdateButton.setText(t("settings.blender_builds.show_upbge_stable_update_button"))
         self.ShowUPBGEStableUpdateButton.setToolTip(
-            "Show the update button to quickly update UPBGE stable builds\
-            \nDEFAULT: On"
+            t("settings.blender_builds.show_upbge_stable_update_button_tooltip")
         )
         self.ShowUPBGEStableUpdateButton.clicked.connect(self.show_upbge_stable_update_button)
         self.ShowUPBGEStableUpdateButton.setChecked(get_show_upbge_stable_update_button())
 
         self.UpdateUPBGEStableBehavior = QComboBox()
         self.UpdateUPBGEStableBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateUPBGEStableBehavior.setToolTip(
-            "Define the update behavior for UPBGE stable builds\
-            \nDEFAULT: Minor"
-        )
+        self.UpdateUPBGEStableBehavior.setToolTip(t("settings.blender_builds.update_upbge_stable_behavior_tooltip"))
         self.UpdateUPBGEStableBehavior.setCurrentIndex(get_upbge_stable_update_behavior())
         self.UpdateUPBGEStableBehavior.activated[int].connect(self.change_update_upbge_stable_behavior)
         self.UpdateUPBGEStableBehavior.setEnabled(self.ShowUPBGEStableUpdateButton.isChecked())
 
         self.ShowUPBGEWeeklyUpdateButton = QCheckBox()
-        self.ShowUPBGEWeeklyUpdateButton.setText("Show UPBGE Weekly Update Button")
+        self.ShowUPBGEWeeklyUpdateButton.setText(t("settings.blender_builds.show_upbge_weekly_update_button"))
         self.ShowUPBGEWeeklyUpdateButton.setToolTip(
-            "Show the update button to quickly update UPBGE weekly builds\
-            \nDEFAULT: On"
+            t("settings.blender_builds.show_upbge_weekly_update_button_tooltip")
         )
         self.ShowUPBGEWeeklyUpdateButton.clicked.connect(self.show_upbge_weekly_update_button)
         self.ShowUPBGEWeeklyUpdateButton.setChecked(get_show_upbge_weekly_update_button())
 
         self.UpdateUPBGEWeeklyBehavior = QComboBox()
         self.UpdateUPBGEWeeklyBehavior.addItems(list(update_behavior.keys()))
-        self.UpdateUPBGEWeeklyBehavior.setToolTip(
-            "Define the update behavior for UPBGE weekly builds\
-            \nDEFAULT: Minor"
-        )
+        self.UpdateUPBGEWeeklyBehavior.setToolTip(t("settings.blender_builds.update_upbge_weekly_behavior_tooltip"))
         self.UpdateUPBGEWeeklyBehavior.setCurrentIndex(get_upbge_weekly_update_behavior())
         self.UpdateUPBGEWeeklyBehavior.activated[int].connect(self.change_update_upbge_weekly_behavior)
         self.UpdateUPBGEWeeklyBehavior.setEnabled(self.ShowUPBGEWeeklyUpdateButton.isChecked())
 
         # Mark As Favorite
         self.EnableMarkAsFavorite = QCheckBox()
-        self.EnableMarkAsFavorite.setText("Mark as Favorite")
-        self.EnableMarkAsFavorite.setToolTip(
-            "Mark a tab as favorite to quickly access it\
-            \nDEFAULT: Off"
-        )
+        self.EnableMarkAsFavorite.setText(t("settings.blender_builds.mark_as_favorite"))
+        self.EnableMarkAsFavorite.setToolTip(t("settings.blender_builds.mark_as_favorite_tooltip"))
         self.EnableMarkAsFavorite.setChecked(get_mark_as_favorite() != 0)
         self.EnableMarkAsFavorite.clicked.connect(self.toggle_mark_as_favorite)
         self.MarkAsFavorite = QComboBox()
         self.MarkAsFavorite.addItems([fav for fav in favorite_pages if fav != "Disable"])
-        self.MarkAsFavorite.setToolTip(
-            "Select a tab to mark as favorite\
-            \nDEFAULT: Stable Releases"
-        )
+        self.MarkAsFavorite.setToolTip(t("settings.blender_builds.select_favorite_tab_tooltip"))
         self.MarkAsFavorite.setCurrentIndex(max(get_mark_as_favorite() - 1, 0))
         self.MarkAsFavorite.activated[int].connect(self.change_mark_as_favorite)
         self.MarkAsFavorite.setEnabled(self.EnableMarkAsFavorite.isChecked())
 
         # Install Template
         self.InstallTemplate = QCheckBox()
-        self.InstallTemplate.setText("Install Template")
-        self.InstallTemplate.setToolTip(
-            "Installs a template on newly added builds to the Library tab\
-            \nDEFAULT: Off"
-        )
+        self.InstallTemplate.setText(t("settings.blender_builds.install_template"))
+        self.InstallTemplate.setToolTip(t("settings.blender_builds.install_template_tooltip"))
         self.InstallTemplate.clicked.connect(self.toggle_install_template)
         self.InstallTemplate.setChecked(get_install_template())
 
@@ -413,9 +352,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBehavior.setEnabled(not is_advanced and self.ShowUpdateButton.isChecked())
 
         if is_advanced:
-            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_disabled)
+            self.ShowUpdateButton.setToolTip(t("settings.blender_builds.show_update_button_tooltip_disabled"))
         else:
-            self.ShowUpdateButton.setToolTip(self.show_update_button_tooltip_normal)
+            self.ShowUpdateButton.setToolTip(t("settings.blender_builds.show_update_button_tooltip_normal"))
 
         self.downloading_layout = QGridLayout()
         self.downloading_layout.addWidget(self.ShowUpdateButton, 0, 0, 1, 1)
@@ -428,56 +367,39 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.download_settings.setLayout(self.downloading_layout)
 
         # Launching builds settings
-        self.launching_settings = SettingsGroup("Launching Builds", parent=self)
+        self.launching_settings = SettingsGroup(t("settings.blender_builds.launching_builds"), parent=self)
 
         # Quick Launch Key Sequence
         self.EnableQuickLaunchKeySeq = QCheckBox()
-        self.EnableQuickLaunchKeySeq.setText("Quick Launch Global Shortcut")
-        self.EnableQuickLaunchKeySeq.setToolTip(
-            "Enable a global shortcut to quickly launch Blender\
-            \nDEFAULT: On"
-        )
+        self.EnableQuickLaunchKeySeq.setText(t("settings.blender_builds.quick_launch_global_shortcut"))
+        self.EnableQuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_global_shortcut_tooltip"))
         self.EnableQuickLaunchKeySeq.clicked.connect(self.toggle_enable_quick_launch_key_seq)
         self.EnableQuickLaunchKeySeq.setChecked(get_enable_quick_launch_key_seq())
         self.QuickLaunchKeySeq = QLineEdit()
         self.QuickLaunchKeySeq.setEnabled(get_enable_quick_launch_key_seq())
         self.QuickLaunchKeySeq.keyPressEvent = self._keyPressEvent
         self.QuickLaunchKeySeq.setText(str(get_quick_launch_key_seq()))
-        self.QuickLaunchKeySeq.setToolTip(
-            "Global shortcut to quickly launch Blender\
-            \nDEFAULT: ctrl + f11"
-        )
+        self.QuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_key_seq_tooltip"))
         self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.NoContextMenu)
         self.QuickLaunchKeySeq.setCursorPosition(0)
         self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
         # Run Blender using blender-launcher.exe
         self.LaunchBlenderNoConsole = QCheckBox()
-        self.LaunchBlenderNoConsole.setText("Hide Console On Startup")
-        self.LaunchBlenderNoConsole.setToolTip(
-            "Hide the console window when launching Blender\
-            \nDEFAULT: On"
-        )
+        self.LaunchBlenderNoConsole.setText(t("settings.blender_builds.hide_console_on_startup"))
+        self.LaunchBlenderNoConsole.setToolTip(t("settings.blender_builds.hide_console_on_startup_tooltip"))
         self.LaunchBlenderNoConsole.clicked.connect(self.toggle_launch_blender_no_console)
         self.LaunchBlenderNoConsole.setChecked(get_launch_blender_no_console())
         # Blender Startup Arguments
         self.BlenderStartupArguments = QLineEdit()
         self.BlenderStartupArguments.setText(str(get_blender_startup_arguments()))
-        self.BlenderStartupArguments.setToolTip(
-            "Arguments to pass to when launching Blender (after the Blender executable i.e. [… <args>]\
-            \nDEFAULT: None\
-            \nExample: --background"
-        )
+        self.BlenderStartupArguments.setToolTip(t("settings.blender_builds.blender_startup_arguments_tooltip"))
         self.BlenderStartupArguments.setContextMenuPolicy(Qt.NoContextMenu)
         self.BlenderStartupArguments.setCursorPosition(0)
         self.BlenderStartupArguments.editingFinished.connect(self.update_blender_startup_arguments)
         # Command Line Arguments
         self.BashArguments = QLineEdit()
         self.BashArguments.setText(str(get_bash_arguments()))
-        self.BashArguments.setToolTip(
-            "Instructions to pass to bash when launching Blender (before the Blender executable i.e. [<args> …])\
-            \nDEFAULT: None\
-            \nExample: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup"
-        )
+        self.BashArguments.setToolTip(t("settings.blender_builds.bash_arguments_tooltip"))
         self.BashArguments.setContextMenuPolicy(Qt.NoContextMenu)
         self.BashArguments.setCursorPosition(0)
         self.BashArguments.editingFinished.connect(self.update_bash_arguments)
@@ -487,11 +409,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         if get_platform() == "Windows":
             self.launching_layout.addRow(self.LaunchBlenderNoConsole)
         if get_platform() == "Linux":
-            self.launching_layout.addRow(QLabel("Bash Arguments:", self))
+            self.launching_layout.addRow(QLabel(t("settings.blender_builds.bash_arguments"), self))
             self.launching_layout.addRow(self.BashArguments)
-
-        self.launching_layout.addRow(QLabel("Startup Arguments:", self))
-        self.launching_layout.addRow(self.BlenderStartupArguments)
+            self.launching_layout.addRow(QLabel(t("settings.blender_builds.startup_arguments"), self))
+            self.launching_layout.addRow(self.BlenderStartupArguments)
 
         self.launching_settings.setLayout(self.launching_layout)
 

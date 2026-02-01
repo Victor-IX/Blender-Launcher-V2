@@ -297,10 +297,10 @@ class AppearancePage(BasicOnboardingPage):
         self.dpi_scale_factor.setSingleStep(0.25)
         self.dpi_scale_factor.setValue(get_dpi_scale_factor())
         if DPI_OVERRIDDEN:
-            label = "settings.dpi_scale_factor_overridden"
+            label = "settings.appearance.dpi_scale_factor_overridden"
             self.dpi_scale_factor.setEnabled(False)
         else:
-            label = "settings.dpi_scale_factor"
+            label = "settings.appearance.dpi_scale_factor"
         self.dpi_scale_label = QLabel(t(label))
         dpi_scale_desc = QLabel(t("wizard.appearance.dpi_scaling"), self)
 

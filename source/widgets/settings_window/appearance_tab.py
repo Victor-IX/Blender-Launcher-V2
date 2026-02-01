@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.settings import (
     downloads_pages,
     get_default_downloads_page,
@@ -10,6 +11,7 @@ from modules.settings import (
     get_dpi_scale_factor,
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
+    get_make_error_popup,
     get_sync_library_and_downloads_pages,
     get_use_system_titlebar,
     library_pages,
@@ -49,31 +51,26 @@ class AppearanceTabWidget(SettingsFormWidget):
         self.launcher: BlenderLauncher = parent
 
         # Windows
-        self.window_settings = SettingsGroup("Window related", parent=self)
+        self.window_settings = SettingsGroup(t("settings.appearance.window_related"), parent=self)
 
         # Use System Title Bar
         self.UseSystemTitleBar = QCheckBox()
-        self.UseSystemTitleBar.setText("Use System Title Bar")
-        self.UseSystemTitleBar.setToolTip(
-            "Use the system title bar instead of the custom one\
-            \nDEFAULT: False"
-        )
+        self.UseSystemTitleBar.setText(t("settings.appearance.use_system_titlebar"))
+        self.UseSystemTitleBar.setToolTip(t("settings.appearance.use_system_titlebar_tooltip"))
         self.UseSystemTitleBar.setChecked(get_use_system_titlebar())
         self.UseSystemTitleBar.clicked.connect(self.toggle_system_titlebar)
+
         # DPI Scale Factor
         self.DpiScaleFactorSpinBox = QDoubleSpinBox()
         self.DpiScaleFactorSpinBox.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        dpi_scale_label_text = "settings.appearance.dpi_scale_factor"
         if DPI_OVERRIDDEN:
-            label = "DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)"
+            dpi_scale_label_text = "settings.appearance.dpi_scale_factor_overridden_tooltip"
             self.DpiScaleFactorSpinBox.setEnabled(False)
-        else:
-            label = "DPI Scale Factor"
-        self.DpiScaleFactorLabel = QLabel(label)
-        self.DpiScaleFactorSpinBox.setToolTip(
-            "change DPI scaling for the application\
-            \nScale the user interface by a factor to make things more readable & comfortable\
-            \nDEFAULT: 1.0"
-        )
+
+        self.DpiScaleFactorLabel = QLabel(t(dpi_scale_label_text))
+        self.DpiScaleFactorSpinBox.setToolTip(t("settings.appearance.dpi_scale_factor_tooltip"))
         self.DpiScaleFactorSpinBox.setRange(0.25, 10.0)
         self.DpiScaleFactorSpinBox.setSingleStep(0.05)
         self.DpiScaleFactorSpinBox.setValue(get_dpi_scale_factor())
@@ -88,32 +85,25 @@ class AppearanceTabWidget(SettingsFormWidget):
         self.window_settings.setLayout(self.window_layout)
 
         # Notifications
-        self.notification_settings = SettingsGroup("Notifications", parent=self)
+        self.notification_settings = SettingsGroup(t("settings.appearance.notifications.label"), parent=self)
 
         self.EnableNewBuildsNotifications = QCheckBox()
-        self.EnableNewBuildsNotifications.setText("New Available Build")
-        self.EnableNewBuildsNotifications.setToolTip(
-            "Show a notification when a new build is available\
-            \nDEFAULT: True"
-        )
+        self.EnableNewBuildsNotifications.setText(t("settings.appearance.notifications.new_builds"))
+        self.EnableNewBuildsNotifications.setToolTip(t("settings.appearance.notifications.new_builds_tooltip"))
         self.EnableNewBuildsNotifications.clicked.connect(self.toggle_enable_new_builds_notifications)
         self.EnableNewBuildsNotifications.setChecked(get_enable_new_builds_notifications())
+
         self.EnableDownloadNotifications = QCheckBox()
-        self.EnableDownloadNotifications.setText("Finished Downloading")
-        self.EnableDownloadNotifications.setToolTip(
-            "Show a notification when a download is finished\
-            \nDEFAULT: True"
-        )
+        self.EnableDownloadNotifications.setText(t("settings.appearance.notifications.finished_downloading"))
+        self.EnableDownloadNotifications.setToolTip(t("settings.appearance.notifications.finished_downloading_tooltip"))
         self.EnableDownloadNotifications.clicked.connect(self.toggle_enable_download_notifications)
         self.EnableDownloadNotifications.setChecked(get_enable_download_notifications())
+
         self.EnableErrorNotifications = QCheckBox()
-        self.EnableErrorNotifications.setText("Errors")
-        self.EnableErrorNotifications.setToolTip(
-            "Show a notification when an error occurs\
-            \nDEFAULT: True"
-        )
-        self.EnableErrorNotifications.clicked.connect(self.toggle_enable_download_notifications)
-        self.EnableErrorNotifications.setChecked(get_enable_download_notifications())
+        self.EnableErrorNotifications.setText(t("settings.appearance.notifications.errors"))
+        self.EnableErrorNotifications.setToolTip(t("settings.appearance.notifications.errors_tooltip"))
+        self.EnableErrorNotifications.clicked.connect(self.toggle_enable_error_notifications)
+        self.EnableErrorNotifications.setChecked(get_make_error_popup())
 
         self.notification_layout = QVBoxLayout()
         self.notification_layout.addWidget(self.EnableNewBuildsNotifications)
@@ -122,23 +112,20 @@ class AppearanceTabWidget(SettingsFormWidget):
         self.notification_settings.setLayout(self.notification_layout)
 
         # Tabs
-        self.tabs_settings = SettingsGroup("Tabs", parent=self)
+        self.tabs_settings = SettingsGroup(t("settings.appearance.tabs.label"), parent=self)
+
         # Default Tab
         self.DefaultTabComboBox = QComboBox()
         self.DefaultTabComboBox.addItems(tabs.keys())
-        self.DefaultTabComboBox.setToolTip(
-            "The default tab to open when the application starts\
-            \nDEFAULT: Library"
-        )
+        self.DefaultTabComboBox.setToolTip(t("settings.appearance.tabs.default_tab_tooltip"))
         self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
         self.DefaultTabComboBox.activated[int].connect(self.change_default_tab)
 
         # Sync Library and Downloads pages
         self.SyncLibraryAndDownloadsPages = QCheckBox()
-        self.SyncLibraryAndDownloadsPages.setText("Sync Library && Downloads Pages")
+        self.SyncLibraryAndDownloadsPages.setText(t("settings.appearance.tabs.sync_library_and_downloads_pages"))
         self.SyncLibraryAndDownloadsPages.setToolTip(
-            "Sync the selected Library tab with the corresponding Downloads tab\
-            \nDEFAULT: True"
+            t("settings.appearance.tabs.sync_library_and_downloads_pages_tooltip")
         )
         self.SyncLibraryAndDownloadsPages.clicked.connect(self.toggle_sync_library_and_downloads_pages)
         self.SyncLibraryAndDownloadsPages.setChecked(get_sync_library_and_downloads_pages())
@@ -146,27 +133,28 @@ class AppearanceTabWidget(SettingsFormWidget):
         # Default Library Page
         self.DefaultLibraryPageComboBox = QComboBox()
         self.DefaultLibraryPageComboBox.addItems(library_pages.keys())
-        self.DefaultLibraryPageComboBox.setToolTip(
-            "The default page to open in the Library tab\
-            \nDEFAULT: Stable Releases"
-        )
+        self.DefaultLibraryPageComboBox.setToolTip(t("settings.appearance.tabs.default_library_page_tooltip"))
         self.DefaultLibraryPageComboBox.setCurrentIndex(get_default_library_page())
         self.DefaultLibraryPageComboBox.activated[int].connect(self.change_default_library_page)
+
         # Default Downloads Page
         self.DefaultDownloadsPageComboBox = QComboBox()
         self.DefaultDownloadsPageComboBox.addItems(downloads_pages.keys())
-        self.DefaultDownloadsPageComboBox.setToolTip(
-            "The default page to open in the Downloads tab\
-            \nDEFAULT: Stable Releases"
-        )
+        self.DefaultDownloadsPageComboBox.setToolTip(t("settings.appearance.tabs.default_downloads_page_tooltip"))
         self.DefaultDownloadsPageComboBox.setCurrentIndex(get_default_downloads_page())
         self.DefaultDownloadsPageComboBox.activated[int].connect(self.change_default_downloads_page)
 
         self.tabs_layout = QFormLayout()
-        self.tabs_layout.addRow(QLabel("Default Tab", self), self.DefaultTabComboBox)
+        self.tabs_layout.addRow(QLabel(t("settings.appearance.tabs.default_tab"), self), self.DefaultTabComboBox)
         self.tabs_layout.addRow(self.SyncLibraryAndDownloadsPages)
-        self.tabs_layout.addRow(QLabel("Default Library Page", self), self.DefaultLibraryPageComboBox)
-        self.tabs_layout.addRow(QLabel("Default Downloads Page", self), self.DefaultDownloadsPageComboBox)
+        self.tabs_layout.addRow(
+            QLabel(t("settings.appearance.tabs.default_library_page"), self),
+            self.DefaultLibraryPageComboBox,
+        )
+        self.tabs_layout.addRow(
+            QLabel(t("settings.appearance.tabs.default_downloads_page"), self),
+            self.DefaultDownloadsPageComboBox,
+        )
         self.tabs_settings.setLayout(self.tabs_layout)
 
         # Layout

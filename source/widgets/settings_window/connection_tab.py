@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.icons import Icons
 from modules.settings import (
     get_github_token,
@@ -52,25 +53,19 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.icons = Icons.get()
 
         # Proxy Settings
-        self.proxy_settings = SettingsGroup("Proxy", parent=self)
+        self.proxy_settings = SettingsGroup(t("settings.connection.proxy_settings"), parent=self)
 
         # Custom TLS certificates
         self.UseCustomCertificatesCheckBox = QCheckBox()
-        self.UseCustomCertificatesCheckBox.setText("Use Custom TLS Certificates")
-        self.UseCustomCertificatesCheckBox.setToolTip(
-            "Use custom TLS certificates for the connection\
-            \nDEFAULT: False"
-        )
+        self.UseCustomCertificatesCheckBox.setText(t("settings.connection.use_custom_tls_certificates"))
+        self.UseCustomCertificatesCheckBox.setToolTip(t("settings.connection.use_custom_tls_certificates_tooltip"))
         self.UseCustomCertificatesCheckBox.clicked.connect(self.toggle_use_custom_tls_certificates)
         self.UseCustomCertificatesCheckBox.setChecked(get_use_custom_tls_certificates())
 
         # Proxy Type
         self.ProxyTypeComboBox = QComboBox()
         self.ProxyTypeComboBox.addItems(proxy_types.keys())
-        self.ProxyTypeComboBox.setToolTip(
-            "The type of proxy to use for the connection\
-            \nDEFAULT: None"
-        )
+        self.ProxyTypeComboBox.setToolTip(t("settings.connection.proxy_type_tooltip"))
         self.ProxyTypeComboBox.setCurrentIndex(get_proxy_type())
         self.ProxyTypeComboBox.activated[int].connect(self.change_proxy_type)
 
@@ -78,10 +73,7 @@ class ConnectionTabWidget(SettingsFormWidget):
         # Host
         self.ProxyHostLineEdit = QLineEdit()
         self.ProxyHostLineEdit.setText(get_proxy_host())
-        self.ProxyHostLineEdit.setToolTip(
-            "The IP address of the proxy server\
-            \nDEFAULT: 255.255.255.255"
-        )
+        self.ProxyHostLineEdit.setToolTip(t("settings.connection.proxy_host_tooltip"))
         self.ProxyHostLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
         rx = QRegularExpression(
@@ -95,10 +87,7 @@ class ConnectionTabWidget(SettingsFormWidget):
         # Port
         self.ProxyPortLineEdit = QLineEdit()
         self.ProxyPortLineEdit.setText(get_proxy_port())
-        self.ProxyPortLineEdit.setToolTip(
-            "The port number of the proxy server\
-            \nDEFAULT: 9999"
-        )
+        self.ProxyPortLineEdit.setToolTip(t("settings.connection.proxy_port_tooltip"))
         self.ProxyPortLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
         rx = QRegularExpression(r"\d{2,5}")
@@ -111,30 +100,28 @@ class ConnectionTabWidget(SettingsFormWidget):
         # User
         self.ProxyUserLineEdit = QLineEdit()
         self.ProxyUserLineEdit.setText(get_proxy_user())
-        self.ProxyUserLineEdit.setToolTip("The username to authenticate with the proxy server")
+        self.ProxyUserLineEdit.setToolTip(t("settings.connection.proxy_user_tooltip"))
         self.ProxyUserLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.ProxyUserLineEdit.editingFinished.connect(self.update_proxy_user)
 
         # Password
         self.ProxyPasswordLineEdit = QLineEdit()
         self.ProxyPasswordLineEdit.setText(get_proxy_password())
-        self.ProxyPasswordLineEdit.setToolTip("The password to authenticate with the proxy server")
+        self.ProxyPasswordLineEdit.setToolTip(t("settings.connection.proxy_password_tooltip"))
         self.ProxyPasswordLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.ProxyPasswordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.ProxyPasswordLineEdit.editingFinished.connect(self.update_proxy_password)
 
         # Connection Authentication
-        self.connection_authentication_settings = SettingsGroup("Connection Authentication", parent=self)
+        self.connection_authentication_settings = SettingsGroup(
+            t("settings.connection.authentication_settings"), parent=self
+        )
 
         # User ID
-        self.UserIDLabel = QLabel("User ID")
+        self.UserIDLabel = QLabel(t("settings.connection.user_id"))
         self.UserIDLineEdit = QLineEdit()
         self.UserIDLineEdit.setText(get_user_id())
-        self.UserIDLineEdit.setToolTip(
-            "The user ID to authenticate with the Blender website\
-            \nDEFAULT: Random UUID\
-            \nFORMAT: 8-64 characters (a-z, A-Z, 0-9, -)"
-        )
+        self.UserIDLineEdit.setToolTip(t("settings.connection.user_id_tooltip"))
 
         rx = QRegularExpression(r"^[a-zA-Z0-9-]{8,64}$")
 
@@ -143,14 +130,10 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.UserIDLineEdit.editingFinished.connect(self.update_user_id)
 
         # GitHub Token
-        self.GitHubTokenLabel = QLabel("GitHub Token")
+        self.GitHubTokenLabel = QLabel(t("settings.connection.github_token"))
         self.GitHubTokenLineEdit = QLineEdit()
         self.GitHubTokenLineEdit.setText(get_github_token())
-        self.GitHubTokenLineEdit.setToolTip(
-            "Optional: GitHub Personal Access Token to avoid rate limiting\n"
-            "Useful if you're making many requests to GitHub API\n"
-            "Leave empty if not needed"
-        )
+        self.GitHubTokenLineEdit.setToolTip(t("settings.connection.github_token_tooltip"))
         self.GitHubTokenLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.GitHubTokenLineEdit.editingFinished.connect(self.update_github_token)
 
@@ -158,7 +141,7 @@ class ConnectionTabWidget(SettingsFormWidget):
         self.GitHubTokenInfoButton = QPushButton()
         self.GitHubTokenInfoButton.setIcon(self.icons.wiki)
         self.GitHubTokenInfoButton.setFixedSize(QSize(28, 28))
-        self.GitHubTokenInfoButton.setToolTip("Click for GitHub token documentation")
+        self.GitHubTokenInfoButton.setToolTip(t("settings.connection.github_token_info_button_tooltip"))
         self.GitHubTokenInfoButton.clicked.connect(self.open_github_token_docs)
 
         # Layout for token field with info button
@@ -176,14 +159,14 @@ class ConnectionTabWidget(SettingsFormWidget):
         # Layout
         layout = QFormLayout()
         layout.addRow(self.UseCustomCertificatesCheckBox)
-        layout.addRow(QLabel("Type", self), self.ProxyTypeComboBox)
+        layout.addRow(QLabel(t("settings.connection.proxy_type"), self), self.ProxyTypeComboBox)
         sub_layout = QHBoxLayout()
         sub_layout.addWidget(self.ProxyHostLineEdit)
         sub_layout.addWidget(QLabel(" : "))
         sub_layout.addWidget(self.ProxyPortLineEdit)
-        layout.addRow(QLabel("IP", self), sub_layout)
-        layout.addRow(QLabel("Proxy User", self), self.ProxyUserLineEdit)
-        layout.addRow(QLabel("Password", self), self.ProxyPasswordLineEdit)
+        layout.addRow(QLabel(t("settings.connection.proxy_ip"), self), sub_layout)
+        layout.addRow(QLabel(t("settings.connection.proxy_user"), self), self.ProxyUserLineEdit)
+        layout.addRow(QLabel(t("settings.connection.proxy_password"), self), self.ProxyPasswordLineEdit)
 
         self.addRow(self.connection_authentication_settings)
 
@@ -224,13 +207,8 @@ class ConnectionTabWidget(SettingsFormWidget):
         # Show popup if token was saved but had to fall back to settings file
         if token and not stored_in_keyring:
             PopupWindow(
-                title="Keyring Unavailable",
-                message=(
-                    "Failed to store GitHub token in secure system keyring.\n\n"
-                    "The token has been saved to your settings file instead.\n"
-                    "This is less secure than keyring storage.\n\n"
-                    "Consider installing keyring support for your system."
-                ),
+                title=t("settings.connection.keyring_unavailable_title"),
+                message=t("settings.connection.keyring_unavailable_message"),
                 icon=PopupIcon.WARNING,
                 info_popup=True,
                 parent=self.launcher,

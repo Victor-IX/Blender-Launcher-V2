@@ -2,5 +2,215 @@ en:
   library_location: Library Location
   choose_library_folder: Choose Library Folder
 
-  dpi_scale_factor: DPI Scale Factor
-  dpi_scale_factor_overridden: DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)
+  appearance:
+    window_related: Window Related
+    use_system_titlebar: Use System Title Bar
+    use_system_titlebar_tooltip: |
+      Use the system title bar instead of the custom one
+      DEFAULT: False
+    dpi_scale_factor: DPI Scale Factor
+    dpi_scale_factor_tooltip: |
+      change DPI scaling for the application
+      Scale the user interface by a factor to make things more readable & comfortable
+      DEFAULT: 1.0
+    dpi_scale_factor_overridden_tooltip: DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)
+    notifications:
+      label: Notifications
+      new_builds: New Available Build
+      new_builds_tooltip: |
+        Show a notification when a new build is available
+        DEFAULT: True
+      finished_downloading: Finished Downloading
+      finished_downloading_tooltip: |
+        Show a notification when a download is finished
+        DEFAULT: True
+      errors: Errors
+      errors_tooltip: |
+        Show a notification when an error occurs
+        DEFAULT: True
+    tabs:
+      label: Tabs
+      default_tab: Default Tab
+      default_tab_tooltip: |
+        The default tab to open when the application starts
+        DEFAULT: Library
+      sync_library_and_downloads_pages: Sync Library && Downloads Pages
+      sync_library_and_downloads_pages_tooltip: |
+        Sync the selected Library tab with the corresponding Downloads tab
+        DEFAULT: True
+      default_library_page: Default Library Page
+      default_library_page_tooltip: |
+        The default page to open in the Library tab
+        DEFAULT: Stable Releases
+      default_downloads_page: Default Downloads Page
+      default_downloads_page_tooltip: |
+        The default page to open in the Downloads tab
+        DEFAULT: Stable Releases
+
+  connection:
+    proxy_settings: Proxy
+    use_custom_tls_certificates: Use Custom TLS Certificates
+    use_custom_tls_certificates_tooltip: |
+      Use custom TLS certificates for the connection
+      DEFAULT: False
+    proxy_type_tooltip: |
+      The type of proxy to use for the connection
+      DEFAULT: None
+    proxy_host_tooltip: |
+      The IP address of the proxy server
+      DEFAULT: 255.255.255.255
+    proxy_port_tooltip: |
+      The port number of the proxy server
+      DEFAULT: 9999
+    proxy_user_tooltip: The username to authenticate with the proxy server
+    proxy_password_tooltip: The password to authenticate with the proxy server
+    authentication_settings: Connection Authentication
+    user_id: User ID
+    user_id_tooltip: |
+      The user ID to authenticate with the Blender website
+      DEFAULT: Random UUID
+      FORMAT: 8-64 characters (a-z, A-Z, 0-9, -)
+    github_token: GitHub Token
+    github_token_tooltip: |
+      Optional: GitHub Personal Access Token to avoid rate limiting
+      Useful if you're making many requests to GitHub API
+      Leave empty if not needed
+    github_token_info_button_tooltip: Click for GitHub token documentation
+    proxy_type: Type
+    proxy_ip: IP
+    proxy_user: Proxy User
+    proxy_password: Password
+
+    keyring_unavailable_title: Keyring Unavailable
+    keyring_unavailable_message: |
+      Failed to store GitHub token in secure system keyring.
+
+      The token has been saved to your settings file instead.
+      This is less secure than keyring storage.
+
+      Consider installing keyring support for your system.
+
+  blender_builds:
+    visibility_and_downloading: Visibility and Downloading
+    checking_for_builds: Checking For Builds
+    minimum_stable_blender_version_tooltip: |
+      Minimum stable Blender version to scrape
+      DEFAULT: 3.2
+    check_automatically: Check automatically
+    check_automatically_tooltip: |
+      Check for new Blender builds automatically
+      DEFAULT: Off
+    new_builds_check_frequency_tooltip: |
+      Time in hours between new Blender builds check
+      DEFAULT: 12h
+      MINIMUM: 6h
+    interval_prefix: "Interval: "
+    on_startup: On startup
+    on_startup_tooltip: |
+      Check for new Blender builds on Blender Launcher startup
+      DEFAULT: On
+    show_daily_archive_builds: Show Daily Archived Builds
+    show_daily_archive_builds_tooltip: |
+      Show Daily Archived Builds
+      DEFAULT: Off
+    show_experimental_archive_builds: Show Experimental Archived Builds
+    show_experimental_archive_builds_tooltip: |
+      Show Experimental Archived Builds
+      DEFAULT: Off
+    show_patch_archive_builds: Show Patch Archived Builds
+    show_patch_archive_builds_tooltip: |
+      Show Patch Archived Builds
+      DEFAULT: Off
+    minimum_stable_build_to_scrape: Minimum stable build to scrape
+    downloading_and_saving_builds: Downloading & Saving Builds
+    show_update_button: Show Update Button
+    update_behavior_tooltip: |
+      Define the update behavior
+      DEFAULT: Patch
+    use_advanced_update_button: Use Advanced Update Button
+    use_advanced_update_button_tooltip: |
+      Enable advanced update settings to customize the update behavior of each blender branch
+      DEFAULT: Off
+    show_update_button_tooltip_normal: |
+      Show the update button to quickly update Blender builds
+      DEFAULT: On
+    show_update_button_tooltip_disabled: |
+      Show the update button to quickly update Blender builds
+      This option is disabled because Advanced Update Button is enabled
+      Disable 'Use Advanced Update Button' to use this option
+      DEFAULT: On
+    show_stable_update_button: Show Stable Update Button
+    show_stable_update_button_tooltip: |
+      Show the update button to quickly update stable builds
+      DEFAULT: On
+    update_stable_behavior_tooltip: |
+      Define the update behavior for stable builds
+      DEFAULT: Patch
+    show_daily_update_button: Show Daily Update Button
+    show_daily_update_button_tooltip: |
+      Show the update button to quickly update daily builds
+      DEFAULT: On
+    update_daily_behavior_tooltip: |
+      Define the update behavior for daily builds
+      DEFAULT: Patch
+    show_experimental_update_button: Show Experimental Update
+    show_experimental_update_button_tooltip: |
+      Show the update button to quickly update experimental builds
+      DEFAULT: On
+    update_experimental_behavior_tooltip: |
+      Define the update behavior for experimental builds
+      DEFAULT: Patch
+    show_bfa_update_button: Show BFA Update Button
+    show_bfa_update_button_tooltip: |
+      Show the update button to quickly update BFA builds
+      DEFAULT: On
+    update_bfa_behavior_tooltip: |
+      Define the update behavior for BFA builds
+      DEFAULT: Patch
+    show_upbge_stable_update_button: Show UPBGE Stable Update Button
+    show_upbge_stable_update_button_tooltip: |
+      Show the update button to quickly update UPBGE stable builds
+      DEFAULT: On
+    update_upbge_stable_behavior_tooltip: |
+      Define the update behavior for UPBGE stable builds
+      DEFAULT: Minor
+    show_upbge_weekly_update_button: Show UPBGE Weekly Update Button
+    show_upbge_weekly_update_button_tooltip: |
+      Show the update button to quickly update UPBGE weekly builds
+      DEFAULT: On
+    update_upbge_weekly_behavior_tooltip: |
+      Define the update behavior for UPBGE weekly builds
+      DEFAULT: Minor
+    mark_as_favorite: Mark as Favorite
+    mark_as_favorite_tooltip: |
+      Mark a tab as favorite to quickly access it
+      DEFAULT: Off
+    select_favorite_tab_tooltip: |
+      Select a tab to mark as favorite
+      DEFAULT: Stable Releases
+    install_template: Install Template
+    install_template_tooltip: |
+      Installs a template on newly added builds to the Library tab
+      DEFAULT: Off
+    launching_builds: Launching Builds
+    quick_launch_global_shortcut: Quick Launch Global Shortcut
+    quick_launch_global_shortcut_tooltip: |
+      Enable a global shortcut to quickly launch Blender
+      DEFAULT: On
+    quick_launch_key_seq_tooltip: |
+      Global shortcut to quickly launch Blender
+      DEFAULT: ctrl + f11
+    hide_console_on_startup: Hide Console On Startup
+    hide_console_on_startup_tooltip: |
+      Hide the console window when launching Blender
+      DEFAULT: On
+    blender_startup_arguments_tooltip: |
+      Arguments to pass to when launching Blender (after the Blender executable i.e. [… <args>])
+      DEFAULT: None
+      Example: --background
+    bash_arguments_tooltip: |
+      Instructions to pass to bash when launching Blender (before the Blender executable i.e. [<args> …])
+      DEFAULT: None
+      Example: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
+    bash_arguments: "Bash Arguments:"
+    startup_arguments: "Startup Arguments:"
