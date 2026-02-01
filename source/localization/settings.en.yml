@@ -1,0 +1,6 @@
+en:
+  library_location: Library Location
+  choose_library_folder: Choose Library Folder
+
+  dpi_scale_factor: DPI Scale Factor
+  dpi_scale_factor_overridden: DPI Scale Factor (Overridden by QT_SCALE_FACTOR environment variable!)
