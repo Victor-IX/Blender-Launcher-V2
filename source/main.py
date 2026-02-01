@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 import modules._resources_rc  # noqa: F401
+import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
