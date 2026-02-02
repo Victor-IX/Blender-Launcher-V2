@@ -5,13 +5,13 @@ if [ "$(basename "$PWD")" = "scripts" ]; then
     cd ..
 fi
 
-
 PYTHONOPTIMIZE=2 pyinstaller \
     --windowed \
     --icon "source/resources/icons/bl/bl.icns" \
     --hidden-import "pynput.keyboard._darwin" \
     --hidden-import "pynput.mouse._darwin" \
     --name="Blender Launcher" \
+    --add-data="source/localization.tar.gz:." \
     --add-binary="source/resources/certificates/custom.pem:files" \
     --add-data="source/resources/api/blender_launcher_api.json:files" \
     --distpath="./dist/release" \

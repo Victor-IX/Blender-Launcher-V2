@@ -14,6 +14,7 @@ PYTHONOPTIMIZE=2 pyinstaller \
 	--noupx \
 	--onefile \
 	--name="Blender Launcher" \
+    --add-data="source/localization/*.yml:localization" \
 	--add-binary="source/resources/certificates/custom.pem:files" \
 	--add-data="source/resources/api/blender_launcher_api.json:files" \
 	--distpath="./dist/release" \
