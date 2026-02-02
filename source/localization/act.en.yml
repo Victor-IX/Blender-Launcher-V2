@@ -1,70 +1,69 @@
-en:
-  # popups
-  ok: Ok
-  accept: Accept
-  cancel: Cancel
-  quit: Quit
-  prev: Previous
-  next: Next
-  cont: Continue
-  finish: Finish
-  "yes": "Yes"
-  "no": "No"
+# popups
+ok: Ok
+accept: Accept
+cancel: Cancel
+quit: Quit
+prev: Previous
+next: Next
+cont: Continue
+finish: Finish
+"yes": "Yes"
+"no": "No"
 
-  # left icon
-  launch: Launch
-  download: Download
-  installed: Installed
-  lprev: " Previous"
-  updating: Updating
-  deleting: Deleting
+# left icon
+launch: Launch
+download: Download
+installed: Installed
+lprev: " Previous"
+updating: Updating
+deleting: Deleting
 
-  prog:
-    downloading: Downloading
-    extracting: Extracting
-    copying: Copying data...
+prog:
+  downloading: Downloading
+  extracting: Extracting
+  copying: Copying data...
 
-  # actions
-  a:
-    prev: Open Previous File
-    prev_tooltip: |
-      This action opens the last file used in this Build.
-      (Appends `--open-last` to the execution arguments)
-      SHORTCUT: Shift + Launch or Doubleclick
-    quick_launch: Add to Quick Launch
-    fav:
-      add: Add to Favorites
-      rem: Remove from Favorites
-    update: Update Blender Build
-    update_tooltip: Update this build to the latest version
-    d:
-      d: Debug
-      log: Debug Log
-      factory: Factory Startup
-      gpu: Debug GPU
-      glitch: Debug GPU Glitch Workaround
-    rename: Rename Branch
+# actions
+a:
+  prev: Open Previous File
+  prev_tooltip: |
+    This action opens the last file used in this Build.
+    (Appends `--open-last` to the execution arguments)
+    SHORTCUT: Shift + Launch or Doubleclick
+  quick_launch: Add to Quick Launch
+  fav:
+    add: Add to Favorites
+    rem: Remove from Favorites
+  update: Update Blender Build
+  update_tooltip: Update this build to the latest version
+  d:
+    d: Debug
+    log: Debug Log
+    factory: Factory Startup
+    gpu: Debug GPU
+    glitch: Debug GPU Glitch Workaround
+  rename: Rename Branch
 
-    register: Register Extension
-    register_tooltip: Use this build for .blend files and to display thumbnails
-    shortcut: Create Shortcut
-    symlink: Create Symlink
-    template: Install Template
-    port:
-      add: Make Portable
-      rem: Unmake Portable
-    hash: Copy Build Hash
-    freeze:
-      add: Freeze update
-      rem: Unfreeze Update
+  register: Register Extension
+  register_tooltip: Use this build for .blend files and to display thumbnails
+  shortcut: Create Shortcut
+  symlink: Create Symlink
+  template: Install Template
+  port:
+    add: Make Portable
+    rem: Unmake Portable
+  hash: Copy Build Hash
+  freeze:
+    add: Freeze update
+    rem: Unfreeze Update
 
-    release_notes: Show Release Notes
-    release_notes_patch: Show Patch Detailss
-    release_notes_pr: Show PR Details
-    folder_build: Show Build Folders
-    config: Show Config Folder
-    config_portable: Show Portable Config Folder
+  release_notes: Show Release Notes
+  release_notes_patch: Show Patch Detailss
+  release_notes_pr: Show PR Details
+  folder_build: Show Build Folders
+  config: Show Config Folder
+  config_portable: Show Portable Config Folder
 
-    edit: Edit Build...
-    delete: Delete From Drive
-    trash: Send to Trash
+  edit: Edit Build...
+  delete: Delete From Drive
+  trash: Send to Trash
