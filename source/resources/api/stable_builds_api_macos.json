@@ -1,5 +1,5 @@
 {
-    "api_file_version": "18.0",
+    "api_file_version": "19.0",
     "folders": {
         "2.48.0": {
             "assets": [],
@@ -326,7 +326,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.0-macos",
+                                "subversion": "2.83.0-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-06-03T15:27:00+00:00",
                                 "custom_name": "",
@@ -344,7 +344,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.1-macos",
+                                "subversion": "2.83.1-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-06-25T11:58:00+00:00",
                                 "custom_name": "",
@@ -362,7 +362,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.10-macos",
+                                "subversion": "2.83.10-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-12-09T09:12:00+00:00",
                                 "custom_name": "",
@@ -380,7 +380,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.12-macos",
+                                "subversion": "2.83.12-macOS",
                                 "build_hash": null,
                                 "commit_time": "2021-01-27T09:02:00+00:00",
                                 "custom_name": "",
@@ -398,7 +398,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.13-macos",
+                                "subversion": "2.83.13-macOS",
                                 "build_hash": null,
                                 "commit_time": "2021-03-10T09:25:00+00:00",
                                 "custom_name": "",
@@ -524,7 +524,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.2-macos",
+                                "subversion": "2.83.2-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-07-09T06:44:00+00:00",
                                 "custom_name": "",
@@ -560,7 +560,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.3-macos",
+                                "subversion": "2.83.3-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-07-22T06:36:00+00:00",
                                 "custom_name": "",
@@ -578,7 +578,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.4-macos",
+                                "subversion": "2.83.4-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-08-05T06:27:00+00:00",
                                 "custom_name": "",
@@ -596,7 +596,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.5-macos",
+                                "subversion": "2.83.5-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-08-19T06:40:00+00:00",
                                 "custom_name": "",
@@ -614,7 +614,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.6-macos",
+                                "subversion": "2.83.6-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-09-09T08:21:00+00:00",
                                 "custom_name": "",
@@ -632,7 +632,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.7-macos",
+                                "subversion": "2.83.7-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-09-30T06:41:00+00:00",
                                 "custom_name": "",
@@ -650,7 +650,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.8-macos",
+                                "subversion": "2.83.8-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-10-21T09:05:00+00:00",
                                 "custom_name": "",
@@ -668,7 +668,7 @@
                         "blinfo": [
                             {
                                 "branch": "lts",
-                                "subversion": "2.83.9-macos",
+                                "subversion": "2.83.9-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-11-11T15:54:00+00:00",
                                 "custom_name": "",
@@ -691,7 +691,7 @@
                         "blinfo": [
                             {
                                 "branch": "stable",
-                                "subversion": "2.90.0-macos",
+                                "subversion": "2.90.0-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-08-31T12:32:00+00:00",
                                 "custom_name": "",
@@ -709,7 +709,7 @@
                         "blinfo": [
                             {
                                 "branch": "stable",
-                                "subversion": "2.90.1-macos",
+                                "subversion": "2.90.1-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-09-23T08:53:00+00:00",
                                 "custom_name": "",
@@ -732,7 +732,7 @@
                         "blinfo": [
                             {
                                 "branch": "stable",
-                                "subversion": "2.91.0-macos",
+                                "subversion": "2.91.0-macOS",
                                 "build_hash": null,
                                 "commit_time": "2020-11-25T09:23:00+00:00",
                                 "custom_name": "",
@@ -750,7 +750,7 @@
                         "blinfo": [
                             {
                                 "branch": "stable",
-                                "subversion": "2.91.2-macos",
+                                "subversion": "2.91.2-macOS",
                                 "build_hash": null,
                                 "commit_time": "2021-01-20T12:04:00+00:00",
                                 "custom_name": "",
@@ -773,7 +773,7 @@
                         "blinfo": [
                             {
                                 "branch": "stable",
-                                "subversion": "2.92.0-macos",
+                                "subversion": "2.92.0-macOS",
                                 "build_hash": null,
                                 "commit_time": "2021-02-25T12:03:00+00:00",
                                 "custom_name": "",
