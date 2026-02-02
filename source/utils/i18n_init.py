@@ -8,7 +8,7 @@ import i18n
 if getattr(sys, "frozen", False):
     LOCALIZATION_PATH = Path(getattr(sys, "_MEIPASS", "")) / "localization/"
 else:
-    LOCALIZATION_PATH = Path("source/localization").resolve()
+    LOCALIZATION_PATH = Path("source/resources/localization").resolve()
 
 i18n.load_path.append(LOCALIZATION_PATH)
 
