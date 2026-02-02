@@ -3,12 +3,27 @@ ok: Ok
 accept: Accept
 cancel: Cancel
 quit: Quit
-prev: Previous
 next: Next
+prev: Previous
 cont: Continue
 finish: Finish
 "yes": "Yes"
 "no": "No"
+retry: Retry
+update: Update
+later: Later
+
+restart_now: Restart Now
+trash: Trash
+remove: Remove
+delete: Delete
+dont_show_again: Don't Show Again
+migrate: Migrate
+overwrite: Overwrite
+general_folder: Open General Config Folder
+keep_both_versions: Keep Both Versions
+move_to_new: Move to New Version
+remove_settings: Remove Settings
 
 # left icon
 launch: Launch
