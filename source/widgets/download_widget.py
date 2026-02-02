@@ -6,6 +6,7 @@ import shutil
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
@@ -22,7 +23,7 @@ from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from widgets.build_state_widget import BuildStateWidget
 from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.library_widget import LibraryWidget
@@ -426,7 +427,7 @@ class DownloadWidget(BaseBuildWidget):
             message=message,
             title="Portable Settings Transfer Failed",
             icon=PopupIcon.WARNING,
-            buttons=["Continue", "Cancel"],
+            buttons=[PopupButton.CONT, PopupButton.CANCEL],
             parent=self.parent,
         )
 

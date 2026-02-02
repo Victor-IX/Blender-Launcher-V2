@@ -1,0 +1,97 @@
+download_finished: "%{build} download finished!"
+
+# Not bound atm
+info: Info
+warning: Warning
+error: Error
+
+# Not bound atm
+err:
+  no_hash: "Unable to copy build hash: hash not available for this build."
+  rename_branch: "Unable to rename branch: branch name cannot be empty."
+  argparse: |
+    An error occurred during parsing arguments:
+    %{args}
+    %{err}
+
+tool:
+  ok: Ok
+  accept: Accept
+  cancel: Cancel
+  quit: Quit
+  next: Next
+  prev: Previous
+  cont: Continue
+  finish: Finish
+  "yes": "Yes"
+  "no": "No"
+  retry: Retry
+  update: Update
+  later: Later
+
+  restart_now: Restart Now
+  trash: Trash
+  remove: Remove
+  delete: Delete
+  dont_show_again: Don't Show Again
+  migrate: Migrate
+  overwrite: Overwrite
+  general_folder: Open General Config Folder
+  keep_both_versions: Keep Both Versions
+  move_to_new: Move to New Version
+  remove_settings: Remove Settings
+
+# Not bound atm
+title:
+  portable_settings: Portable Settings
+  mvu_remove_old: Major Version Update - Remove Old Build
+  portable_failure: Portable Settings Transfer Failed
+
+# Not bound atm
+popup:
+  dest: Choose destination
+
+  library_perms: |
+    Passed path is not a valid folder or
+    it doesn't have write permissions!
+
+  blver_mismatch: |
+    An attempt to launch a different version
+    of Blender Launcher was detected!
+    Please, terminate currently running
+    version to proceed this action!
+
+  cannot_find_config_path: Unable to determine configuration folder path.
+  cannot_find_config_folder: No config folder found for this version.
+
+  ask_remove_from_drive:
+    one: |
+      Are you sure you want to
+      delete this build?
+    many: |
+      Are you sure you want to
+      delete %{count} builds?
+
+  ask_send_to_trash:
+    one: |
+      Are you sure you want to
+      send this build to the trash?
+    many: |
+      Are you sure you want to
+      send %{count} builds to the trash?
+
+  major_version_update: |
+    Updating from %{current} to %{update} will use a new set of Blender Preferences
+
+    Do you want to remove the old build (%{current}) from your library?
+
+  update_portable_settings: |
+    This build uses portable settings.
+
+    What would you like to do with the portable settings folder?
+
+  portable_failure: |
+    Failed to transfer portable settings:
+    %{error}
+
+    Do you want to continue with the update or cancel?

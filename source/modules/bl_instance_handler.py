@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -46,6 +46,6 @@ class BLInstanceHandler(QObject):
                       of Blender Launcher was detected!<br>\
                       Please, terminate currently running<br>\
                       version to proceed this action!",
-                info_popup=True,
+                buttons=PopupButton.info(),
                 icon=PopupIcon.WARNING,
             )

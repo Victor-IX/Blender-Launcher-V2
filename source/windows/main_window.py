@@ -103,7 +103,7 @@ from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 from windows.settings_window import SettingsWindow
 
 try:
@@ -215,7 +215,7 @@ class BlenderLauncher(BaseWindow):
                 message="Resources failed to load! The launcher will still work,<br> \
                 but the style will be broken.",
                 icon=PopupIcon.WARNING,
-                buttons=["OK", "Don't Show Again"],
+                buttons=[PopupButton.OK, PopupButton.DONT_SHOW_AGAIN],
             )
             dlg.cancelled.connect(set_dont_show_resource_warning)
 
@@ -235,7 +235,7 @@ class BlenderLauncher(BaseWindow):
                 parent=self,
                 title="Setup",
                 message="Choose where Blender<br>builds will be stored",
-                buttons=["Continue"],
+                buttons=PopupButton.CONT,
                 icon=PopupIcon.INFO,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
@@ -273,7 +273,7 @@ class BlenderLauncher(BaseWindow):
                     message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    buttons=["Yes", "No"],
+                    buttons=PopupButton.yn(),
                     icon=PopupIcon.NONE,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
@@ -291,7 +291,7 @@ class BlenderLauncher(BaseWindow):
                 title="Warning",
                 message="Selected folder is not valid or<br>\
                 doesn't have write permissions!",
-                buttons=["Retry"],
+                buttons=PopupButton.RETRY,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
@@ -574,7 +574,7 @@ class BlenderLauncher(BaseWindow):
                     title="Warning",
                     message="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
                     icon=PopupIcon.WARNING,
-                    info_popup=True,
+                    buttons=PopupButton.info(),
                 )
                 return
 
@@ -604,7 +604,7 @@ class BlenderLauncher(BaseWindow):
                 message="In order to update Blender Launcher<br> \
                         complete all active downloads!",
                 icon=PopupIcon.WARNING,
-                info_popup=True,
+                buttons=PopupButton.info(),
             )
 
             return
@@ -700,7 +700,7 @@ class BlenderLauncher(BaseWindow):
             parent=self,
             message="Add build to Quick Launch via<br>\
                         context menu to run it from tray",
-            info_popup=True,
+            buttons=PopupButton.info(),
         )
 
     def tray_icon_activated(self, reason):
@@ -1090,7 +1090,7 @@ class BlenderLauncher(BaseWindow):
             popup = PopupWindow(
                 title=f"New version {latest_tag.replace('v', '')} available",
                 message=path_note_text,
-                buttons=["Update", "Later"],
+                buttons=[PopupButton.UPDATE, PopupButton.LATER],
                 icon=PopupIcon.NONE,
                 parent=self,
             )
@@ -1119,7 +1119,7 @@ class BlenderLauncher(BaseWindow):
                     + "\n".join([f" - {item}<br>" for worker, item in busy.items()])
                     + "Are you sure you want to quit?"
                 ),
-                buttons=["Yes", "No"],
+                buttons=PopupButton.yn(),
                 icon=PopupIcon.WARNING,
             )
 

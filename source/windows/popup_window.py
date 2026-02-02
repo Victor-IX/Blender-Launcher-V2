@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import textwrap
 from enum import Enum
 
+from i18n import t
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
@@ -13,18 +16,57 @@ class PopupIcon(Enum):
     NONE = 3
 
 
+class PopupButton(Enum):
+    OK = "msg.tool.ok"
+    ACCEPT = "msg.tool.accept"
+    CANCEL = "msg.tool.cancel"
+    QUIT = "msg.tool.quit"
+    NEXT = "msg.tool.next"
+    PREV = "msg.tool.prev"
+    CONT = "msg.tool.cont"
+    FINISH = "msg.tool.finish"
+    YES = "msg.tool.yes"
+    NO = "msg.tool.no"
+    RETRY = "msg.tool.retry"
+    UPDATE = "msg.tool.update"
+    LATER = "msg.tool.later"
+
+    RESTART_NOW = "msg.tool.restart_now"
+    TRASH = "msg.tool.trash"
+    REMOVE = "msg.tool.remove"
+    DELETE = "msg.tool.delete"
+    DONT_SHOW_AGAIN = "msg.tool.dont_show_again"
+    MIGRATE = "msg.tool.migrate"
+    OVERWRITE = "msg.tool.overwrite"
+    GENERAL_FOLDER = "msg.tool.general_folder"
+    KEEP_BOTH_VERSIONS = "msg.tool.keep_both_versions"
+    MOVE_TO_NEW = "msg.tool.move_to_new"
+    REMOVE_SETTINGS = "msg.tool.remove_settings"
+
+    @staticmethod
+    def info() -> list[PopupButton]:
+        return [PopupButton.OK]
+
+    @staticmethod
+    def default() -> list[PopupButton]:
+        return [PopupButton.OK, PopupButton.CANCEL]
+
+    @staticmethod
+    def yn() -> list[PopupButton]:
+        return [PopupButton.YES, PopupButton.NO]
+
+
 class PopupWindow(BaseWindow):
     accepted = Signal()
     cancelled = Signal()
-    custom_signal = Signal(str)
+    custom_signal = Signal(PopupButton)
 
     def __init__(
         self,
         message: str,
         title: str = "Info",
-        info_popup: bool = False,
         icon=PopupIcon.INFO,
-        buttons: list[str] | None = None,
+        buttons: PopupButton | list[PopupButton] | None = None,
         parent=None,
         app=None,
     ):
@@ -44,8 +86,13 @@ class PopupWindow(BaseWindow):
 
         self.title = title
         self.message = message
-        self.info_popup = info_popup
-        self.buttons = buttons
+
+        if buttons is None:
+            buttons = PopupButton.default()
+        elif isinstance(buttons, PopupButton):
+            buttons = [buttons]
+
+        self.btns: list[PopupButton] = buttons
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(self.title)
@@ -95,54 +142,30 @@ class PopupWindow(BaseWindow):
         self.setFixedSize(self.size())
 
     def _add_buttons(self):
-        if self.buttons:
-            self._add_custom_buttons()
-        elif self.info_popup:
-            self._add_info_button()
-        else:
-            self._add_default_buttons()
-
-    def _add_custom_buttons(self):
-        if self.buttons is None:
-            return
-
         button_layout = QHBoxLayout()
 
-        if len(self.buttons) > 2:
-            for label in self.buttons:
-                button = self._create_button(label, self._custom_signal)
+        if len(self.btns) > 2:
+            for key in self.btns:
+                button = self._create_button(key, self._custom_signal)
                 button_layout.addWidget(button)
-        elif len(self.buttons) == 2:
-            ok_button = self._create_button(self.buttons[0], self._accept)
-            cancel_button = self._create_button(self.buttons[1], self._cancel)
+        elif len(self.btns) == 2:
+            ok_button = self._create_button(self.btns[0], self._accept)
+            cancel_button = self._create_button(self.btns[1], self._cancel)
             button_layout.addWidget(ok_button)
             button_layout.addWidget(cancel_button)
         else:
-            ok_button = self._create_button(self.buttons[0], self._accept)
+            ok_button = self._create_button(self.btns[0], self._accept)
             button_layout.addWidget(ok_button)
 
         self.PopupLayout.addLayout(button_layout)
 
-    def _add_info_button(self):
-        ok_button = self._create_button("Ok", self._accept)
-        self.PopupLayout.addWidget(ok_button)
-
-    def _add_default_buttons(self):
-        ok_button = self._create_button("Ok", self._accept)
-        cancel_button = self._create_button("Cancel", self._cancel)
-
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(ok_button)
-        button_layout.addWidget(cancel_button)
-        self.PopupLayout.addLayout(button_layout)
-
-    def _create_button(self, label, callback):
-        button = QPushButton(label)
+    def _create_button(self, btn: PopupButton, callback):
+        button = QPushButton(t(btn.value))
         button.setProperty("Popup", True)
-        button.clicked.connect(lambda _, lbl=label: callback(lbl) if callback == self._custom_signal else callback())
+        button.clicked.connect(lambda _, lbl=btn: callback(lbl) if callback == self._custom_signal else callback())
         return button
 
-    def _custom_signal(self, label: str):
+    def _custom_signal(self, label: PopupButton):
         self.custom_signal.emit(label)
         self.close()
 
@@ -155,7 +178,7 @@ class PopupWindow(BaseWindow):
         self.close()
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key.Key_Escape and not self.info_popup:
+        if event.key() == Qt.Key.Key_Escape and self.btns != PopupButton.info():
             self._cancel()
         if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
             self._accept()

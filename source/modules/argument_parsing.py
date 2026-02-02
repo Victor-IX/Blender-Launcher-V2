@@ -2,6 +2,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from modules.platform_utils import is_frozen, show_windows_help
+from windows.popup_window import PopupButton
 
 # These custom handlings are necessary for frozen Windows builds to show
 # argparse help messages properly
@@ -17,7 +18,7 @@ def error(parser: ArgumentParser, msg: str):
             title="Error",
             message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
             icon=PopupIcon.WARNING,
-            buttons=["Quit"],
+            buttons=PopupButton.QUIT,
             app=app,
         ).show()
         sys.exit(app.exec())

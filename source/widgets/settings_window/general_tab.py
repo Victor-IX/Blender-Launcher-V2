@@ -40,7 +40,7 @@ from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -276,7 +276,7 @@ class GeneralTabWidget(SettingsFormWidget):
                 parent=self.launcher,
                 title="Warning",
                 message="Selected folder doesn't have write permissions!",
-                buttons=["Quit"],
+                buttons=PopupButton.QUIT,
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -309,14 +309,15 @@ class GeneralTabWidget(SettingsFormWidget):
     def migrate_confirmation(self):
         title = "Info"
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
-        button = "Migrate, Cancel"
+        button = [PopupButton.MIGRATE, PopupButton.CANCEL]
         icon = PopupIcon.NONE
         if user_config().exists():
             title = "Warning"
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
-            button = "Overwrite, Cancel"
+            button = [PopupButton.OVERWRITE, PopupButton.CANCEL]
             icon = PopupIcon.WARNING
-        dlg = PopupWindow(title=title, message=text, buttons=[button], icon=icon, parent=self.launcher)
+
+        dlg = PopupWindow(title=title, message=text, buttons=button, icon=icon, parent=self.launcher)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):

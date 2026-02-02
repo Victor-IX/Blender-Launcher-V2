@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from widgets.settings_form_widget import SettingsFormWidget
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 from .settings_group import SettingsGroup
 
@@ -210,7 +210,7 @@ class ConnectionTabWidget(SettingsFormWidget):
                 title=t("settings.connection.keyring_unavailable_title"),
                 message=t("settings.connection.keyring_unavailable_message"),
                 icon=PopupIcon.WARNING,
-                info_popup=True,
+                buttons=PopupButton.info(),
                 parent=self.launcher,
             )
 

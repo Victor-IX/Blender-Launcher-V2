@@ -47,7 +47,7 @@ from widgets.elided_text_label import ElidedTextLabel
 from widgets.left_icon_button_widget import LeftIconButtonWidget
 from windows.custom_build_dialog_window import CustomBuildDialogWindow
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from widgets.base_list_widget import BaseListWidget
@@ -556,18 +556,18 @@ class LibraryWidget(BaseBuildWidget):
             message=message,
             title="Portable Settings",
             icon=PopupIcon.WARNING,
-            buttons=["Move to New Version", "Remove Settings", "Cancel"],
+            buttons=[PopupButton.MOVE_TO_NEW, PopupButton.REMOVE, PopupButton.CANCEL],
             parent=self.parent,
         )
 
         self._portable_popup.custom_signal.connect(self._handle_portable_choice)
 
-    def _handle_portable_choice(self, choice: str):
+    def _handle_portable_choice(self, choice: PopupButton):
         """Handle the user's choice for portable settings."""
-        if choice == "Move to New Version":
+        if choice == PopupButton.MOVE_TO_NEW:
             self.move_portable_settings = True
             self._proceed_with_update()
-        elif choice == "Remove Settings":
+        elif choice == PopupButton.REMOVE:
             self._proceed_with_update()
         else:  # Cancel
             # Reset the UI state
@@ -610,7 +610,7 @@ class LibraryWidget(BaseBuildWidget):
                 message=message,
                 title="Major Version Update - Remove Old Build",
                 icon=PopupIcon.WARNING,
-                buttons=["Remove", "Keep Both Versions"],
+                buttons=[PopupButton.REMOVE, PopupButton.KEEP_BOTH_VERSIONS],
                 parent=self.parent,
             )
 
@@ -772,7 +772,7 @@ class LibraryWidget(BaseBuildWidget):
             title="Warning",
             message="Are you sure you want to<br>delete selected builds?",
             icon=PopupIcon.NONE,
-            buttons=["Yes", "No"],
+            buttons=PopupButton.yn(),
         )
 
         if len(self.list_widget.selectedItems()) > 1:
@@ -808,7 +808,7 @@ class LibraryWidget(BaseBuildWidget):
             message="Are you sure you want to<br> \
                   send selected builds to trash?",
             icon=PopupIcon.NONE,
-            buttons=["Yes", "No"],
+            buttons=PopupButton.yn(),
         )
 
         if len(self.list_widget.selectedItems()) > 1:
@@ -1076,7 +1076,7 @@ class LibraryWidget(BaseBuildWidget):
             PopupWindow(
                 title="Error",
                 message="Unable to determine configuration folder path.",
-                info_popup=True,
+                buttons=PopupButton.info(),
                 icon=PopupIcon.WARNING,
                 parent=self.parent,
             )
@@ -1090,7 +1090,7 @@ class LibraryWidget(BaseBuildWidget):
             popup = PopupWindow(
                 title="Warning",
                 message="No config folder found for this version.",
-                buttons=["Open General Config Folder", "Cancel"],
+                buttons=[PopupButton.GENERAL_FOLDER, PopupButton.CANCEL],
                 icon=PopupIcon.WARNING,
                 parent=self.parent,
             )

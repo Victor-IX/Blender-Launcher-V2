@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.left_icon_button_widget import LeftIconButtonWidget
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 if TYPE_CHECKING:
     from items.base_list_widget_item import BaseListWidgetItem
@@ -70,15 +70,15 @@ class LibraryDamagedWidget(BaseBuildWidget):
             title="Warning",
             message="Do you want to delete, or<br>trash selected builds?",
             icon=PopupIcon.NONE,
-            buttons=["Delete", "Trash", "Cancel"],
+            buttons=[PopupButton.DELETE, PopupButton.TRASH, PopupButton.CANCEL],
         )
 
         self.dlg.custom_signal.connect(self.removal_response)
 
-    @Slot(str)
-    def removal_response(self, s: str):
-        if s != "Cancel":
-            self.remove_from_drive(trash=(s == "Trash"))
+    @Slot(PopupButton)
+    def removal_response(self, s: PopupButton):
+        if s != PopupButton.CANCEL:
+            self.remove_from_drive(trash=(s == PopupButton.TRASH))
 
     @Slot()
     def remove_from_drive(self, trash=False):
