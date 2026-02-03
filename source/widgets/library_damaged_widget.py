@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.left_icon_button_widget import LeftIconButtonWidget
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from items.base_list_widget_item import BaseListWidgetItem
@@ -65,20 +65,18 @@ class LibraryDamagedWidget(BaseBuildWidget):
     @Slot()
     def ask_remove_from_drive(self):
         self.item.setSelected(True)
-        self.dlg = PopupWindow(
-            parent=self.parent,
-            title="Warning",
+        self.dlg = Popup.warning(
             message="Do you want to delete, or<br>trash selected builds?",
-            icon=PopupIcon.NONE,
-            buttons=[PopupButton.DELETE, PopupButton.TRASH, PopupButton.CANCEL],
+            buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
+            parent=self.parent,
         )
 
         self.dlg.custom_signal.connect(self.removal_response)
 
-    @Slot(PopupButton)
-    def removal_response(self, s: PopupButton):
-        if s != PopupButton.CANCEL:
-            self.remove_from_drive(trash=(s == PopupButton.TRASH))
+    @Slot(Popup.Button)
+    def removal_response(self, s: Popup.Button):
+        if s != Popup.Button.CANCEL:
+            self.remove_from_drive(trash=(s == Popup.Button.TRASH))
 
     @Slot()
     def remove_from_drive(self, trash=False):

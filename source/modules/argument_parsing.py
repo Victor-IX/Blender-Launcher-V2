@@ -2,7 +2,6 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from modules.platform_utils import is_frozen, show_windows_help
-from windows.popup_window import PopupButton
 
 # These custom handlings are necessary for frozen Windows builds to show
 # argparse help messages properly
@@ -11,14 +10,12 @@ from windows.popup_window import PopupButton
 def error(parser: ArgumentParser, msg: str):
     if is_frozen() and sys.platform == "win32":
         from PySide6.QtWidgets import QApplication
-        from windows.popup_window import PopupIcon, PopupWindow
+        from windows.popup_window import Popup
 
         app = QApplication([])
-        PopupWindow(
-            title="Error",
+        Popup.error(
             message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
-            icon=PopupIcon.WARNING,
-            buttons=PopupButton.QUIT,
+            buttons=Popup.Button.QUIT,
             app=app,
         ).show()
         sys.exit(app.exec())

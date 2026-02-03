@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -39,13 +39,11 @@ class BLInstanceHandler(QObject):
         if isinstance(d, memoryview):
             d = d.tobytes()
         if str(d, encoding="ascii") != str(self.launcher.version):
-            self.dlg = PopupWindow(
-                parent=self.launcher,
-                title="Warning",
+            self.dlg = Popup.warning(
                 message="An attempt to launch a different version<br>\
                       of Blender Launcher was detected!<br>\
                       Please, terminate currently running<br>\
                       version to proceed this action!",
-                buttons=PopupButton.info(),
-                icon=PopupIcon.WARNING,
+                buttons=Popup.Button.info(),
+                parent=self.launcher,
             )

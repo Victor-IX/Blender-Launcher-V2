@@ -1,7 +1,8 @@
 download_finished: "%{build} download finished!"
 
-# Not bound atm
+success: Success
 info: Info
+setup: Setup
 warning: Warning
 error: Error
 

@@ -40,7 +40,7 @@ from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -272,11 +272,10 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def library_folder_validity_changed(self, v: bool):
         if not v:
-            self.dlg = PopupWindow(
-                parent=self.launcher,
-                title="Warning",
+            self.dlg = Popup.warning(
                 message="Selected folder doesn't have write permissions!",
-                buttons=PopupButton.QUIT,
+                buttons=Popup.Button.QUIT,
+                parent=self.launcher,
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -307,17 +306,17 @@ class GeneralTabWidget(SettingsFormWidget):
         set_use_pre_release_builds(is_checked)
 
     def migrate_confirmation(self):
-        title = "Info"
+        t = Popup.Type.Info
         text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
-        button = [PopupButton.MIGRATE, PopupButton.CANCEL]
-        icon = PopupIcon.NONE
+        button = [Popup.Button.MIGRATE, Popup.Button.CANCEL]
+        icon = Popup.Icon.NONE
         if user_config().exists():
-            title = "Warning"
+            t = Popup.Type.Warning
             text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
-            button = [PopupButton.OVERWRITE, PopupButton.CANCEL]
-            icon = PopupIcon.WARNING
+            button = [Popup.Button.OVERWRITE, Popup.Button.CANCEL]
+            icon = Popup.Icon.WARNING
 
-        dlg = PopupWindow(title=title, message=text, buttons=button, icon=icon, parent=self.launcher)
+        dlg = Popup.Window(popup_type=t, message=text, buttons=button, icon=icon, parent=self.launcher)
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
@@ -353,18 +352,14 @@ class GeneralTabWidget(SettingsFormWidget):
     def purge_temp_now(self):
         success = purge_temp_folder()
         if success:
-            PopupWindow(
-                parent=self.launcher,
-                title="Success",
+            Popup.success(
                 message="Temp folder has been purged successfully!",
-                icon=PopupIcon.NONE,
+                parent=self.launcher,
             )
         else:
-            PopupWindow(
-                parent=self.launcher,
-                title="Error",
+            Popup.error(
                 message="Failed to purge temp folder. Some files may be in use.",
-                icon=PopupIcon.WARNING,
+                parent=self.launcher,
             )
 
     def register_with_winget(self):
@@ -372,18 +367,14 @@ class GeneralTabWidget(SettingsFormWidget):
         if success:
             set_auto_register_winget(True)
             self.refresh_winget_buttons()
-            PopupWindow(
-                parent=self.launcher,
-                title="Success",
+            Popup.success(
                 message="Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher'",
-                icon=PopupIcon.NONE,
+                parent=self.launcher,
             )
         else:
-            PopupWindow(
-                parent=self.launcher,
-                title="Error",
+            Popup.error(
                 message="Failed to register with WinGet. Check logs for details.",
-                icon=PopupIcon.WARNING,
+                parent=self.launcher,
             )
 
     def unregister_from_winget(self):
@@ -391,18 +382,14 @@ class GeneralTabWidget(SettingsFormWidget):
         if success:
             set_auto_register_winget(False)
             self.refresh_winget_buttons()
-            PopupWindow(
-                parent=self.launcher,
-                title="Success",
+            Popup.success(
                 message="Successfully unregistered from WinGet.",
-                icon=PopupIcon.NONE,
+                parent=self.launcher,
             )
         else:
-            PopupWindow(
-                parent=self.launcher,
-                title="Error",
+            Popup.error(
                 message="Failed to unregister from WinGet. Check logs for details.",
-                icon=PopupIcon.WARNING,
+                parent=self.launcher,
             )
 
     def refresh_winget_buttons(self):

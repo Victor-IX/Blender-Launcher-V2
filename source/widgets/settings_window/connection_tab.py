@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from widgets.settings_form_widget import SettingsFormWidget
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 from .settings_group import SettingsGroup
 
@@ -206,11 +206,9 @@ class ConnectionTabWidget(SettingsFormWidget):
 
         # Show popup if token was saved but had to fall back to settings file
         if token and not stored_in_keyring:
-            PopupWindow(
-                title=t("settings.connection.keyring_unavailable_title"),
+            Popup.warning(
                 message=t("settings.connection.keyring_unavailable_message"),
-                icon=PopupIcon.WARNING,
-                buttons=PopupButton.info(),
+                buttons=Popup.Button.info(),
                 parent=self.launcher,
             )
 

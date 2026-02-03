@@ -23,7 +23,7 @@ from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from widgets.build_state_widget import BuildStateWidget
 from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from widgets.library_widget import LibraryWidget
@@ -251,9 +251,9 @@ class DownloadWidget(BaseBuildWidget):
 
         if get_install_template():
             self.progressBar.set_title(t("act.prog.copying"))
-            t = TemplateTask(destination=self.build_dir)
-            t.finished.connect(self.download_get_info)
-            self.parent.task_queue.append(t)
+            task = TemplateTask(destination=self.build_dir)
+            task.finished.connect(self.download_get_info)
+            self.parent.task_queue.append(task)
         else:
             self.download_get_info()
 
@@ -423,11 +423,9 @@ class DownloadWidget(BaseBuildWidget):
             f"Failed to transfer portable settings:\n{error}\n\nDo you want to continue with the update or cancel?"
         )
 
-        popup = PopupWindow(
+        popup = Popup.warning(
             message=message,
-            title="Portable Settings Transfer Failed",
-            icon=PopupIcon.WARNING,
-            buttons=[PopupButton.CONT, PopupButton.CANCEL],
+            buttons=[Popup.Button.CONT, Popup.Button.CANCEL],
             parent=self.parent,
         )
 

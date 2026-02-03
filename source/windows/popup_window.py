@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import textwrap
-from enum import Enum
+from enum import Enum, StrEnum
+from typing import Required, TypedDict, Unpack
 
 from i18n import t
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QPixmap
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 from windows.base_window import BaseWindow
+
+
+class PopupType(StrEnum):
+    Success = "msg.success"
+    Info = "msg.info"
+    Setup = "msg.setup"
+    Warning = "msg.warning"
+    Error = "msg.error"
 
 
 class PopupIcon(Enum):
@@ -16,7 +25,7 @@ class PopupIcon(Enum):
     NONE = 3
 
 
-class PopupButton(Enum):
+class PopupButton(StrEnum):
     OK = "act.ok"
     ACCEPT = "act.accept"
     CANCEL = "act.cancel"
@@ -63,9 +72,10 @@ class PopupWindow(BaseWindow):
 
     def __init__(
         self,
+        *,
+        popup_type: PopupType,
+        icon: PopupIcon,
         message: str,
-        title: str = "Info",
-        icon=PopupIcon.INFO,
         buttons: PopupButton | list[PopupButton] | None = None,
         parent=None,
         app=None,
@@ -84,7 +94,7 @@ class PopupWindow(BaseWindow):
         """
         super().__init__(parent=parent, app=app)
 
-        self.title = title
+        self.ptype = popup_type
         self.message = message
 
         if buttons is None:
@@ -95,7 +105,7 @@ class PopupWindow(BaseWindow):
         self.btns: list[PopupButton] = buttons
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
-        self.setWindowTitle(self.title)
+        self.setWindowTitle(t(self.ptype.value))
         self.setMinimumSize(200, 100)
 
         self.PopupWidget = QWidget(self)
@@ -182,3 +192,37 @@ class PopupWindow(BaseWindow):
             self._cancel()
         if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
             self._accept()
+
+
+class __GenericPWARGS(TypedDict, total=False):
+    message: Required[str]
+    buttons: PopupButton | list[PopupButton]
+    parent: BaseWindow
+    app: QApplication
+
+
+class Popup:
+    Type = PopupType
+    Icon = PopupIcon
+    Button = PopupButton
+    Window = PopupWindow
+
+    @staticmethod
+    def success(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:
+        return PopupWindow(popup_type=PopupType.Success, icon=PopupIcon.NONE, **kwargs)
+
+    @staticmethod
+    def info(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:
+        return PopupWindow(popup_type=PopupType.Info, icon=PopupIcon.INFO, **kwargs)
+
+    @staticmethod
+    def setup(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:
+        return PopupWindow(popup_type=PopupType.Setup, icon=PopupIcon.NONE, **kwargs)
+
+    @staticmethod
+    def warning(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:
+        return PopupWindow(popup_type=PopupType.Warning, icon=PopupIcon.WARNING, **kwargs)
+
+    @staticmethod
+    def error(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:
+        return PopupWindow(popup_type=PopupType.Error, icon=PopupIcon.WARNING, **kwargs)

@@ -8,7 +8,7 @@ from modules.platform_utils import get_cwd
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -67,14 +67,12 @@ class FolderSelector(QWidget):
     def set_folder(self, folder: Path, relative: bool | None = None):
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = PopupWindow(
-                    parent=self.launcher,
-                    title="Setup",
+                self.dlg = Popup.setup(
                     message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    icon=PopupIcon.NONE,
-                    buttons=PopupButton.yn(),
+                    buttons=Popup.Button.yn(),
+                    parent=self.launcher,
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))

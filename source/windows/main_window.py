@@ -103,7 +103,7 @@ from widgets.library_widget import LibraryWidget
 from windows.base_window import BaseWindow
 from windows.file_dialog_window import FileDialogWindow
 from windows.onboarding_window import OnboardingWindow
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
+from windows.popup_window import Popup
 from windows.settings_window import SettingsWindow
 
 try:
@@ -209,13 +209,11 @@ class BlenderLauncher(BaseWindow):
         self.pre_release_build = get_use_pre_release_builds
 
         if not RESOURCES_AVAILABLE and not get_dont_show_resource_warning():
-            dlg = PopupWindow(
-                parent=self,
-                title="Error",
+            dlg = Popup.error(
                 message="Resources failed to load! The launcher will still work,<br> \
                 but the style will be broken.",
-                icon=PopupIcon.WARNING,
-                buttons=[PopupButton.OK, PopupButton.DONT_SHOW_AGAIN],
+                buttons=[Popup.Button.OK, Popup.Button.DONT_SHOW_AGAIN],
+                parent=self,
             )
             dlg.cancelled.connect(set_dont_show_resource_warning)
 
@@ -231,12 +229,12 @@ class BlenderLauncher(BaseWindow):
         # into an unknown state without them realizing. If we show the program without a
         # valid library folder, then many things will break.
         if is_library_folder_valid() is False:
-            self.dlg = PopupWindow(
-                parent=self,
-                title="Setup",
+            self.dlg = Popup.Window(
+                popup_type=Popup.Type.Setup,
+                icon=Popup.Icon.INFO,
                 message="Choose where Blender<br>builds will be stored",
-                buttons=PopupButton.CONT,
-                icon=PopupIcon.INFO,
+                buttons=Popup.Button.CONT,
+                parent=self,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
             return
@@ -267,14 +265,12 @@ class BlenderLauncher(BaseWindow):
 
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = PopupWindow(
-                    parent=self,
-                    title="Setup",
+                self.dlg = Popup.setup(
                     message="The selected path is relative to the executable's path.<br>\
                         Would you like to save it as relative?<br>\
                         This is useful if the folder may move.",
-                    buttons=PopupButton.yn(),
-                    icon=PopupIcon.NONE,
+                    buttons=Popup.Button.yn(),
+                    parent=self,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -286,12 +282,11 @@ class BlenderLauncher(BaseWindow):
         if set_library_folder(str(folder)) is True:
             self.draw(True)
         else:
-            self.dlg = PopupWindow(
+            self.dlg = Popup.warning(
                 parent=self,
-                title="Warning",
                 message="Selected folder is not valid or<br>\
                 doesn't have write permissions!",
-                buttons=PopupButton.RETRY,
+                buttons=Popup.Button.RETRY,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
@@ -569,12 +564,10 @@ class BlenderLauncher(BaseWindow):
             try:
                 self.hk_listener = keyboard.GlobalHotKeys({key_seq: self.on_activate_quick_launch})
             except Exception:
-                self.dlg = PopupWindow(
-                    parent=self,
-                    title="Warning",
+                self.dlg = Popup.warning(
                     message="Global hotkey sequence was not recognized!<br>Try to use another combination of keys",
-                    icon=PopupIcon.WARNING,
-                    buttons=PopupButton.info(),
+                    buttons=Popup.Button.info(),
+                    parent=self,
                 )
                 return
 
@@ -598,13 +591,11 @@ class BlenderLauncher(BaseWindow):
 
     def show_update_window(self):
         if not self.is_downloading_idle():
-            self.dlg = PopupWindow(
-                parent=self,
-                title="Warning",
+            self.dlg = Popup.warning(
                 message="In order to update Blender Launcher<br> \
                         complete all active downloads!",
-                icon=PopupIcon.WARNING,
-                buttons=PopupButton.info(),
+                parent=self,
+                buttons=Popup.Button.info(),
             )
 
             return
@@ -696,11 +687,11 @@ class BlenderLauncher(BaseWindow):
             self.quick_launch_fail_signal.emit()
 
     def quick_launch_fail(self):
-        self.dlg = PopupWindow(
+        self.dlg = Popup.setup(
             parent=self,
             message="Add build to Quick Launch via<br>\
                         context menu to run it from tray",
-            buttons=PopupButton.info(),
+            buttons=Popup.Button.info(),
         )
 
     def tray_icon_activated(self, reason):
@@ -1087,11 +1078,12 @@ class BlenderLauncher(BaseWindow):
                 path_note_text = patch_note_cleaner(path_note)
             else:
                 path_note_text = "No release notes available."
-            popup = PopupWindow(
-                title=f"New version {latest_tag.replace('v', '')} available",
+
+            path_note_text = f"New version {latest_tag.replace('v', '')} available!\n\n" + path_note_text
+
+            popup = Popup.info(
                 message=path_note_text,
-                buttons=[PopupButton.UPDATE, PopupButton.LATER],
-                icon=PopupIcon.NONE,
+                buttons=[Popup.Button.UPDATE, Popup.Button.LATER],
                 parent=self,
             )
             popup.accepted.connect(self.show_update_window)
@@ -1111,16 +1103,14 @@ class BlenderLauncher(BaseWindow):
     def quit_(self):
         busy = self.task_queue.get_busy_threads()
         if any(busy):
-            self.dlg = PopupWindow(
-                parent=self,
-                title="Warning",
+            self.dlg = Popup.warning(
                 message=(
                     "Some tasks are still in progress!<br>"
                     + "\n".join([f" - {item}<br>" for worker, item in busy.items()])
                     + "Are you sure you want to quit?"
                 ),
-                buttons=PopupButton.yn(),
-                icon=PopupIcon.WARNING,
+                buttons=Popup.Button.yn(),
+                parent=self,
             )
 
             self.dlg.accepted.connect(self.destroy)

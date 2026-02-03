@@ -25,7 +25,6 @@ from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
-from windows.popup_window import PopupButton, PopupIcon, PopupWindow
 
 version = Version(
     2,
@@ -230,16 +229,15 @@ def main():
 
 def start_set_library_folder(app: QApplication, lib_folder: str):
     from modules.settings import set_library_folder
+    from windows.popup_window import Popup
 
     if set_library_folder(str(lib_folder)):
         logging.info(f"Library folder set to {lib_folder!s}")
     else:
         logging.error("Failed to set library folder")
-        PopupWindow(
-            title="Warning",
+        Popup.warning(
             message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
-            icon=PopupIcon.WARNING,
-            buttons=PopupButton.QUIT,
+            buttons=Popup.Button.QUIT,
             app=app,
         ).show()
         sys.exit(app.exec())
