@@ -1,6 +1,7 @@
 import sys
 from argparse import ArgumentParser, Namespace
 
+from i18n import t
 from modules.platform_utils import is_frozen, show_windows_help
 
 # These custom handlings are necessary for frozen Windows builds to show
@@ -14,7 +15,7 @@ def error(parser: ArgumentParser, msg: str):
 
         app = QApplication([])
         Popup.error(
-            message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
+            message=t("msg.err.argparse", args=parser.format_usage(), err=msg),
             buttons=Popup.Button.QUIT,
             app=app,
         ).show()

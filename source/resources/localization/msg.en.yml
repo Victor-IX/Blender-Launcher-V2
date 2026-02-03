@@ -1,5 +1,3 @@
-download_finished: "%{build} download finished!"
-
 success: Success
 info: Info
 setup: Setup
@@ -10,24 +8,41 @@ error: Error
 err:
   no_hash: "Unable to copy build hash: hash not available for this build."
   rename_branch: "Unable to rename branch: branch name cannot be empty."
+  no_base_config: Unable to determine configuration folder path.
+  no_config_version: No config folder found for this version.
+  folder_invalid: |
+    Selected folder is not a valid folder or
+    it doesn't have write permissions!
+  library_no_write: Selected folder doesn't have write permissions!
   argparse: |
     An error occurred during parsing arguments:
     %{args}
     %{err}
 
-# Not bound atm
-title:
-  portable_settings: Portable Settings
-  mvu_remove_old: Major Version Update - Remove Old Build
-  portable_failure: Portable Settings Transfer Failed
+  no_resources: |
+    Resources failed to load! The launcher will still work,
+    but the style will be broken.
 
-# Not bound atm
+updates:
+  download_before_update: |
+    In order to update Blender Launcher
+    complete all active downloads!
+
+  new_version_available: |
+    New version %{version} available!
+
+    %{patch_notes}
+
+  no_release_notes: No release notes available.
+
+  update_to_version: Update to version %{version}
+
 popup:
   dest: Choose destination
-
-  library_perms: |
-    Passed path is not a valid folder or
-    it doesn't have write permissions!
+  select_library: Select Library Folder
+  first_time_select_library: |
+    Choose where Blender
+    builds will be stored
 
   blver_mismatch: |
     An attempt to launch a different version
@@ -35,8 +50,34 @@ popup:
     Please, terminate currently running
     version to proceed this action!
 
-  cannot_find_config_path: Unable to determine configuration folder path.
-  cannot_find_config_folder: No config folder found for this version.
+  tasks_in_progress: |
+    Some tasks are still in progress!
+    %{tasks}
+    Are you sure you want to quit?
+
+  apply_the_following: |
+    Restart Blender Launcher in
+    order to apply the following settings:
+    %{pending}
+
+
+
+  relative_path_found: |
+    The selected path is relative to the executable's path.
+    Would you like to save it as relative?
+    This is useful if the folder may move.
+
+  global_hotkeys_invalid: |
+    Global hotkey sequence was not recognized!
+    Try to use another combination of keys
+
+  quick_launch_tray: |
+    Add build to Quick Launch via
+    context menu to run it from tray
+
+  ask_delete_or_trash: |
+    Do you want to delete, or
+    trash selected builds?
 
   ask_remove_from_drive:
     one: |
@@ -69,3 +110,28 @@ popup:
     %{error}
 
     Do you want to continue with the update or cancel?
+
+  mv_confirm: |
+    Are you sure you want to move
+    %{start}
+    to
+    %{end}?
+
+  mv_overwrite_confirm: |
+    <font color="red">WARNING:</font> The user settings already exist!
+    Are you sure you want to move
+    %{start}
+    to
+    %{end}?
+
+  purge:
+    success: Temp folder has been purged successfully!
+    error: Failed to purge temp folder. Some files may be in use.
+
+  winget:
+    register:
+      success: Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher
+      error: Failed to register with WinGet. Check logs for details.
+    unregister:
+      success: Successfully unregister from WinGet.
+      error: Failed to unregister from WinGet. Check logs for details.

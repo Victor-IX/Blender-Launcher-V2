@@ -550,12 +550,11 @@ class LibraryWidget(BaseBuildWidget):
 
     def _show_portable_settings_dialog(self):
         """Show dialog asking what to do with portable settings."""
-        message = "This build uses portable settings.\n\nWhat would you like to do with the portable settings folder?"
 
         self._portable_popup = Popup.Window(
             popup_type=Popup.Type.Setup,
             icon=Popup.Icon.WARNING,
-            message=message,
+            message=t("msg.popup.update_portable_settings"),
             buttons=[Popup.Button.MOVE_TO_NEW, Popup.Button.REMOVE, Popup.Button.CANCEL],
             parent=self.parent,
         )
@@ -601,13 +600,8 @@ class LibraryWidget(BaseBuildWidget):
             current_version = self.build_info.semversion.replace(prerelease=None)
             update_version = update_download_widget.build_info.semversion.replace(prerelease=None)
 
-            message = (
-                f"Updating from {current_version} to {update_version} will use a new set of Blender Preferences\n\n"
-                f"Do you want to remove the old build ({current_version}) from your library?"
-            )
-
             self._confirmation_popup = Popup.warning(
-                message=message,
+                message=t("msg.popup.major_version_update", current=current_version, update=update_version),
                 buttons=[Popup.Button.REMOVE, Popup.Button.KEEP_BOTH_VERSIONS],
                 parent=self.parent,
             )
@@ -765,13 +759,15 @@ class LibraryWidget(BaseBuildWidget):
             return
 
         self.item.setSelected(True)
+
+        count = len(self.list_widget.selectedItems())
         self.dlg = Popup.warning(
-            message="Are you sure you want to<br>delete selected builds?",
+            message=t("msg.popup.ask_remove_from_drive", count=count),
             buttons=Popup.Button.yn(),
             parent=self.parent,
         )
 
-        if len(self.list_widget.selectedItems()) > 1:
+        if count > 1:
             self.dlg.accepted.connect(self.remove_from_drive_extended)
         else:
             self.dlg.accepted.connect(self.remove_from_drive)
@@ -798,9 +794,9 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def ask_send_to_trash(self):
         self.item.setSelected(True)
+        count = len(self.list_widget.selectedItems())
         self.dlg = Popup.warning(
-            message="Are you sure you want to<br> \
-                  send selected builds to trash?",
+            message=t("msg.popup.ask_send_to_trash", count=count),
             buttons=Popup.Button.yn(),
             parent=self.parent,
         )
@@ -1068,7 +1064,7 @@ class LibraryWidget(BaseBuildWidget):
         if base_config_path is None:
             logger.error("Unable to determine base configuration path.")
             Popup.error(
-                message="Unable to determine configuration folder path.",
+                message=t("msg.err.no_base_config"),
                 buttons=Popup.Button.info(),
                 parent=self.parent,
             )
@@ -1080,7 +1076,7 @@ class LibraryWidget(BaseBuildWidget):
         if not path.is_dir():
             logger.warning(f"Config folder {path} do not exist.")
             popup = Popup.warning(
-                message="No config folder found for this version.",
+                message=t("msg.err.no_config_version"),
                 buttons=[Popup.Button.GENERAL_FOLDER, Popup.Button.CANCEL],
                 parent=self.parent,
             )

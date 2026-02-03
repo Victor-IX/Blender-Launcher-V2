@@ -228,6 +228,7 @@ def main():
 
 
 def start_set_library_folder(app: QApplication, lib_folder: str):
+    from i18n import t
     from modules.settings import set_library_folder
     from windows.popup_window import Popup
 
@@ -236,7 +237,7 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
     else:
         logging.error("Failed to set library folder")
         Popup.warning(
-            message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
+            message=t("msg.err.library_invalid"),
             buttons=Popup.Button.QUIT,
             app=app,
         ).show()

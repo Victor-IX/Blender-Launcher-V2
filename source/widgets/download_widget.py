@@ -419,12 +419,9 @@ class DownloadWidget(BaseBuildWidget):
 
     def _show_portable_failure_dialog(self, old_widget: LibraryWidget, error: str) -> None:
         """Show dialog asking user how to handle portable settings transfer failure."""
-        message = (
-            f"Failed to transfer portable settings:\n{error}\n\nDo you want to continue with the update or cancel?"
-        )
 
         popup = Popup.warning(
-            message=message,
+            message=t("msg.popup.portable_failure", error=error),
             buttons=[Popup.Button.CONT, Popup.Button.CANCEL],
             parent=self.parent,
         )

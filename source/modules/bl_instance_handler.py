@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from windows.popup_window import Popup
@@ -40,10 +41,7 @@ class BLInstanceHandler(QObject):
             d = d.tobytes()
         if str(d, encoding="ascii") != str(self.launcher.version):
             self.dlg = Popup.warning(
-                message="An attempt to launch a different version<br>\
-                      of Blender Launcher was detected!<br>\
-                      Please, terminate currently running<br>\
-                      version to proceed this action!",
+                message=t("msg.popup.blver_mismatch"),
                 buttons=Popup.Button.info(),
                 parent=self.launcher,
             )

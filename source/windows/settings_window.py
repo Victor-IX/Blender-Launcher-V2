@@ -1,3 +1,4 @@
+from i18n import t
 from modules.settings import (
     get_check_for_new_builds_automatically,
     get_dpi_scale_factor,
@@ -201,15 +202,11 @@ class SettingsWindow(BaseWindow):
         return pending_to_restart
 
     def show_dlg_restart_bl(self, pending: list[str]):
-        pending_to_restart = ""
-
-        for s in pending:
-            pending_to_restart += "<br>- " + s
+        pending_to_restart = "".join(f"<br>- {s}" for s in pending)
 
         self.dlg = Popup.warning(
             parent=self.launcher,
-            message=f"Restart Blender Launcher in<br> \
-                  order to apply following settings:{pending_to_restart}",
+            message=t("msg.popup.apply_the_following", pending=pending_to_restart),
             buttons=[Popup.Button.RESTART_NOW, Popup.Button.LATER],
         )
         self.dlg.accepted.connect(self.restart_app)

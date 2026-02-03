@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.build_info import BuildInfo
 from modules.settings import get_library_folder
 from PySide6.QtCore import Qt, Slot
@@ -54,7 +55,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
 
         self.infoLabel = QLabel(f"Build *{self.link.name}* is damaged!")
         self.infoLabel.setWordWrap(True)
-        self.launchButton = LeftIconButtonWidget("Delete", parent=self)
+        self.launchButton = LeftIconButtonWidget(t("act.delete"), parent=self)
         self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("CancelButton", True)
         self.launchButton.clicked.connect(self.ask_remove_from_drive)
@@ -66,7 +67,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
     def ask_remove_from_drive(self):
         self.item.setSelected(True)
         self.dlg = Popup.warning(
-            message="Do you want to delete, or<br>trash selected builds?",
+            message=t("msg.popup.ask_delete_or_trash"),
             buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
             parent=self.parent,
         )
@@ -85,7 +86,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         a.finished.connect(self.remover_completed)
         self.parent.task_queue.append(a)
 
-        self.launchButton.set_text("Deleting")
+        self.launchButton.set_text(t("act.deleting"))
         self.setEnabled(False)
         self.item.setFlags(self.item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
 

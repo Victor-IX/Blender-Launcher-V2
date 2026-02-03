@@ -4,6 +4,7 @@ import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.platform_utils import get_cwd
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
@@ -68,9 +69,7 @@ class FolderSelector(QWidget):
         if folder.is_relative_to(get_cwd()):
             if relative is None:
                 self.dlg = Popup.setup(
-                    message="The selected path is relative to the executable's path.<br>\
-                        Would you like to save it as relative?<br>\
-                        This is useful if the folder may move.",
+                    message=t("msg.popup.relative_path_found"),
                     buttons=Popup.Button.yn(),
                     parent=self.launcher,
                 )
