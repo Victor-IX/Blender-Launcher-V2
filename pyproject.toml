@@ -17,7 +17,7 @@ dependencies = [
     "send2trash>=1.8.3",
     "webdav4==0.10.0",
     "dateparser==1.2.2",
-    "pyside6-essentials==6.10.1",
+    "pyside6-essentials==6.10.2",
     "markdown>=3.7",
     "keyring>=25.7.0",
     "py7zr>=0.22.0",
