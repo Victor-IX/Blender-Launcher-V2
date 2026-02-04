@@ -46,8 +46,10 @@ popup:
   blver_mismatch: |
     An attempt to launch a different version
     of Blender Launcher was detected!
-    Please, terminate currently running
-    version to proceed this action!
+    Please, terminate the currently running
+    version to proceed with this action!
+    Currently running: {running}
+    Given version: {given}
 
   tasks_in_progress: |
     Some tasks are still in progress!
