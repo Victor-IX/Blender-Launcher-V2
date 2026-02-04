@@ -18,6 +18,10 @@ err:
     %{args}
     %{err}
 
+  port:
+      no_build_dir: The new build directory can't be found.
+      no_settings: No portable settings found to transfer.
+
   no_resources: |
     Resources failed to load! The launcher will still work,
     but the style will be broken.

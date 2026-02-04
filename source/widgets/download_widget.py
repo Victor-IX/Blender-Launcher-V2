@@ -381,39 +381,36 @@ class DownloadWidget(BaseBuildWidget):
 
     def handle_portable_settings(self, old_widget: LibraryWidget, new_widget: LibraryWidget) -> None:
         """Handle portable settings transfer based on user choice."""
+        # early exit -- don't handle portable settings
+        if not old_widget.move_portable_settings:
+            self.remove_old_build(old_widget)
+            return
 
-        if old_widget.move_portable_settings:
-            old_config_path = old_widget.make_portable_path()
+        old_config_path = old_widget.make_portable_path()
+        if not old_config_path.is_dir():
+            logger.warning(f"No portable settings found at {old_config_path} to move.")
+            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_build_dir"))
+            return
 
-            if old_config_path.is_dir():
-                # Wait for the new widget to be initialized
-                if new_widget.build_info is None:
-                    QTimer.singleShot(500, lambda: self.handle_portable_settings(old_widget, new_widget))
-                    return
+        new_config_path = new_widget.make_portable_path()
 
-                new_config_path = new_widget.make_portable_path()
+        if not new_config_path.parent.exists():
+            logger.error(f"New config path parent does not exist: {new_config_path.parent}")
+            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_build_dir"))
+            return
 
-                try:
-                    # Copy portable settings to new build
-                    if new_config_path.parent.exists():
-                        shutil.copytree(old_config_path, new_config_path, dirs_exist_ok=True)
-                        logger.info(f"Portable settings moved from {old_config_path} to {new_config_path}")
+        try:
+            # Copy portable settings to new build
+            shutil.copytree(old_config_path, new_config_path, dirs_exist_ok=True)
+        except Exception as e:
+            logger.error(f"Failed to move portable settings: {e}")
+            self._show_portable_failure_dialog(old_widget, str(e))
+            return
 
-                        # Update the new widget to reflect portable status
-                        new_widget.makePortableAction.setText(t("act.a.port.rem"))
-                        new_widget.showConfigFolderAction.setText(t("act.a.config_portable"))
-                    else:
-                        logger.error(f"New config path parent does not exist: {new_config_path.parent}")
-                        self._show_portable_failure_dialog(old_widget, "The new build directory can't be found.")
-                        return
-                except Exception as e:
-                    logger.error(f"Failed to move portable settings: {e}")
-                    self._show_portable_failure_dialog(old_widget, str(e))
-                    return
-            else:
-                logger.warning(f"No portable settings found at {old_config_path} to move.")
-                self._show_portable_failure_dialog(old_widget, "No portable settings found to transfer.")
-                return
+        logger.info(f"Portable settings moved from {old_config_path} to {new_config_path}")
+        # Update the new widget to reflect portable status
+        new_widget.makePortableAction.setText(t("act.a.port.rem"))
+        new_widget.showConfigFolderAction.setText(t("act.a.config_portable"))
 
         self.remove_old_build(old_widget)
 
