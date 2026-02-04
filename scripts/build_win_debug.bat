@@ -23,5 +23,6 @@ python -OO -m PyInstaller ^
 --add-binary="source\resources\certificates\custom.pem;files" ^
 --add-data="source\resources\api\blender_launcher_api.json;files" ^
 --add-data="source\resources\api\stable_builds_api_windows.json;files" ^
+--add-data="source\resources\localization\*.yml:localization" ^
 --distpath="./dist/debug" ^
 source\main.py

@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+# es necesario porque de lo contrario se detecta como un flujo de trabajo fulib
+# popups
+ok: Ok
+accept: Aceptar
+cancel: Cancelar
+quit: Salir
+prev: Anterior
+next: Siguiente
+back: Atras
+cont: Continuar
+finish: Finalizar
+"yes": "Sí"
+"no": "No"
+
+# left icon
+launch: Lanzar
+download: Descargar
+installed: Instalado
+lprev: " Anterior"
+updating: Actualizando
+deleting: Eliminando
+
+prog:
+  downloading: Descargando
+  extracting: Extrayendo
+  copying: Copiando datos...
+
+# actions
+a:
+  prev: Abrir archivo anterior
+  prev_tooltip: |
+    Esta acción abre el último archivo utilizado en esta versión.
+    (Añade `--open-last` a los argumentos de ejecución)
+    ATAJO: Shift + Lanzar o Doble clic
+  quick_launch: Añadir a Inicio Rápido
+  fav:
+    add: Añadir a Favoritos
+    rem: Quitar de Favoritos
+  update: Actualizar versión de Blender
+  update_tooltip: Actualizar esta versión a la más reciente
+  d:
+    d: Depurar
+    log: Registro de depuración
+    factory: Inicio de fábrica
+    gpu: Depurar GPU
+    glitch: Solución de errores de GPU
+  rename: Renombrar rama
+
+  register: Registrar extensión
+  register_tooltip: Usar esta versión para archivos .blend y para mostrar miniaturas
+  shortcut: Crear acceso directo
+  symlink: Crear enlace simbólico
+  template: Instalar plantilla
+  port:
+    add: Hacer portable
+    rem: Quitar portable
+  hash: Copiar Hash de la versión
+  freeze:
+    add: Congelar actualización
+    rem: Descongelar actualización
+
+  release_notes: Mostrar notas de la versión
+  release_notes_patch: Mostrar detalles del parche
+  release_notes_pr: Mostrar detalles del PR
+  folder_build: Mostrar carpetas de la versión
+  config: Mostrar carpeta de configuración
+  config_portable: Mostrar carpeta de configuración portable
+
+  edit: Editar versión...
+  delete: Eliminar de la unidad
+  trash: Enviar a la papelera

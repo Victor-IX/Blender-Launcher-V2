@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.platform_utils import get_platform
 from modules.settings import (
     delete_action,
@@ -40,7 +41,7 @@ from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from widgets.settings_window.settings_group import SettingsGroup
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -262,7 +263,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def prompt_library_folder(self):
         library_folder = str(get_library_folder())
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Library Folder", library_folder)
+        new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select_library"), library_folder)
         if new_library_folder and (library_folder != new_library_folder):
             self.set_library_folder(Path(new_library_folder))
 
@@ -272,11 +273,10 @@ class GeneralTabWidget(SettingsFormWidget):
 
     def library_folder_validity_changed(self, v: bool):
         if not v:
-            self.dlg = PopupWindow(
+            self.dlg = Popup.warning(
+                message=t("msg.err.library_no_write"),
+                buttons=Popup.Button.QUIT,
                 parent=self.launcher,
-                title="Warning",
-                message="Selected folder doesn't have write permissions!",
-                buttons=["Quit"],
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -307,16 +307,19 @@ class GeneralTabWidget(SettingsFormWidget):
         set_use_pre_release_builds(is_checked)
 
     def migrate_confirmation(self):
-        title = "Info"
-        text = f"Are you sure you want to move<br>{get_config_file()}<br>to<br>{user_config()}?"
-        button = "Migrate, Cancel"
-        icon = PopupIcon.NONE
         if user_config().exists():
-            title = "Warning"
-            text = f'<font color="red">WARNING:</font> The user settings already exist!<br>{text}'
-            button = "Overwrite, Cancel"
-            icon = PopupIcon.WARNING
-        dlg = PopupWindow(title=title, message=text, buttons=[button], icon=icon, parent=self.launcher)
+            dlg = Popup.warning(
+                message=t("msg.popup.mv_overwrite_confirm", start=get_config_file(), end=user_config()),
+                buttons=[Popup.Button.OVERWRITE, Popup.Button.CANCEL],
+                parent=self.launcher,
+            )
+        else:
+            dlg = Popup.info(
+                message=t("msg.popup.mv_confirm", start=get_config_file(), end=user_config()),
+                buttons=[Popup.Button.MIGRATE, Popup.Button.CANCEL],
+                parent=self.launcher,
+            )
+
         dlg.accepted.connect(self.migrate)
 
     def migrate(self):
@@ -327,7 +330,7 @@ class GeneralTabWidget(SettingsFormWidget):
     def create_shortcut(self):
         destination = get_default_program_shortcut_destination()
         file_place = FileDialogWindow().get_save_filename(
-            parent=self, title="Choose destination", directory=str(destination)
+            parent=self, title=t("msg.popup.dest"), directory=str(destination)
         )
         if file_place[0]:
             generate_program_shortcut(Path(file_place[0]))
@@ -352,18 +355,14 @@ class GeneralTabWidget(SettingsFormWidget):
     def purge_temp_now(self):
         success = purge_temp_folder()
         if success:
-            PopupWindow(
+            Popup.success(
+                message=t("msg.popup.purge.success"),
                 parent=self.launcher,
-                title="Success",
-                message="Temp folder has been purged successfully!",
-                icon=PopupIcon.NONE,
             )
         else:
-            PopupWindow(
+            Popup.error(
+                message=t("msg.popup.purge.error"),
                 parent=self.launcher,
-                title="Error",
-                message="Failed to purge temp folder. Some files may be in use.",
-                icon=PopupIcon.WARNING,
             )
 
     def register_with_winget(self):
@@ -371,18 +370,14 @@ class GeneralTabWidget(SettingsFormWidget):
         if success:
             set_auto_register_winget(True)
             self.refresh_winget_buttons()
-            PopupWindow(
+            Popup.success(
+                message=t("msg.popup.winget.register.success"),
                 parent=self.launcher,
-                title="Success",
-                message="Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher'",
-                icon=PopupIcon.NONE,
             )
         else:
-            PopupWindow(
+            Popup.error(
+                message=t("msg.popup.winget.register.error"),
                 parent=self.launcher,
-                title="Error",
-                message="Failed to register with WinGet. Check logs for details.",
-                icon=PopupIcon.WARNING,
             )
 
     def unregister_from_winget(self):
@@ -390,18 +385,14 @@ class GeneralTabWidget(SettingsFormWidget):
         if success:
             set_auto_register_winget(False)
             self.refresh_winget_buttons()
-            PopupWindow(
+            Popup.success(
+                message=t("msg.popup.winget.unregister.success"),
                 parent=self.launcher,
-                title="Success",
-                message="Successfully unregistered from WinGet.",
-                icon=PopupIcon.NONE,
             )
         else:
-            PopupWindow(
+            Popup.error(
+                message=t("msg.popup.winget.unregister.error"),
                 parent=self.launcher,
-                title="Error",
-                message="Failed to unregister from WinGet. Check logs for details.",
-                icon=PopupIcon.WARNING,
             )
 
     def refresh_winget_buttons(self):
