@@ -202,7 +202,7 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setDownload(False)
             self.build_state_widget.setExtract(False)
         if state == DownloadState.DOWNLOADING:
-            self.progressBar.set_title(t("act.prog.downloading"))
+            self.progressBar.set_state(self.progressBar.State.DOWNLOADING)
             self.progressBar.show()
             self.cancelButton.show()
             self.cancelButton.setEnabled(True)
@@ -210,7 +210,7 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setDownload()
         elif state == DownloadState.EXTRACTING:
             self.progressBar.show()
-            self.progressBar.set_title(t("act.prog.extracting"))
+            self.progressBar.set_state(self.progressBar.State.EXTRACTING)
             self.cancelButton.setEnabled(False)
             self.build_state_widget.setExtract()
         elif state == DownloadState.READING:

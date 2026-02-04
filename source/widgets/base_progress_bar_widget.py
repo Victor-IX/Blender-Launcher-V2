@@ -1,22 +1,35 @@
 from __future__ import annotations
 
+from enum import Enum
+
+from i18n import t
 from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtWidgets import QProgressBar
+
+
+class BarState(Enum):
+    DOWNLOADING = "act.prog.downloading"
+    EXTRACTING = "act.prog.extracting"
+    NONE = ""
 
 
 class BaseProgressBarWidget(QProgressBar):
     progress_updated = Signal(int, int)
 
+    State = BarState
+
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
+        self.state = BarState.NONE
         self.title = ""
 
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setMinimum(0)
         self.set_progress(0, 0)
 
-    def set_title(self, title: str):
-        self.title = title
+    def set_state(self, state: BarState):
+        self.state = state
+        self.title = t(state.value)
         self.setFormat(f"{self.title}: {self.last_progress[0]:.1f} of {self.last_progress[1]:.1f} MB")
 
     @Slot(int, int)

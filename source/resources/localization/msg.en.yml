@@ -4,7 +4,6 @@ setup: Setup
 warning: Warning
 error: Error
 
-# Not bound atm
 err:
   no_hash: "Unable to copy build hash: hash not available for this build."
   rename_branch: "Unable to rename branch: branch name cannot be empty."
