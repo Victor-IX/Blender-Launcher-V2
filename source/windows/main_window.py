@@ -428,7 +428,7 @@ class BlenderLauncher(BaseWindow):
         # self.DownloadsToolBox.add_tab("All")
         self.DownloadsToolBox.add_tab("Stable", branch=("stable", "lts"))
         self.DownloadsToolBox.add_tab("Daily", branch=("daily",))
-        self.DownloadsToolBox.add_tab("Experimental", folder="experimental")
+        self.DownloadsToolBox.add_tab("Experimental", branch=("experimental","patch"))
         self.DownloadsToolBox.add_tab("Bforartists", branch=("bforartists",))
         self.DownloadsToolBox.add_tab("UPBGE", branch=("upbge-stable",))
         self.DownloadsToolBox.add_tab("UPBGE Weekly", branch=("upbge-weekly",))
