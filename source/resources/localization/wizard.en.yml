@@ -1,3 +1,5 @@
+title: Blender Launcher First-Time Setup
+
 welcome:
   title: Welcome to Blender Launcher %{v}
   text: |
@@ -78,6 +80,14 @@ committing:
   title: Committing settings changes...
   subtitle: This should take less than a second.
 
+  finished_page: Finished page "%{page}"
+
 error:
   title: An Error occured during setup!
   continue: Continue anyways?
+
+
+  occurred: |
+    %{finished_pages}
+    ERR OCCURED DURING PAGE %{page}!
+    %{exc}
