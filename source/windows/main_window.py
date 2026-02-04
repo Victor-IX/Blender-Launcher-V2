@@ -155,7 +155,7 @@ class BlenderLauncher(BaseWindow):
         self.setAcceptDrops(True)
 
         # Server
-        self.instance_handler = BLInstanceHandler(self.version, self)
+        self.instance_handler = BLInstanceHandler(self)
         self.instance_handler.show_launcher.connect(self._show)
 
         self.quick_launch_fail_signal.connect(self.quick_launch_fail)
