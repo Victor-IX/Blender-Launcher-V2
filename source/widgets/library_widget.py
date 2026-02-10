@@ -725,7 +725,7 @@ class LibraryWidget(BaseBuildWidget):
             self.build_info.custom_name = name
             self.write_build_info()
         else:
-            error_msg = "Branch name cannot be empty."
+            error_msg = t("msg.err.rename_branch")
             logger.error(error_msg)
             self.parent.show_message(error_msg, message_type=MessageType.ERROR)
 
@@ -937,7 +937,7 @@ class LibraryWidget(BaseBuildWidget):
 
         destination = get_default_shortcut_destination(name)
         file_place = FileDialogWindow().get_save_filename(
-            parent=self, title="Choose destination", directory=str(destination)
+            parent=self, title=t("msg.popup.dest"), directory=str(destination)
         )
         if file_place[0]:
             generate_blender_shortcut(self.link, name, Path(file_place[0]))

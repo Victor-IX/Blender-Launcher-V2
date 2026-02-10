@@ -389,7 +389,7 @@ class DownloadWidget(BaseBuildWidget):
         old_config_path = old_widget.make_portable_path()
         if not old_config_path.is_dir():
             logger.warning(f"No portable settings found at {old_config_path} to move.")
-            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_build_dir"))
+            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_settings"))
             return
 
         new_config_path = new_widget.make_portable_path()

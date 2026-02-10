@@ -1,5 +1,93 @@
-library_location: Library Location
-choose_library_folder: Choose Library Folder
+
+
+general:
+  app:
+    label: Application
+    library_folder: "Library Folder:"
+
+    system_start: Launch When System Starts
+    system_start_tooltip: |
+      Start the app when the system starts.
+      DEFAULT: Off
+    launch_minimized: Launch Minimized to Tray
+    launch_minimized_tooltip: |
+      Start the app minimized to the system tray.
+      DEFAULT: Off
+    minimize: Minimize to Tray
+    minimize_tooltip: |
+      Closing the app will minimize it to the system tray instead of closing it completely
+      DEFAULT: Off
+    worker_count: Worker Thread Count
+    worker_count_tooltip: |
+      Determines how many IO operations can be done at once, ex. Downloading, Deleting, Extracting
+      DEFAULT: <cpu count> * (3/4)
+    worker_count_warning: "(Warning: value above {cnt} (cpu count) !!)"
+    prerelease: Use Pre-release Builds
+    prerelease_tooltip: |
+      While checking for a new version of Blender Launcher, check for pre-releases.
+      WARNING: These builds are likely to have bugs! They are mainly used for testing new features.
+      DEFAULT: Off
+
+    create_shortcut: Create Blender Launcher {shortcut_type}
+    shortcut_type:
+      windows: Shortcut
+      linux: Desktop file
+      macos: Shortcut
+  migratel2u: Migrate local settings to user settings
+
+  file_assoc:
+    label: File association
+
+    register: Register File Association
+    register_tooltip: |
+      Add Blender Launcher to the list of programs that can open .blend files
+
+    unregister: Unregister File Association
+    unregister_tooltip: |
+      Removes Blender Launcher from the list of programs that can open .blend files
+
+    launch_timer_duration: Launch Timer Duration (secs)
+    launch_timer_duration_tooltip: |
+      Determines how much time you have while opening blendfiles to change the build you're launching
+      DEFAULT: 3s
+    launch_timer_suffix:
+      "-1": " (Disabled)"
+      "0": "s (Immediate)"
+      more: "s"
+
+  winget:
+    label: WinGet Integration
+
+    info: Register Blender Launcher with WinGet package manager to enable automatic updates via 'winget update'.
+    register: Register with WinGet
+    register_tooltip: |
+      Register this installation with WinGet so it can be updated via 'winget update'
+    unregister: Unregister from WinGet
+    unregister_tooltip: |
+      Remove WinGet registration for this installation
+
+  advanced:
+    label: Advanced
+
+    delete_actions:
+      "0": Send to Trash
+      "1": Delete Permanently
+    default_delete_action: Default Delete Action
+    default_delete_action_tooltip: |
+      Set the default action available in the right click menu for deleting a build
+      The other option is available whn holding the shift key
+      DEFAULT: Send to Trash
+
+    purge_temp: Purge Temp Folder on Startup
+    purge_temp_tooltip: |
+      Automatically clear the temporary download folder when Blender Launcher starts.
+      DEFAULT: On
+
+    purge_temp_now: Purge Temp Folder Now
+    purge_temp_now_tooltip: |
+        Immediately clear all files in the temporary download folder
+
+
 
 appearance:
   window_related: Window Related

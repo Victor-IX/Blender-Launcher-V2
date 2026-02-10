@@ -34,7 +34,7 @@ from modules.settings import (
     set_worker_thread_count,
     user_config,
 )
-from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination, get_shortcut_type
+from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
 from modules.winget_integration import register_with_winget, unregister_from_winget
 from PySide6.QtWidgets import QCheckBox, QComboBox, QGridLayout, QLabel, QPushButton, QSpinBox
 from widgets.folder_select import FolderSelector
@@ -53,54 +53,43 @@ class GeneralTabWidget(SettingsFormWidget):
         self.launcher: BlenderLauncher = parent
 
         # Application Settings
-        self.application_settings = SettingsGroup("Application", parent=self)
+
+        self.application_settings = SettingsGroup(t("settings.general.app.label"), parent=self)
 
         # Library Folder
         self.LibraryFolderLabel = QLabel()
-        self.LibraryFolderLabel.setText("Library Folder:")
+        self.LibraryFolderLabel.setText(t("settings.general.app.library_folder"))
         self.LibraryFolder = FolderSelector(parent, default_folder=get_actual_library_folder())
         self.LibraryFolder.validity_changed.connect(self.library_folder_validity_changed)
         self.LibraryFolder.folder_changed.connect(self.set_library_folder_)
 
         # Launch When System Starts
         self.LaunchWhenSystemStartsCheckBox = QCheckBox()
-        self.LaunchWhenSystemStartsCheckBox.setText("Launch When System Starts")
-        self.LaunchWhenSystemStartsCheckBox.setToolTip(
-            "Start the app when the system starts.\
-            \nDEFAULT: Off"
-        )
+        self.LaunchWhenSystemStartsCheckBox.setText(t("settings.general.app.system_start"))
+        self.LaunchWhenSystemStartsCheckBox.setToolTip(t("settings.general.app.system_start_tooltip"))
         self.LaunchWhenSystemStartsCheckBox.setChecked(get_launch_when_system_starts())
-        self.LaunchWhenSystemStartsCheckBox.clicked.connect(self.toggle_launch_when_system_starts)
+        self.LaunchWhenSystemStartsCheckBox.clicked.connect(set_launch_when_system_starts)
 
         # Launch Minimized To Tray
         self.LaunchMinimizedToTrayCheckBox = QCheckBox()
-        self.LaunchMinimizedToTrayCheckBox.setText("Launch Minimized To Tray")
-        self.LaunchMinimizedToTrayCheckBox.setToolTip(
-            "Start the app minimized to the system tray.\
-            \nDEFAULT: Off"
-        )
+        self.LaunchMinimizedToTrayCheckBox.setText(t("settings.general.app.launch_minimized"))
+        self.LaunchMinimizedToTrayCheckBox.setToolTip(t("settings.general.app.launch_minimized_tooltip"))
         self.LaunchMinimizedToTrayCheckBox.setChecked(get_launch_minimized_to_tray())
         self.LaunchMinimizedToTrayCheckBox.setEnabled(get_launch_when_system_starts())
-        self.LaunchMinimizedToTrayCheckBox.clicked.connect(self.toggle_launch_minimized_to_tray)
+        self.LaunchMinimizedToTrayCheckBox.clicked.connect(set_launch_minimized_to_tray)
 
         # Show Tray Icon
         self.ShowTrayIconCheckBox = QCheckBox()
-        self.ShowTrayIconCheckBox.setText("Minimise to tray")
+        self.ShowTrayIconCheckBox.setText(t("settings.general.app.minimize"))
         self.ShowTrayIconCheckBox.setChecked(get_show_tray_icon())
         self.ShowTrayIconCheckBox.clicked.connect(self.toggle_show_tray_icon)
-        self.ShowTrayIconCheckBox.setToolTip(
-            "Closing the app will minimise it to the system tray instead of closing it completely\
-            \nDEFAULT: Off"
-        )
+        self.ShowTrayIconCheckBox.setToolTip(t("settings.general.app.minimize_tooltip"))
 
         # Worker thread count
         self.WorkerThreadCountBox = QLabel()
-        self.WorkerThreadCountBox.setText("Worker Thread Count")
+        self.WorkerThreadCountBox.setText(t("settings.general.app.worker_count"))
         self.WorkerThreadCount = QSpinBox()
-        self.WorkerThreadCount.setToolTip(
-            "Determines how many IO operations can be done at once, ex. Downloading, deleting, and extracting files\
-            \nDEFAULT: cpu_count * (3/4)"
-        )
+        self.WorkerThreadCount.setToolTip(t("settings.general.app.worker_count_tooltip"))
         self.WorkerThreadCount.editingFinished.connect(self.set_worker_thread_count)
         self.WorkerThreadCount.setMinimum(1)
         self.WorkerThreadCount.setValue(get_worker_thread_count())
@@ -111,7 +100,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
             def warn_values_above_cpu(v: int):
                 if v > cpu_count:
-                    self.WorkerThreadCount.setSuffix(f" (warning: value above {cpu_count} (cpu count) !!)")
+                    self.WorkerThreadCount.setSuffix(t("settings.general.app.worker_count_warning"))
                 else:
                     self.WorkerThreadCount.setSuffix("")
 
@@ -119,17 +108,20 @@ class GeneralTabWidget(SettingsFormWidget):
 
         # Pre-release builds
         self.PreReleaseBuildsCheckBox = QCheckBox()
-        self.PreReleaseBuildsCheckBox.setText("Use Pre-release Builds")
+        self.PreReleaseBuildsCheckBox.setText(t("settings.general.app.prerelease"))
         self.PreReleaseBuildsCheckBox.setChecked(get_use_pre_release_builds())
-        self.PreReleaseBuildsCheckBox.clicked.connect(self.toggle_use_pre_release_builds)
-        self.PreReleaseBuildsCheckBox.setToolTip(
-            "While checking for a new version of Blender Launcher, check for pre-releases.\
-            \nWARNING: These builds are likely to have bugs! They are mainly used for testing new features.\
-            \nDEFAULT: Off"
-        )
+        self.PreReleaseBuildsCheckBox.clicked.connect(set_use_pre_release_builds)
+        self.PreReleaseBuildsCheckBox.setToolTip(t("settings.general.app.prerelease_tooltip"))
 
         # Create Shortcut
-        self.create_shortcut_button = QPushButton(f"Create Blender Launcher {get_shortcut_type()}")
+        self.create_shortcut_button = QPushButton(
+            t(
+                "general.app.create_shortcut",
+                shortcut_type=t(
+                    f"general.app.shortcut_type.{get_platform().lower()}",
+                ),
+            )
+        )
         self.create_shortcut_button.clicked.connect(self.create_shortcut)
 
         # Layout
@@ -149,32 +141,28 @@ class GeneralTabWidget(SettingsFormWidget):
         self.addRow(self.application_settings)
 
         if get_config_file() != user_config():
-            self.migrate_button = QPushButton("Migrate local settings to user settings", self)
+            self.migrate_button = QPushButton(t("settings.general.migratel2u"), self)
             self.migrate_button.setProperty("CollapseButton", True)
             self.migrate_button.clicked.connect(self.migrate_confirmation)
 
             self.addRow(self.migrate_button)
 
         # File Association
-        self.file_association_group = SettingsGroup("File association", parent=self)
+        self.file_association_group = SettingsGroup(t("settings.general.file_assoc.label"), parent=self)
         layout = QGridLayout()
 
         if sys.platform == "win32":
             from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 
             self.register_file_association_button = QPushButton(
-                "Register File Association", parent=self.file_association_group
+                t("settings.general.file_assoc.register"), parent=self.file_association_group
             )
-            self.register_file_association_button.setToolTip(
-                "Add Blender Launcher from the list of programs that can open .blend files"
-            )
+            self.register_file_association_button.setToolTip(t("settings.general.file_assoc.register_tooltip"))
 
             self.unregister_file_association_button = QPushButton(
-                "Unregister File Association", parent=self.file_association_group
+                t("settings.general.file_assoc.unregister"), parent=self.file_association_group
             )
-            self.unregister_file_association_button.setToolTip(
-                "Removes Blender Launcher from the list of programs that can open .blend files"
-            )
+            self.unregister_file_association_button.setToolTip(t("settings.general.file_assoc.unregister_tooltip"))
             self.register_file_association_button.clicked.connect(register_windows_filetypes)
             self.register_file_association_button.clicked.connect(self.refresh_association_buttons)
             self.unregister_file_association_button.clicked.connect(unregister_windows_filetypes)
@@ -184,15 +172,12 @@ class GeneralTabWidget(SettingsFormWidget):
             layout.addWidget(self.unregister_file_association_button, 0, 1, 1, 1)
 
         self.launch_timer_duration = QSpinBox()
-        self.launch_timer_duration.setToolTip(
-            "Determines how much time you have while opening blendfiles to change the build you're launching\
-            \nDEFAULT: 3s"
-        )
+        self.launch_timer_duration.setToolTip(t("settings.general.file_assoc.launch_timer_duration_tooltip"))
         self.launch_timer_duration.setRange(-1, 120)
         self.launch_timer_duration.setValue(get_launch_timer_duration())
         self.launch_timer_duration.valueChanged.connect(self.set_launch_timer_duration)
         self.set_launch_timer_duration()
-        layout.addWidget(QLabel("Launch Timer Duration (secs)"), 1, 0, 1, 1)
+        layout.addWidget(QLabel(t("settings.general.file_assoc.launch_timer_duration")), 1, 0, 1, 1)
         layout.addWidget(self.launch_timer_duration, 1, 1, 1, 1)
 
         self.file_association_group.setLayout(layout)
@@ -200,21 +185,20 @@ class GeneralTabWidget(SettingsFormWidget):
 
         # WinGet Integration
         if get_platform() == "Windows":
-            self.winget_group = SettingsGroup("WinGet Integration", parent=self)
+            self.winget_group = SettingsGroup(t("settings.general.winget.label"), parent=self)
             winget_layout = QGridLayout()
 
-            winget_info = QLabel(
-                "Register Blender Launcher with WinGet package manager to enable automatic updates via 'winget update'."
-            )
+            winget_info = QLabel(t("settings.general.winget.info"))
             winget_info.setWordWrap(True)
 
-            self.register_winget_button = QPushButton("Register with WinGet", parent=self.winget_group)
-            self.register_winget_button.setToolTip(
-                "Register this installation with WinGet so it can be updated via 'winget update'"
-            )
+            self.register_winget_button = QPushButton(t("settings.general.winget.register"), parent=self.winget_group)
+            self.register_winget_button.setToolTip(t("settings.general.winget.register_tooltip"))
 
-            self.unregister_winget_button = QPushButton("Unregister from WinGet", parent=self.winget_group)
-            self.unregister_winget_button.setToolTip("Remove WinGet registration for this installation")
+            self.unregister_winget_button = QPushButton(
+                t("settings.general.winget.unregister"),
+                parent=self.winget_group,
+            )
+            self.unregister_winget_button.setToolTip(t("settings.general.winget.unregister_tooltip"))
 
             self.register_winget_button.clicked.connect(self.register_with_winget)
             self.unregister_winget_button.clicked.connect(self.unregister_from_winget)
@@ -227,30 +211,23 @@ class GeneralTabWidget(SettingsFormWidget):
             self.winget_group.setLayout(winget_layout)
             self.addRow(self.winget_group)
 
-        self.advanced_settings = SettingsGroup("Advanced", parent=self)
+        self.advanced_settings = SettingsGroup(t("settings.general.advanced.label"), parent=self)
         self.default_delete_action = QComboBox()
         self.default_delete_action.addItems(delete_action.keys())
-        self.default_delete_action.setToolTip(
-            "Set the default action available in the right click menu for deleting a build\
-            \nThe other option is available when holding the shift key\
-            \nDEFAULT: Send to Trash"
-        )
+        self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
         self.default_delete_action.setCurrentIndex(get_default_delete_action())
         self.default_delete_action.activated[int].connect(self.change_default_delete_action)
 
         # Purge Temp on Startup
         self.PurgeTempOnStartupCheckBox = QCheckBox()
-        self.PurgeTempOnStartupCheckBox.setText("Purge Temp Folder on Startup")
-        self.PurgeTempOnStartupCheckBox.setToolTip(
-            "Automatically clear the temporary download folder when Blender Launcher starts.\
-            \nDEFAULT: On"
-        )
+        self.PurgeTempOnStartupCheckBox.setText(t("settings.general.advanced.purge_temp"))
+        self.PurgeTempOnStartupCheckBox.setToolTip(t("settings.general.advanced.purge_temp_tooltip"))
         self.PurgeTempOnStartupCheckBox.setChecked(get_purge_temp_on_startup())
-        self.PurgeTempOnStartupCheckBox.clicked.connect(self.toggle_purge_temp_on_startup)
+        self.PurgeTempOnStartupCheckBox.clicked.connect(set_purge_temp_on_startup)
 
         # Purge Temp Now Button
-        self.PurgeTempNowButton = QPushButton("Purge Temp Folder Now")
-        self.PurgeTempNowButton.setToolTip("Immediately clear all files in the temporary download folder")
+        self.PurgeTempNowButton = QPushButton(t("settings.general.advanced.purge_temp_now"))
+        self.PurgeTempNowButton.setToolTip(t("settings.general.advanced.purge_temp_now_tooltip"))
         self.PurgeTempNowButton.clicked.connect(self.purge_temp_now)
 
         self.advanced_layout = QGridLayout()
@@ -280,9 +257,6 @@ class GeneralTabWidget(SettingsFormWidget):
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
-    def toggle_launch_when_system_starts(self, is_checked):
-        set_launch_when_system_starts(is_checked)
-
     def toggle_launch_minimized_to_tray(self, is_checked):
         set_launch_minimized_to_tray(is_checked)
 
@@ -295,16 +269,9 @@ class GeneralTabWidget(SettingsFormWidget):
         set_worker_thread_count(self.WorkerThreadCount.value())
 
     def set_launch_timer_duration(self):
-        if self.launch_timer_duration.value() == -1:
-            self.launch_timer_duration.setSuffix(" (Disabled)")
-        elif self.launch_timer_duration.value() == 0:
-            self.launch_timer_duration.setSuffix("s (Immediate)")
-        else:
-            self.launch_timer_duration.setSuffix("s")
+        sfx = t(f"general.file_assoc.launch_timer_suffix.{self.launch_timer_duration.value()}")
+        self.launch_timer_duration.setSuffix(sfx)
         set_launch_timer_duration(self.launch_timer_duration.value())
-
-    def toggle_use_pre_release_builds(self, is_checked):
-        set_use_pre_release_builds(is_checked)
 
     def migrate_confirmation(self):
         if user_config().exists():
