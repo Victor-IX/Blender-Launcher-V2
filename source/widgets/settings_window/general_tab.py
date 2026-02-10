@@ -53,92 +53,73 @@ class GeneralTabWidget(SettingsFormWidget):
         self.launcher: BlenderLauncher = parent
 
         # Application Settings
+        with self.group("settings.general.app.label") as grp:
+            # Library Folder
+            grp.add_label("settings.general.app.library_folder")
+            self.LibraryFolder = grp.add(FolderSelector(parent, default_folder=get_actual_library_folder()))
+            self.LibraryFolder.validity_changed.connect(self.library_folder_validity_changed)
+            self.LibraryFolder.folder_changed.connect(self.set_library_folder_)
 
-        self.application_settings = SettingsGroup(t("settings.general.app.label"), parent=self)
+            # Launch When System Starts
+            if get_platform() == "Windows":
+                grp.add_checkbox(
+                    "settings.general.app.system_start",
+                    default=get_launch_when_system_starts(),
+                    setter=set_launch_when_system_starts,
+                )
 
-        # Library Folder
-        self.LibraryFolderLabel = QLabel()
-        self.LibraryFolderLabel.setText(t("settings.general.app.library_folder"))
-        self.LibraryFolder = FolderSelector(parent, default_folder=get_actual_library_folder())
-        self.LibraryFolder.validity_changed.connect(self.library_folder_validity_changed)
-        self.LibraryFolder.folder_changed.connect(self.set_library_folder_)
-
-        # Launch When System Starts
-        self.LaunchWhenSystemStartsCheckBox = QCheckBox()
-        self.LaunchWhenSystemStartsCheckBox.setText(t("settings.general.app.system_start"))
-        self.LaunchWhenSystemStartsCheckBox.setToolTip(t("settings.general.app.system_start_tooltip"))
-        self.LaunchWhenSystemStartsCheckBox.setChecked(get_launch_when_system_starts())
-        self.LaunchWhenSystemStartsCheckBox.clicked.connect(set_launch_when_system_starts)
-
-        # Launch Minimized To Tray
-        self.LaunchMinimizedToTrayCheckBox = QCheckBox()
-        self.LaunchMinimizedToTrayCheckBox.setText(t("settings.general.app.launch_minimized"))
-        self.LaunchMinimizedToTrayCheckBox.setToolTip(t("settings.general.app.launch_minimized_tooltip"))
-        self.LaunchMinimizedToTrayCheckBox.setChecked(get_launch_minimized_to_tray())
-        self.LaunchMinimizedToTrayCheckBox.setEnabled(get_launch_when_system_starts())
-        self.LaunchMinimizedToTrayCheckBox.clicked.connect(set_launch_minimized_to_tray)
-
-        # Show Tray Icon
-        self.ShowTrayIconCheckBox = QCheckBox()
-        self.ShowTrayIconCheckBox.setText(t("settings.general.app.minimize"))
-        self.ShowTrayIconCheckBox.setChecked(get_show_tray_icon())
-        self.ShowTrayIconCheckBox.clicked.connect(self.toggle_show_tray_icon)
-        self.ShowTrayIconCheckBox.setToolTip(t("settings.general.app.minimize_tooltip"))
-
-        # Worker thread count
-        self.WorkerThreadCountBox = QLabel()
-        self.WorkerThreadCountBox.setText(t("settings.general.app.worker_count"))
-        self.WorkerThreadCount = QSpinBox()
-        self.WorkerThreadCount.setToolTip(t("settings.general.app.worker_count_tooltip"))
-        self.WorkerThreadCount.editingFinished.connect(self.set_worker_thread_count)
-        self.WorkerThreadCount.setMinimum(1)
-        self.WorkerThreadCount.setValue(get_worker_thread_count())
-
-        # Warn if thread count exceeds cpu count
-        cpu_count = os.cpu_count()
-        if cpu_count is not None:
-
-            def warn_values_above_cpu(v: int):
-                if v > cpu_count:
-                    self.WorkerThreadCount.setSuffix(t("settings.general.app.worker_count_warning"))
-                else:
-                    self.WorkerThreadCount.setSuffix("")
-
-            self.WorkerThreadCount.valueChanged.connect(warn_values_above_cpu)
-
-        # Pre-release builds
-        self.PreReleaseBuildsCheckBox = QCheckBox()
-        self.PreReleaseBuildsCheckBox.setText(t("settings.general.app.prerelease"))
-        self.PreReleaseBuildsCheckBox.setChecked(get_use_pre_release_builds())
-        self.PreReleaseBuildsCheckBox.clicked.connect(set_use_pre_release_builds)
-        self.PreReleaseBuildsCheckBox.setToolTip(t("settings.general.app.prerelease_tooltip"))
-
-        # Create Shortcut
-        self.create_shortcut_button = QPushButton(
-            t(
-                "general.app.create_shortcut",
-                shortcut_type=t(
-                    f"general.app.shortcut_type.{get_platform().lower()}",
-                ),
+            # Show Tray Icon
+            grp.add_checkbox(
+                "settings.general.app.minimize",
+                default=get_show_tray_icon(),
+                setter=self.toggle_show_tray_icon,
             )
-        )
-        self.create_shortcut_button.clicked.connect(self.create_shortcut)
 
-        # Layout
-        self.application_layout = QGridLayout()
-        self.application_layout.addWidget(self.LibraryFolderLabel, 0, 0, 1, 1)
-        self.application_layout.addWidget(self.LibraryFolder, 1, 0, 1, 3)
-        if get_platform() == "Windows":
-            self.application_layout.addWidget(self.LaunchWhenSystemStartsCheckBox, 2, 0, 1, 1)
-        self.application_layout.addWidget(self.ShowTrayIconCheckBox, 3, 0, 1, 1)
-        self.application_layout.addWidget(self.LaunchMinimizedToTrayCheckBox, 4, 0, 1, 1)
-        self.application_layout.addWidget(self.WorkerThreadCountBox, 5, 0, 1, 1)
-        self.application_layout.addWidget(self.WorkerThreadCount, 5, 1, 1, 2)
-        self.application_layout.addWidget(self.PreReleaseBuildsCheckBox, 6, 0, 1, 1)
-        self.application_layout.addWidget(self.create_shortcut_button, 7, 0, 1, 3)
-        self.application_settings.setLayout(self.application_layout)
+            # Launch Minimized To Tray
+            self.LaunchMinimizedToTrayCheckBox = grp.add_checkbox(
+                "settings.general.app.launch_minimized",
+                default=get_launch_minimized_to_tray(),
+                setter=set_launch_minimized_to_tray,
+            )
+            self.LaunchMinimizedToTrayCheckBox.setEnabled(get_launch_when_system_starts())
 
-        self.addRow(self.application_settings)
+            # Worker thread count
+            spin = grp.add_spin(
+                "settings.general.app.worker_count",
+                default=get_worker_thread_count(),
+                setter=set_worker_thread_count,
+                min_=1,
+            )
+
+            # Warn if thread count exceeds cpu count
+            cpu_count = os.cpu_count()
+            if cpu_count is not None:
+
+                def warn_cpu_count(v: int):
+                    if v > cpu_count:
+                        spin.setSuffix(t("settings.general.app.worker_count_warning"))
+                    else:
+                        spin.setSuffix("")
+
+                spin.valueChanged.connect(warn_cpu_count)
+
+            # Pre-release builds
+            grp.add_checkbox(
+                "settings.general.app.prerelease",
+                default=get_use_pre_release_builds(),
+                setter=set_use_pre_release_builds,
+            )
+
+            # Create Shortcut
+            grp.add_button(
+                "settings.general.app.create_shortcut",
+                clicked=self.create_shortcut,
+                label_kwargs={
+                    "shortcut_type": t(
+                        f"settings.general.app.shortcut_type.{get_platform().lower()}",
+                    )
+                },
+            )
 
         if get_config_file() != user_config():
             self.migrate_button = QPushButton(t("settings.general.migratel2u"), self)
@@ -148,95 +129,63 @@ class GeneralTabWidget(SettingsFormWidget):
             self.addRow(self.migrate_button)
 
         # File Association
-        self.file_association_group = SettingsGroup(t("settings.general.file_assoc.label"), parent=self)
-        layout = QGridLayout()
+        with self.group("settings.general.file_assoc.label") as grp:
+            if sys.platform == "win32":
+                from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 
-        if sys.platform == "win32":
-            from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
+                self.register_file_association_button = grp.add_button(
+                    "settings.general.file_assoc.register",
+                    clicked=register_windows_filetypes,
+                )
+                self.unregister_file_association_button = grp.add_button(
+                    "settings.general.file_assoc.unregister",
+                    clicked=unregister_windows_filetypes,
+                )
+                self.register_file_association_button.clicked.connect(self.refresh_association_buttons)
+                self.unregister_file_association_button.clicked.connect(self.refresh_association_buttons)
+                self.refresh_association_buttons()
 
-            self.register_file_association_button = QPushButton(
-                t("settings.general.file_assoc.register"), parent=self.file_association_group
+            self.launch_timer_duration = grp.add_spin(
+                "settings.general.file_assoc.launch_timer_duration",
+                default=get_launch_timer_duration(),
+                setter=self.set_launch_timer_duration,
+                min_=-1,
             )
-            self.register_file_association_button.setToolTip(t("settings.general.file_assoc.register_tooltip"))
-
-            self.unregister_file_association_button = QPushButton(
-                t("settings.general.file_assoc.unregister"), parent=self.file_association_group
-            )
-            self.unregister_file_association_button.setToolTip(t("settings.general.file_assoc.unregister_tooltip"))
-            self.register_file_association_button.clicked.connect(register_windows_filetypes)
-            self.register_file_association_button.clicked.connect(self.refresh_association_buttons)
-            self.unregister_file_association_button.clicked.connect(unregister_windows_filetypes)
-            self.unregister_file_association_button.clicked.connect(self.refresh_association_buttons)
-            self.refresh_association_buttons()
-            layout.addWidget(self.register_file_association_button, 0, 0, 1, 1)
-            layout.addWidget(self.unregister_file_association_button, 0, 1, 1, 1)
-
-        self.launch_timer_duration = QSpinBox()
-        self.launch_timer_duration.setToolTip(t("settings.general.file_assoc.launch_timer_duration_tooltip"))
-        self.launch_timer_duration.setRange(-1, 120)
-        self.launch_timer_duration.setValue(get_launch_timer_duration())
-        self.launch_timer_duration.valueChanged.connect(self.set_launch_timer_duration)
-        self.set_launch_timer_duration()
-        layout.addWidget(QLabel(t("settings.general.file_assoc.launch_timer_duration")), 1, 0, 1, 1)
-        layout.addWidget(self.launch_timer_duration, 1, 1, 1, 1)
-
-        self.file_association_group.setLayout(layout)
-        self.addRow(self.file_association_group)
+            self.set_launch_timer_duration(get_launch_timer_duration())
 
         # WinGet Integration
         if get_platform() == "Windows":
-            self.winget_group = SettingsGroup(t("settings.general.winget.label"), parent=self)
-            winget_layout = QGridLayout()
+            with self.group("settings.general.winget.label") as grp:
+                lbl = grp.add_label("settings.general.winget.label")
+                lbl.setWordWrap(True)
 
-            winget_info = QLabel(t("settings.general.winget.info"))
-            winget_info.setWordWrap(True)
+                self.register_winget_button = grp.add_button(
+                    "settings.general.winget.register",
+                    clicked=self.register_with_winget,
+                )
+                self.unregister_winget_button = grp.add_button(
+                    "settings.general.winget.unregister",
+                    clicked=self.unregister_from_winget,
+                )
+                self.refresh_winget_buttons()
 
-            self.register_winget_button = QPushButton(t("settings.general.winget.register"), parent=self.winget_group)
-            self.register_winget_button.setToolTip(t("settings.general.winget.register_tooltip"))
+        with self.group("settings.general.advanced.label") as grp:
+            grp.add_label("settings.general.advanced.default_delete_action")
+            # Default Deletion Action
+            self.default_delete_action = grp.add(QComboBox())
+            self.default_delete_action.addItems(delete_action.keys())
+            self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
+            self.default_delete_action.setCurrentIndex(get_default_delete_action())
+            self.default_delete_action.activated[int].connect(self.change_default_delete_action)
 
-            self.unregister_winget_button = QPushButton(
-                t("settings.general.winget.unregister"),
-                parent=self.winget_group,
+            # Purge Temp on Startup
+            grp.add_checkbox(
+                "settings.general.advanced.purge_temp",
+                default=get_purge_temp_on_startup(),
+                setter=set_purge_temp_on_startup,
             )
-            self.unregister_winget_button.setToolTip(t("settings.general.winget.unregister_tooltip"))
-
-            self.register_winget_button.clicked.connect(self.register_with_winget)
-            self.unregister_winget_button.clicked.connect(self.unregister_from_winget)
-            self.refresh_winget_buttons()
-
-            winget_layout.addWidget(winget_info, 0, 0, 1, 2)
-            winget_layout.addWidget(self.register_winget_button, 1, 0, 1, 1)
-            winget_layout.addWidget(self.unregister_winget_button, 1, 1, 1, 1)
-
-            self.winget_group.setLayout(winget_layout)
-            self.addRow(self.winget_group)
-
-        self.advanced_settings = SettingsGroup(t("settings.general.advanced.label"), parent=self)
-        self.default_delete_action = QComboBox()
-        self.default_delete_action.addItems(delete_action.keys())
-        self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
-        self.default_delete_action.setCurrentIndex(get_default_delete_action())
-        self.default_delete_action.activated[int].connect(self.change_default_delete_action)
-
-        # Purge Temp on Startup
-        self.PurgeTempOnStartupCheckBox = QCheckBox()
-        self.PurgeTempOnStartupCheckBox.setText(t("settings.general.advanced.purge_temp"))
-        self.PurgeTempOnStartupCheckBox.setToolTip(t("settings.general.advanced.purge_temp_tooltip"))
-        self.PurgeTempOnStartupCheckBox.setChecked(get_purge_temp_on_startup())
-        self.PurgeTempOnStartupCheckBox.clicked.connect(set_purge_temp_on_startup)
-
-        # Purge Temp Now Button
-        self.PurgeTempNowButton = QPushButton(t("settings.general.advanced.purge_temp_now"))
-        self.PurgeTempNowButton.setToolTip(t("settings.general.advanced.purge_temp_now_tooltip"))
-        self.PurgeTempNowButton.clicked.connect(self.purge_temp_now)
-
-        self.advanced_layout = QGridLayout()
-        self.advanced_layout.addWidget(QLabel("Default Delete Action"), 0, 0, 1, 1)
-        self.advanced_layout.addWidget(self.default_delete_action, 0, 1, 1, 1)
-        self.advanced_layout.addWidget(self.PurgeTempOnStartupCheckBox, 1, 0, 1, 2)
-        self.advanced_layout.addWidget(self.PurgeTempNowButton, 2, 0, 1, 2)
-        self.advanced_settings.setLayout(self.advanced_layout)
-        self.addRow(self.advanced_settings)
+            # Purge Temp Now
+            grp.add_button("settings.general.advanced.purge_temp_now", clicked=self.purge_temp_now)
 
     def prompt_library_folder(self):
         library_folder = str(get_library_folder())
@@ -265,13 +214,14 @@ class GeneralTabWidget(SettingsFormWidget):
         self.LaunchMinimizedToTrayCheckBox.setEnabled(is_checked)
         self.launcher.tray_icon.setVisible(is_checked)
 
-    def set_worker_thread_count(self):
-        set_worker_thread_count(self.WorkerThreadCount.value())
-
-    def set_launch_timer_duration(self):
-        sfx = t(f"general.file_assoc.launch_timer_suffix.{self.launch_timer_duration.value()}")
+    def set_launch_timer_duration(self, val: int):
+        if val <= 0:
+            v = val
+        else:
+            v = "more"
+        sfx = t(f"settings.general.file_assoc.launch_timer_suffix.{v}")
         self.launch_timer_duration.setSuffix(sfx)
-        set_launch_timer_duration(self.launch_timer_duration.value())
+        set_launch_timer_duration(val)
 
     def migrate_confirmation(self):
         if user_config().exists():

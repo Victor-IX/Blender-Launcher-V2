@@ -28,7 +28,7 @@ general:
       WARNING: These builds are likely to have bugs! They are mainly used for testing new features.
       DEFAULT: Off
 
-    create_shortcut: Create Blender Launcher {shortcut_type}
+    create_shortcut: Create Blender Launcher %{shortcut_type}
     shortcut_type:
       windows: Shortcut
       linux: Desktop file
