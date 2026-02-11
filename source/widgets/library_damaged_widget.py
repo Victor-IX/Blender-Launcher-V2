@@ -53,7 +53,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.outer_layout.addWidget(self.layout_widget)
         self.setLayout(self.outer_layout)
 
-        self.infoLabel = QLabel(f"Build *{self.link.name}* is damaged!")
+        self.infoLabel = QLabel(t("msg.err.damaged", build=self.link.name))
         self.infoLabel.setWordWrap(True)
         self.launchButton = LeftIconButtonWidget(t("act.delete"), parent=self)
         self.launchButton.setFixedWidth(95)

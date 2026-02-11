@@ -137,8 +137,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     min_=6,  # 6h
                     max_=24 * 7 * 4,  # 4 weeks??
                 )
-                # NewBuildsCheckFrequency.setPrefix(t("settings.blender_builds.interval_prefix"))
-                NewBuildsCheckFrequency.setSuffix("h")
+                NewBuildsCheckFrequency.setToolTip(t("settings.blender_builds.new_builds_check_frequency_tooltip"))
+                NewBuildsCheckFrequency.setPrefix(t("settings.blender_builds.interval_prefix"))
+                NewBuildsCheckFrequency.setSuffix(t("settings.blender_builds.interval_suffix"))
 
             # Whether to check on startup
             grp.add_checkbox(
@@ -164,8 +165,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 setter=set_show_patch_archive_builds,
             )
 
-        self.show_update_button_tooltip_normal = t("settings.blender_builds.show_update_button_tooltip_normal")
-        self.show_update_button_tooltip_disabled = t("settings.blender_builds.show_update_button_tooltip_disabled")
         # Downloading builds settings
         with self.group("settings.blender_builds.downloading_and_saving_builds") as grp:
             # Update button

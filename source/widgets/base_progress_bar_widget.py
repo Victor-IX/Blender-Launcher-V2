@@ -30,7 +30,14 @@ class BaseProgressBarWidget(QProgressBar):
     def set_state(self, state: BarState):
         self.state = state
         self.title = t(state.value)
-        self.setFormat(f"{self.title}: {self.last_progress[0]:.1f} of {self.last_progress[1]:.1f} MB")
+        self.setFormat(
+            t(
+                "act.prog.pregress",
+                title=self.title,
+                progress=f"{self.last_progress[0]:.1f}",
+                total=f"{self.last_progress[1]:.1f}",
+            )
+        )
 
     @Slot(int, int)
     def set_progress(self, obtained: int | float, total: int | float, title: str | None = None):
@@ -46,6 +53,13 @@ class BaseProgressBarWidget(QProgressBar):
         total = total / 1048576
 
         # Repaint and call signal
-        self.setFormat(f"{self.title}: {obtained:.1f} of {total:.1f} MB")
+        self.setFormat(
+            t(
+                "act.prog.pregress",
+                title=self.title,
+                progress=f"{obtained:.1f}",
+                total=f"{total:.1f}",
+            )
+        )
         self.progress_updated.emit(obtained, total)
         self.last_progress = (obtained, total)

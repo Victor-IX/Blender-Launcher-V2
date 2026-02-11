@@ -6,6 +6,7 @@ error: Error
 
 err:
   no_hash: "Unable to copy build hash: hash not available for this build."
+
   rename_branch: "Unable to rename branch: branch name cannot be empty."
   no_base_config: Unable to determine configuration folder path.
   no_config_version: No config folder found for this version.
@@ -18,13 +19,21 @@ err:
     %{args}
     %{err}
 
+  generic: |
+    An error has occurred: %{err}
+    See the logs for more details.
+
+  cant_write: The requested location has no write permissions!
+  damaged: Build %{build} is damaged!
   port:
-      no_build_dir: The new build directory can't be found.
-      no_settings: No portable settings found to transfer.
+    no_build_dir: The new build directory can't be found.
+    no_settings: No portable settings found to transfer.
 
   no_resources: |
     Resources failed to load! The launcher will still work,
     but the style will be broken.
+
+  connection_failed: "Error: connection failed at %{time}"
 
 updates:
   download_before_update: |
@@ -40,8 +49,11 @@ updates:
 
   update_to_version: Update to version %{version}
 
+  new_builds: New builds of blender are available!
+
 popup:
   dest: Choose destination
+  select: Select Folder
   select_library: Select Library Folder
   first_time_select_library: |
     Choose where Blender
@@ -65,8 +77,6 @@ popup:
     order to apply the following settings:
     %{pending}
 
-
-
   relative_path_found: |
     The selected path is relative to the executable's path.
     Would you like to save it as relative?
@@ -79,6 +89,10 @@ popup:
   quick_launch_tray: |
     Add build to Quick Launch via
     context menu to run it from tray
+
+  tray_notify: |
+    Blender Launcher is minimized to the system tray.
+    Disable "Show Tray Icon" in the settings to disable this.
 
   ask_delete_or_trash: |
     Do you want to delete, or

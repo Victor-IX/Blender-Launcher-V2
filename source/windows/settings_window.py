@@ -148,7 +148,7 @@ class SettingsWindow(BaseWindow):
         # Restart app if any of the connection settings changed
         if self.old_use_custom_tls_certificates != use_custom_tls_certificates:
             pending_to_restart.append(
-                "Use Custom TLS Certificates: "
+                t("settings.connection.use_custom_tls_certificates")
                 + checkdct[self.old_use_custom_tls_certificates]
                 + "🠆"
                 + checkdct[use_custom_tls_certificates]
@@ -157,22 +157,24 @@ class SettingsWindow(BaseWindow):
         if self.old_proxy_type != proxy_type:
             r_proxy_types = dict(zip(proxy_types.values(), proxy_types.keys(), strict=True))
 
-            pending_to_restart.append(f"Proxy Type: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}")
+            pending_to_restart.append(
+                f"{t('settings.connection.proxy_type')}: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}"
+            )
 
         if self.old_proxy_host != proxy_host:
-            pending_to_restart.append(f"Proxy Host: {self.old_proxy_host}🠆{proxy_host}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_host')}: {self.old_proxy_host}🠆{proxy_host}")
 
         if self.old_proxy_port != proxy_port:
-            pending_to_restart.append(f"Proxy Port: {self.old_proxy_port}🠆{proxy_port}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_port')}: {self.old_proxy_port}🠆{proxy_port}")
 
         if self.old_proxy_user != proxy_user:
-            pending_to_restart.append(f"Proxy User: {self.old_proxy_user}🠆{proxy_user}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_user')}: {self.old_proxy_user}🠆{proxy_user}")
 
         if self.old_proxy_password != proxy_password:
-            pending_to_restart.append("Proxy Password")
+            pending_to_restart.append(t("settings.connection.proxy_password"))
 
         if self.old_user_id != user_id:
-            pending_to_restart.append(f"User ID: {self.old_user_id}🠆{user_id}")
+            pending_to_restart.append(f"{t('settings.connection.user_id')}: {self.old_user_id}🠆{user_id}")
 
         """Update build check frequency"""
         check_for_new_builds_automatically = get_check_for_new_builds_automatically()
@@ -190,19 +192,19 @@ class SettingsWindow(BaseWindow):
 
         if self.old_dpi_scale_factor != dpi_scale_factor:
             pending_to_restart.append(
-                f"DPI Scale Factor: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
+                f"{t('settings.appearance.dpi_scale_factor')}: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
             )
 
         """Update worker thread count"""
         worker_thread_count = get_worker_thread_count()
 
         if self.old_thread_count != worker_thread_count:
-            pending_to_restart.append(f"Worker Threads: {self.old_thread_count}🠆{worker_thread_count}")
+            pending_to_restart.append(f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}")
 
         return pending_to_restart
 
     def show_dlg_restart_bl(self, pending: list[str]):
-        pending_to_restart = "".join(f"<br>- {s}" for s in pending)
+        pending_to_restart = "".join(f"\n- {s}" for s in pending)
 
         self.dlg = Popup.warning(
             parent=self.launcher,

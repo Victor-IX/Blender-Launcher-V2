@@ -114,7 +114,7 @@ class LibraryWidget(BaseBuildWidget):
         self.updateButton = LeftIconButtonWidget("", self.parent.icons.update, parent=self)
         self.updateButton.setFixedWidth(25)
         self.updateButton.setProperty("UpdateButton", True)
-        self.updateButton.setToolTip("Update Blender to the latest version")
+        self.updateButton.setToolTip(t("act.update_library"))
         self.updateButton.hide()
 
         self.subversionLabel = QLabel(self.build_info.display_version)
@@ -675,14 +675,8 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def copy_build_hash(self):
-        if self.build_info is None:
-            error_msg = "Unable to copy build hash: build information not available."
-            logger.error(error_msg)
-            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
-            return
-
         if self.build_info.build_hash is None:
-            error_msg = "Unable to copy build hash: hash not available for this build."
+            error_msg = t("msg.err.no_hash")
             logger.error(error_msg)
             self.parent.show_message(error_msg, message_type=MessageType.ERROR)
             return
@@ -691,12 +685,6 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def freeze_update(self):
-        if self.build_info is None:
-            error_msg = "Unable to freeze/unfreeze update: build information not available."
-            logger.error(error_msg)
-            self.parent.show_message(error_msg, message_type=MessageType.ERROR)
-            return
-
         if self.build_info.is_frozen:
             self.build_info.is_frozen = False
             self.freezeUpdate.setText(t("act.a.freeze.add"))
@@ -838,7 +826,7 @@ class LibraryWidget(BaseBuildWidget):
 
             return
         # TODO Child synchronization and reverting selection flags
-        self.launchButton.set_text("Launch")
+        self.launchButton.set_text(t("act.launch"))
         self.setEnabled(True)
         return
 

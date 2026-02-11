@@ -54,7 +54,7 @@ class FolderSelector(QWidget):
         self.layout_.addWidget(self.button)
 
     def prompt_folder(self):
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Folder", str(self.default_choose_dir))
+        new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select"), str(self.default_choose_dir))
         if not new_library_folder:
             return
         if self.check_relatives:
@@ -110,7 +110,7 @@ class FolderSelector(QWidget):
             self.line_edit.setToolTip("")
         else:
             self.line_edit.setStyleSheet("border-color: red")
-            self.line_edit.setToolTip("The requested location has no write permissions!")
+            self.line_edit.setToolTip(t("msg.err.cant_write"))
         if old_valid != can_write:
             self.validity_changed.emit(can_write)
 

@@ -26,19 +26,12 @@ from modules.settings import (
 from PySide6 import QtGui
 from PySide6.QtCore import QRegularExpression, QSize, Qt
 from PySide6.QtWidgets import (
-    QCheckBox,
     QComboBox,
-    QFormLayout,
-    QGridLayout,
-    QHBoxLayout,
-    QLabel,
     QLineEdit,
     QPushButton,
 )
 from widgets.settings_form_widget import SettingsFormWidget
 from windows.popup_window import Popup
-
-from .settings_group import SettingsGroup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher

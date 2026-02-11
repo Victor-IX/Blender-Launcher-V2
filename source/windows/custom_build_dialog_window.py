@@ -5,6 +5,7 @@ import os
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.platform_utils import get_platform
 from PySide6.QtCore import Qt, Signal
@@ -65,15 +66,15 @@ class CustomBuildDialogWindow(BaseWindow):
         self.central_layout.setContentsMargins(6, 6, 6, 6)
         self.central_layout.setSpacing(0)
         self.setCentralWidget(self.central_widget)
-        self.setWindowTitle("Build Entry Creator")
+        self.setWindowTitle(t("custom_build.title"))
 
-        self.text_label = QLabel(f"Create new build for: {path.relative_to(path.parent.parent)!s}")
+        self.text_label = QLabel(t("custom_build.text", path=str(path.relative_to(path.parent.parent))))
         self.text_label.setTextFormat(Qt.TextFormat.RichText)
         self.text_label.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
 
-        self.accept_button = QPushButton("Accept")
+        self.accept_button = QPushButton(t("act.accept"))
         self.accept_button.setEnabled(False)
-        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button = QPushButton(t("act.cancel"))
 
         self.button_layout = QHBoxLayout()
         self.button_layout.setContentsMargins(0, 0, 0, 0)
@@ -116,7 +117,7 @@ class CustomBuildDialogWindow(BaseWindow):
 
             return label
 
-        self.executable_label = QLabel("Executable name: ")
+        self.executable_label = QLabel(t("custom_build.exe"))
         self.executable_choice = LintableLineEdit(self)
 
         self.executable_choice.setCompleter(completer)
@@ -131,7 +132,7 @@ class CustomBuildDialogWindow(BaseWindow):
 
         self.auto_detect_button = QPushButton(self)
         self.auto_detect_button.clicked.connect(self.auto_detect_info)
-        self.auto_detect_button.setText("Auto-detect information")
+        self.auto_detect_button.setText(t("custom_build.autodetect"))
         self.auto_detect_button.setEnabled(False)
 
         # Excerpt from BuildInfo
@@ -179,12 +180,12 @@ class CustomBuildDialogWindow(BaseWindow):
         self.custom_name = QLineEdit(self)
         self.favorite = QCheckBox(self)
 
-        add_row(self.subversion_edit, "Subversion: ")
-        add_row(self.hash_edit, "Build hash: ")
-        add_row(self.commit_time, "Commit time: ")
-        add_row(self.branch_edit, "Branch name: ")
-        add_row(self.custom_name, "Custom name: ")
-        add_row(self.favorite, "Favorite: ")
+        add_row(self.subversion_edit, t("custom_build.svn"))
+        add_row(self.hash_edit, t("custom_build.hash"))
+        add_row(self.commit_time, t("custom_build.ctime"))
+        add_row(self.branch_edit, t("custom_build.branch"))
+        add_row(self.custom_name, t("custom_build.custom"))
+        add_row(self.favorite, t("custom_build.fav"))
 
         # Label
         self.central_layout.addWidget(self.text_label)

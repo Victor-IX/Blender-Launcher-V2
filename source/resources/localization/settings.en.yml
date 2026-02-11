@@ -165,6 +165,8 @@ connection:
   github_token_info_button_tooltip: Click for GitHub token documentation
   proxy_type: Type
   proxy_ip: IP
+  proxy_host: Host
+  proxy_port: Port
   proxy_user: Proxy User
   proxy_password: Password
 
@@ -192,6 +194,7 @@ blender_builds:
     DEFAULT: 12h
     MINIMUM: 6h
   interval_prefix: "Interval: "
+  interval_suffix: h
   on_startup: On startup
   on_startup_tooltip: |
     Check for new Blender builds on Blender Launcher startup

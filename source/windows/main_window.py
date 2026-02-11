@@ -176,7 +176,7 @@ class BlenderLauncher(BaseWindow):
         self.offline = offline
         self.build_cache = build_cache
         self.favorite: LibraryWidget | None = None
-        self.status = "Unknown"
+        self.status = "????"
         self.is_force_check_on = False
         self.app_state = AppState.IDLE
         self.cashed_builds = []
@@ -249,7 +249,7 @@ class BlenderLauncher(BaseWindow):
 
     def prompt_library_folder(self):
         library_folder = get_default_library_folder().as_posix()
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Library Folder", library_folder)
+        new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select_library"), library_folder)
 
         if new_library_folder:
             self.set_library_folder(Path(new_library_folder))
@@ -320,10 +320,10 @@ class BlenderLauncher(BaseWindow):
     def draw(self, polish=False):
         # Header
         self.SettingsButton = WHeaderButton(self.icons.settings, "", self)
-        self.SettingsButton.setToolTip("Show settings window")
+        self.SettingsButton.setToolTip(t("act.a.settings_win"))
         self.SettingsButton.clicked.connect(self.show_settings_window)
         self.DocsButton = WHeaderButton(self.icons.wiki, "", self)
-        self.DocsButton.setToolTip("Open documentation")
+        self.DocsButton.setToolTip(t("act.a.docs"))
         self.DocsButton.clicked.connect(self.open_docs)
 
         self.SettingsButton.setProperty("HeaderButton", True)
@@ -393,8 +393,8 @@ class BlenderLauncher(BaseWindow):
         self.LibraryPage: BasePageWidget[LibraryWidget] = BasePageWidget(
             parent=self,
             page_name="LibraryPage",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
+            time_label=t("repo.commit_time"),
+            info_text=t("repo.nothing"),
             extended_selection=True,
             show_reload=True,
         )
@@ -414,8 +414,8 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsPage: BasePageWidget[DownloadWidget] = BasePageWidget(
             parent=self,
             page_name="DownloadsPage",
-            time_label="Upload Time",
-            info_text="No new builds available",
+            time_label=t("repo.upload_time"),
+            info_text=t("repo.no_new_builds"),
         )
         # self.DownloadsToolBox.add_tab("All")
         self.DownloadsToolBox.add_tab("Stable", branch=("stable", "lts"))
@@ -431,8 +431,8 @@ class BlenderLauncher(BaseWindow):
         self.FavoritesPage: BasePageWidget[LibraryWidget] = BasePageWidget(
             parent=self,
             page_name="FavoritesPage",
-            time_label="Commit Time",
-            info_text="Nothing to show yet",
+            time_label=t("repo.commit_time"),
+            info_text=t("repo.nothing"),
         )
         self.UserToolBox.add_tab("Favorites")
         self.UserTabLayout.addWidget(self.FavoritesPage)
@@ -462,21 +462,16 @@ class BlenderLauncher(BaseWindow):
         self.status_bar.setContentsMargins(0, 0, 0, 2)
         self.status_bar.setFont(self.font_10)
         self.statusbarLabel = QLabel()
-        self.ForceCheckNewBuilds = QPushButton("Check")
+        self.ForceCheckNewBuilds = QPushButton(t("act.a.check"))
         self.ForceCheckNewBuilds.setEnabled(False)
-        self.ForceCheckNewBuilds.setToolTip(
-            "Check for new builds online<br>\
-            (Hold SHIFT to force check stable and automated builds)"
-        )
+        self.ForceCheckNewBuilds.setToolTip(t("act.a.check_tooltip"))
         self.ForceCheckNewBuilds.clicked.connect(self.force_check)
         self.NewVersionButton = QPushButton()
         self.NewVersionButton.hide()
         self.NewVersionButton.clicked.connect(self.show_update_window)
         self.statusbarVersion = QPushButton(str(self.version))
         self.statusbarVersion.clicked.connect(self.show_changelog)
-        self.statusbarVersion.setToolTip(
-            "The version of Blender Launcher that is currently run. Press to check changelog."
-        )
+        self.statusbarVersion.setToolTip(t("act.a.version_tooltip"))
         self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
         self.status_bar.addPermanentWidget(QLabel("│"))
         self.status_bar.addPermanentWidget(self.statusbarLabel)
@@ -488,11 +483,11 @@ class BlenderLauncher(BaseWindow):
         self.draw_library()
 
         # Setup tray icon context Menu
-        quit_action = QAction("Quit", self)
+        quit_action = QAction(t("act.quit"), self)
         quit_action.triggered.connect(self.quit_)
-        hide_action = QAction("Hide", self)
+        hide_action = QAction(t("act.hide"), self)
         hide_action.triggered.connect(self.close)
-        show_action = QAction("Show", self)
+        show_action = QAction(t("act.show"), self)
         show_action.triggered.connect(self._show)
         show_favorites_action = QAction(self.icons.favorite, "Favorites", self)
         show_favorites_action.triggered.connect(self.show_favorites)
@@ -658,7 +653,7 @@ class BlenderLauncher(BaseWindow):
             self.tray_icon.showMessage("Blender Launcher", message, self.icons.taskbar, 10000)
 
     def message_from_error(self, err: Exception):
-        self.show_message(f"An error has occurred: {err}\nSee the logs for more details.", MessageType.ERROR)
+        self.show_message(t("msg.err.generic", err=err), MessageType.ERROR)
         logger.error(err)
 
     def message_from_worker(self, w, message, message_type=None):
@@ -730,7 +725,7 @@ class BlenderLauncher(BaseWindow):
         self.app.quit()
 
     def draw_library(self, clear=False):
-        self.set_status("Reading local builds", False)
+        self.set_status(t("act.prog.reading_local"), False)
 
         if clear:
             self.cm = ConnectionManager(version=self.version, proxy_type=get_proxy_type())
@@ -783,7 +778,7 @@ class BlenderLauncher(BaseWindow):
         logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
-        self.set_status("Error: connection failed at " + utcnow)
+        self.set_status(t("msg.err.connection_failed", time=utcnow))
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
@@ -832,7 +827,7 @@ class BlenderLauncher(BaseWindow):
         scrape_upbge=None,
         scrape_upbge_weekly=None,
     ):
-        self.set_status("Checking for new builds", False)
+        self.set_status(t("act.prog.checking"), False)
         self.stop_auto_scrape_timer()
 
         if scrape_stable is None:
@@ -848,7 +843,7 @@ class BlenderLauncher(BaseWindow):
         if scrape_upbge_weekly is None:
             scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
 
-        self.DownloadsPage.set_info_label_text("Checking for new builds")
+        self.DownloadsPage.set_info_label_text(t("act.prog.checking"))
 
         # Sometimes these builds end up being invalid, particularly when new builds are available, which, there usually
         # are at least once every two days. They are so easily gathered there's little loss here
@@ -869,9 +864,9 @@ class BlenderLauncher(BaseWindow):
 
     def scraper_finished(self):
         if self.new_downloads:
-            self.show_message("New builds of Blender are available!", message_type=MessageType.NEWBUILDS)
+            self.show_message(t("msg.updates.new_builds"), message_type=MessageType.NEWBUILDS)
 
-        self.DownloadsPage.set_info_label_text("No builds of this type was found!")
+        self.DownloadsPage.set_info_label_text(t("repo.no_builds"))
 
         for widget in self.DownloadsPage.list_widget.widgets.copy():
             if widget.build_info not in self.cashed_builds:
@@ -895,7 +890,7 @@ class BlenderLauncher(BaseWindow):
 
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
-        self.set_status("Last check at " + self.last_time_checked.strftime(DATETIME_FORMAT), True)
+        self.set_status(t("act.prog.last_check", time=self.last_time_checked.strftime(DATETIME_FORMAT)), True)
         self.scraper_finished_signal.emit()
 
     def draw_from_cashed(self, build_info):
@@ -1130,10 +1125,7 @@ class BlenderLauncher(BaseWindow):
     def closeEvent(self, event):
         if get_show_tray_icon():
             if not get_tray_icon_notified():
-                self.show_message(
-                    "Blender Launcher is minimized to the system tray. "
-                    '\nDisable "Show Tray Icon" in the settings to disable this.'
-                )
+                self.show_message(t("msg.popup.tray_notify"))
                 set_tray_icon_notified()
             event.ignore()
             self.hide()
