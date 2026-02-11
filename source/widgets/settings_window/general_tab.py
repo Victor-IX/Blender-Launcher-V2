@@ -170,9 +170,8 @@ class GeneralTabWidget(SettingsFormWidget):
                 self.refresh_winget_buttons()
 
         with self.group("settings.general.advanced.label") as grp:
-            grp.add_label("settings.general.advanced.default_delete_action")
             # Default Deletion Action
-            self.default_delete_action = grp.add(QComboBox())
+            self.default_delete_action = grp.add(QComboBox(), "settings.general.advanced.default_delete_action")
             self.default_delete_action.addItems(delete_action.keys())
             self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
             self.default_delete_action.setCurrentIndex(get_default_delete_action())
