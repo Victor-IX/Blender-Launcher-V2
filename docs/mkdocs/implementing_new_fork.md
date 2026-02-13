@@ -19,8 +19,9 @@ Create a new scraper in `source/threads/scraping/<fork_name>.py`:
 ### Basic Scraper Structure
 
 ```python
+from collections.abc import Generator
+
 from modules.build_info import BuildInfo
-from modules._platform import get_platform
 from threads.scraping.base import BuildScraper
 from modules.connection_manager import ConnectionManager
 
@@ -216,27 +217,20 @@ Update `source/windows/main_window.py`:
 ```python
 def draw(self, polish=False):
     # Library page
-    self.LibraryforkPageWidget = BasePageWidget(
-        parent=self,
-        page_name="LibraryforkListWidget",
-        time_label="Commit Time",
-        info_text="Nothing to show yet",
-        extended_selection=True,
-    )
-    self.LibraryforkListWidget = self.LibraryToolBox.add_page_widget(
-        self.LibraryforkPageWidget, "<Fork Name>"
-    )
-    
+    self.LibraryPage: BasePageWidget[LibraryWidget] = BasePageWidget( ... )
+    ... # existing additions
+    self.LibraryToolBox.add_tab("<Fork Name>", **vsq_kwargs)
+    ...
     # Downloads page
-    self.DownloadsforkPageWidget = BasePageWidget(
-        parent=self,
-        page_name="DownloadsforkListWidget",
-        time_label="Upload Time",
-        info_text="No new builds available",
-    )
-    self.DownloadsforkListWidget = self.DownloadsToolBox.add_page_widget(
-        self.DownloadsforkPageWidget, "<Fork Name>"
-    )
+    self.DownloadsToolBox.add_tab("<Fork Name>", **vsq_kwargs)
+
+    # vsq_kwargs can be anything related to `VersionSearchQuery`s
+    # see source/modules/version_matcher.py for more info on them
+    # 
+    # simple examples checking for a folder: 
+    # self.LibraryToolBox.add_tab("<Fork Name>", folder="...")
+    # or a branch:
+    # self.LibraryToolBox.add_tab("<Fork Name>", branch=("ForkBranchName", ...))
 ```
 
 ### Update Scraper Integration
@@ -245,25 +239,16 @@ def draw(self, polish=False):
 def start_scraper(self, scrape_fork=None, ...):
     if scrape_fork is None:
         scrape_fork = get_scrape_fork_builds()
-    
-    if scrape_fork:
-        self.DownloadsforkPageWidget.set_info_label_text("Checking for new builds")
-    else:
-        self.DownloadsforkPageWidget.set_info_label_text("Checking disabled")
-    
-    self.DownloadsforkListWidget.clear_()
+
     self.scraper.scrape_fork = scrape_fork
 
-def draw_to_downloads(self, build_info: BuildInfo):
-    # ... existing branches
-    elif branch == "<fork-branch>":
-        downloads_list_widget = self.DownloadsforkListWidget
-        library_list_widget = self.LibraryforkListWidget
-
 def draw_to_library(self, path: Path, ...):
-    # ... existing branches
-    elif branch == "<fork-branch>":
-        library = self.LibraryforkListWidget
+    if branch not in (
+        ...,
+        "fork_name",
+        "custom",
+    ):
+        return
 ```
 
 ### Update Visibility Controls
@@ -273,10 +258,9 @@ def update_visible_lists(self, force_l_fork=False, force_s_fork=False, ...):
     show_fork = force_l_fork or get_show_fork_builds()
     scrape_fork = force_s_fork or get_scrape_fork_builds()
     
-    self.LibraryToolBox.setTabVisible(X, show_fork)
-    self.LibraryToolBox.setTabEnabled(X, show_fork)
-    self.DownloadsToolBox.setTabVisible(X, scrape_fork)
-    self.DownloadsToolBox.setTabEnabled(X, scrape_fork)
+    self.LibraryToolBox.update_visibility(X, show_fork)
+    
+    self.DownloadsToolBox.update_visibility(X, scrape_fork)
 ```
 
 ## 7. Update Settings UI
