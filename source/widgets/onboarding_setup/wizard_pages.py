@@ -289,9 +289,9 @@ class AppearancePage(BasicOnboardingPage):
         self.titlebar = QCheckBox(t("wizard.appearance.titlebar"), self)
         self.titlebar.setChecked(get_use_system_titlebar())
         if get_platform() == "Linux":
-            titlebar_label = QLabel(t("wizard.appearance.titlebar_label"), self)
-        else:
             titlebar_label = QLabel(t("wizard.appearance.titlebar_label_linux"), self)
+        else:
+            titlebar_label = QLabel(t("wizard.appearance.titlebar_label"), self)
         self.dpi_scale_factor = QDoubleSpinBox(self)
         self.dpi_scale_factor.setRange(0.25, 10.0)
         self.dpi_scale_factor.setSingleStep(0.25)
