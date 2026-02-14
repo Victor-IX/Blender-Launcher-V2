@@ -17,6 +17,7 @@ nav:
     - Development:
         - Overview: development.md
         - Implementing New Fork: implementing_new_fork.md
+        - Localization: localization.md
     - FAQ: FAQ.md
 docs_dir: mkdocs
 site_dir: site

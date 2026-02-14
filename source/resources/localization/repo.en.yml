@@ -1,0 +1,24 @@
+stable_tooltip: Production-ready builds.
+daily_tooltip: Builds created every day. They have the latest features and bug fixes, but they can be unstable.
+experimental_tooltip: These have new features that may end up in official Blender releases. They can be very unstable.
+upbge_tooltip: UPBGE stable builds - fork of Blender for game development.
+upbge_weekly_tooltip: UPBGE weekly builds with latest features.
+
+
+visibility_tooltip: |
+  Make this repository visible / hidden in the launcher view.
+  If disabled, then it will automatically disable fetching,
+  unless another repository shares the fetching behavior.
+
+download_tooltip: |
+  Enable / Disable fetching this repository.
+  If you force-check by holding SHIFT while pressing the "Check" button,
+  Then all visible categories will download regardless of fetching settings.
+
+no_builds: No builds of this type were found!
+
+upload_time: Upload Time
+commit_time: Commit Time
+
+no_new_builds: No new builds available
+nothing: Nothing to show yet

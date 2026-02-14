@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 import modules._resources_rc  # noqa: F401
+import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
@@ -24,7 +25,6 @@ from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
-from windows.popup_window import PopupIcon, PopupWindow
 
 version = Version(
     2,
@@ -228,17 +228,17 @@ def main():
 
 
 def start_set_library_folder(app: QApplication, lib_folder: str):
+    from i18n import t
     from modules.settings import set_library_folder
+    from windows.popup_window import Popup
 
     if set_library_folder(str(lib_folder)):
         logging.info(f"Library folder set to {lib_folder!s}")
     else:
         logging.error("Failed to set library folder")
-        PopupWindow(
-            title="Warning",
-            message="Passed path is not a valid folder or<br>it doesn't have write permissions!",
-            icon=PopupIcon.WARNING,
-            buttons=["Quit"],
+        Popup.warning(
+            message=t("msg.err.library_invalid"),
+            buttons=Popup.Button.QUIT,
             app=app,
         ).show()
         sys.exit(app.exec())

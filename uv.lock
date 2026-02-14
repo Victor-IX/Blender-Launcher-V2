@@ -170,6 +170,7 @@ dependencies = [
     { name = "pyinstaller" },
     { name = "pynput" },
     { name = "pyside6-essentials" },
+    { name = "python-i18n", extra = ["yaml"] },
     { name = "python-xlib" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "semver" },
@@ -206,6 +207,7 @@ requires-dist = [
     { name = "pynput", specifier = "==1.8.1" },
     { name = "pyside6-essentials", specifier = "==6.10.2" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=9.0.2" },
+    { name = "python-i18n", extras = ["yaml"], specifier = ">=0.3.9" },
     { name = "python-xlib" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=303" },
     { name = "ruff", marker = "extra == 'ruff'", specifier = ">=0.3.5" },
@@ -1511,6 +1513,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3", size = 342432, upload-time = "2024-03-01T18:36:20.211Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427", size = 229892, upload-time = "2024-03-01T18:36:18.57Z" },
+]
+
+[[package]]
+name = "python-i18n"
+version = "0.3.9"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/32/d9ba976458c9503ec22db4eb677a5d919edaecd73d893effeaa92a67b84b/python-i18n-0.3.9.tar.gz", hash = "sha256:df97f3d2364bf3a7ebfbd6cbefe8e45483468e52a9e30b909c6078f5f471e4e8", size = 11778, upload-time = "2020-08-26T14:31:27.512Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/73/9a0b2974dd9a3d50788d235f10c4d73c2efcd22926036309645fc2f0db0c/python_i18n-0.3.9-py3-none-any.whl", hash = "sha256:bda5b8d889ebd51973e22e53746417bd32783c9bd6780fd27cadbb733915651d", size = 13750, upload-time = "2020-08-26T14:31:26.266Z" },
+]
+
+[package.optional-dependencies]
+yaml = [
+    { name = "pyyaml" },
 ]
 
 [[package]]

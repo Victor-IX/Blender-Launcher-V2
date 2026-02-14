@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.build_info import BuildInfo
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
@@ -25,7 +26,7 @@ class UnrecoBuildWidget(BaseBuildWidget):
         self.path = path
         self.list_widget = list_widget
 
-        self.init_button = QPushButton("Initialize")
+        self.init_button = QPushButton(t("act.init"))
         self.init_button.setFixedWidth(85)
         self.init_button.setProperty("CreateButton", True)
         self.init_button.clicked.connect(self.init_unrecognized)

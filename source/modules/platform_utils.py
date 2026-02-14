@@ -7,11 +7,12 @@ from functools import cache
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, STDOUT, Popen, call, check_call, check_output
 from tempfile import NamedTemporaryFile
+from typing import Literal
 
 
 @cache
-def get_platform() -> str:
-    platforms = {
+def get_platform() -> Literal["Windows", "Linux", "macOS"]:
+    platforms: dict[str, Literal["Windows", "Linux", "macOS"]] = {
         "linux": "Linux",
         "linux1": "Linux",
         "linux2": "Linux",

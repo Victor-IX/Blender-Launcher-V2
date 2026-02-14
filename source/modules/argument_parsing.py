@@ -1,6 +1,7 @@
 import sys
 from argparse import ArgumentParser, Namespace
 
+from i18n import t
 from modules.platform_utils import is_frozen, show_windows_help
 
 # These custom handlings are necessary for frozen Windows builds to show
@@ -10,14 +11,12 @@ from modules.platform_utils import is_frozen, show_windows_help
 def error(parser: ArgumentParser, msg: str):
     if is_frozen() and sys.platform == "win32":
         from PySide6.QtWidgets import QApplication
-        from windows.popup_window import PopupIcon, PopupWindow
+        from windows.popup_window import Popup
 
         app = QApplication([])
-        PopupWindow(
-            title="Error",
-            message="An error occurred during parsing arguments:<br>" + parser.format_usage() + "<br>" + msg,
-            icon=PopupIcon.WARNING,
-            buttons=["Quit"],
+        Popup.error(
+            message=t("msg.err.argparse", args=parser.format_usage(), err=msg),
+            buttons=Popup.Button.QUIT,
             app=app,
         ).show()
         sys.exit(app.exec())

@@ -1,4 +1,6 @@
+from i18n import t
 from PySide6.QtWidgets import QFormLayout, QLabel, QWidget
+from widgets.settings_window.settings_group import SettingsGroup
 
 
 class SettingsFormWidgetRow:
@@ -36,3 +38,8 @@ class SettingsFormWidget(QWidget):
             self.layout.addRow(label, widget)
 
         return SettingsFormWidgetRow(label, widget)
+
+    def group(self, label: str) -> SettingsGroup:
+        grp = SettingsGroup(t(label), parent=self)
+        self.addRow(grp)
+        return grp

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.platform_utils import get_platform
 from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
@@ -47,14 +48,19 @@ class Committer(QThread):
         try:
             for page in self.pages:
                 page.evaluate()
-                txt = f'Finished page "{page.title()}"'
+                txt = t("wizard.committing.finished_page", page=page)
                 logging.info(txt)
                 finished_pages += txt + "\n"
             self.completed.emit()
         except Exception:
             # show the exception
             exc = traceback.format_exc()
-            text = f'{finished_pages}\nERR OCCURRED DURING PAGE "{page.title()}"!\n{exc}'
+            text = t(
+                "wizard.error.occurred",
+                finished_pages=finished_pages,
+                page=page.title(),
+                exc=exc,
+            )
             self.err.emit((exc, text))
 
 
@@ -64,17 +70,21 @@ class OnboardingWindow(BaseWindow):
 
     def __init__(self, version: Version, parent: BlenderLauncher):
         super().__init__(parent=parent, version=version)
-        self.setWindowTitle("Blender Launcher First-Time Setup")
+        self.setWindowTitle(t("wizard.title"))
         self.setMinimumWidth(768)
         self.setMinimumHeight(512)
         # A wizard showing the settings being configured
         self.wizard = QWizard(self)
         self.wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
         self.wizard.setPixmap(QWizard.WizardPixmap.LogoPixmap, parent.icons.taskbar.pixmap(64, 64))
-        self.wizard.button(QWizard.WizardButton.NextButton).setProperty("CreateButton", True)  # type: ignore
-        self.wizard.button(QWizard.WizardButton.BackButton).setProperty("CreateButton", True)  # type: ignore
-        self.wizard.button(QWizard.WizardButton.CancelButton).setProperty("CancelButton", True)  # type: ignore
-        self.wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)  # type: ignore
+        self.wizard.button(QWizard.WizardButton.NextButton).setProperty("CreateButton", True)
+        self.wizard.button(QWizard.WizardButton.BackButton).setProperty("CreateButton", True)
+        self.wizard.button(QWizard.WizardButton.CancelButton).setProperty("CancelButton", True)
+        self.wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)
+        self.wizard.setButtonText(QWizard.WizardButton.NextButton, f"> {t('act.next')}")
+        self.wizard.setButtonText(QWizard.WizardButton.BackButton, f"< {t('act.back')}")
+        self.wizard.setButtonText(QWizard.WizardButton.CancelButton, t("act.cancel"))
+        self.wizard.setButtonText(QWizard.WizardButton.FinishButton, t("act.finish"))
 
         # A wizard shown during the execution stage
         self.commit_wizard = QWizard(self)
@@ -86,7 +96,8 @@ class OnboardingWindow(BaseWindow):
         self.error_wizard.setWizardStyle(QWizard.WizardStyle.ClassicStyle)
         self.error_wizard.button(QWizard.WizardButton.CancelButton).setProperty("CancelButton", True)
         self.error_wizard.button(QWizard.WizardButton.FinishButton).setProperty("LaunchButton", True)
-        self.error_wizard.setButtonText(QWizard.WizardButton.FinishButton, "OK")
+        self.error_wizard.setButtonText(QWizard.WizardButton.CancelButton, t("act.cancel"))
+        self.error_wizard.setButtonText(QWizard.WizardButton.FinishButton, t("act.ok"))
 
         self.prop_settings = PropogatedSettings()
 
