@@ -1,5 +1,5 @@
 {
-    "api_file_version": "18.0",
+    "api_file_version": "19.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -3605,6 +3605,24 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.18-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.18",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:30:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.2-linux-x64.tar.xz",
                     {
                         "file_version": "1.5",
@@ -3749,7 +3767,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-01-20T08:34:00"
+            "modified_date": "2026-02-17T08:32:00"
         },
         "4.3.0": {
             "assets": [
@@ -4014,9 +4032,27 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.7-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.7",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:31:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2026-01-20T08:35:00"
+            "modified_date": "2026-02-17T08:32:00"
         },
         "5.0.0": {
             "assets": [

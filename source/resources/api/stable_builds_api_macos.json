@@ -4080,6 +4080,42 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.18-macos-arm64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.18-macos-arm64",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:29:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.18-macos-x64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.18-macos-x64",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:31:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.2-macos-arm64.dmg",
                     {
                         "file_version": "1.5",
@@ -4368,7 +4404,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-01-20T08:34:00"
+            "modified_date": "2026-02-17T08:32:00"
         },
         "4.3.0": {
             "assets": [
@@ -4885,9 +4921,45 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.7-macos-arm64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.7-macos-arm64",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:30:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.7-macos-x64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.7-macos-x64",
+                                "build_hash": null,
+                                "commit_time": "2026-02-17T08:32:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2026-01-20T08:35:00"
+            "modified_date": "2026-02-17T08:32:00"
         },
         "5.0.0": {
             "assets": [
