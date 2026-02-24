@@ -1,3 +1,5 @@
+title: Configuration initiale de Blender Launcher
+
 welcome:
   title: Bienvenue dans Blender Launcher %{v}
   text: |
@@ -14,8 +16,11 @@ library:
 
   perm_warning:
     Windows: "Avertissement : N'utilisez pas C:/Program Files/... comme emplacement de bibliothèque ou tout autre endroit où vous pourriez ne pas avoir de permissions."
+    Linux: "Avertissement : N'utilisez pas /bin comme emplacement de bibliothèque ou tout autre endroit où vous pourriez ne pas avoir de permissions."
 
   location: "Emplacement de la bibliothèque :"
+
+  path_warning: L'exécutable du programme est en dehors de %{home}, il pourrait ne pas avoir les permissions nécessaires pour déplacer l'exécutable vers la bibliothèque !
 
 repo_select:
   title: Visibilité des dépôts Blender
@@ -25,8 +30,27 @@ shortcuts:
   title: Raccourcis et association de fichiers
   subtitle: Créer des raccourcis pour Blender Launcher et enregistrer les associations de fichiers pour ouvrir les fichiers .blend directement avec Blender Launcher
 
+  start_menu: Ajouter au menu Démarrer
+  desktop: Ajouter au bureau
+
 file_association:
   name: S'enregistrer pour l'association de fichiers
+  Linux: |
+    Pour lancer des fichiers .blend avec Blender Launcher sous Linux, nous allons générer un fichier .desktop à l'emplacement demandé. \
+    Il contient des données de type MIME qui indiquent à l'environnement de bureau quels fichiers le programme peut gérer, et le programme sera également visible dans les lanceurs d'applications.
+
+    Notre emplacement par défaut est généralement recherché par les environnements de bureau pour les entrées d'applications.
+  Windows: |
+    Pour lancer des fichiers .blend avec Blender Launcher sous Windows, nous allons mettre à jour le registre pour associer le lanceur à l'extension .blend. \
+    Pour annuler cette opération après l'installation, un panneau dédié se trouve dans l'onglet Général des paramètres. Vous y trouverez un bouton pour désenregistrer le lanceur.
+
+    Survolez ce texte pour voir quelles clés de registre seront modifiées et pour quelle raison.
+  win_reg_key: |
+    Les clés suivantes seront modifiées :
+    CRÉER Software\Classes\blenderlauncherv2.blend\shell\open\command -- Pour exposer le lanceur comme classe logicielle
+    METTRE À JOUR Software\Classes\.blend\OpenWithProgids -- Pour ajouter le lanceur à la liste « Ouvrir avec... » des fichiers .blend
+    CRÉER Software\Classes\blenderlauncherv2.blend\DefaultIcon -- Pour définir l'icône lorsque Blender Launcher est l'application par défaut
+    Celles-ci seront supprimées/rétrogradées lorsque vous désenregistrerez le lanceur
 
 appearance:
   title: Apparence de Blender Launcher
@@ -55,6 +79,14 @@ committing:
   title: Enregistrement des modifications des paramètres...
   subtitle: Cela devrait prendre moins d'une seconde.
 
+  finished_page: Page "%{page}" terminée
+
 error:
   title: Une erreur s'est produite lors de la configuration !
   continue: Continuer quand même ?
+
+
+  occurred: |
+    %{finished_pages}
+    ERREUR SURVENUE LORS DE LA PAGE %{page} !
+    %{exc}

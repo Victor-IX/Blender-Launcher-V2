@@ -1,0 +1,25 @@
+status:
+  reading: Lecture des builds...
+  found: "%{count} builds trouvés"
+  header: "Version de l'en-tête détectée : %{version}"
+
+
+help: |
+  La requête de version peut être modifiée en utilisant ^ et - pour rechercher des builds spécifiques en fonction de leur ancienneté.
+  Exemples de requêtes de version valides :
+
+any_v_placeholder: Tous (*.*.*)
+
+chrono:
+  latest: Dernier (^)
+  any: Tous (*)
+  oldest: Plus ancien (-)
+
+version: "Sélection de la version : "
+branch: "Branche : "
+bhash: "Hash du build : "
+date: "Sélection de la date : "
+
+save_current: Enregistrer la recherche actuelle pour les fichiers .blend créés dans %{short_v}
+
+timer: Lancement dans %{time}s

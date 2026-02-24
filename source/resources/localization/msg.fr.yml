@@ -1,0 +1,156 @@
+success: Succès
+info: Info
+setup: Configuration
+warning: Avertissement
+error: Erreur
+
+err:
+  no_hash: "Impossible de copier le hash du build : hash non disponible pour ce build."
+
+  rename_branch: "Impossible de renommer la branche : le nom de la branche ne peut pas être vide."
+  no_base_config: Impossible de déterminer le chemin du dossier de configuration.
+  no_config_version: Aucun dossier de configuration trouvé pour cette version.
+  folder_invalid: |
+    Le dossier sélectionné n'est pas valide ou
+    il ne dispose pas des permissions d'écriture !
+  library_no_write: Le dossier sélectionné ne dispose pas des permissions d'écriture !
+  argparse: |
+    Une erreur s'est produite lors de l'analyse des arguments :
+    %{args}
+    %{err}
+
+  generic: |
+    Une erreur s'est produite : %{err}
+    Consultez les journaux pour plus de détails.
+
+  cant_write: L'emplacement demandé ne dispose pas des permissions d'écriture !
+  damaged: Le build %{build} est endommagé !
+  port:
+    no_build_dir: Le nouveau répertoire de build est introuvable.
+    no_settings: Aucun paramètre portable trouvé à transférer.
+
+  no_resources: |
+    Le chargement des ressources a échoué ! Le lanceur fonctionnera toujours,
+    mais le style sera altéré.
+
+  connection_failed: "Erreur : la connexion a échoué à %{time}"
+
+updates:
+  download_before_update: |
+    Pour mettre à jour Blender Launcher,
+    terminez tous les téléchargements actifs !
+
+  new_version_available: |
+    Nouvelle version %{version} disponible !
+
+    %{patch_notes}
+
+  no_release_notes: Aucune note de version disponible.
+
+  update_to_version: Mettre à jour vers la version %{version}
+
+  new_builds: De nouveaux builds de Blender sont disponibles !
+
+popup:
+  dest: Choisir la destination
+  select: Sélectionner un dossier
+  select_library: Sélectionner le dossier de la bibliothèque
+  first_time_select_library: |
+    Choisissez où les builds
+    de Blender seront stockés
+
+  blver_mismatch: |
+    Une tentative de lancement d'une version différente
+    de Blender Launcher a été détectée !
+    Veuillez fermer la version en cours
+    d'exécution pour continuer !
+    En cours d'exécution : {running}
+    Version donnée : {given}
+
+  tasks_in_progress: |
+    Des tâches sont encore en cours !
+    %{tasks}
+    Êtes-vous sûr de vouloir quitter ?
+
+  apply_the_following: |
+    Redémarrez Blender Launcher pour
+    appliquer les paramètres suivants :
+    %{pending}
+
+  relative_path_found: |
+    Le chemin sélectionné est relatif au chemin de l'exécutable.
+    Souhaitez-vous l'enregistrer en tant que chemin relatif ?
+    Cela est utile si le dossier est susceptible d'être déplacé.
+
+  global_hotkeys_invalid: |
+    La séquence de raccourci global n'a pas été reconnue !
+    Essayez d'utiliser une autre combinaison de touches
+
+  quick_launch_tray: |
+    Ajoutez un build au lancement rapide via
+    le menu contextuel pour le lancer depuis la zone de notification
+
+  tray_notify: |
+    Blender Launcher est réduit dans la zone de notification.
+    Désactivez « Afficher l'icône de la zone de notification » dans les paramètres pour désactiver ceci.
+
+  ask_delete_or_trash: |
+    Voulez-vous supprimer ou envoyer
+    les builds sélectionnés à la corbeille ?
+
+  ask_remove_from_drive:
+    one: |
+      Êtes-vous sûr de vouloir
+      supprimer ce build ?
+    many: |
+      Êtes-vous sûr de vouloir
+      supprimer %{count} builds ?
+
+  ask_send_to_trash:
+    one: |
+      Êtes-vous sûr de vouloir envoyer
+      ce build à la corbeille ?
+    many: |
+      Êtes-vous sûr de vouloir envoyer
+      %{count} builds à la corbeille ?
+
+  major_version_update: |
+    La mise à jour de %{current} vers %{update} utilisera un nouveau jeu de préférences Blender
+
+    Voulez-vous supprimer l'ancien build (%{current}) de votre bibliothèque ?
+
+  update_portable_settings: |
+    Ce build utilise des paramètres portables.
+
+    Que souhaitez-vous faire avec le dossier de paramètres portables ?
+
+  portable_failure: |
+    Échec du transfert des paramètres portables :
+    %{error}
+
+    Voulez-vous continuer la mise à jour ou annuler ?
+
+  mv_confirm: |
+    Êtes-vous sûr de vouloir déplacer
+    %{start}
+    vers
+    %{end} ?
+
+  mv_overwrite_confirm: |
+    <font color="red">AVERTISSEMENT :</font> Les paramètres utilisateur existent déjà !
+    Êtes-vous sûr de vouloir déplacer
+    %{start}
+    vers
+    %{end} ?
+
+  purge:
+    success: Le dossier temporaire a été purgé avec succès !
+    error: Échec de la purge du dossier temporaire. Certains fichiers sont peut-être en cours d'utilisation.
+
+  winget:
+    register:
+      success: Enregistrement avec WinGet réussi !<br>Vous pouvez maintenant mettre à jour via 'winget update VictorIX.BlenderLauncher
+      error: Échec de l'enregistrement avec WinGet. Consultez les journaux pour plus de détails.
+    unregister:
+      success: Désenregistrement de WinGet réussi.
+      error: Échec du désenregistrement de WinGet. Consultez les journaux pour plus de détails.
