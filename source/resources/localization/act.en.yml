@@ -90,7 +90,7 @@ a:
     rem: Unfreeze Update
 
   release_notes: Show Release Notes
-  release_notes_patch: Show Patch Detailss
+  release_notes_patch: Show Patch Details
   release_notes_pr: Show PR Details
   folder_build: Show Build Folders
   config: Show Config Folder

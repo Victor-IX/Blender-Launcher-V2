@@ -28,7 +28,7 @@ general:
     worker_count_tooltip: |
       Determines how many IO operations can be done at once, ex. Downloading, Deleting, Extracting
       DEFAULT: <cpu count> * (3/4)
-    worker_count_warning: "(Warning: value above {cnt} (cpu count) !!)"
+    worker_count_warning: "(Warning: value above %{cnt} (cpu count) !!)"
     prerelease: Use Pre-release Builds
     prerelease_tooltip: |
       While checking for a new version of Blender Launcher, check for pre-releases.

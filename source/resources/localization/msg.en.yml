@@ -64,8 +64,8 @@ popup:
     of Blender Launcher was detected!
     Please, terminate the currently running
     version to proceed with this action!
-    Currently running: {running}
-    Given version: {given}
+    Currently running: %{running}
+    Given version: %{given}
 
   tasks_in_progress: |
     Some tasks are still in progress!

@@ -83,11 +83,11 @@ committing:
   finished_page: Finished page "%{page}"
 
 error:
-  title: An Error occured during setup!
+  title: An Error occurred during setup!
   continue: Continue anyways?
 
 
   occurred: |
     %{finished_pages}
-    ERR OCCURED DURING PAGE %{page}!
+    ERR OCCURRED DURING PAGE %{page}!
     %{exc}

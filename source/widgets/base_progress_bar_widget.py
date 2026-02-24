@@ -32,7 +32,7 @@ class BaseProgressBarWidget(QProgressBar):
         self.title = t(state.value)
         self.setFormat(
             t(
-                "act.prog.pregress",
+                "act.prog.progress",
                 title=self.title,
                 progress=f"{self.last_progress[0]:.1f}",
                 total=f"{self.last_progress[1]:.1f}",
@@ -55,7 +55,7 @@ class BaseProgressBarWidget(QProgressBar):
         # Repaint and call signal
         self.setFormat(
             t(
-                "act.prog.pregress",
+                "act.prog.progress",
                 title=self.title,
                 progress=f"{obtained:.1f}",
                 total=f"{total:.1f}",
