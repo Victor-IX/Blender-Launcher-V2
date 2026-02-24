@@ -1,0 +1,93 @@
+title: Blender Launcher 初回セットアップ
+
+welcome:
+  title: Blender Launcher %{v} へようこそ
+  text: |
+    この初回セットアップでは、よく使われる設定を順を追って説明します。
+    この設定は一度だけ行えば、再度行う必要はありません。
+    すべての設定は後から変更できます。
+
+library:
+  title: Blender Launcherライブラリの場所
+  subtitle: このフォルダには、ダウンロードして保存するすべてのビルドに十分なストレージがあることを確認してください。
+
+  move_exe: 実行ファイルをライブラリに移動
+  move_exe_tooltip: プログラムの実行ファイルを指定した場所に移動します。初回セットアップが完了すると、以降の起動にはこの場所を参照する必要があります。
+
+  perm_warning:
+    Windows: "警告: C:/Program Files/... やその他権限がない場所をライブラリの場所として使用しないでください"
+    Linux: "警告: /bin やその他権限がない場所をライブラリの場所として使用しないでください"
+
+  location: "ライブラリの場所:"
+
+  path_warning: プログラムの実行ファイルが %{home} の外にあるため、ライブラリへの移動に必要な権限がない可能性があります！
+
+repo_select:
+  title: Blenderリポジトリの表示設定
+  subtitle: 特定のBlenderビルドの表示/スクレイピングを有効/無効にします。
+
+shortcuts:
+  title: ショートカットとファイルの関連付け
+  subtitle: Blender Launcherのショートカットを作成し、.blendファイルをBlender Launcherで直接開くためのファイルの関連付けを登録します
+
+  start_menu: スタートメニューに追加
+  desktop: デスクトップに追加
+
+file_association:
+  name: ファイルの関連付けを登録
+  Linux: |
+    LinuxでBlender Launcherからblendファイルを起動するために、指定した場所に.desktopファイルを生成します。\
+    このファイルにはプログラムが処理するファイルの種類をデスクトップ環境（DE）に伝えるMIMEタイプ情報が含まれ、副次的にアプリケーションランチャーにも表示されます。
+
+    デフォルトの場所は通常、DEがアプリケーションエントリを検索する場所です。
+  Windows: |
+    WindowsでBlender Launcherからblendファイルを起動するために、レジストリを更新して.blend拡張子にランチャーを関連付けます。\
+    インストール後に元に戻すには、設定の「全般」タブにあるパネルから登録を解除できます。
+
+    このテキストにマウスをホバーすると、変更されるレジストリキーとその理由を確認できます。
+  win_reg_key: |
+    以下のキーが変更されます:
+    作成 Software\Classes\blenderlauncherv2.blend\shell\open\command -- ランチャーをソフトウェアクラスとして公開
+    更新 Software\Classes\.blend\OpenWithProgids -- .blendの「プログラムから開く...」リストにランチャーを追加
+    作成 Software\Classes\blenderlauncherv2.blend\DefaultIcon -- Blender Launcherがデフォルトアプリケーションの場合のアイコンを設定
+    ランチャーの登録を解除すると、これらは削除/ダウングレードされます
+
+appearance:
+  title: Blender Launcherの外観
+  subtitle: Blender Launcherの見た目を設定します
+
+
+  titlebar: システムタイトルバーを使用
+  titlebar_label: カスタムタイトルバーを無効にし、OSのデフォルトタイトルバーを使用します。
+  titlebar_label_linux: |
+    カスタムタイトルバーを無効にし、OSのデフォルトタイトルバーを使用します。
+
+    Linux Wayland環境では、タイトルバーを使用してウィンドウの移動や
+    リサイズが可能になるため、これを推奨します。
+    移動やリサイズの主な方法はX11で最適に動作します。
+
+  dpi_scaling: |
+    プログラムのDPI倍率を変更します。
+    モニターのピクセル密度に基づいてUIを自動スケーリングし、この値を掛けます。
+    MacOSなどの画面で文字が小さすぎる場合に役立ちます。
+
+background:
+  title: Blender Launcherのバックグラウンド実行
+  subtitle: Blender Launcherはシステムトレイアイコンを使用してバックグラウンドで動作し続けることができます。読み込み効率やその他の機能に役立ちますが、必須ではありません。
+  show_tray_icon: Blender Launcherをバックグラウンドで実行（トレイに最小化）
+
+committing:
+  title: 設定変更を適用中...
+  subtitle: 1秒もかかりません。
+
+  finished_page: ページ「%{page}」が完了しました
+
+error:
+  title: セットアップ中にエラーが発生しました！
+  continue: そのまま続行しますか？
+
+
+  occurred: |
+    %{finished_pages}
+    ページ %{page} でエラーが発生しました！
+    %{exc}

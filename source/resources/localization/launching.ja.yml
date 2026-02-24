@@ -1,0 +1,25 @@
+status:
+  reading: ビルドを読み込み中...
+  found: "%{count} 個のビルドが見つかりました"
+  header: "検出されたヘッダーバージョン: %{version}"
+
+
+help: |
+  バージョンクエリは ^ と - を使用して、ビルドの新しさに応じた検索に変更できます。
+  有効なバージョンクエリの例:
+
+any_v_placeholder: すべて (*.*.*)
+
+chrono:
+  latest: 最新 (^)
+  any: すべて (*)
+  oldest: 最古 (-)
+
+version: "バージョン選択: "
+branch: "ブランチ: "
+bhash: "ビルドハッシュ: "
+date: "日付選択: "
+
+save_current: "%{short_v} で作成した.blendファイル用に現在の検索条件を保存"
+
+timer: "%{time}秒後に起動"

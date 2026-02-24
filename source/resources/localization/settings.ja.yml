@@ -1,0 +1,314 @@
+
+
+
+general:
+  app:
+    label: アプリケーション
+    library_folder: "ライブラリフォルダ:"
+
+    language: 言語
+    language_tooltip: |
+      Blender Launcherの表示言語を選択します。
+      「自動」はシステム言語を自動検出します。
+      反映するには再起動が必要です。
+      DEFAULT: Auto
+
+    system_start: システム起動時に起動
+    system_start_tooltip: |
+      システム起動時にアプリを自動的に開始します。
+      DEFAULT: Off
+    launch_minimized: トレイに最小化して起動
+    launch_minimized_tooltip: |
+      システムトレイに最小化した状態でアプリを起動します。
+      DEFAULT: Off
+    minimize: トレイに最小化
+    minimize_tooltip: |
+      アプリを閉じると完全に終了せず、システムトレイに最小化します
+      DEFAULT: Off
+    worker_count: ワーカースレッド数
+    worker_count_tooltip: |
+      同時に実行できるIO操作の数を設定します（例: ダウンロード、削除、展開）
+      DEFAULT: <CPUコア数> * (3/4)
+    worker_count_warning: "(警告: %{cnt} (CPUコア数) を超えています！！)"
+    prerelease: プレリリース版を使用
+    prerelease_tooltip: |
+      Blender Launcherの新バージョンを確認する際に、プレリリース版もチェックします。
+      警告: これらのビルドにはバグが含まれている可能性があります！主に新機能のテスト用です。
+      DEFAULT: Off
+
+    create_shortcut: Blender Launcherの%{shortcut_type}を作成
+    shortcut_type:
+      windows: ショートカット
+      linux: デスクトップファイル
+      macos: ショートカット
+  migratel2u: ローカル設定をユーザー設定に移行
+
+  file_assoc:
+    label: ファイルの関連付け
+
+    register: ファイルの関連付けを登録
+    register_tooltip: |
+      .blendファイルを開けるプログラムのリストにBlender Launcherを追加します
+
+    unregister: ファイルの関連付けを解除
+    unregister_tooltip: |
+      .blendファイルを開けるプログラムのリストからBlender Launcherを削除します
+
+    launch_timer_duration: 起動タイマー (秒)
+    launch_timer_duration_tooltip: |
+      blendファイルを開く際に起動するビルドを変更できる時間を設定します
+      DEFAULT: 3s
+    launch_timer_suffix:
+      "-1": " (無効)"
+      "0": "秒 (即時)"
+      more: "秒"
+
+  winget:
+    label: WinGet連携
+
+    info: WinGetパッケージマネージャにBlender Launcherを登録して、'winget update'による自動更新を有効にします。
+    register: WinGetに登録
+    register_tooltip: |
+      このインストールをWinGetに登録して、'winget update'で更新できるようにします
+    unregister: WinGetから登録解除
+    unregister_tooltip: |
+      このインストールのWinGet登録を削除します
+
+  advanced:
+    label: 詳細設定
+
+    delete_actions:
+      "0": ゴミ箱に移動
+      "1": 完全に削除
+    default_delete_action: デフォルトの削除操作
+    default_delete_action_tooltip: |
+      右クリックメニューでビルドを削除する際のデフォルト操作を設定します
+      Shiftキーを押しながらでもう一方のオプションを使用できます
+      DEFAULT: Send to Trash
+
+    purge_temp: 起動時に一時フォルダをパージ
+    purge_temp_tooltip: |
+      Blender Launcher起動時にダウンロード用一時フォルダを自動的にクリアします。
+      DEFAULT: On
+
+    purge_temp_now: 今すぐ一時フォルダをパージ
+    purge_temp_now_tooltip: |
+        一時ダウンロードフォルダ内のすべてのファイルを即座にクリアします
+
+
+
+appearance:
+  window_related: ウィンドウ関連
+  use_system_titlebar: システムタイトルバーを使用
+  use_system_titlebar_tooltip: |
+    カスタムタイトルバーの代わりにシステムタイトルバーを使用します
+    DEFAULT: False
+  dpi_scale_factor: DPIスケール倍率
+  dpi_scale_factor_overridden: DPIスケール倍率 (QT_SCALE_FACTOR環境変数で上書きされています！)
+  dpi_scale_factor_tooltip: |
+    アプリケーションのDPIスケーリングを変更します
+    UIをスケーリングして読みやすく快適にします
+    DEFAULT: 1.0
+  notifications:
+    label: 通知
+    new_builds: 新しいビルドの通知
+    new_builds_tooltip: |
+      新しいビルドが利用可能な場合に通知を表示します
+      DEFAULT: True
+    finished_downloading: ダウンロード完了
+    finished_downloading_tooltip: |
+      ダウンロードが完了した際に通知を表示します
+      DEFAULT: True
+    errors: エラー
+    errors_tooltip: |
+      エラーが発生した際に通知を表示します
+      DEFAULT: True
+  tabs:
+    label: タブ
+    default_tab: デフォルトタブ
+    default_tab_tooltip: |
+      アプリケーション起動時に開くデフォルトのタブ
+      DEFAULT: Library
+    sync_library_and_downloads_pages: ライブラリとダウンロードページを同期
+    sync_library_and_downloads_pages_tooltip: |
+      選択中のライブラリタブと対応するダウンロードタブを同期します
+      DEFAULT: True
+    default_library_page: デフォルトライブラリページ
+    default_library_page_tooltip: |
+      ライブラリタブで開くデフォルトのページ
+      DEFAULT: Stable Releases
+    default_downloads_page: デフォルトダウンロードページ
+    default_downloads_page_tooltip: |
+      ダウンロードタブで開くデフォルトのページ
+      DEFAULT: Stable Releases
+
+connection:
+  proxy_settings: プロキシ
+  use_custom_tls_certificates: カスタムTLS証明書を使用
+  use_custom_tls_certificates_tooltip: |
+    接続にカスタムTLS証明書を使用します
+    DEFAULT: False
+  proxy_type_tooltip: |
+    接続に使用するプロキシの種類
+    DEFAULT: None
+  proxy_host_tooltip: |
+    プロキシサーバーのIPアドレス
+    DEFAULT: 255.255.255.255
+  proxy_port_tooltip: |
+    プロキシサーバーのポート番号
+    DEFAULT: 9999
+  proxy_user_tooltip: プロキシサーバーの認証ユーザー名
+  proxy_password_tooltip: プロキシサーバーの認証パスワード
+  authentication_settings: 接続認証
+  user_id: ユーザーID
+  user_id_tooltip: |
+    Blenderウェブサイトの認証用ユーザーID
+    DEFAULT: Random UUID
+    FORMAT: 8-64 characters (a-z, A-Z, 0-9, -)
+  github_token: GitHubトークン
+  github_token_tooltip: |
+    オプション: レート制限を回避するためのGitHubパーソナルアクセストークン
+    GitHub APIに多数のリクエストを行う場合に便利です
+    不要な場合は空のままにしてください
+  github_token_info_button_tooltip: GitHubトークンのドキュメントを表示するにはクリック
+  proxy_type: 種類
+  proxy_ip: IP
+  proxy_host: ホスト
+  proxy_port: ポート
+  proxy_user: プロキシユーザー
+  proxy_password: パスワード
+
+  keyring_unavailable_title: キーリングが利用できません
+  keyring_unavailable_message: |
+    GitHubトークンをシステムのセキュアキーリングに保存できませんでした。
+
+    代わりに設定ファイルにトークンが保存されました。
+    これはキーリングストレージより安全性が低くなります。
+
+    システムにキーリングサポートのインストールを検討してください。
+
+blender_builds:
+  visibility_and_downloading: 表示とダウンロード
+  checking_for_builds: ビルドの確認
+  minimum_stable_blender_version_tooltip: |
+    スクレイピングする最小安定版Blenderバージョン
+    DEFAULT: 3.2
+  check_automatically: 自動確認
+  check_automatically_tooltip: |
+    新しいBlenderビルドを自動的に確認します
+    DEFAULT: Off
+  new_builds_check_frequency_tooltip: |
+    新しいBlenderビルドの確認間隔（時間単位）
+    DEFAULT: 12h
+    MINIMUM: 6h
+  interval_prefix: "間隔: "
+  interval_suffix: 時間
+  on_startup: 起動時
+  on_startup_tooltip: |
+    Blender Launcher起動時に新しいBlenderビルドを確認します
+    DEFAULT: On
+  show_daily_archive_builds: デイリーアーカイブビルドを表示
+  show_daily_archive_builds_tooltip: |
+    デイリーアーカイブビルドを表示します
+    DEFAULT: Off
+  show_experimental_archive_builds: 実験的アーカイブビルドを表示
+  show_experimental_archive_builds_tooltip: |
+    実験的アーカイブビルドを表示します
+    DEFAULT: Off
+  show_patch_archive_builds: パッチアーカイブビルドを表示
+  show_patch_archive_builds_tooltip: |
+    パッチアーカイブビルドを表示します
+    DEFAULT: Off
+  minimum_stable_build_to_scrape: スクレイピングする最小安定版ビルド
+  downloading_and_saving_builds: ビルドのダウンロードと保存
+  show_update_button: 更新ボタンを表示
+  update_behavior_tooltip: |
+    更新の動作を定義します
+    DEFAULT: Patch
+  use_advanced_update_button: 詳細更新ボタンを使用
+  use_advanced_update_button_tooltip: |
+    各Blenderブランチの更新動作をカスタマイズするための詳細更新設定を有効にします
+    DEFAULT: Off
+  show_update_button_tooltip_normal: |
+    Blenderビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  show_update_button_tooltip_disabled: |
+    Blenderビルドを素早く更新するための更新ボタンを表示します
+    詳細更新ボタンが有効なため、このオプションは無効です
+    このオプションを使用するには「詳細更新ボタンを使用」を無効にしてください
+    DEFAULT: On
+  show_stable_update_button: 安定版更新ボタンを表示
+  show_stable_update_button_tooltip: |
+    安定版ビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_stable_behavior_tooltip: |
+    安定版ビルドの更新動作を定義します
+    DEFAULT: Patch
+  show_daily_update_button: デイリー更新ボタンを表示
+  show_daily_update_button_tooltip: |
+    デイリービルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_daily_behavior_tooltip: |
+    デイリービルドの更新動作を定義します
+    DEFAULT: Patch
+  show_experimental_update_button: 実験的更新ボタンを表示
+  show_experimental_update_button_tooltip: |
+    実験的ビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_experimental_behavior_tooltip: |
+    実験的ビルドの更新動作を定義します
+    DEFAULT: Patch
+  show_bfa_update_button: BFA更新ボタンを表示
+  show_bfa_update_button_tooltip: |
+    BFAビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_bfa_behavior_tooltip: |
+    BFAビルドの更新動作を定義します
+    DEFAULT: Patch
+  show_upbge_stable_update_button: UPBGE安定版更新ボタンを表示
+  show_upbge_stable_update_button_tooltip: |
+    UPBGE安定版ビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_upbge_stable_behavior_tooltip: |
+    UPBGE安定版ビルドの更新動作を定義します
+    DEFAULT: Minor
+  show_upbge_weekly_update_button: UPBGE週次更新ボタンを表示
+  show_upbge_weekly_update_button_tooltip: |
+    UPBGE週次ビルドを素早く更新するための更新ボタンを表示します
+    DEFAULT: On
+  update_upbge_weekly_behavior_tooltip: |
+    UPBGE週次ビルドの更新動作を定義します
+    DEFAULT: Minor
+  mark_as_favorite: お気に入りに設定
+  mark_as_favorite_tooltip: |
+    タブをお気に入りに設定して素早くアクセスできるようにします
+    DEFAULT: Off
+  select_favorite_tab_tooltip: |
+    お気に入りに設定するタブを選択します
+    DEFAULT: Stable Releases
+  install_template: テンプレートをインストール
+  install_template_tooltip: |
+    ライブラリタブに新しく追加されたビルドにテンプレートをインストールします
+    DEFAULT: Off
+  launching_builds: ビルドの起動
+  quick_launch_global_shortcut: クイック起動グローバルショートカット
+  quick_launch_global_shortcut_tooltip: |
+    Blenderを素早く起動するためのグローバルショートカットを有効にします
+    DEFAULT: On
+  quick_launch_key_seq_tooltip: |
+    Blenderを素早く起動するためのグローバルショートカット
+    DEFAULT: ctrl + f11
+  hide_console_on_startup: 起動時にコンソールを非表示
+  hide_console_on_startup_tooltip: |
+    Blender起動時にコンソールウィンドウを非表示にします
+    DEFAULT: On
+  blender_startup_arguments_tooltip: |
+    Blender起動時に渡す引数（Blender実行ファイルの後 例: [… <args>]）
+    DEFAULT: None
+    Example: --background
+  bash_arguments_tooltip: |
+    Blender起動時にbashに渡す命令（Blender実行ファイルの前 例: [<args> …]）
+    DEFAULT: None
+    Example: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
+  bash_arguments: "Bash引数:"
+  startup_arguments: "起動引数:"
