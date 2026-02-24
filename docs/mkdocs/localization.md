@@ -68,6 +68,36 @@ It is crucial that the **translation keys remain unchanged**. Inconsistent keys 
 
     This will make the language visible in the Settings language dropdown menu.
 
+### Checking Translation Coverage
+
+Before starting a translation, you can check the current coverage of all languages using the `language_coverage.py` script located in the `scripts/` directory:
+
+```bash
+python scripts/language_coverage.py
+```
+
+This will display a summary of translation coverage for each language, showing:
+- The number of keys translated per category
+- Overall coverage percentage for each language
+- A summary table with all languages sorted by coverage
+
+#### Checking a Specific Language
+
+If you're actively working on a translation, you can check your progress on a specific language with the `--language` flag:
+
+```bash
+python scripts/language_coverage.py --language fr
+```
+
+This will show detailed coverage information for that language, including a list of all missing keys organized by category. This is useful for developers actively translating, as it provides quick feedback on what still needs to be done.
+
+#### Listing All Missing Keys
+
+To see a detailed list of missing translation keys for all languages, use the `--list-missing-keys` flag:
+
+```bash
+python scripts/language_coverage.py --list-missing-keys
+```
 
 ### How they are used in the code
 
