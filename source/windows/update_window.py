@@ -115,14 +115,14 @@ class BlenderLauncherUpdater(BaseWindow):
         link = self.get_link() if self.platform == "Linux" else release_link.format(self.release_tag, self.platform)
 
         assert self.manager is not None
-        self.ProgressBar.set_title("Downloading")
+        self.ProgressBar.set_state(self.ProgressBar.State.DOWNLOADING)
         a = DownloadTask(self.manager, link)
         a.progress.connect(self.ProgressBar.set_progress)
         a.finished.connect(self.extract)
         self.queue.append(a)
 
     def extract(self, source):
-        self.ProgressBar.set_title("Extracting")
+        self.ProgressBar.set_state(self.ProgressBar.State.EXTRACTING)
         self.source_zip = source
         a = ExtractTask(source, self.cwd)
         a.progress.connect(self.ProgressBar.set_progress)

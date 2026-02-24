@@ -1,0 +1,108 @@
+# popups
+ok: Ok
+accept: Accepter
+cancel: Annuler
+quit: Quitter
+hide: Masquer
+show: Afficher
+next: Suivant
+prev: Précédent
+back: Retour
+cont: Continuer
+finish: Terminer
+"yes": "Oui"
+"no": "Non"
+retry: Réessayer
+update: Mettre à jour
+later: Plus tard
+
+update_library: Mettre à jour Blender vers la dernière version
+restart_now: Redémarrer maintenant
+trash: Corbeille
+remove: Supprimer
+delete: Supprimer
+dont_show_again: Ne plus afficher
+migrate: Migrer
+overwrite: Écraser
+general_folder: Ouvrir le dossier de configuration général
+keep_both_versions: Garder les deux versions
+move_to_new: Déplacer vers la nouvelle version
+remove_settings: Supprimer les paramètres
+
+reload: Recharger
+reload_tooltip: Recharger les builds personnalisés depuis le disque
+
+# left icon
+launch: Lancer
+download: Télécharger
+installed: Installé
+lprev: " Précédent"
+updating: Mise à jour
+deleting: Suppression
+init: Initialiser
+
+prog:
+  downloading: Téléchargement
+  extracting: Extraction
+  copying: Copie des données...
+  progress: "%{title} : %{progress} sur %{total} Mo"
+
+  reading_local: Lecture des builds locaux
+  checking: Vérification des nouveaux builds
+  last_check: Dernière vérification à %{time}
+
+# actions
+a:
+  settings_win: Afficher la fenêtre des paramètres
+  docs: Ouvrir la documentation
+
+
+  prev: Ouvrir le fichier précédent
+  prev_tooltip: |
+    Cette action ouvre le dernier fichier utilisé dans ce build.
+    (Ajoute `--open-last` aux arguments d'exécution)
+    RACCOURCI : Maj + Lancer ou Double-clic
+  quick_launch: Ajouter au lancement rapide
+  fav:
+    add: Ajouter aux favoris
+    rem: Retirer des favoris
+  update: Mettre à jour le build Blender
+  update_tooltip: Mettre à jour ce build vers la dernière version
+  d:
+    d: Débogage
+    log: Journal de débogage
+    factory: Démarrage usine
+    gpu: Débogage GPU
+    glitch: Contournement du bug GPU
+  rename: Renommer la branche
+
+  register: Enregistrer l'extension
+  register_tooltip: Utiliser ce build pour les fichiers .blend et afficher les miniatures
+  shortcut: Créer un raccourci
+  symlink: Créer un lien symbolique
+  template: Installer un modèle
+  port:
+    add: Rendre portable
+    rem: Annuler la portabilité
+  hash: Copier le hash du build
+  freeze:
+    add: Geler la mise à jour
+    rem: Dégeler la mise à jour
+
+  release_notes: Afficher les notes de version
+  release_notes_patch: Afficher les détails du correctif
+  release_notes_pr: Afficher les détails de la PR
+  folder_build: Afficher les dossiers du build
+  config: Afficher le dossier de configuration
+  config_portable: Afficher le dossier de configuration portable
+
+  edit: Modifier le build...
+  delete: Supprimer du disque
+  trash: Envoyer à la corbeille
+
+  check: Vérifier
+  check_tooltip: |
+      Vérifier les nouveaux builds en ligne
+      (Maintenez MAJ pour forcer la vérification des builds stables et automatisés)
+
+  version_tooltip: La version de Blender Launcher actuellement utilisée. Appuyez pour consulter le journal des modifications.

@@ -4,11 +4,12 @@ import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.platform_utils import get_cwd
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
 from windows.file_dialog_window import FileDialogWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
@@ -53,7 +54,7 @@ class FolderSelector(QWidget):
         self.layout_.addWidget(self.button)
 
     def prompt_folder(self):
-        new_library_folder = FileDialogWindow().get_directory(self, "Select Folder", str(self.default_choose_dir))
+        new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select"), str(self.default_choose_dir))
         if not new_library_folder:
             return
         if self.check_relatives:
@@ -67,14 +68,10 @@ class FolderSelector(QWidget):
     def set_folder(self, folder: Path, relative: bool | None = None):
         if folder.is_relative_to(get_cwd()):
             if relative is None:
-                self.dlg = PopupWindow(
+                self.dlg = Popup.setup(
+                    message=t("msg.popup.relative_path_found"),
+                    buttons=Popup.Button.yn(),
                     parent=self.launcher,
-                    title="Setup",
-                    message="The selected path is relative to the executable's path.<br>\
-                        Would you like to save it as relative?<br>\
-                        This is useful if the folder may move.",
-                    icon=PopupIcon.NONE,
-                    buttons=["Yes", "No"],
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))
@@ -113,7 +110,7 @@ class FolderSelector(QWidget):
             self.line_edit.setToolTip("")
         else:
             self.line_edit.setStyleSheet("border-color: red")
-            self.line_edit.setToolTip("The requested location has no write permissions!")
+            self.line_edit.setToolTip(t("msg.err.cant_write"))
         if old_valid != can_write:
             self.validity_changed.emit(can_write)
 

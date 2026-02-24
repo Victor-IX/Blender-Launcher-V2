@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Generic
 
+from i18n import t
 from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import Qt, QTimer, Signal
@@ -76,8 +77,8 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.PlaceholderLayout.addStretch()
         self.PlaceholderLayout.addLayout(self.InfoLayout)
 
-        self.EmptyReloadButton = QPushButton("Reload" * show_reload)
-        self.EmptyReloadButton.setToolTip("Reload Custom builds from disk")
+        self.EmptyReloadButton = QPushButton(t("act.reload") * show_reload)
+        self.EmptyReloadButton.setToolTip(t("act.reload_tooltip"))
         self.EmptyReloadButton.clicked.connect(parent.reload_custom_builds)
         self.EmptyReloadButton.hide()
 
@@ -97,8 +98,8 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.HeaderLayout.setContentsMargins(2, 0, 0, 0)
         self.HeaderLayout.setSpacing(0)
 
-        self.HeaderReloadButton = QPushButton("Reload" * show_reload)
-        self.HeaderReloadButton.setToolTip("Reload Custom builds from disk")
+        self.HeaderReloadButton = QPushButton(t("act.reload") * show_reload)
+        self.HeaderReloadButton.setToolTip(t("act.reload_tooltip"))
         self.HeaderReloadButton.setProperty("ListHeader", True)
         self.HeaderReloadButton.clicked.connect(parent.reload_custom_builds)
         self.HeaderReloadButton.setFixedWidth(95)  # Match launchButton width in list items
@@ -186,7 +187,7 @@ class BasePageWidget(QWidget, Generic[_WT]):
     def update_reload(self, query: VersionSearchQuery):
         visible = query.folder in SHOW_RELOAD_ON
         self.EmptyReloadButton.setVisible(visible)
-        self.HeaderReloadButton.setText("Reload" * visible)
+        self.HeaderReloadButton.setText(t("act.reload") * visible)
         self.HeaderReloadButton.setEnabled(visible)
 
     def _on_splitter_moved(self, pos, index):

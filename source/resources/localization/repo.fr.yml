@@ -1,0 +1,24 @@
+stable_tooltip: Builds prêts pour la production.
+daily_tooltip: Builds créés chaque jour. Ils contiennent les dernières fonctionnalités et corrections de bugs, mais peuvent être instables.
+experimental_tooltip: Ceux-ci contiennent de nouvelles fonctionnalités qui pourraient être intégrées dans les versions officielles de Blender. Ils peuvent être très instables.
+upbge_tooltip: Builds stables UPBGE - fork de Blender pour le développement de jeux.
+upbge_weekly_tooltip: Builds hebdomadaires UPBGE avec les dernières fonctionnalités.
+
+
+visibility_tooltip: |
+  Rendre ce dépôt visible / masqué dans la vue du lanceur.
+  Si désactivé, la récupération sera automatiquement désactivée,
+  sauf si un autre dépôt partage le même comportement de récupération.
+
+download_tooltip: |
+  Activer / Désactiver la récupération de ce dépôt.
+  Si vous forcez la vérification en maintenant MAJ tout en appuyant sur le bouton « Vérifier »,
+  alors toutes les catégories visibles seront téléchargées indépendamment des paramètres de récupération.
+
+no_builds: Aucun build de ce type n'a été trouvé !
+
+upload_time: Date de téléversement
+commit_time: Date du commit
+
+no_new_builds: Aucun nouveau build disponible
+nothing: Rien à afficher pour le moment

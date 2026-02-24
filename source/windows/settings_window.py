@@ -1,7 +1,9 @@
+from i18n import t
 from modules.settings import (
     get_check_for_new_builds_automatically,
     get_dpi_scale_factor,
     get_enable_quick_launch_key_seq,
+    get_language,
     get_new_builds_check_frequency,
     get_proxy_host,
     get_proxy_password,
@@ -20,7 +22,7 @@ from widgets.header import WindowHeader
 from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget
 from windows.base_window import BaseWindow
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 
 class SettingsWindow(BaseWindow):
@@ -55,6 +57,7 @@ class SettingsWindow(BaseWindow):
 
         self.old_dpi_scale_factor = get_dpi_scale_factor()
         self.old_thread_count = get_worker_thread_count()
+        self.old_language = get_language()
 
         # Header layout
         self.header = WindowHeader(self, "Settings", use_minimize=False)
@@ -147,7 +150,7 @@ class SettingsWindow(BaseWindow):
         # Restart app if any of the connection settings changed
         if self.old_use_custom_tls_certificates != use_custom_tls_certificates:
             pending_to_restart.append(
-                "Use Custom TLS Certificates: "
+                t("settings.connection.use_custom_tls_certificates")
                 + checkdct[self.old_use_custom_tls_certificates]
                 + "🠆"
                 + checkdct[use_custom_tls_certificates]
@@ -156,22 +159,24 @@ class SettingsWindow(BaseWindow):
         if self.old_proxy_type != proxy_type:
             r_proxy_types = dict(zip(proxy_types.values(), proxy_types.keys(), strict=True))
 
-            pending_to_restart.append(f"Proxy Type: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}")
+            pending_to_restart.append(
+                f"{t('settings.connection.proxy_type')}: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}"
+            )
 
         if self.old_proxy_host != proxy_host:
-            pending_to_restart.append(f"Proxy Host: {self.old_proxy_host}🠆{proxy_host}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_host')}: {self.old_proxy_host}🠆{proxy_host}")
 
         if self.old_proxy_port != proxy_port:
-            pending_to_restart.append(f"Proxy Port: {self.old_proxy_port}🠆{proxy_port}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_port')}: {self.old_proxy_port}🠆{proxy_port}")
 
         if self.old_proxy_user != proxy_user:
-            pending_to_restart.append(f"Proxy User: {self.old_proxy_user}🠆{proxy_user}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_user')}: {self.old_proxy_user}🠆{proxy_user}")
 
         if self.old_proxy_password != proxy_password:
-            pending_to_restart.append("Proxy Password")
+            pending_to_restart.append(t("settings.connection.proxy_password"))
 
         if self.old_user_id != user_id:
-            pending_to_restart.append(f"User ID: {self.old_user_id}🠆{user_id}")
+            pending_to_restart.append(f"{t('settings.connection.user_id')}: {self.old_user_id}🠆{user_id}")
 
         """Update build check frequency"""
         check_for_new_builds_automatically = get_check_for_new_builds_automatically()
@@ -189,30 +194,30 @@ class SettingsWindow(BaseWindow):
 
         if self.old_dpi_scale_factor != dpi_scale_factor:
             pending_to_restart.append(
-                f"DPI Scale Factor: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
+                f"{t('settings.appearance.dpi_scale_factor')}: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
             )
 
         """Update worker thread count"""
         worker_thread_count = get_worker_thread_count()
 
         if self.old_thread_count != worker_thread_count:
-            pending_to_restart.append(f"Worker Threads: {self.old_thread_count}🠆{worker_thread_count}")
+            pending_to_restart.append(f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}")
+
+        """Update language"""
+        language = get_language()
+
+        if self.old_language != language:
+            pending_to_restart.append(f"{t('settings.general.app.language')}: {self.old_language}🠆{language}")
 
         return pending_to_restart
 
     def show_dlg_restart_bl(self, pending: list[str]):
-        pending_to_restart = ""
+        pending_to_restart = "".join(f"\n- {s}" for s in pending)
 
-        for s in pending:
-            pending_to_restart += "<br>- " + s
-
-        self.dlg = PopupWindow(
+        self.dlg = Popup.warning(
             parent=self.launcher,
-            title="Warning",
-            message=f"Restart Blender Launcher in<br> \
-                  order to apply following settings:{pending_to_restart}",
-            buttons=["Restart Now", "Ignore"],
-            icon=PopupIcon.WARNING,
+            message=t("msg.popup.apply_the_following", pending=pending_to_restart),
+            buttons=[Popup.Button.RESTART_NOW, Popup.Button.LATER],
         )
         self.dlg.accepted.connect(self.restart_app)
         self.dlg.cancelled.connect(self.attempt_close)

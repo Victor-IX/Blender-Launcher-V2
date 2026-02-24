@@ -1,0 +1,93 @@
+title: Blender Launcher First-Time Setup
+
+welcome:
+  title: Welcome to Blender Launcher %{v}
+  text: |
+    In this First-Time Setup, we will walk through the most common settings you will likely want to configure.
+    you only have to do this once and never again.
+    All of these settings can be changed in the future.
+
+library:
+  title: Blender Launcher library Location
+  subtitle: Make sure that this folder has enough storage to download and store all the builds you want.
+
+  move_exe: Move exe to library
+  move_exe_tooltip: Moves the program's exe to the specified location. Once first-time-setup is complete, you'll have to refer to this location in subsequent runs.
+
+  perm_warning:
+    Windows: "Warning: Do not use C:/Program Files/... as your library location or anywhere else you may not have permissions"
+    Linux: "Warning: Do not use /bin as your library location or anywhere else you may not have permissions"
+
+  location: "Library location:"
+
+  path_warning: The program's exe is outside of %{home}, it may lack the permissions needed to move the executable to the library!
+
+repo_select:
+  title: Blender repositories visibility
+  subtitle: Enable/disable certain builds of blender to be visible/scraped.
+
+shortcuts:
+  title: Shortcuts and file association
+  subtitle: Create Blender Launcher shortcuts and register file associations to open .blend files directly with Blender Launcher
+
+  start_menu: Add to Start Menu
+  desktop: Add to Desktop
+
+file_association:
+  name: Register for file associations
+  Linux: |
+    In order to launch blendfiles with Blender Launcher on Linux, we will generate a .desktop file at the requested location. \
+    It contains mimetype data which tells the desktop environment (DE) what files the program expects to handle, and as a side effect the program is also visible in application launchers.
+
+    Our default location is typically searched by DEs for application entries.
+  Windows: |
+    In order to launch blendfiles with Blender Launcher on Windows, we will update the registry to relate the launcher to the .blend extension. \
+    To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
+
+    Hover over this text to see which registry keys will be changed and for what reason.
+  win_reg_key: |
+    The Following keys will be changed:
+    CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
+    UPDATE Software\Classes\.blend\OpenWithProgids -- To add the launcher to the .blend "Open With..." list
+    CREATE Software\Classes\blenderlauncherv2.blend\DefaultIcon -- To set the icon when Blender Launcher is the default application
+    These will be deleted/downgraded when you unregister the launcher
+
+appearance:
+  title: Blender Launcher appearance
+  subtitle: Configure how Blender Launcher Looks
+
+
+  titlebar: Use System Titlebar
+  titlebar_label: This disables the custom title bar and uses the OS's default titlebar.
+  titlebar_label_linux: |
+    This disables the custom title bar and uses the OS's default titlebar.
+
+    In Linux Wayland environments, this is recommended because you will be
+    able to use the title for moving and resizing the windows.
+    Our main method of moving and resizing works best on X11.
+
+  dpi_scaling: |
+    This changes the DPI factor of the program.
+    automatically scales the user interface based on the monitor's pixel density, multiplied by this value.
+    Helps when things are too small to read on screens like MacOS
+
+background:
+  title: Running Blender Launcher in the background
+  subtitle: Blender Launcher can be kept alive in the background with a system tray icon. This can be useful for reading efficiency and other features, but it is not totally necessary.
+  show_tray_icon: Run Blender Launcher in the background (Minimise to tray)
+
+committing:
+  title: Committing settings changes...
+  subtitle: This should take less than a second.
+
+  finished_page: Finished page "%{page}"
+
+error:
+  title: An Error occurred during setup!
+  continue: Continue anyways?
+
+
+  occurred: |
+    %{finished_pages}
+    ERR OCCURRED DURING PAGE %{page}!
+    %{exc}

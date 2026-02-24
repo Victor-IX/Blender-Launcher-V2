@@ -1,0 +1,156 @@
+success: Success
+info: Info
+setup: Setup
+warning: Warning
+error: Error
+
+err:
+  no_hash: "Unable to copy build hash: hash not available for this build."
+
+  rename_branch: "Unable to rename branch: branch name cannot be empty."
+  no_base_config: Unable to determine configuration folder path.
+  no_config_version: No config folder found for this version.
+  folder_invalid: |
+    Selected folder is not a valid folder or
+    it doesn't have write permissions!
+  library_no_write: Selected folder doesn't have write permissions!
+  argparse: |
+    An error occurred during parsing arguments:
+    %{args}
+    %{err}
+
+  generic: |
+    An error has occurred: %{err}
+    See the logs for more details.
+
+  cant_write: The requested location has no write permissions!
+  damaged: Build %{build} is damaged!
+  port:
+    no_build_dir: The new build directory can't be found.
+    no_settings: No portable settings found to transfer.
+
+  no_resources: |
+    Resources failed to load! The launcher will still work,
+    but the style will be broken.
+
+  connection_failed: "Error: connection failed at %{time}"
+
+updates:
+  download_before_update: |
+    In order to update Blender Launcher
+    complete all active downloads!
+
+  new_version_available: |
+    New version %{version} available!
+
+    %{patch_notes}
+
+  no_release_notes: No release notes available.
+
+  update_to_version: Update to version %{version}
+
+  new_builds: New builds of blender are available!
+
+popup:
+  dest: Choose destination
+  select: Select Folder
+  select_library: Select Library Folder
+  first_time_select_library: |
+    Choose where Blender
+    builds will be stored
+
+  blver_mismatch: |
+    An attempt to launch a different version
+    of Blender Launcher was detected!
+    Please, terminate the currently running
+    version to proceed with this action!
+    Currently running: %{running}
+    Given version: %{given}
+
+  tasks_in_progress: |
+    Some tasks are still in progress!
+    %{tasks}
+    Are you sure you want to quit?
+
+  apply_the_following: |
+    Restart Blender Launcher in
+    order to apply the following settings:
+    %{pending}
+
+  relative_path_found: |
+    The selected path is relative to the executable's path.
+    Would you like to save it as relative?
+    This is useful if the folder may move.
+
+  global_hotkeys_invalid: |
+    Global hotkey sequence was not recognized!
+    Try to use another combination of keys
+
+  quick_launch_tray: |
+    Add build to Quick Launch via
+    context menu to run it from tray
+
+  tray_notify: |
+    Blender Launcher is minimized to the system tray.
+    Disable "Show Tray Icon" in the settings to disable this.
+
+  ask_delete_or_trash: |
+    Do you want to delete, or
+    trash selected builds?
+
+  ask_remove_from_drive:
+    one: |
+      Are you sure you want to
+      delete this build?
+    many: |
+      Are you sure you want to
+      delete %{count} builds?
+
+  ask_send_to_trash:
+    one: |
+      Are you sure you want to
+      send this build to the trash?
+    many: |
+      Are you sure you want to
+      send %{count} builds to the trash?
+
+  major_version_update: |
+    Updating from %{current} to %{update} will use a new set of Blender Preferences
+
+    Do you want to remove the old build (%{current}) from your library?
+
+  update_portable_settings: |
+    This build uses portable settings.
+
+    What would you like to do with the portable settings folder?
+
+  portable_failure: |
+    Failed to transfer portable settings:
+    %{error}
+
+    Do you want to continue with the update or cancel?
+
+  mv_confirm: |
+    Are you sure you want to move
+    %{start}
+    to
+    %{end}?
+
+  mv_overwrite_confirm: |
+    The user settings already exists!
+    Are you sure you want to move
+    %{start}
+    to
+    %{end}?
+
+  purge:
+    success: Temp folder has been purged successfully!
+    error: Failed to purge temp folder. Some files may be in use.
+
+  winget:
+    register:
+      success: Successfully registered with WinGet!<br>You can now update via 'winget update VictorIX.BlenderLauncher
+      error: Failed to register with WinGet. Check logs for details.
+    unregister:
+      success: Successfully unregister from WinGet.
+      error: Failed to unregister from WinGet. Check logs for details.

@@ -5,6 +5,7 @@ import json
 import logging
 from pathlib import Path
 
+from i18n import t
 from items.enablable_list_widget_item import EnablableListWidgetItem
 from modules.blendfile_reader import BlendfileHeader, read_blendfile_header
 from modules.build_info import BuildInfo, LaunchOpenLast, LaunchWithBlendFile, launch_build
@@ -70,11 +71,11 @@ class LaunchingWindow(BaseWindow):
         self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.cancelled = False
 
-        self.launch_button = QPushButton("Launch", parent=self)
+        self.launch_button = QPushButton(t("act.launch"), parent=self)
         self.launch_button.setProperty("LaunchButton", True)
         self.launch_button.clicked.connect(self.launch_from_button)
 
-        self.cancel_button = QPushButton("Cancel", parent=self)
+        self.cancel_button = QPushButton(t("act.cancel"), parent=self)
         self.cancel_button.setProperty("CancelButton", True)
         self.cancel_button.clicked.connect(self.close_)
 
@@ -84,38 +85,29 @@ class LaunchingWindow(BaseWindow):
         self.central_layout.setContentsMargins(10, 10, 10, 10)
         self.setCentralWidget(widget)
 
-        self.status_label = QLabel("Reading builds...", parent=self)
+        self.status_label = QLabel(t("launching.status.reading"), parent=self)
 
         file_icon = self.icons.bl_file
         pixmap = file_icon.pixmap(16, 16)
 
         self.help_label = QLabel(parent=self)
         self.help_label.setPixmap(pixmap)
-        self.help_label.setToolTip(
-            "<br>".join(
-                [
-                    "The version query",
-                    "can be modified to use ^ and - to search for specific builds depending on age.",
-                    "Examples of valid version queries:",
-                    *VALID_QUERIES.splitlines(),
-                ]
-            )
-        )
+        self.help_label.setToolTip("<br>".join([t("launching.help"), *VALID_QUERIES.splitlines()]))
         ## Version settings
         self.version_query_edit = LintableLineEdit(self)
         self.version_query_edit.editingFinished.connect(self.update_query_from_edits)
         self.version_query_edit.textChanged.connect(self.cancel_timer)
-        self.version_query_edit.setPlaceholderText("Any (*.*.*)")
+        self.version_query_edit.setPlaceholderText(t("launching.any_v_placeholder"))
         self.branch_edit = LintableLineEdit(self)
         self.branch_edit.editingFinished.connect(self.update_query_from_edits)
         self.branch_edit.textChanged.connect(self.cancel_timer)
-        self.branch_edit.setPlaceholderText("Any (*)")
+        self.branch_edit.setPlaceholderText(t("launching.chrono.any"))
         self.build_hash_edit = LintableLineEdit(self)
         self.build_hash_edit.editingFinished.connect(self.update_query_from_edits)
         self.build_hash_edit.textChanged.connect(self.cancel_timer)
         self.build_hash_edit.setPlaceholderText("Any (*)")
         self.date_range_combo = QComboBox(self)
-        self.date_range_combo.addItems(["Latest (^)", "Any (*)", "Oldest (-)"])
+        self.date_range_combo.addItems([t(f"launching.chrono.{x}") for x in ["latest", "any", "oldest"]])
         self.date_range_combo.setCurrentIndex(0)
         self.date_range_combo.currentIndexChanged.connect(self.update_query_from_edits)
         self.date_range_combo.currentIndexChanged.connect(self.cancel_timer)
@@ -138,13 +130,13 @@ class LaunchingWindow(BaseWindow):
 
         self.central_layout.addWidget(self.status_label, 0, 1, 1, 2)
         self.central_layout.addWidget(self.help_label, 0, 0, 1, 1)
-        self.central_layout.addWidget(QLabel("Version selection: ", parent=self), 1, 0, 1, 1)
+        self.central_layout.addWidget(QLabel(t("launching.version"), parent=self), 1, 0, 1, 1)
         self.central_layout.addWidget(self.version_query_edit, 1, 1, 1, 2)
-        self.central_layout.addWidget(QLabel("Branch: ", parent=self), 2, 0, 1, 1)
+        self.central_layout.addWidget(QLabel(t("launching.branch"), parent=self), 2, 0, 1, 1)
         self.central_layout.addWidget(self.branch_edit, 2, 1, 1, 2)
-        self.central_layout.addWidget(QLabel("Build hash: ", parent=self), 3, 0, 1, 1)
+        self.central_layout.addWidget(QLabel(t("launching.bhash"), parent=self), 3, 0, 1, 1)
         self.central_layout.addWidget(self.build_hash_edit, 3, 1, 1, 2)
-        self.central_layout.addWidget(QLabel("Date selection: ", parent=self), 4, 0, 1, 1)
+        self.central_layout.addWidget(QLabel(t("launching.date"), parent=self), 4, 0, 1, 1)
         self.central_layout.addWidget(self.date_range_combo, 4, 1, 1, 2)
         self.central_layout.addWidget(self.error_preview, 5, 0, 1, 3)
         self.central_layout.addWidget(self.builds_list, 6, 0, 1, 3)
@@ -333,7 +325,7 @@ class LaunchingWindow(BaseWindow):
 
     @Slot()
     def search_finished(self):
-        self.status_label.setText(f"Found {len(self.builds)} builds")
+        self.status_label.setText(t("launching.status.found", count=len(self.builds)))
 
         self.repad_list()
 
@@ -355,10 +347,10 @@ class LaunchingWindow(BaseWindow):
             if header is None:
                 raise
             self.saved_header = header
-            self.status_label.setText(f"Detected header version: {header.version}")
+            self.status_label.setText(t("launching.status.header", version=header.version))
             if self.save_current_query_button is not None:
                 self.save_current_query_button.setText(
-                    f"Save current search for .blend files made in {header.version.major}.{header.version.minor}"
+                    t("launching.save_current", short_v=f"{header.version.major}.{header.version.minor}")
                 )
                 self.save_current_query_button.show()
 
@@ -456,7 +448,7 @@ class LaunchingWindow(BaseWindow):
         """Called by the launch timer waiting to start the build."""
         self.remaining_time = self.remaining_time - 1
         if self.remaining_time > 0:
-            self.timer_label.setText(f"Launching in {self.remaining_time}s")
+            self.timer_label.setText(t("launching.timer", time=self.remaining_time))
             self.launch_timer.start()
         else:
             self.actually_launch(self.target_build)

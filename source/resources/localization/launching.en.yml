@@ -1,0 +1,25 @@
+status:
+  reading: Reading builds...
+  found: Found %{count} builds
+  header: "Detected header version: %{version}"
+
+
+help: |
+  The version query can be modified to use ^ and - to search for specific builds depending on age.
+  Examples of valid version queries:
+
+any_v_placeholder: Any (*.*.*)
+
+chrono:
+  latest: Latest (^)
+  any: Any (*)
+  oldest: Oldest(-)
+
+version: "Version selection: "
+branch: "Branch: "
+bhash: "Build hash: "
+date: "Date selection: "
+
+save_current: Save current search for .blend files made in %{short_v}
+
+timer: Launching in %{time}s

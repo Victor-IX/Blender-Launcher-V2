@@ -21,6 +21,7 @@ dependencies = [
     "markdown>=3.7",
     "keyring>=25.7.0",
     "py7zr>=0.22.0",
+    "python-i18n[yaml]>=0.3.9",
 ]
 requires-python = "<3.15,>=3.11"
 readme = "README.md"

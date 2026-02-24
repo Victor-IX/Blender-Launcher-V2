@@ -1,0 +1,14 @@
+title: Créateur d'entrée de build
+
+text: "Créer un nouveau build pour : %{path}"
+
+exe: "Nom de l'exécutable : "
+
+autodetect: Détection automatique des informations
+
+svn: "Subversion : "
+hash: "Hash du build : "
+ctime: "Date du commit : "
+branch: "Nom de la branche : "
+custom: "Nom personnalisé : "
+fav: "Favori : "

@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.build_info import BuildInfo
 from modules.settings import get_library_folder
 from PySide6.QtCore import Qt, Slot
@@ -11,7 +12,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.left_icon_button_widget import LeftIconButtonWidget
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from items.base_list_widget_item import BaseListWidgetItem
@@ -52,9 +53,9 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.outer_layout.addWidget(self.layout_widget)
         self.setLayout(self.outer_layout)
 
-        self.infoLabel = QLabel(f"Build *{self.link.name}* is damaged!")
+        self.infoLabel = QLabel(t("msg.err.damaged", build=self.link.name))
         self.infoLabel.setWordWrap(True)
-        self.launchButton = LeftIconButtonWidget("Delete", parent=self)
+        self.launchButton = LeftIconButtonWidget(t("act.delete"), parent=self)
         self.launchButton.setFixedWidth(95)
         self.launchButton.setProperty("CancelButton", True)
         self.launchButton.clicked.connect(self.ask_remove_from_drive)
@@ -65,20 +66,18 @@ class LibraryDamagedWidget(BaseBuildWidget):
     @Slot()
     def ask_remove_from_drive(self):
         self.item.setSelected(True)
-        self.dlg = PopupWindow(
+        self.dlg = Popup.warning(
+            message=t("msg.popup.ask_delete_or_trash"),
+            buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
             parent=self.parent,
-            title="Warning",
-            message="Do you want to delete, or<br>trash selected builds?",
-            icon=PopupIcon.NONE,
-            buttons=["Delete", "Trash", "Cancel"],
         )
 
         self.dlg.custom_signal.connect(self.removal_response)
 
-    @Slot(str)
-    def removal_response(self, s: str):
-        if s != "Cancel":
-            self.remove_from_drive(trash=(s == "Trash"))
+    @Slot(Popup.Button)
+    def removal_response(self, s: Popup.Button):
+        if s != Popup.Button.CANCEL:
+            self.remove_from_drive(trash=(s == Popup.Button.TRASH))
 
     @Slot()
     def remove_from_drive(self, trash=False):
@@ -87,7 +86,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         a.finished.connect(self.remover_completed)
         self.parent.task_queue.append(a)
 
-        self.launchButton.set_text("Deleting")
+        self.launchButton.set_text(t("act.deleting"))
         self.setEnabled(False)
         self.item.setFlags(self.item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
 

@@ -1,0 +1,108 @@
+# popups
+ok: Ok
+accept: Accept
+cancel: Cancel
+quit: Quit
+hide: Hide
+show: Show
+next: Next
+prev: Previous
+back: Back
+cont: Continue
+finish: Finish
+"yes": "Yes"
+"no": "No"
+retry: Retry
+update: Update
+later: Later
+
+update_library: Update Blender to the latest version
+restart_now: Restart Now
+trash: Trash
+remove: Remove
+delete: Delete
+dont_show_again: Don't Show Again
+migrate: Migrate
+overwrite: Overwrite
+general_folder: Open General Config Folder
+keep_both_versions: Keep Both Versions
+move_to_new: Move to New Version
+remove_settings: Remove Settings
+
+reload: Reload
+reload_tooltip: Reload Custom Builds from disk
+
+# left icon
+launch: Launch
+download: Download
+installed: Installed
+lprev: " Previous"
+updating: Updating
+deleting: Deleting
+init: Initialize
+
+prog:
+  downloading: Downloading
+  extracting: Extracting
+  copying: Copying data...
+  progress: "%{title}: %{progress} of %{total} MB"
+
+  reading_local: Reading local builds
+  checking: Checking for new builds
+  last_check: Last check at %{time}
+
+# actions
+a:
+  settings_win: Show Settings Window
+  docs: Open documentation
+
+
+  prev: Open Previous File
+  prev_tooltip: |
+    This action opens the last file used in this Build.
+    (Appends `--open-last` to the execution arguments)
+    SHORTCUT: Shift + Launch or Doubleclick
+  quick_launch: Add to Quick Launch
+  fav:
+    add: Add to Favorites
+    rem: Remove from Favorites
+  update: Update Blender Build
+  update_tooltip: Update this build to the latest version
+  d:
+    d: Debug
+    log: Debug Log
+    factory: Factory Startup
+    gpu: Debug GPU
+    glitch: Debug GPU Glitch Workaround
+  rename: Rename Branch
+
+  register: Register Extension
+  register_tooltip: Use this build for .blend files and to display thumbnails
+  shortcut: Create Shortcut
+  symlink: Create Symlink
+  template: Install Template
+  port:
+    add: Make Portable
+    rem: Unmake Portable
+  hash: Copy Build Hash
+  freeze:
+    add: Freeze update
+    rem: Unfreeze Update
+
+  release_notes: Show Release Notes
+  release_notes_patch: Show Patch Details
+  release_notes_pr: Show PR Details
+  folder_build: Show Build Folders
+  config: Show Config Folder
+  config_portable: Show Portable Config Folder
+
+  edit: Edit Build...
+  delete: Delete From Drive
+  trash: Send to Trash
+
+  check: Check
+  check_tooltip: |
+      Check for new builds online
+      (Hold SHIFT to force check stable and automated builds)
+
+  version_tooltip: The version of Blender Launcher that is currently run. Press to check changelog.

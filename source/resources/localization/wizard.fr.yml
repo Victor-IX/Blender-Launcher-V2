@@ -1,0 +1,92 @@
+title: Configuration initiale de Blender Launcher
+
+welcome:
+  title: Bienvenue dans Blender Launcher %{v}
+  text: |
+    Lors de cette configuration initiale, nous allons passer en revue les paramètres les plus courants que vous souhaiterez probablement configurer.
+    Vous n'avez à le faire qu'une seule fois.
+    Tous ces paramètres peuvent être modifiés ultérieurement.
+
+library:
+  title: Emplacement de la bibliothèque Blender Launcher
+  subtitle: Assurez-vous que ce dossier dispose d'un espace de stockage suffisant pour télécharger et stocker toutes les versions que vous souhaitez.
+
+  move_exe: Déplacer l'exécutable vers la bibliothèque
+  move_exe_tooltip: Déplace l'exécutable du programme vers l'emplacement spécifié. Une fois la configuration initiale terminée, vous devrez vous référer à cet emplacement lors des exécutions ultérieures.
+
+  perm_warning:
+    Windows: "Avertissement : N'utilisez pas C:/Program Files/... comme emplacement de bibliothèque ou tout autre endroit où vous pourriez ne pas avoir de permissions."
+    Linux: "Avertissement : N'utilisez pas /bin comme emplacement de bibliothèque ou tout autre endroit où vous pourriez ne pas avoir de permissions."
+
+  location: "Emplacement de la bibliothèque :"
+
+  path_warning: L'exécutable du programme est en dehors de %{home}, il pourrait ne pas avoir les permissions nécessaires pour déplacer l'exécutable vers la bibliothèque !
+
+repo_select:
+  title: Visibilité des dépôts Blender
+  subtitle: Activer/désactiver la visibilité ou la récupération de certaines versions de Blender.
+
+shortcuts:
+  title: Raccourcis et association de fichiers
+  subtitle: Créer des raccourcis pour Blender Launcher et enregistrer les associations de fichiers pour ouvrir les fichiers .blend directement avec Blender Launcher
+
+  start_menu: Ajouter au menu Démarrer
+  desktop: Ajouter au bureau
+
+file_association:
+  name: S'enregistrer pour l'association de fichiers
+  Linux: |
+    Pour lancer des fichiers .blend avec Blender Launcher sous Linux, nous allons générer un fichier .desktop à l'emplacement demandé. \
+    Il contient des données de type MIME qui indiquent à l'environnement de bureau quels fichiers le programme peut gérer, et le programme sera également visible dans les lanceurs d'applications.
+
+    Notre emplacement par défaut est généralement recherché par les environnements de bureau pour les entrées d'applications.
+  Windows: |
+    Pour lancer des fichiers .blend avec Blender Launcher sous Windows, nous allons mettre à jour le registre pour associer le lanceur à l'extension .blend. \
+    Pour annuler cette opération après l'installation, un panneau dédié se trouve dans l'onglet Général des paramètres. Vous y trouverez un bouton pour désenregistrer le lanceur.
+
+    Survolez ce texte pour voir quelles clés de registre seront modifiées et pour quelle raison.
+  win_reg_key: |
+    Les clés suivantes seront modifiées :
+    CRÉER Software\Classes\blenderlauncherv2.blend\shell\open\command -- Pour exposer le lanceur comme classe logicielle
+    METTRE À JOUR Software\Classes\.blend\OpenWithProgids -- Pour ajouter le lanceur à la liste « Ouvrir avec... » des fichiers .blend
+    CRÉER Software\Classes\blenderlauncherv2.blend\DefaultIcon -- Pour définir l'icône lorsque Blender Launcher est l'application par défaut
+    Celles-ci seront supprimées/rétrogradées lorsque vous désenregistrerez le lanceur
+
+appearance:
+  title: Apparence de Blender Launcher
+  subtitle: Configurer l'apparence de Blender Launcher
+
+
+  titlebar: Utiliser la barre de titre système
+  titlebar_label: Ceci désactive la barre de titre personnalisée et utilise la barre de titre par défaut du système d'exploitation.
+  titlebar_label_linux: |
+    Ceci désactive la barre de titre personnalisée et utilise la barre de titre par défaut du système d'exploitation.
+
+    Dans les environnements Linux Wayland, ceci est recommandé car vous pourrez utiliser le titre pour déplacer et redimensionner les fenêtres.
+    Notre méthode principale de déplacement et de redimensionnement fonctionne mieux sur X11.
+
+  dpi_scaling: |
+    Ceci modifie le facteur DPI du programme.
+    Il met automatiquement à l'échelle l'interface utilisateur en fonction de la densité de pixels du moniteur, multipliée par cette valeur.
+    Utile lorsque les éléments sont trop petits pour être lus sur des écrans comme MacOS
+
+background:
+  title: Exécution de Blender Launcher en arrière-plan
+  subtitle: Blender Launcher peut être maintenu actif en arrière-plan avec une icône dans la zone de notification. Cela peut être utile pour l'efficacité de lecture et d'autres fonctionnalités, mais ce n'est pas totalement nécessaire.
+  show_tray_icon: Exécuter Blender Launcher en arrière-plan (Réduire dans la zone de notification)
+
+committing:
+  title: Enregistrement des modifications des paramètres...
+  subtitle: Cela devrait prendre moins d'une seconde.
+
+  finished_page: Page "%{page}" terminée
+
+error:
+  title: Une erreur s'est produite lors de la configuration !
+  continue: Continuer quand même ?
+
+
+  occurred: |
+    %{finished_pages}
+    ERREUR SURVENUE LORS DE LA PAGE %{page} !
+    %{exc}

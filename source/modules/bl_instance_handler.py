@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
-    from windows.main_window import BlenderLauncher
+    from semver import Version
+    from windows.base_window import BaseWindow
 
 
 class BLInstanceHandler(QObject):
@@ -20,9 +22,10 @@ class BLInstanceHandler(QObject):
 
     show_launcher = Signal()
 
-    def __init__(self, launcher: BlenderLauncher):
-        super().__init__(launcher)
-        self.launcher = launcher
+    def __init__(self, version: Version, window: BaseWindow):
+        super().__init__(window)
+        self.window = window
+        self.version = version
         self.server = QLocalServer(self)
         self.server.listen("blender-launcher-server")
         self.server.newConnection.connect(self.new_connection)
@@ -38,14 +41,13 @@ class BLInstanceHandler(QObject):
         d = qbytearr.data()
         if isinstance(d, memoryview):
             d = d.tobytes()
-        if str(d, encoding="ascii") != str(self.launcher.version):
-            self.dlg = PopupWindow(
-                parent=self.launcher,
-                title="Warning",
-                message="An attempt to launch a different version<br>\
-                      of Blender Launcher was detected!<br>\
-                      Please, terminate currently running<br>\
-                      version to proceed this action!",
-                info_popup=True,
-                icon=PopupIcon.WARNING,
+        if (given := str(d, encoding="ascii")) != str(self.version):
+            self.dlg = Popup.warning(
+                message=t(
+                    "msg.popup.blver_mismatch",
+                    running=str(self.version),
+                    given=given,
+                ),
+                buttons=Popup.Button.info(),
+                parent=self.window
             )

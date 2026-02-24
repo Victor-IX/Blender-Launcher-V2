@@ -1,0 +1,306 @@
+
+
+general:
+  app:
+    label: Application
+    library_folder: "Dossier de la bibliothèque :"
+
+    system_start: Lancer au démarrage du système
+    system_start_tooltip: |
+      Démarrer l'application au démarrage du système.
+      PAR DÉFAUT : Désactivé
+    launch_minimized: Lancer réduit dans la zone de notification
+    launch_minimized_tooltip: |
+      Démarrer l'application réduite dans la zone de notification.
+      PAR DÉFAUT : Désactivé
+    minimize: Réduire dans la zone de notification
+    minimize_tooltip: |
+      La fermeture de l'application la réduira dans la zone de notification au lieu de la fermer complètement
+      PAR DÉFAUT : Désactivé
+    worker_count: Nombre de threads de travail
+    worker_count_tooltip: |
+      Détermine le nombre d'opérations d'E/S pouvant être effectuées simultanément, ex. Téléchargement, Suppression, Extraction
+      PAR DÉFAUT : <nombre de cœurs> * (3/4)
+    worker_count_warning: "(Attention : valeur supérieure à {cnt} (nombre de cœurs) !!)"
+    prerelease: Utiliser les versions préliminaires
+    prerelease_tooltip: |
+      Lors de la vérification d'une nouvelle version de Blender Launcher, vérifier les versions préliminaires.
+      AVERTISSEMENT : Ces builds sont susceptibles de contenir des bugs ! Ils sont principalement utilisés pour tester de nouvelles fonctionnalités.
+      PAR DÉFAUT : Désactivé
+
+    create_shortcut: Créer un %{shortcut_type} Blender Launcher
+    shortcut_type:
+      windows: Raccourci
+      linux: Fichier Desktop
+      macos: Raccourci
+  migratel2u: Migrer les paramètres locaux vers les paramètres utilisateur
+
+  file_assoc:
+    label: Association de fichiers
+
+    register: Enregistrer l'association de fichiers
+    register_tooltip: |
+      Ajouter Blender Launcher à la liste des programmes pouvant ouvrir les fichiers .blend
+
+    unregister: Désenregistrer l'association de fichiers
+    unregister_tooltip: |
+      Retirer Blender Launcher de la liste des programmes pouvant ouvrir les fichiers .blend
+
+    launch_timer_duration: Durée du minuteur de lancement (sec)
+    launch_timer_duration_tooltip: |
+      Détermine le temps dont vous disposez lors de l'ouverture de fichiers .blend pour changer le build que vous lancez
+      PAR DÉFAUT : 3s
+    launch_timer_suffix:
+      "-1": " (Désactivé)"
+      "0": "s (Immédiat)"
+      more: "s"
+
+  winget:
+    label: Intégration WinGet
+
+    info: Enregistrer Blender Launcher avec le gestionnaire de paquets WinGet pour permettre les mises à jour automatiques via 'winget update'.
+    register: Enregistrer avec WinGet
+    register_tooltip: |
+      Enregistrer cette installation avec WinGet pour pouvoir la mettre à jour via 'winget update'
+    unregister: Désenregistrer de WinGet
+    unregister_tooltip: |
+      Supprimer l'enregistrement WinGet pour cette installation
+
+  advanced:
+    label: Avancé
+
+    delete_actions:
+      "0": Envoyer à la corbeille
+      "1": Supprimer définitivement
+    default_delete_action: Action de suppression par défaut
+    default_delete_action_tooltip: |
+      Définir l'action par défaut disponible dans le menu contextuel pour supprimer un build
+      L'autre option est disponible en maintenant la touche Maj
+      PAR DÉFAUT : Envoyer à la corbeille
+
+    purge_temp: Purger le dossier temporaire au démarrage
+    purge_temp_tooltip: |
+      Vider automatiquement le dossier de téléchargement temporaire au démarrage de Blender Launcher.
+      PAR DÉFAUT : Activé
+
+    purge_temp_now: Purger le dossier temporaire maintenant
+    purge_temp_now_tooltip: |
+        Vider immédiatement tous les fichiers du dossier de téléchargement temporaire
+
+
+
+appearance:
+  window_related: Fenêtrage
+  use_system_titlebar: Utiliser la barre de titre système
+  use_system_titlebar_tooltip: |
+    Utiliser la barre de titre du système au lieu de la barre personnalisée
+    PAR DÉFAUT : Faux
+  dpi_scale_factor: Facteur d'échelle DPI
+  dpi_scale_factor_overridden: Facteur d'échelle DPI (Remplacé par la variable d'environnement QT_SCALE_FACTOR !)
+  dpi_scale_factor_tooltip: |
+    Modifier le facteur DPI de l'application
+    Mettre à l'échelle l'interface utilisateur pour améliorer la lisibilité et le confort
+    PAR DÉFAUT : 1.0
+  notifications:
+    label: Notifications
+    new_builds: Nouveau build disponible
+    new_builds_tooltip: |
+      Afficher une notification lorsqu'un nouveau build est disponible
+      PAR DÉFAUT : Vrai
+    finished_downloading: Téléchargement terminé
+    finished_downloading_tooltip: |
+      Afficher une notification lorsqu'un téléchargement est terminé
+      PAR DÉFAUT : Vrai
+    errors: Erreurs
+    errors_tooltip: |
+      Afficher une notification lorsqu'une erreur survient
+      PAR DÉFAUT : Vrai
+  tabs:
+    label: Onglets
+    default_tab: Onglet par défaut
+    default_tab_tooltip: |
+      L'onglet par défaut à ouvrir au démarrage de l'application
+      PAR DÉFAUT : Bibliothèque
+    sync_library_and_downloads_pages: Synchroniser les pages Bibliothèque && Téléchargements
+    sync_library_and_downloads_pages_tooltip: |
+      Synchroniser l'onglet Bibliothèque sélectionné avec l'onglet Téléchargements correspondant
+      PAR DÉFAUT : Vrai
+    default_library_page: Page de bibliothèque par défaut
+    default_library_page_tooltip: |
+      La page par défaut à ouvrir dans l'onglet Bibliothèque
+      PAR DÉFAUT : Versions stables
+    default_downloads_page: Page de téléchargements par défaut
+    default_downloads_page_tooltip: |
+      La page par défaut à ouvrir dans l'onglet Téléchargements
+      PAR DÉFAUT : Versions stables
+
+connection:
+  proxy_settings: Proxy
+  use_custom_tls_certificates: Utiliser des certificats TLS personnalisés
+  use_custom_tls_certificates_tooltip: |
+    Utiliser des certificats TLS personnalisés pour la connexion
+    PAR DÉFAUT : Faux
+  proxy_type_tooltip: |
+    Le type de proxy à utiliser pour la connexion
+    PAR DÉFAUT : Aucun
+  proxy_host_tooltip: |
+    L'adresse IP du serveur proxy
+    PAR DÉFAUT : 255.255.255.255
+  proxy_port_tooltip: |
+    Le numéro de port du serveur proxy
+    PAR DÉFAUT : 9999
+  proxy_user_tooltip: Le nom d'utilisateur pour s'authentifier auprès du serveur proxy
+  proxy_password_tooltip: Le mot de passe pour s'authentifier auprès du serveur proxy
+  authentication_settings: Authentification de connexion
+  user_id: Identifiant utilisateur
+  user_id_tooltip: |
+    L'identifiant utilisateur pour s'authentifier auprès du site Blender
+    PAR DÉFAUT : UUID aléatoire
+    FORMAT : 8-64 caractères (a-z, A-Z, 0-9, -)
+  github_token: Jeton GitHub
+  github_token_tooltip: |
+    Optionnel : Jeton d'accès personnel GitHub pour éviter la limitation de débit
+    Utile si vous effectuez de nombreuses requêtes vers l'API GitHub
+    Laissez vide si non nécessaire
+  github_token_info_button_tooltip: Cliquez pour la documentation sur les jetons GitHub
+  proxy_type: Type
+  proxy_ip: IP
+  proxy_host: Hôte
+  proxy_port: Port
+  proxy_user: Utilisateur proxy
+  proxy_password: Mot de passe
+
+  keyring_unavailable_title: Trousseau de clés indisponible
+  keyring_unavailable_message: |
+    Échec du stockage du jeton GitHub dans le trousseau de clés sécurisé du système.
+
+    Le jeton a été enregistré dans votre fichier de paramètres à la place.
+    Ceci est moins sécurisé que le stockage dans le trousseau de clés.
+
+    Envisagez d'installer le support du trousseau de clés pour votre système.
+
+blender_builds:
+  visibility_and_downloading: Visibilité et téléchargement
+  checking_for_builds: Vérification des builds
+  minimum_stable_blender_version_tooltip: |
+    Version stable minimale de Blender à récupérer
+    PAR DÉFAUT : 3.2
+  check_automatically: Vérifier automatiquement
+  check_automatically_tooltip: |
+    Vérifier automatiquement les nouveaux builds de Blender
+    PAR DÉFAUT : Désactivé
+  new_builds_check_frequency_tooltip: |
+    Intervalle en heures entre les vérifications de nouveaux builds de Blender
+    PAR DÉFAUT : 12h
+    MINIMUM : 6h
+  interval_prefix: "Intervalle : "
+  interval_suffix: h
+  on_startup: Au démarrage
+  on_startup_tooltip: |
+    Vérifier les nouveaux builds de Blender au démarrage de Blender Launcher
+    PAR DÉFAUT : Activé
+  show_daily_archive_builds: Afficher les builds quotidiens archivés
+  show_daily_archive_builds_tooltip: |
+    Afficher les builds quotidiens archivés
+    PAR DÉFAUT : Désactivé
+  show_experimental_archive_builds: Afficher les builds expérimentaux archivés
+  show_experimental_archive_builds_tooltip: |
+    Afficher les builds expérimentaux archivés
+    PAR DÉFAUT : Désactivé
+  show_patch_archive_builds: Afficher les builds de correctifs archivés
+  show_patch_archive_builds_tooltip: |
+    Afficher les builds de correctifs archivés
+    PAR DÉFAUT : Désactivé
+  minimum_stable_build_to_scrape: Build stable minimal à récupérer
+  downloading_and_saving_builds: Téléchargement et sauvegarde des builds
+  show_update_button: Afficher le bouton de mise à jour
+  update_behavior_tooltip: |
+    Définir le comportement de mise à jour
+    PAR DÉFAUT : Correctif
+  use_advanced_update_button: Utiliser le bouton de mise à jour avancé
+  use_advanced_update_button_tooltip: |
+    Activer les paramètres de mise à jour avancés pour personnaliser le comportement de mise à jour de chaque branche Blender
+    PAR DÉFAUT : Désactivé
+  show_update_button_tooltip_normal: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds de Blender
+    PAR DÉFAUT : Activé
+  show_update_button_tooltip_disabled: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds de Blender
+    Cette option est désactivée car le bouton de mise à jour avancé est activé
+    Désactivez « Utiliser le bouton de mise à jour avancé » pour utiliser cette option
+    PAR DÉFAUT : Activé
+  show_stable_update_button: Afficher le bouton de mise à jour stable
+  show_stable_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds stables
+    PAR DÉFAUT : Activé
+  update_stable_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds stables
+    PAR DÉFAUT : Correctif
+  show_daily_update_button: Afficher le bouton de mise à jour quotidien
+  show_daily_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds quotidiens
+    PAR DÉFAUT : Activé
+  update_daily_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds quotidiens
+    PAR DÉFAUT : Correctif
+  show_experimental_update_button: Afficher la mise à jour expérimentale
+  show_experimental_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds expérimentaux
+    PAR DÉFAUT : Activé
+  update_experimental_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds expérimentaux
+    PAR DÉFAUT : Correctif
+  show_bfa_update_button: Afficher le bouton de mise à jour BFA
+  show_bfa_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds BFA
+    PAR DÉFAUT : Activé
+  update_bfa_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds BFA
+    PAR DÉFAUT : Correctif
+  show_upbge_stable_update_button: Afficher le bouton de mise à jour UPBGE stable
+  show_upbge_stable_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds UPBGE stables
+    PAR DÉFAUT : Activé
+  update_upbge_stable_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds UPBGE stables
+    PAR DÉFAUT : Mineur
+  show_upbge_weekly_update_button: Afficher le bouton de mise à jour UPBGE hebdomadaire
+  show_upbge_weekly_update_button_tooltip: |
+    Afficher le bouton de mise à jour pour mettre rapidement à jour les builds UPBGE hebdomadaires
+    PAR DÉFAUT : Activé
+  update_upbge_weekly_behavior_tooltip: |
+    Définir le comportement de mise à jour pour les builds UPBGE hebdomadaires
+    PAR DÉFAUT : Mineur
+  mark_as_favorite: Marquer comme favori
+  mark_as_favorite_tooltip: |
+    Marquer un onglet comme favori pour y accéder rapidement
+    PAR DÉFAUT : Désactivé
+  select_favorite_tab_tooltip: |
+    Sélectionner un onglet à marquer comme favori
+    PAR DÉFAUT : Versions stables
+  install_template: Installer un modèle
+  install_template_tooltip: |
+    Installe un modèle sur les builds nouvellement ajoutés à l'onglet Bibliothèque
+    PAR DÉFAUT : Désactivé
+  launching_builds: Lancement des builds
+  quick_launch_global_shortcut: Raccourci global de lancement rapide
+  quick_launch_global_shortcut_tooltip: |
+    Activer un raccourci global pour lancer rapidement Blender
+    PAR DÉFAUT : Activé
+  quick_launch_key_seq_tooltip: |
+    Raccourci global pour lancer rapidement Blender
+    PAR DÉFAUT : ctrl + f11
+  hide_console_on_startup: Masquer la console au démarrage
+  hide_console_on_startup_tooltip: |
+    Masquer la fenêtre de console lors du lancement de Blender
+    PAR DÉFAUT : Activé
+  blender_startup_arguments_tooltip: |
+    Arguments à passer lors du lancement de Blender (après l'exécutable Blender, c.-à-d. [… <args>])
+    PAR DÉFAUT : Aucun
+    Exemple : --background
+  bash_arguments_tooltip: |
+    Instructions à passer à bash lors du lancement de Blender (avant l'exécutable Blender, c.-à-d. [<args> …])
+    PAR DÉFAUT : Aucun
+    Exemple : env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
+  bash_arguments: "Arguments Bash :"
+  startup_arguments: "Arguments de démarrage :"

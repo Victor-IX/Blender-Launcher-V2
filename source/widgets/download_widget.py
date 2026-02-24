@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
 from modules.settings import get_install_template, get_library_folder
@@ -22,7 +23,7 @@ from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from widgets.build_state_widget import BuildStateWidget
 from widgets.datetime_widget import DateTimeWidget
 from widgets.elided_text_label import ElidedTextLabel
-from windows.popup_window import PopupIcon, PopupWindow
+from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from widgets.library_widget import LibraryWidget
@@ -63,18 +64,18 @@ class DownloadWidget(BaseBuildWidget):
         self.progressBar.setFixedHeight(18)
         self.progressBar.hide()
 
-        self.downloadButton = QPushButton("Download")
+        self.downloadButton = QPushButton(t("act.download"))
         self.downloadButton.setFixedWidth(95)  # Match header fakeLabel width
         self.downloadButton.setProperty("LaunchButton", True)
         self.downloadButton.clicked.connect(lambda: self.init_downloader())
         self.downloadButton.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.installedButton = QPushButton("Installed")
+        self.installedButton = QPushButton(t("act.installed"))
         self.installedButton.setFixedWidth(95)  # Match header fakeLabel width
         self.installedButton.setProperty("InstalledButton", True)
         self.installedButton.clicked.connect(self.focus_installed)
 
-        self.cancelButton = QPushButton("Cancel")
+        self.cancelButton = QPushButton(t("act.cancel"))
         self.cancelButton.setFixedWidth(95)  # Match header fakeLabel width
         self.cancelButton.setProperty("CancelButton", True)
         self.cancelButton.clicked.connect(self.download_cancelled)
@@ -143,12 +144,12 @@ class DownloadWidget(BaseBuildWidget):
             exp = re.compile(r"D\d{5}")
 
             if exp.search(self.build_info.branch):
-                self.showReleaseNotesAction.setText("Show Patch Details")
+                self.showReleaseNotesAction.setText(t("act.a.release_notes_patch"))
                 self.menu.addAction(self.showReleaseNotesAction)
             else:
                 exp = re.compile(r"pr\d+", flags=re.IGNORECASE)
                 if exp.search(self.build_info.subversion):
-                    self.showReleaseNotesAction.setText("Show PR Details")
+                    self.showReleaseNotesAction.setText(t("act.a.release_notes_pr"))
                     self.menu.addAction(self.showReleaseNotesAction)
 
         self.list_widget.sortItems()
@@ -201,7 +202,7 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setDownload(False)
             self.build_state_widget.setExtract(False)
         if state == DownloadState.DOWNLOADING:
-            self.progressBar.set_title("Downloading")
+            self.progressBar.set_state(self.progressBar.State.DOWNLOADING)
             self.progressBar.show()
             self.cancelButton.show()
             self.cancelButton.setEnabled(True)
@@ -209,7 +210,7 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setDownload()
         elif state == DownloadState.EXTRACTING:
             self.progressBar.show()
-            self.progressBar.set_title("Extracting")
+            self.progressBar.set_state(self.progressBar.State.EXTRACTING)
             self.cancelButton.setEnabled(False)
             self.build_state_widget.setExtract()
         elif state == DownloadState.READING:
@@ -249,10 +250,10 @@ class DownloadWidget(BaseBuildWidget):
             self.move_bforartists_patch_note()
 
         if get_install_template():
-            self.progressBar.set_title("Copying data...")
-            t = TemplateTask(destination=self.build_dir)
-            t.finished.connect(self.download_get_info)
-            self.parent.task_queue.append(t)
+            self.progressBar.set_title(t("act.prog.copying"))
+            task = TemplateTask(destination=self.build_dir)
+            task.finished.connect(self.download_get_info)
+            self.parent.task_queue.append(task)
         else:
             self.download_get_info()
 
@@ -284,7 +285,7 @@ class DownloadWidget(BaseBuildWidget):
 
         # Reset the widget's button states if this was an update download
         if self.updating_widget is not None:
-            self.updating_widget.launchButton.set_text("Launch")
+            self.updating_widget.launchButton.set_text(t("act.launch"))
             self.updating_widget.launchButton.setEnabled(True)
             if hasattr(self.updating_widget, "_update_download_widget"):
                 self.updating_widget.show_update_button()
@@ -380,53 +381,45 @@ class DownloadWidget(BaseBuildWidget):
 
     def handle_portable_settings(self, old_widget: LibraryWidget, new_widget: LibraryWidget) -> None:
         """Handle portable settings transfer based on user choice."""
+        # early exit -- don't handle portable settings
+        if not old_widget.move_portable_settings:
+            self.remove_old_build(old_widget)
+            return
 
-        if old_widget.move_portable_settings:
-            old_config_path = old_widget.make_portable_path()
+        old_config_path = old_widget.make_portable_path()
+        if not old_config_path.is_dir():
+            logger.warning(f"No portable settings found at {old_config_path} to move.")
+            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_settings"))
+            return
 
-            if old_config_path.is_dir():
-                # Wait for the new widget to be initialized
-                if new_widget.build_info is None:
-                    QTimer.singleShot(500, lambda: self.handle_portable_settings(old_widget, new_widget))
-                    return
+        new_config_path = new_widget.make_portable_path()
 
-                new_config_path = new_widget.make_portable_path()
+        if not new_config_path.parent.exists():
+            logger.error(f"New config path parent does not exist: {new_config_path.parent}")
+            self._show_portable_failure_dialog(old_widget, t("msg.err.port.no_build_dir"))
+            return
 
-                try:
-                    # Copy portable settings to new build
-                    if new_config_path.parent.exists():
-                        shutil.copytree(old_config_path, new_config_path, dirs_exist_ok=True)
-                        logger.info(f"Portable settings moved from {old_config_path} to {new_config_path}")
+        try:
+            # Copy portable settings to new build
+            shutil.copytree(old_config_path, new_config_path, dirs_exist_ok=True)
+        except Exception as e:
+            logger.error(f"Failed to move portable settings: {e}")
+            self._show_portable_failure_dialog(old_widget, str(e))
+            return
 
-                        # Update the new widget to reflect portable status
-                        new_widget.makePortableAction.setText("Unmake Portable")
-                        new_widget.showConfigFolderAction.setText("Show Portable Config Folder")
-                    else:
-                        logger.error(f"New config path parent does not exist: {new_config_path.parent}")
-                        self._show_portable_failure_dialog(old_widget, "The new build directory can't be found.")
-                        return
-                except Exception as e:
-                    logger.error(f"Failed to move portable settings: {e}")
-                    self._show_portable_failure_dialog(old_widget, str(e))
-                    return
-            else:
-                logger.warning(f"No portable settings found at {old_config_path} to move.")
-                self._show_portable_failure_dialog(old_widget, "No portable settings found to transfer.")
-                return
+        logger.info(f"Portable settings moved from {old_config_path} to {new_config_path}")
+        # Update the new widget to reflect portable status
+        new_widget.makePortableAction.setText(t("act.a.port.rem"))
+        new_widget.showConfigFolderAction.setText(t("act.a.config_portable"))
 
         self.remove_old_build(old_widget)
 
     def _show_portable_failure_dialog(self, old_widget: LibraryWidget, error: str) -> None:
         """Show dialog asking user how to handle portable settings transfer failure."""
-        message = (
-            f"Failed to transfer portable settings:\n{error}\n\nDo you want to continue with the update or cancel?"
-        )
 
-        popup = PopupWindow(
-            message=message,
-            title="Portable Settings Transfer Failed",
-            icon=PopupIcon.WARNING,
-            buttons=["Continue", "Cancel"],
+        popup = Popup.warning(
+            message=t("msg.popup.portable_failure", error=error),
+            buttons=[Popup.Button.CONT, Popup.Button.CANCEL],
             parent=self.parent,
         )
 
