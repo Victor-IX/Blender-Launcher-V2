@@ -137,7 +137,7 @@ popup:
     %{end} ?
 
   mv_overwrite_confirm: |
-    <font color="red">AVERTISSEMENT :</font> Les paramètres utilisateur existent déjà !
+    Les paramètres utilisateur existent déjà !
     Êtes-vous sûr de vouloir déplacer
     %{start}
     vers

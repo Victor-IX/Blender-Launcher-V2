@@ -137,7 +137,7 @@ popup:
     %{end}?
 
   mv_overwrite_confirm: |
-    <font color="red">WARNING:</font> The user settings already exist!
+    The user settings already exists!
     Are you sure you want to move
     %{start}
     to
