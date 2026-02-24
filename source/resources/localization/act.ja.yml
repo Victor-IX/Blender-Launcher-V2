@@ -1,0 +1,108 @@
+# ポップアップ
+ok: OK
+accept: 承認
+cancel: キャンセル
+quit: 終了
+hide: 非表示
+show: 表示
+next: 次へ
+prev: 前へ
+back: 戻る
+cont: 続行
+finish: 完了
+"yes": "はい"
+"no": "いいえ"
+retry: 再試行
+update: 更新
+later: 後で
+
+update_library: Blenderを最新バージョンに更新
+restart_now: 今すぐ再起動
+trash: ゴミ箱に移動
+remove: 削除
+delete: 削除
+dont_show_again: 今後表示しない
+migrate: 移行
+overwrite: 上書き
+general_folder: 全般設定フォルダを開く
+keep_both_versions: 両方のバージョンを保持
+move_to_new: 新しいバージョンに移動
+remove_settings: 設定を削除
+
+reload: 再読み込み
+reload_tooltip: カスタムビルドをディスクから再読み込み
+
+# 左アイコン
+launch: 起動
+download: ダウンロード
+installed: インストール済み
+lprev: " 前のファイル"
+updating: 更新中
+deleting: 削除中
+init: 初期化
+
+prog:
+  downloading: ダウンロード中
+  extracting: 展開中
+  copying: データをコピー中...
+  progress: "%{title}: %{progress} / %{total} MB"
+
+  reading_local: ローカルビルドを読み込み中
+  checking: 新しいビルドを確認中
+  last_check: "最終確認: %{time}"
+
+# アクション
+a:
+  settings_win: 設定ウィンドウを表示
+  docs: ドキュメントを開く
+
+
+  prev: 前のファイルを開く
+  prev_tooltip: |
+    このビルドで最後に使用したファイルを開きます。
+    (実行引数に `--open-last` を追加します)
+    ショートカット: Shift + 起動 またはダブルクリック
+  quick_launch: クイック起動に追加
+  fav:
+    add: お気に入りに追加
+    rem: お気に入りから削除
+  update: Blenderビルドを更新
+  update_tooltip: このビルドを最新バージョンに更新
+  d:
+    d: デバッグ
+    log: デバッグログ
+    factory: 工場出荷時の状態で起動
+    gpu: GPUデバッグ
+    glitch: GPUグリッチ回避デバッグ
+  rename: ブランチ名を変更
+
+  register: 拡張機能を登録
+  register_tooltip: このビルドを.blendファイルとサムネイル表示に使用する
+  shortcut: ショートカットを作成
+  symlink: シンボリックリンクを作成
+  template: テンプレートをインストール
+  port:
+    add: ポータブル化
+    rem: ポータブル解除
+  hash: ビルドハッシュをコピー
+  freeze:
+    add: 更新を凍結
+    rem: 更新の凍結を解除
+
+  release_notes: リリースノートを表示
+  release_notes_patch: パッチ詳細を表示
+  release_notes_pr: PR詳細を表示
+  folder_build: ビルドフォルダを表示
+  config: 設定フォルダを表示
+  config_portable: ポータブル設定フォルダを表示
+
+  edit: ビルドを編集...
+  delete: ドライブから削除
+  trash: ゴミ箱に移動
+
+  check: 更新確認
+  check_tooltip: |
+      新しいビルドをオンラインで更新確認
+      (SHIFTを押しながらで安定版と自動ビルドを強制更新確認)
+
+  version_tooltip: 現在実行中のBlender Launcherのバージョンです。クリックで変更履歴を確認できます。

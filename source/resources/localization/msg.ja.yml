@@ -1,0 +1,156 @@
+success: 成功
+info: 情報
+setup: セットアップ
+warning: 警告
+error: エラー
+
+err:
+  no_hash: "ビルドハッシュをコピーできません: このビルドではハッシュが利用できません。"
+
+  rename_branch: "ブランチ名を変更できません: ブランチ名を空にすることはできません。"
+  no_base_config: 設定フォルダのパスを特定できません。
+  no_config_version: このバージョンの設定フォルダが見つかりません。
+  folder_invalid: |
+    選択したフォルダは無効であるか、
+    書き込み権限がありません！
+  library_no_write: 選択したフォルダに書き込み権限がありません！
+  argparse: |
+    引数の解析中にエラーが発生しました:
+    %{args}
+    %{err}
+
+  generic: |
+    エラーが発生しました: %{err}
+    詳細はログを確認してください。
+
+  cant_write: 指定された場所に書き込み権限がありません！
+  damaged: ビルド %{build} は破損しています！
+  port:
+    no_build_dir: 新しいビルドディレクトリが見つかりません。
+    no_settings: 転送するポータブル設定が見つかりません。
+
+  no_resources: |
+    リソースの読み込みに失敗しました！ランチャーは動作しますが、
+    スタイルが崩れます。
+
+  connection_failed: "エラー: %{time} に接続が失敗しました"
+
+updates:
+  download_before_update: |
+    Blender Launcherを更新するには、
+    すべてのダウンロードを完了してください！
+
+  new_version_available: |
+    新しいバージョン %{version} が利用可能です！
+
+    %{patch_notes}
+
+  no_release_notes: リリースノートはありません。
+
+  update_to_version: バージョン %{version} に更新
+
+  new_builds: Blenderの新しいビルドが利用可能です！
+
+popup:
+  dest: 保存先を選択
+  select: フォルダを選択
+  select_library: ライブラリフォルダを選択
+  first_time_select_library: |
+    Blenderビルドの
+    保存先を選択してください
+
+  blver_mismatch: |
+    異なるバージョンのBlender Launcherを
+    起動しようとしました！
+    この操作を続行するには、現在実行中の
+    バージョンを終了してください！
+    実行中: %{running}
+    指定されたバージョン: %{given}
+
+  tasks_in_progress: |
+    まだ進行中のタスクがあります！
+    %{tasks}
+    本当に終了しますか？
+
+  apply_the_following: |
+    以下の設定を適用するには
+    Blender Launcherを再起動してください:
+    %{pending}
+
+  relative_path_found: |
+    選択したパスは実行ファイルからの相対パスです。
+    相対パスとして保存しますか？
+    フォルダが移動される可能性がある場合に便利です。
+
+  global_hotkeys_invalid: |
+    グローバルホットキーの組み合わせが認識されません！
+    別のキーの組み合わせを試してください
+
+  quick_launch_tray: |
+    コンテキストメニューからビルドをクイック起動に追加して
+    トレイから実行できます
+
+  tray_notify: |
+    Blender Launcherはシステムトレイに最小化されました。
+    無効にするには設定で「トレイアイコンを表示」をオフにしてください。
+
+  ask_delete_or_trash: |
+    選択したビルドを削除しますか、
+    それともゴミ箱に移動しますか？
+
+  ask_remove_from_drive:
+    one: |
+      このビルドを本当に
+      削除しますか？
+    many: |
+      %{count} 個のビルドを本当に
+      削除しますか？
+
+  ask_send_to_trash:
+    one: |
+      このビルドを本当に
+      ゴミ箱に移動しますか？
+    many: |
+      %{count} 個のビルドを本当に
+      ゴミ箱に移動しますか？
+
+  major_version_update: |
+    %{current} から %{update} に更新すると、新しいBlender設定が使用されます
+
+    古いビルド (%{current}) をライブラリから削除しますか？
+
+  update_portable_settings: |
+    このビルドはポータブル設定を使用しています。
+
+    ポータブル設定フォルダをどうしますか？
+
+  portable_failure: |
+    ポータブル設定の転送に失敗しました:
+    %{error}
+
+    更新を続行しますか、それともキャンセルしますか？
+
+  mv_confirm: |
+    本当に移動しますか？
+    %{start}
+    移動先:
+    %{end}
+
+  mv_overwrite_confirm: |
+    ユーザー設定は既に存在します！
+    本当に移動しますか？
+    %{start}
+    移動先:
+    %{end}
+
+  purge:
+    success: 一時フォルダのパージが完了しました！
+    error: 一時フォルダのパージに失敗しました。一部のファイルが使用中の可能性があります。
+
+  winget:
+    register:
+      success: WinGetへの登録が完了しました！<br>'winget update VictorIX.BlenderLauncher' で更新できます
+      error: WinGetへの登録に失敗しました。詳細はログを確認してください。
+    unregister:
+      success: WinGetからの登録解除が完了しました。
+      error: WinGetからの登録解除に失敗しました。詳細はログを確認してください。
