@@ -12,6 +12,7 @@ from modules.settings import (
     get_actual_library_folder,
     get_config_file,
     get_default_delete_action,
+    get_language,
     get_launch_minimized_to_tray,
     get_launch_timer_duration,
     get_launch_when_system_starts,
@@ -24,6 +25,7 @@ from modules.settings import (
     purge_temp_folder,
     set_auto_register_winget,
     set_default_delete_action,
+    set_language,
     set_launch_minimized_to_tray,
     set_launch_timer_duration,
     set_launch_when_system_starts,
@@ -37,6 +39,7 @@ from modules.settings import (
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
 from modules.winget_integration import register_with_winget, unregister_from_winget
 from PySide6.QtWidgets import QComboBox, QPushButton
+from utils.i18n_init import Language
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget
 from windows.file_dialog_window import FileDialogWindow
@@ -58,6 +61,16 @@ class GeneralTabWidget(SettingsFormWidget):
             self.LibraryFolder = grp.add(FolderSelector(parent, default_folder=get_actual_library_folder()))
             self.LibraryFolder.validity_changed.connect(self.library_folder_validity_changed)
             self.LibraryFolder.folder_changed.connect(self.set_library_folder_)
+
+            # Language
+            self.language_combo = grp.add(QComboBox(), "settings.general.app.language")
+            for lang in Language:
+                self.language_combo.addItem(lang.display_name, lang.value)
+            current_lang = get_language()
+            idx = self.language_combo.findData(current_lang)
+            if idx >= 0:
+                self.language_combo.setCurrentIndex(idx)
+            self.language_combo.activated.connect(self.change_language)
 
             # Launch When System Starts
             if get_platform() == "Windows":
@@ -194,6 +207,10 @@ class GeneralTabWidget(SettingsFormWidget):
     def set_library_folder_(self, p: Path):
         print("SETTTE", p)
         set_library_folder(str(p))
+
+    def change_language(self, index: int):
+        lang = self.language_combo.itemData(index)
+        set_language(lang)
 
     def library_folder_validity_changed(self, v: bool):
         if not v:

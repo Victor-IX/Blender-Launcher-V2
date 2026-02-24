@@ -314,6 +314,14 @@ def set_enable_download_notifications(is_checked):
     get_settings().setValue("enable_download_notifications", is_checked)
 
 
+def get_language() -> str:
+    return get_settings().value("language", defaultValue="auto", type=str)  # type: ignore
+
+
+def set_language(lang: str):
+    get_settings().setValue("language", lang)
+
+
 def get_blender_startup_arguments() -> str:
     args: str = get_settings().value("blender_startup_arguments", defaultValue="", type=str)  # type: ignore
     return args.strip()

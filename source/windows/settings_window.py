@@ -3,6 +3,7 @@ from modules.settings import (
     get_check_for_new_builds_automatically,
     get_dpi_scale_factor,
     get_enable_quick_launch_key_seq,
+    get_language,
     get_new_builds_check_frequency,
     get_proxy_host,
     get_proxy_password,
@@ -56,6 +57,7 @@ class SettingsWindow(BaseWindow):
 
         self.old_dpi_scale_factor = get_dpi_scale_factor()
         self.old_thread_count = get_worker_thread_count()
+        self.old_language = get_language()
 
         # Header layout
         self.header = WindowHeader(self, "Settings", use_minimize=False)
@@ -200,6 +202,12 @@ class SettingsWindow(BaseWindow):
 
         if self.old_thread_count != worker_thread_count:
             pending_to_restart.append(f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}")
+
+        """Update language"""
+        language = get_language()
+
+        if self.old_language != language:
+            pending_to_restart.append(f"{t('settings.general.app.language')}: {self.old_language}🠆{language}")
 
         return pending_to_restart
 

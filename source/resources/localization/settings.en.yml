@@ -5,6 +5,13 @@ general:
     label: Application
     library_folder: "Library Folder:"
 
+    language: Language
+    language_tooltip: |
+      Select the display language for Blender Launcher.
+      "Auto" detects your system language automatically.
+      Requires a restart to take effect.
+      DEFAULT: Auto
+
     system_start: Launch When System Starts
     system_start_tooltip: |
       Start the app when the system starts.
