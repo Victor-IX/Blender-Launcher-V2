@@ -47,6 +47,27 @@ For everything in the UI you want to change, there's a respective string in our 
 To add a new language, duplicate an existing translation file, update the language tag in its filename, and then translate the content. It is recommended to copy an existing file rather than creating a new one from scratch to maintain consistent key ordering across versions, which simplifies future updates.
 
 It is crucial that the **translation keys remain unchanged**. Inconsistent keys will prevent the program from retrieving the correct translations, resulting in English text being displayed by default.
+ 
+
+
+??? details "**If the language is completely new (no translations already exist)**, you will also need to update the `Language` enum in `source/utils/i18n_init.py`."
+
+    ```py
+    class Language(StrEnum):
+        ... # existing languages...
+        <LANGUAGE> = "ln"
+
+        @property
+        def display_name(self) -> str:
+            names = {
+                ... # existing display names...
+                Language.<LANGUAGE>: "<Display of language>",
+            }
+            return names[self]
+    ```
+
+    This will make the language visible in the Settings language dropdown menu.
+
 
 ### How they are used in the code
 
