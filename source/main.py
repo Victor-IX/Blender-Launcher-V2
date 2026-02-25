@@ -25,6 +25,7 @@ from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
+from modules.uninstall import perform_uninstall
 
 version = Version(
     2,
@@ -145,6 +146,19 @@ def main():
         )
         subparsers.add_parser("unregister", help="Undoes the changes that `register` makes. (WIN ONLY)")
 
+        uninstall_parser = subparsers.add_parser(
+            "uninstall",
+            help="Fully uninstall Blender Launcher: removes settings, registry entries, shortcuts, and cached data. (WINDOWS ONLY)",
+            add_help=False,
+        )
+        add_help(uninstall_parser)
+        uninstall_parser.add_argument(
+            "--quiet",
+            "-q",
+            action="store_true",
+            help="Uninstall without confirmation prompt (used by winget).",
+        )
+
     input_args = None
 
     # Shortcut for launching
@@ -205,6 +219,8 @@ def main():
         start_register()
     if args.command == "unregister":
         start_unregister()
+    if args.command == "uninstall":
+        perform_uninstall(args.quiet)
 
     if not args.instanced:
         check_for_instance()
