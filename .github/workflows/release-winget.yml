@@ -10,6 +10,11 @@ on:
         description: "Specific tag name"
         required: false
         type: string
+      skip_pr_check:
+        description: "Force resubmit even if a PR already exists (open or closed)"
+        required: false
+        type: boolean
+        default: false
 jobs:
   winget-publish:
     name: Publish winget package
@@ -39,3 +44,5 @@ jobs:
           release-tag: ${{ steps.extract_tag.outputs.tag }}
           token: ${{ secrets.WINGET_ACC_TOKEN }}
           # fork-user: Victor-IX
+        env:
+          SKIP_PR_CHECK: ${{ inputs.skip_pr_check == true }}
