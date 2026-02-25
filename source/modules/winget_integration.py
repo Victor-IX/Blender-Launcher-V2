@@ -32,6 +32,10 @@ def register_with_winget(exe_path: str | Path, version: str) -> bool:
         install_location = exe_path.parent
         package_id = "VictorIX.BlenderLauncher"
 
+        if _has_winget_tracking_key(winreg, package_id):
+            logger.debug(f"Winget tracking key already exists for {package_id}, skipping registration")
+            return True
+
         # Registry path for uninstall information
         # Using HKEY_CURRENT_USER to avoid requiring admin privileges
         registry_path = rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{package_id}"
@@ -62,7 +66,8 @@ def register_with_winget(exe_path: str | Path, version: str) -> bool:
             winreg.SetValueEx(key, "WinGetSourceIdentifier", 0, winreg.REG_SZ, "winget")
 
             logger.info(f"Successfully registered with WinGet: {package_id} v{version}")
-            return True
+
+        return True
 
     except Exception as e:
         logger.error(f"Failed to register with WinGet: {e}")
@@ -85,32 +90,55 @@ def unregister_from_winget() -> bool:
             winreg.DeleteKey(winreg.HKEY_CURRENT_USER, rf"{uninstall_root}\{package_id}")
             logger.info(f"Successfully unregistered from WinGet: {package_id}")
 
-        # Also delete winget-created keys (e.g. VictorIX.BlenderLauncher__DefaultSource)
-        # Winget appends source suffixes like __DefaultSource when it installs portable packages
-        try:
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, uninstall_root) as root_key:
-                i = 0
-                keys_to_delete = []
-                while True:
-                    try:
-                        subkey_name = winreg.EnumKey(root_key, i)
-                        if subkey_name.startswith(f"{package_id}__"):
-                            keys_to_delete.append(subkey_name)
-                        i += 1
-                    except OSError:
-                        break
-
-                for subkey_name in keys_to_delete:
-                    with contextlib.suppress(FileNotFoundError):
-                        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, rf"{uninstall_root}\{subkey_name}")
-                        logger.info(f"Removed winget tracking key: {subkey_name}")
-        except FileNotFoundError:
-            pass
+        _remove_winget_tracking_keys(winreg, package_id)
 
     except Exception as e:
         logger.error(f"Failed to unregister from WinGet: {e}")
         return False
     return True
+
+
+def _has_winget_tracking_key(winreg, package_id: str) -> bool:
+    """Check if there is winget tracking key for this package."""
+    uninstall_root = r"Software\Microsoft\Windows\CurrentVersion\Uninstall"
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, uninstall_root) as root_key:
+            i = 0
+            while True:
+                try:
+                    subkey_name = winreg.EnumKey(root_key, i)
+                    if subkey_name.startswith(package_id):
+                        return True
+                    i += 1
+                except OSError:
+                    break
+    except FileNotFoundError:
+        pass
+    return False
+
+
+def _remove_winget_tracking_keys(winreg, package_id: str) -> None:
+    """Remove winget tracking keys (e.g. VictorIX.BlenderLauncher__DefaultSource)."""
+    uninstall_root = r"Software\Microsoft\Windows\CurrentVersion\Uninstall"
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, uninstall_root) as root_key:
+            i = 0
+            keys_to_delete = []
+            while True:
+                try:
+                    subkey_name = winreg.EnumKey(root_key, i)
+                    if subkey_name.startswith(package_id):
+                        keys_to_delete.append(subkey_name)
+                    i += 1
+                except OSError:
+                    break
+
+            for subkey_name in keys_to_delete:
+                with contextlib.suppress(FileNotFoundError):
+                    winreg.DeleteKey(winreg.HKEY_CURRENT_USER, rf"{uninstall_root}\{subkey_name}")
+                    logger.info(f"Removed winget tracking key: {subkey_name}")
+    except FileNotFoundError:
+        pass
 
 
 def is_registered_with_winget() -> bool:
@@ -121,13 +149,8 @@ def is_registered_with_winget() -> bool:
         import winreg
 
         package_id = "VictorIX.BlenderLauncher"
-        registry_path = rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{package_id}"
+        return _has_winget_tracking_key(winreg, package_id)
 
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, registry_path):
-            return True
-
-    except FileNotFoundError:
-        return False
     except Exception as e:
         logger.error(f"Error checking WinGet registration: {e}")
         return False
