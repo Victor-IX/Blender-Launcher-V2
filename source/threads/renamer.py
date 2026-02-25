@@ -32,6 +32,9 @@ class RenameTask(Task):
                 send2trash(dst)
                 logger.debug(f"Removed existing file: {dst}")
 
+            # Attempt to rename with retries in case of PermissionError
+            # Renaming is likely to fail on Enterprise Windows Workstation
+            # due to antivirus or other processes locking the file
             last_error: OSError | None = None
             for attempt in range(_RENAME_MAX_RETRIES):
                 try:
