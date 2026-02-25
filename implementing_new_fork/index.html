@@ -14,7 +14,7 @@
         <link rel="prev" href="../development/">
       
       
-        <link rel="next" href="../FAQ/">
+        <link rel="next" href="../localization/">
       
       
         
@@ -1195,6 +1195,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../localization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Localization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1753,8 +1781,9 @@
 <h2 id="1-create-scraper">1. Create Scraper<a class="headerlink" href="#1-create-scraper" title="Permanent link">&para;</a></h2>
 <p>Create a new scraper in <code>source/threads/scraping/&lt;fork_name&gt;.py</code>:</p>
 <h3 id="basic-scraper-structure">Basic Scraper Structure<a class="headerlink" href="#basic-scraper-structure" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">modules.build_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildInfo</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">modules._platform</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_platform</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">modules.build_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threads.scraping.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildScraper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modules.connection_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConnectionManager</span>
 
@@ -1916,61 +1945,44 @@
 <h3 id="create-page-widgets">Create Page Widgets<a class="headerlink" href="#create-page-widgets" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polish</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Library page</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryforkPageWidget</span> <span class="o">=</span> <span class="n">BasePageWidget</span><span class="p">(</span>
-        <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-        <span class="n">page_name</span><span class="o">=</span><span class="s2">&quot;LibraryforkListWidget&quot;</span><span class="p">,</span>
-        <span class="n">time_label</span><span class="o">=</span><span class="s2">&quot;Commit Time&quot;</span><span class="p">,</span>
-        <span class="n">info_text</span><span class="o">=</span><span class="s2">&quot;Nothing to show yet&quot;</span><span class="p">,</span>
-        <span class="n">extended_selection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryforkListWidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LibraryToolBox</span><span class="o">.</span><span class="n">add_page_widget</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">LibraryforkPageWidget</span><span class="p">,</span> <span class="s2">&quot;&lt;Fork Name&gt;&quot;</span>
-    <span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryPage</span><span class="p">:</span> <span class="n">BasePageWidget</span><span class="p">[</span><span class="n">LibraryWidget</span><span class="p">]</span> <span class="o">=</span> <span class="n">BasePageWidget</span><span class="p">(</span> <span class="o">...</span> <span class="p">)</span>
+    <span class="o">...</span> <span class="c1"># existing additions</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryToolBox</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="s2">&quot;&lt;Fork Name&gt;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">vsq_kwargs</span><span class="p">)</span>
+    <span class="o">...</span>
     <span class="c1"># Downloads page</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkPageWidget</span> <span class="o">=</span> <span class="n">BasePageWidget</span><span class="p">(</span>
-        <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-        <span class="n">page_name</span><span class="o">=</span><span class="s2">&quot;DownloadsforkListWidget&quot;</span><span class="p">,</span>
-        <span class="n">time_label</span><span class="o">=</span><span class="s2">&quot;Upload Time&quot;</span><span class="p">,</span>
-        <span class="n">info_text</span><span class="o">=</span><span class="s2">&quot;No new builds available&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkListWidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsToolBox</span><span class="o">.</span><span class="n">add_page_widget</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkPageWidget</span><span class="p">,</span> <span class="s2">&quot;&lt;Fork Name&gt;&quot;</span>
-    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsToolBox</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="s2">&quot;&lt;Fork Name&gt;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">vsq_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># vsq_kwargs can be anything related to `VersionSearchQuery`s</span>
+    <span class="c1"># see source/modules/version_matcher.py for more info on them</span>
+    <span class="c1"># </span>
+    <span class="c1"># simple examples checking for a folder: </span>
+    <span class="c1"># self.LibraryToolBox.add_tab(&quot;&lt;Fork Name&gt;&quot;, folder=&quot;...&quot;)</span>
+    <span class="c1"># or a branch:</span>
+    <span class="c1"># self.LibraryToolBox.add_tab(&quot;&lt;Fork Name&gt;&quot;, branch=(&quot;ForkBranchName&quot;, ...))</span>
 </code></pre></div>
 <h3 id="update-scraper-integration">Update Scraper Integration<a class="headerlink" href="#update-scraper-integration" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">start_scraper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scrape_fork</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">scrape_fork</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">scrape_fork</span> <span class="o">=</span> <span class="n">get_scrape_fork_builds</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">scrape_fork</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkPageWidget</span><span class="o">.</span><span class="n">set_info_label_text</span><span class="p">(</span><span class="s2">&quot;Checking for new builds&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkPageWidget</span><span class="o">.</span><span class="n">set_info_label_text</span><span class="p">(</span><span class="s2">&quot;Checking disabled&quot;</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkListWidget</span><span class="o">.</span><span class="n">clear_</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="o">.</span><span class="n">scrape_fork</span> <span class="o">=</span> <span class="n">scrape_fork</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">draw_to_downloads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">build_info</span><span class="p">:</span> <span class="n">BuildInfo</span><span class="p">):</span>
-    <span class="c1"># ... existing branches</span>
-    <span class="k">elif</span> <span class="n">branch</span> <span class="o">==</span> <span class="s2">&quot;&lt;fork-branch&gt;&quot;</span><span class="p">:</span>
-        <span class="n">downloads_list_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsforkListWidget</span>
-        <span class="n">library_list_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LibraryforkListWidget</span>
-
 <span class="k">def</span><span class="w"> </span><span class="nf">draw_to_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
-    <span class="c1"># ... existing branches</span>
-    <span class="k">elif</span> <span class="n">branch</span> <span class="o">==</span> <span class="s2">&quot;&lt;fork-branch&gt;&quot;</span><span class="p">:</span>
-        <span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LibraryforkListWidget</span>
+    <span class="k">if</span> <span class="n">branch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;fork_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;custom&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span>
 </code></pre></div>
 <h3 id="update-visibility-controls">Update Visibility Controls<a class="headerlink" href="#update-visibility-controls" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_visible_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_l_fork</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_s_fork</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
     <span class="n">show_fork</span> <span class="o">=</span> <span class="n">force_l_fork</span> <span class="ow">or</span> <span class="n">get_show_fork_builds</span><span class="p">()</span>
     <span class="n">scrape_fork</span> <span class="o">=</span> <span class="n">force_s_fork</span> <span class="ow">or</span> <span class="n">get_scrape_fork_builds</span><span class="p">()</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryToolBox</span><span class="o">.</span><span class="n">setTabVisible</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">show_fork</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryToolBox</span><span class="o">.</span><span class="n">setTabEnabled</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">show_fork</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsToolBox</span><span class="o">.</span><span class="n">setTabVisible</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">scrape_fork</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsToolBox</span><span class="o">.</span><span class="n">setTabEnabled</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">scrape_fork</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">LibraryToolBox</span><span class="o">.</span><span class="n">update_visibility</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">show_fork</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">DownloadsToolBox</span><span class="o">.</span><span class="n">update_visibility</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">scrape_fork</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="7-update-settings-ui">7. Update Settings UI<a class="headerlink" href="#7-update-settings-ui" title="Permanent link">&para;</a></h2>
 <p>Update <code>source/widgets/settings_window/blender_builds_tab.py</code>:</p>
