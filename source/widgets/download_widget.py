@@ -236,7 +236,7 @@ class DownloadWidget(BaseBuildWidget):
             dist = library_folder / "experimental"
 
         self.source_file = source
-        t = ExtractTask(file=source, destination=dist)
+        t = ExtractTask(file=source, destination=dist, is_upbge=self.build_info.branch.startswith("upbge"))
         t.progress.connect(self.progressBar.set_progress)
         t.finished.connect(self.init_template_installer)
         self.parent.task_queue.append(t)

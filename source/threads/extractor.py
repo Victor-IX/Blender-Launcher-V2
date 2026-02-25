@@ -304,6 +304,7 @@ def _fix_upbge_structure(build_path: Path) -> Path:
 class ExtractTask(Task):
     file: Path
     destination: Path
+    is_upbge: bool = False
 
     progress = Signal(int, int)
     finished = Signal(Path, bool)
@@ -335,7 +336,8 @@ class ExtractTask(Task):
                 raise ValueError(f"Unsupported archive format: {self.file.suffix}")
 
             # Fix UPBGE structure if needed
-            result = _fix_upbge_structure(result)
+            if self.is_upbge:
+                result = _fix_upbge_structure(result)
             self.finished.emit(result, is_removed)
         except (zipfile.BadZipFile, tarfile.TarError, py7zr.Bad7zFile) as e:
             self._handle_extraction_error(e)
