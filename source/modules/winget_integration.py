@@ -48,9 +48,13 @@ def register_with_winget(exe_path: str | Path, version: str) -> bool:
             # Executable path
             winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, str(exe_path))
 
-            # Since this is a portable app, we don't have a real uninstaller
-            # It could be nice to add a custom uninstaller script in the future
-            winreg.SetValueEx(key, "NoRemove", 0, winreg.REG_DWORD, 1)
+            # Uninstall command for winget
+            winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f'"{exe_path}" uninstall')
+            winreg.SetValueEx(key, "QuietUninstallString", 0, winreg.REG_SZ, f'"{exe_path}" uninstall --quiet')
+
+            # Remove legacy NoRemove flag from older versions
+            with contextlib.suppress(FileNotFoundError):
+                winreg.DeleteValue(key, "NoRemove")
 
             # WinGet-specific markers
             # This helps WinGet identify the package
@@ -74,11 +78,34 @@ def unregister_from_winget() -> bool:
         import winreg
 
         package_id = "VictorIX.BlenderLauncher"
-        registry_path = rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{package_id}"
+        uninstall_root = r"Software\Microsoft\Windows\CurrentVersion\Uninstall"
 
+        # Delete our own ARP key
         with contextlib.suppress(FileNotFoundError):
-            winreg.DeleteKey(winreg.HKEY_CURRENT_USER, registry_path)
+            winreg.DeleteKey(winreg.HKEY_CURRENT_USER, rf"{uninstall_root}\{package_id}")
             logger.info(f"Successfully unregistered from WinGet: {package_id}")
+
+        # Also delete winget-created keys (e.g. VictorIX.BlenderLauncher__DefaultSource)
+        # Winget appends source suffixes like __DefaultSource when it installs portable packages
+        try:
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, uninstall_root) as root_key:
+                i = 0
+                keys_to_delete = []
+                while True:
+                    try:
+                        subkey_name = winreg.EnumKey(root_key, i)
+                        if subkey_name.startswith(f"{package_id}__"):
+                            keys_to_delete.append(subkey_name)
+                        i += 1
+                    except OSError:
+                        break
+
+                for subkey_name in keys_to_delete:
+                    with contextlib.suppress(FileNotFoundError):
+                        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, rf"{uninstall_root}\{subkey_name}")
+                        logger.info(f"Removed winget tracking key: {subkey_name}")
+        except FileNotFoundError:
+            pass
 
     except Exception as e:
         logger.error(f"Failed to unregister from WinGet: {e}")
