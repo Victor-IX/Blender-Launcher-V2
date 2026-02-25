@@ -201,7 +201,9 @@ class SettingsWindow(BaseWindow):
         worker_thread_count = get_worker_thread_count()
 
         if self.old_thread_count != worker_thread_count:
-            pending_to_restart.append(f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}")
+            pending_to_restart.append(
+                f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}"
+            )
 
         """Update language"""
         language = get_language()

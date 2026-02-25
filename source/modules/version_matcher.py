@@ -203,12 +203,7 @@ class VersionSearchQuery:
         **extra_args: Unpack[VSQKwargs],
     ):
         """A constructor with major, minor, and patch at the front"""
-        return cls(
-            major=major,
-            minor=minor,
-            patch=patch,
-            **extra_args
-        )
+        return cls(major=major, minor=minor, patch=patch, **extra_args)
 
     @classmethod
     def default(cls):

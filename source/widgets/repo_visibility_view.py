@@ -33,8 +33,7 @@ class RepoUserView(QWidget):
         self.library_enable_button = QCheckBox(self)
         self.library_enable_button.setProperty("Visibility", True)
         self.library_enable_button.setChecked(library or False)
-        self.library_enable_button.setToolTip(t("repo.visibility_tooltip")
-        )
+        self.library_enable_button.setToolTip(t("repo.visibility_tooltip"))
         self.library_enable_button.toggled.connect(self.__library_button_toggled)
 
         if library is None:

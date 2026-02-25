@@ -410,6 +410,7 @@ class BlenderLauncher(BaseWindow):
         self.LibraryToolBox.query_changed.connect(self.LibraryPage.list_widget.update_tab_filter)
         self.LibraryToolBox.query_changed.connect(self.LibraryPage.update_reload)
         self.LibraryPage.list_widget.update_tab_filter(self.LibraryToolBox.current_query())
+        self.LibraryPage.update_reload(self.LibraryToolBox.current_query())
 
         self.DownloadsPage: BasePageWidget[DownloadWidget] = BasePageWidget(
             parent=self,
@@ -420,7 +421,7 @@ class BlenderLauncher(BaseWindow):
         # self.DownloadsToolBox.add_tab("All")
         self.DownloadsToolBox.add_tab("Stable", branch=("stable", "lts"))
         self.DownloadsToolBox.add_tab("Daily", branch=("daily",))
-        self.DownloadsToolBox.add_tab("Experimental", branch=("experimental","patch"))
+        self.DownloadsToolBox.add_tab("Experimental", branch=("experimental", "patch"))
         self.DownloadsToolBox.add_tab("Bforartists", branch=("bforartists",))
         self.DownloadsToolBox.add_tab("UPBGE", branch=("upbge-stable",))
         self.DownloadsToolBox.add_tab("UPBGE Weekly", branch=("upbge-weekly",))
