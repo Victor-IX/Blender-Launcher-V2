@@ -6,12 +6,10 @@ import os
 import shutil
 import subprocess
 import sys
-import winreg
 from pathlib import Path
 
 import keyring
 from keyring.errors import PasswordDeleteError
-
 from modules.platform_utils import get_cache_path, get_config_path, local_config
 from modules.settings import (
     KEYRING_PROXY_HOST,
@@ -64,6 +62,8 @@ def perform_uninstall(quiet: bool = False) -> None:
 def _remove_startup_entry() -> None:
     """Remove the 'Launch when system starts' registry entry."""
     try:
+        import winreg
+
         with winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
             r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
