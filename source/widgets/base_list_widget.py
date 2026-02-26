@@ -51,7 +51,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         return f"BaseListWidget build info: {widget}"
 
     def itemWidget(self, item) -> _WT | None:  # type: ignore
-        return super().itemWidget(item)  # type: ignore[return-value]
+        return super().itemWidget(item)
 
     def add_item(self, item, widget):
         item.setSizeHint(widget.sizeHint())
@@ -101,8 +101,9 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         return items
 
-    def contains_build_info(self, build_info):
-        return any(build_info == widget.build_info for widget in self.widgets)
+    def contains_build_info(self, build_info: BuildInfo):
+        fsv = build_info.full_semversion
+        return any(fsv == widget.build_info.full_semversion for widget in self.widgets)
 
     def widget_with_blinfo(self, build_info: BuildInfo) -> _WT | None:
         try:
