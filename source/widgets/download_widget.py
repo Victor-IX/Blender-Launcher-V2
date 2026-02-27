@@ -278,6 +278,7 @@ class DownloadWidget(BaseBuildWidget):
     def download_cancelled(self) -> None:
         self.item.setSelected(True)
         self.set_state(DownloadState.IDLE)
+        self.parent._active_update_links.discard(self.build_info.link)
         self.cancelButton.hide()
         self.downloadButton.show()
         self.parent.task_queue.remove_task(self.dl_task)
@@ -346,6 +347,7 @@ class DownloadWidget(BaseBuildWidget):
             self._is_removed = is_removed
 
         self.set_state(DownloadState.IDLE)
+        self.parent._active_update_links.discard(self.build_info.link)
 
         if path is None:
             path = self.build_dir

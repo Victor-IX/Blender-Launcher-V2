@@ -176,6 +176,7 @@ class BlenderLauncher(BaseWindow):
         self.offline = offline
         self.build_cache = build_cache
         self.favorite: LibraryWidget | None = None
+        self._active_update_links: set[str] = set()
         self.status = "????"
         self.is_force_check_on = False
         self.app_state = AppState.IDLE
