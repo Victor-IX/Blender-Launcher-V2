@@ -81,7 +81,9 @@ class SettingsWindow(BaseWindow):
         self.GeneralScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.GeneralTabWidget = general_tab.GeneralTabWidget(parent=self.launcher)
         self.GeneralScrollArea.setWidget(self.GeneralTabWidget)
-        self.GeneralTab.layout().addWidget(self.GeneralScrollArea)
+        general_layout = self.GeneralTab.layout()
+        if general_layout:
+            general_layout.addWidget(self.GeneralScrollArea)
 
         # Appearance Tab
         self.AppearanceTab = TabWidget(self.TabWidget, "Appearance")
@@ -92,7 +94,9 @@ class SettingsWindow(BaseWindow):
         self.AppearanceScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.AppearanceTabWidget = appearance_tab.AppearanceTabWidget(parent=self.launcher)
         self.AppearanceScrollArea.setWidget(self.AppearanceTabWidget)
-        self.AppearanceTab.layout().addWidget(self.AppearanceScrollArea)
+        appearance_layout = self.AppearanceTab.layout()
+        if appearance_layout:
+            appearance_layout.addWidget(self.AppearanceScrollArea)
 
         # Connection Tab
         self.ConnectionTab = TabWidget(self.TabWidget, "Connection")
@@ -103,7 +107,9 @@ class SettingsWindow(BaseWindow):
         self.ConnectionScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.ConnectionTabWidget = connection_tab.ConnectionTabWidget(parent=self.launcher)
         self.ConnectionScrollArea.setWidget(self.ConnectionTabWidget)
-        self.ConnectionTab.layout().addWidget(self.ConnectionScrollArea)
+        connection_layout = self.ConnectionTab.layout()
+        if connection_layout:
+            connection_layout.addWidget(self.ConnectionScrollArea)
 
         # Blender Builds Tab
         self.BlenderBuildsTab = TabWidget(self.TabWidget, "Blender Builds")
@@ -114,7 +120,9 @@ class SettingsWindow(BaseWindow):
         self.BlenderBuildsScrollArea.setFrameShape(QScrollArea.Shape.NoFrame)
         self.BlenderBuildsTabWidget = blender_builds_tab.BlenderBuildsTabWidget(parent=self.launcher)
         self.BlenderBuildsScrollArea.setWidget(self.BlenderBuildsTabWidget)
-        self.BlenderBuildsTab.layout().addWidget(self.BlenderBuildsScrollArea)
+        blender_builds_layout = self.BlenderBuildsTab.layout()
+        if blender_builds_layout:
+            blender_builds_layout.addWidget(self.BlenderBuildsScrollArea)
 
         self.show()
 
