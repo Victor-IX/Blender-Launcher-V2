@@ -54,7 +54,7 @@ class ConnectionManager(QObject):
 
         # Basic Headers
         agent = f"Blender-Launcher-v2/v.{self.version!s}/{get_platform_full()}/UserID-{get_user_id()}"
-        self._headers = {"user-agent": agent}
+        self._headers = {"user-agent": agent, "Accept-Encoding": "gzip, deflate"}
         logger.info(f"Connection Manager Header: {agent}")
         # Get custom certificates file path
         if is_frozen() is True:
