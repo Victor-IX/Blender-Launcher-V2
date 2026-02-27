@@ -30,7 +30,7 @@ from modules.uninstall import perform_uninstall
 version = Version(
     2,
     6,
-    0,
+    1,
     # prerelease="rc.2",
 )
 
