@@ -119,6 +119,10 @@ popup:
 
     Do you want to remove the old build (%{current}) from your library?
 
+  update_already_in_progress: |
+    A build is already updating to
+    version %{version}.
+
   update_portable_settings: |
     This build uses portable settings.
 

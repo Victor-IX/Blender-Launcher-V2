@@ -119,6 +119,10 @@ popup:
 
     Voulez-vous supprimer l'ancien build (%{current}) de votre bibliothèque ?
 
+  update_already_in_progress: |
+    Un build est déjà en cours de mise à jour
+    vers la version %{version}.
+
   update_portable_settings: |
     Ce build utilise des paramètres portables.
 

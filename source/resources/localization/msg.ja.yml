@@ -119,6 +119,10 @@ popup:
 
     古いビルド (%{current}) をライブラリから削除しますか？
 
+  update_already_in_progress: |
+    バージョン %{version} へのアップデートは
+    既に進行中です。
+
   update_portable_settings: |
     このビルドはポータブル設定を使用しています。
 
