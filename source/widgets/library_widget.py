@@ -578,15 +578,13 @@ class LibraryWidget(BaseBuildWidget):
     def _proceed_with_update(self):
         """Proceed with the actual update download."""
         if hasattr(self, "_update_download_widget"):
-            if self._update_download_widget.state.value != 1: # != DownloadState.IDLE
+            if self._update_download_widget.state.value != 1:  # != DownloadState.IDLE
                 version = self._update_download_widget.build_info.subversion
                 Popup.info(
                     message=t("msg.popup.update_already_in_progress", version=version),
                     parent=self.parent,
                 )
                 return
-
-            self.parent._active_update_links.add(link)
 
         self._hide_update_button()
         self.launchButton.set_text(t("act.updating"))
