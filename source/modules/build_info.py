@@ -189,14 +189,13 @@ class BuildInfo:
         if other is None:
             return False
 
-        if (self.build_hash is None) != (other.build_hash is None):
-            return False
-
         if (self.build_hash is not None) and (other.build_hash is not None):
             return self.build_hash == other.build_hash
 
         # Compare by semver major.minor.patch (ignore prerelease differences)
-        # This allows "4.5.2" to match "4.5.2-window" for Bforartists builds
+        # This allows matching when one side has no build_hash (e.g. stable
+        # scraper URLs don't contain a hash, but installed .blinfo files do),
+        # and also handles "4.5.2" matching "4.5.2-window" for Bforartists.
         try:
             self_ver = parse_blender_ver(self.subversion)
             other_ver = parse_blender_ver(other.subversion)
@@ -204,10 +203,11 @@ class BuildInfo:
                 self_ver.major == other_ver.major
                 and self_ver.minor == other_ver.minor
                 and self_ver.patch == other_ver.patch
+                and self.branch == other.branch
             )
         except (ValueError, Exception):
             # Fall back to string comparison if parsing fails
-            return self.subversion == other.subversion
+            return self.subversion == other.subversion and self.branch == other.branch
 
     @property
     def semversion(self):
