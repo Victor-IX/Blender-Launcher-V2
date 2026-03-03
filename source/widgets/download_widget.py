@@ -272,6 +272,7 @@ class DownloadWidget(BaseBuildWidget):
                 if file_version in folder.name:
                     try:
                         shutil.move(file, folder / file.name)
+                        break
                     except shutil.Error as e:
                         logger.exception(f"Failed to move {file.name} to {folder.name}: {e}")
 
