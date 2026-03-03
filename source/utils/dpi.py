@@ -1,7 +1,7 @@
 import os
 from contextlib import contextmanager
 
-from modules.settings import get_dpi_scale_factor
+from settings import get_dpi_scale_factor
 
 # https://doc.qt.io/qt-6/portingguide.html#high-dpi
 # While Qt 5 supported an option called High DPI Scaling, Qt6 does not. this is now the default behavior.

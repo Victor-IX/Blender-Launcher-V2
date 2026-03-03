@@ -59,7 +59,7 @@ def _detect_os_locale() -> str:
 def _get_saved_language() -> str | None:
     """Read the language setting directly from QSettings."""
     try:
-        from modules.settings import get_language
+        from settings import get_language
 
         lang = get_language()
         if lang and lang != Language.AUTO:

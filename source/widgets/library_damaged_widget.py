@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.build_info import BuildInfo
-from modules.settings import get_library_folder
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
+from settings import get_library_folder
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.left_icon_button_widget import LeftIconButtonWidget

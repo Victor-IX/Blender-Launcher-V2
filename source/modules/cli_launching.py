@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 from modules.blendfile_reader import read_blendfile_header
 from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args
-from modules.settings import get_favorite_path, get_version_specific_queries
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
+from settings import get_favorite_path, get_version_specific_queries
 from threads.library_drawer import get_blender_builds
 
 logger = logging.getLogger()

@@ -6,11 +6,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
-from modules.platform_utils import get_platform
-from modules.settings import (
+from modules.platform_utils import get_config_file, get_platform
+from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
+from modules.winget_integration import register_with_winget, unregister_from_winget
+from PySide6.QtWidgets import QComboBox, QPushButton
+from settings import (
     delete_action,
     get_actual_library_folder,
-    get_config_file,
     get_default_delete_action,
     get_language,
     get_launch_minimized_to_tray,
@@ -36,9 +38,6 @@ from modules.settings import (
     set_worker_thread_count,
     user_config,
 )
-from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
-from modules.winget_integration import register_with_winget, unregister_from_winget
-from PySide6.QtWidgets import QComboBox, QPushButton
 from utils.i18n_init import Language
 from widgets.folder_select import FolderSelector
 from widgets.settings_form_widget import SettingsFormWidget

@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.platform_utils import get_platform
-from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QWizard
+from settings import set_first_time_setup_seen
 from widgets.onboarding_setup.wizard_pages import (
     AppearancePage,
     BackgroundRunningPage,

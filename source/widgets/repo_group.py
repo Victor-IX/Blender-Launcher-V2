@@ -1,5 +1,6 @@
 from i18n import t
-from modules.settings import (
+from PySide6.QtWidgets import QFrame, QSizePolicy, QVBoxLayout
+from settings import (
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
@@ -13,7 +14,6 @@ from modules.settings import (
     get_show_upbge_builds,
     get_show_upbge_weekly_builds,
 )
-from PySide6.QtWidgets import QFrame, QSizePolicy, QVBoxLayout
 from widgets.repo_visibility_view import RepoUserView
 
 

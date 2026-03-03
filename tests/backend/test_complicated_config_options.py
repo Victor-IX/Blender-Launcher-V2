@@ -1,11 +1,11 @@
 import pytest
 from semver import Version
 
-from source.modules.settings import (
+from source.modules.version_matcher import VersionSearchQuery
+from source.settings import (
     get_version_specific_queries,
     set_version_specific_queries,
 )
-from source.modules.version_matcher import VersionSearchQuery
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 

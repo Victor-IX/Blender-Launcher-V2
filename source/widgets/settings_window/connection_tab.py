@@ -4,7 +4,14 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.icons import Icons
-from modules.settings import (
+from PySide6 import QtGui
+from PySide6.QtCore import QRegularExpression, QSize, Qt
+from PySide6.QtWidgets import (
+    QComboBox,
+    QLineEdit,
+    QPushButton,
+)
+from settings import (
     get_github_token,
     get_proxy_host,
     get_proxy_password,
@@ -22,13 +29,6 @@ from modules.settings import (
     set_proxy_user,
     set_use_custom_tls_certificates,
     set_user_id,
-)
-from PySide6 import QtGui
-from PySide6.QtCore import QRegularExpression, QSize, Qt
-from PySide6.QtWidgets import (
-    QComboBox,
-    QLineEdit,
-    QPushButton,
 )
 from widgets.settings_form_widget import SettingsFormWidget
 from windows.popup_window import Popup

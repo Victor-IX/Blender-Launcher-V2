@@ -28,7 +28,23 @@ from modules.platform_utils import (
     get_platform,
     is_frozen,
 )
-from modules.settings import (
+from modules.string_utils import patch_note_cleaner
+from modules.tasks import TaskQueue, TaskWorker
+from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
+from PySide6.QtGui import QAction, QDesktopServices
+from PySide6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QStatusBar,
+    QSystemTrayIcon,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
+from semver import Version
+from settings import (
     create_library_folders,
     get_check_for_new_builds_automatically,
     get_check_for_new_builds_on_startup,
@@ -73,22 +89,6 @@ from modules.settings import (
     set_library_folder,
     set_tray_icon_notified,
 )
-from modules.string_utils import patch_note_cleaner
-from modules.tasks import TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
-from PySide6.QtGui import QAction, QDesktopServices
-from PySide6.QtWidgets import (
-    QApplication,
-    QHBoxLayout,
-    QLabel,
-    QPushButton,
-    QStatusBar,
-    QSystemTrayIcon,
-    QTabWidget,
-    QVBoxLayout,
-    QWidget,
-)
-from semver import Version
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper

@@ -7,10 +7,10 @@ from urllib.parse import parse_qs, urlparse
 from modules._copyfileobj import copyfileobj
 from modules.connection_manager import REQUEST_MANAGER
 from modules.enums import MessageType
-from modules.settings import get_library_folder
 from modules.string_utils import extract_filename_from_url
 from modules.task import Task
 from PySide6.QtCore import Signal
+from settings import get_library_folder
 from threads.scraping.bfa import BFA_NC_BASE_URL, BFA_NC_WEBDAV_SHARE_TOKEN
 from urllib3.exceptions import MaxRetryError
 

@@ -14,15 +14,15 @@ from typing import TypedDict
 import dateparser
 from modules.bl_api_manager import lts_blender_version, read_blender_version_list
 from modules.platform_utils import _check_output, _popen, get_platform
-from modules.settings import (
+from modules.task import Task
+from PySide6.QtCore import Signal
+from semver import Version
+from settings import (
     get_bash_arguments,
     get_blender_startup_arguments,
     get_launch_blender_no_console,
     get_library_folder,
 )
-from modules.task import Task
-from PySide6.QtCore import Signal
-from semver import Version
 
 logger = logging.getLogger()
 

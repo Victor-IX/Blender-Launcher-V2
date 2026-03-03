@@ -22,7 +22,11 @@ from modules.build_info import (
 )
 from modules.enums import MessageType
 from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
-from modules.settings import (
+from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
+from PySide6.QtCore import Qt, QUrl, Slot
+from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
+from settings import (
     get_default_delete_action,
     get_favorite_path,
     get_library_folder,
@@ -30,10 +34,6 @@ from modules.settings import (
     get_show_update_button,
     set_favorite_path,
 )
-from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6.QtCore import Qt, QUrl, Slot
-from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
 from threads.register import Register
 from threads.remover import RemovalTask

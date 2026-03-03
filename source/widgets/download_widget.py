@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING
 from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
-from modules.settings import get_install_template, get_library_folder
 from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from semver import Version
+from settings import get_install_template, get_library_folder
 from threads.downloader import DownloadTask
 from threads.extractor import ExtractTask
 from threads.renamer import RenameTask

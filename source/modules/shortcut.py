@@ -7,7 +7,7 @@ from shutil import copyfile
 
 from modules.icons import get_bl_file_location
 from modules.platform_utils import get_cache_path, get_cwd, get_platform, is_frozen
-from modules.settings import get_library_folder
+from settings import get_library_folder
 
 
 # TODO: Remove this duplicate code generate_program_shortcut()

@@ -14,8 +14,8 @@ from modules.bl_api_manager import (
     update_stable_builds_cache,
 )
 from modules.platform_utils import get_platform
-from modules.settings import get_use_pre_release_builds
 from semver import Version
+from settings import get_use_pre_release_builds
 
 if TYPE_CHECKING:
     from modules.connection_manager import ConnectionManager

@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
 from modules.platform_utils import get_architecture, get_platform
-from modules.settings import (
+from PySide6.QtCore import QThread, Signal
+from settings import (
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
@@ -17,7 +18,6 @@ from modules.settings import (
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
 )
-from PySide6.QtCore import QThread, Signal
 from threads.scraping.automated import ScraperAutomated
 from threads.scraping.bfa import ScraperBfa
 from threads.scraping.launcher_updates import LauncherDataUpdater

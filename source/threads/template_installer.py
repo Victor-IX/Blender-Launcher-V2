@@ -3,9 +3,9 @@ from pathlib import Path
 from re import match
 from shutil import copytree
 
-from modules.settings import get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal
+from settings import get_library_folder
 
 
 def install_template(dist: Path):

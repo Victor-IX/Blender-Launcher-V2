@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from i18n import t
-from modules.settings import (
+from PySide6.QtWidgets import (
+    QComboBox,
+)
+from settings import (
     downloads_pages,
     get_default_downloads_page,
     get_default_library_page,
@@ -25,9 +28,6 @@ from modules.settings import (
     set_sync_library_and_downloads_pages,
     set_use_system_titlebar,
     tabs,
-)
-from PySide6.QtWidgets import (
-    QComboBox,
 )
 from utils.dpi import DPI_OVERRIDDEN
 from widgets.settings_form_widget import SettingsFormWidget

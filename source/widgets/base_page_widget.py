@@ -2,11 +2,11 @@ from enum import Enum
 from typing import Generic
 
 from i18n import t
-from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSplitter, QVBoxLayout, QWidget
+from settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
 from widgets.base_list_widget import _WT, BaseListWidget
 
 

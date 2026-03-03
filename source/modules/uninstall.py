@@ -11,7 +11,9 @@ from pathlib import Path
 import keyring
 from keyring.errors import PasswordDeleteError
 from modules.platform_utils import get_cache_path, get_config_path, local_config
-from modules.settings import (
+from modules.shortcut import get_default_program_shortcut_destination, unregister_windows_filetypes
+from modules.winget_integration import unregister_from_winget
+from settings import (
     KEYRING_PROXY_HOST,
     KEYRING_PROXY_PASSWORD,
     KEYRING_PROXY_PORT,
@@ -19,8 +21,6 @@ from modules.settings import (
     KEYRING_SERVICE_NAME,
     KEYRING_TOKEN_USERNAME,
 )
-from modules.shortcut import get_default_program_shortcut_destination, unregister_windows_filetypes
-from modules.winget_integration import unregister_from_winget
 
 logger = logging.getLogger(__name__)
 

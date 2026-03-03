@@ -9,7 +9,14 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.platform_utils import find_app_bundle, get_platform, is_frozen
-from modules.settings import (
+from modules.shortcut import (
+    generate_program_shortcut,
+    get_default_program_shortcut_destination,
+    get_default_shortcut_folder,
+    register_windows_filetypes,
+)
+from PySide6.QtWidgets import QCheckBox, QDoubleSpinBox, QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QWizardPage
+from settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
     get_dpi_scale_factor,
@@ -28,13 +35,6 @@ from modules.settings import (
     set_show_tray_icon,
     set_use_system_titlebar,
 )
-from modules.shortcut import (
-    generate_program_shortcut,
-    get_default_program_shortcut_destination,
-    get_default_shortcut_folder,
-    register_windows_filetypes,
-)
-from PySide6.QtWidgets import QCheckBox, QDoubleSpinBox, QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QWizardPage
 from utils.dpi import DPI_OVERRIDDEN
 from widgets.folder_select import FolderSelector
 from widgets.repo_group import RepoGroup

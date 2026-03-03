@@ -7,8 +7,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
-from modules.settings import EPOCH
 from semver import Version
+from settings import EPOCH
 
 if TYPE_CHECKING:
     from pathlib import Path

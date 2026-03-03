@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from modules.platform_utils import get_cwd, get_platform_full, is_frozen
-from modules.settings import (
+from PySide6.QtCore import QObject, Signal
+from settings import (
     get_github_token,
     get_proxy_host,
     get_proxy_password,
@@ -17,7 +18,6 @@ from modules.settings import (
     get_use_custom_tls_certificates,
     get_user_id,
 )
-from PySide6.QtCore import QObject, Signal
 from urllib3 import PoolManager, ProxyManager, make_headers
 from urllib3.contrib.socks import SOCKSProxyManager
 

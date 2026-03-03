@@ -17,13 +17,13 @@ import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
-from modules.settings import get_auto_register_winget
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
 from modules.winget_integration import register_with_winget
 from PySide6.QtWidgets import QApplication
 from semver import Version
+from settings import get_auto_register_winget
 from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
 
@@ -245,7 +245,7 @@ def main():
 
 def start_set_library_folder(app: QApplication, lib_folder: str):
     from i18n import t
-    from modules.settings import set_library_folder
+    from settings import set_library_folder
     from windows.popup_window import Popup
 
     if set_library_folder(str(lib_folder)):

@@ -1,5 +1,7 @@
 from i18n import t
-from modules.settings import (
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QScrollArea, QTabWidget, QVBoxLayout, QWidget
+from settings import (
     get_check_for_new_builds_automatically,
     get_dpi_scale_factor,
     get_enable_quick_launch_key_seq,
@@ -16,8 +18,6 @@ from modules.settings import (
     get_worker_thread_count,
     proxy_types,
 )
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QScrollArea, QTabWidget, QVBoxLayout, QWidget
 from widgets.header import WindowHeader
 from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget

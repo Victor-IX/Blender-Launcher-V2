@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from modules.settings import (
+from semver import Version
+from settings import (
     get_bfa_update_behavior,
     get_daily_update_behavior,
     get_experimental_update_behavior,
@@ -20,7 +21,6 @@ from modules.settings import (
     get_update_behavior,
     get_use_advanced_update_button,
 )
-from semver import Version
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo

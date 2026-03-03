@@ -9,18 +9,18 @@ from i18n import t
 from items.enablable_list_widget_item import EnablableListWidgetItem
 from modules.blendfile_reader import BlendfileHeader, read_blendfile_header
 from modules.build_info import BuildInfo, LaunchOpenLast, LaunchWithBlendFile, launch_build
-from modules.settings import (
-    get_favorite_path,
-    get_launch_timer_duration,
-    get_version_specific_queries,
-    set_version_specific_queries,
-)
 from modules.tasks import TaskQueue
 from modules.version_matcher import VALID_QUERIES, VersionSearchQuery
 from modules.version_matcher import BasicBuildInfo as BBI
 from PySide6.QtCore import Qt, QTimer, Slot
 from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
 from PySide6.QtWidgets import QApplication, QComboBox, QGridLayout, QLabel, QListWidget, QPushButton, QWidget
+from settings import (
+    get_favorite_path,
+    get_launch_timer_duration,
+    get_version_specific_queries,
+    set_version_specific_queries,
+)
 from threads.library_drawer import DrawLibraryTask
 from widgets.lintable_line_edit import LintableLineEdit
 from windows.base_window import BaseWindow

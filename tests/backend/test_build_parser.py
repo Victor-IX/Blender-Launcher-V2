@@ -13,7 +13,7 @@ from source.modules.build_info import (
     parse_blender_ver,
 )
 from source.modules.platform_utils import get_platform
-from source.modules.settings import get_bash_arguments, set_bash_arguments
+from source.settings import get_bash_arguments, set_bash_arguments
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 

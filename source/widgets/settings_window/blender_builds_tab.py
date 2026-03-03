@@ -5,7 +5,13 @@ from typing import TYPE_CHECKING
 from i18n import t
 from modules.bl_api_manager import dropdown_blender_version
 from modules.platform_utils import get_platform
-from modules.settings import (
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QComboBox,
+    QLineEdit,
+)
+from settings import (
     favorite_pages,
     get_bash_arguments,
     get_bfa_update_behavior,
@@ -78,12 +84,6 @@ from modules.settings import (
     set_update_behavior,
     set_use_advanced_update_button,
     update_behavior,
-)
-from PySide6 import QtGui
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QComboBox,
-    QLineEdit,
 )
 from widgets.repo_group import RepoGroup
 from widgets.settings_form_widget import SettingsFormWidget
