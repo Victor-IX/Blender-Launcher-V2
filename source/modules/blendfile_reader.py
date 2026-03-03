@@ -116,7 +116,7 @@ def get_blendfile_header(pth: Path) -> tuple[bytes, CompressionType] | None:
     return None
 
 
-def read_blendfile_header(pth: Path) -> BlendfileHeader | None:
+def read_blendfile_header(pth: Path) -> BlendfileHeader:
     header = get_blendfile_header(pth)
     if header is None:
         raise Exception("Could not decode blendfile header")

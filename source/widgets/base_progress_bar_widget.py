@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QProgressBar
 class BarState(Enum):
     DOWNLOADING = "act.prog.downloading"
     EXTRACTING = "act.prog.extracting"
+    COPYING = "act.prog.copying"
     NONE = ""
 
 

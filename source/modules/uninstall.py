@@ -64,15 +64,17 @@ def _remove_startup_entry() -> None:
     try:
         import winreg
 
-        with winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-            0,
-            winreg.KEY_SET_VALUE,
-        ) as key:
-            with contextlib.suppress(FileNotFoundError):
-                winreg.DeleteValue(key, "Blender Launcher")
-                logger.info("Removed startup registry entry")
+        with (
+            contextlib.suppress(FileNotFoundError),
+            winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                0,
+                winreg.KEY_SET_VALUE,
+            ) as key,
+        ):
+            winreg.DeleteValue(key, "Blender Launcher")
+            logger.info("Removed startup registry entry")
     except Exception as e:
         logger.warning(f"Failed to remove startup entry: {e}")
 

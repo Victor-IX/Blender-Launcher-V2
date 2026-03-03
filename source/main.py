@@ -19,13 +19,13 @@ from modules.cli_launching import cli_launch
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.settings import get_auto_register_winget
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
+from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
 from modules.winget_integration import register_with_winget
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.dpi import apply_scale_factor
 from utils.logger import setup_logging
-from modules.uninstall import perform_uninstall
 
 version = Version(
     2,

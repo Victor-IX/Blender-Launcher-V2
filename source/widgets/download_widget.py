@@ -215,7 +215,6 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setExtract()
         elif state == DownloadState.READING:
             self.progressBar.show()
-        # elif state == DownloadState.RENAMING:
 
     def init_extractor(self, source: Path) -> None:
         self.set_state(DownloadState.EXTRACTING)
@@ -250,7 +249,7 @@ class DownloadWidget(BaseBuildWidget):
             self.move_bforartists_patch_note()
 
         if get_install_template():
-            self.progressBar.set_title(t("act.prog.copying"))
+            self.progressBar.set_state(self.progressBar.State.COPYING)
             task = TemplateTask(destination=self.build_dir)
             task.finished.connect(self.download_get_info)
             self.parent.task_queue.append(task)
@@ -448,14 +447,19 @@ class DownloadWidget(BaseBuildWidget):
         widget.update_finished()
         self.updating_widget = None
 
+    def is_working(self):
+        return self.state != DownloadState.IDLE
+
     def setInstalled(self, build_widget: LibraryWidget) -> None:
-        if self.state == DownloadState.IDLE:
-            build_widget.destroyed.connect(self.uninstalled)
-            self.downloadButton.hide()
-            self.installedButton.show()
-            self.cancelButton.hide()
-            self.progressBar.hide()
-            self.installed = build_widget
+        if self.is_working():
+            return
+
+        build_widget.destroyed.connect(self.uninstalled)
+        self.downloadButton.hide()
+        self.installedButton.show()
+        self.cancelButton.hide()
+        self.progressBar.hide()
+        self.installed = build_widget
 
     @Slot()
     def uninstalled(self) -> None:
