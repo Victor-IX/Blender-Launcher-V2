@@ -19,10 +19,11 @@ from modules.settings import (
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QScrollArea, QTabWidget, QVBoxLayout, QWidget
 from widgets.header import WindowHeader
-from widgets.settings_window import appearance_tab, blender_builds_tab, connection_tab, general_tab
 from widgets.tab_widget import TabWidget
 from windows.base_window import BaseWindow
 from windows.popup_window import Popup
+
+from . import appearance_tab, blender_builds_tab, connection_tab, general_tab
 
 
 class SettingsWindow(BaseWindow):

@@ -86,7 +86,8 @@ from PySide6.QtWidgets import (
     QLineEdit,
 )
 from widgets.repo_group import RepoGroup
-from widgets.settings_form_widget import SettingsFormWidget
+
+from .settings_form_widget import SettingsFormWidget
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher

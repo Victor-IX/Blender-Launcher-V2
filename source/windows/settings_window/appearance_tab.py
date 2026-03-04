@@ -30,7 +30,8 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 from utils.dpi import DPI_OVERRIDDEN
-from widgets.settings_form_widget import SettingsFormWidget
+
+from .settings_form_widget import SettingsFormWidget
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
