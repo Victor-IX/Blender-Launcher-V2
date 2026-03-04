@@ -14,4 +14,4 @@ To reduce these prompts, apps usually need **code signing** and time to build re
 
 
 ## Where can I find the Blender Launcher log files?
-Check the [Troubleshooting](troubleshooting.md#where-are-the-log-files) page for more information about log file locations.
+Check the [Troubleshooting](troubleshooting.md#log-file) page for more information about log file locations.

@@ -2,7 +2,7 @@
 
 Blender Launcher supports localization, allowing the application to reflect your computer's language settings. This includes the translation of settings, error messages, and other UI elements into your preferred language. In instances where a specific translation is unavailable, English will be used as the default language.
 
-**We welcome contributions to expand our translation efforts!** For details on how to contribute, please refer to the [Contributing Translations](localization.md#Contributing Translations) section.
+**We welcome contributions to expand our translation efforts!** For details on how to contribute, please refer to the [Contributing Translations](localization.md#contributing-translations) section.
 
 ## How to change your language:
 
