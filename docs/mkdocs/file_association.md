@@ -55,9 +55,7 @@ and the relevant data will be pushed to the search options.
 
 ## Launch timer
 
-!!! info "Conditions"
-    **This timer appears when a build is specified,**
-    **or the version search matches only one build.**
+<sub>Conditions: This timer appears when a build is specified, or the version search matches only one build.</sub>
 
 When the launching window dialogue appears, there is a chance a timer is placed at the bottom of the window.
 The timer can be cancelled by editing any of the text boxes or cancelling the launch by pressing ESC or the "Cancel" button.
@@ -71,8 +69,7 @@ Special values:
 
 ## Save Current Search
 
-!!! info "Conditions"
-    **This button only appears when a build is specified, and the version stored in the header was sucessfully parsed.**
+<sub>This button only appears when a build is specified, and the version stored in the header was sucessfully parsed.</sub>
 
 Saving the current search will save the created query to your settings, whenever a build with the parsed version is found, this search query will automatically fill the search options.
 
@@ -97,7 +94,7 @@ All the parts of the version are optional, except for the initial three digits/w
 The branch is specified with a `-` symbol, the build_hash is specified with a `+` handle, and the commit_time is specified with an `@` symbol.
 
 Running it in cli mode is not recommended in Windows as logging is a little messy, but on Linux it should work fine.
-It avoids creating a QT frontend whenever possible, and should take as little effort to launch.
+It avoids creating a QT frontend whenever possible, and should take little effort to launch.
 
 ### Examples
 

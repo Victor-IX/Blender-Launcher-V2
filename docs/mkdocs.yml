@@ -32,11 +32,13 @@ theme:
         - search.suggest
         - search.highlight
         - content.code.copy
+        - content.footnote.tooltips
     favicon: icons/favicon.ico
     logo: icons/favicon.ico
 markdown_extensions:
     - smarty
     - admonition
+    - footnotes
     - pymdownx.tabbed
     - pymdownx.superfences
     - pymdownx.tabbed:
