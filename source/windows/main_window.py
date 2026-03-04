@@ -792,57 +792,30 @@ class BlenderLauncher(BaseWindow):
     def force_check(self):
         if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier:  # Shift held while pressing check
             # Ignore scrape_stable, scrape_automated and scrape_bfa settings and scrape all that are visible
-            show_stable = get_show_stable_builds()
-            show_daily = get_show_daily_builds()
-            show_expatch = get_show_experimental_and_patch_builds()
-            show_bfa = get_show_bfa_builds()
-            show_upbge = get_show_upbge_builds()
-            show_upbge_weekly = get_show_upbge_weekly_builds()
-            self.start_scraper(
-                show_stable,
-                show_daily,
-                show_expatch,
-                show_bfa,
-                show_upbge,
-                show_upbge_weekly,
-            )
-            self.update_visible_lists(
-                force_s_stable=show_stable,
-                force_s_daily=show_daily,
-                force_s_expatch=show_expatch,
-                force_s_bfa=show_bfa,
-                force_s_upbge=show_upbge,
-                force_s_upbge_weekly=show_upbge_weekly,
-            )
+            self.start_scraper(scrape_all_visible=True)
+            self.update_visible_lists(scrape_all_visible=True)
         else:
             # Use settings
             self.start_scraper()
             self.update_visible_lists()
 
-    def start_scraper(
-        self,
-        scrape_stable=None,
-        scrape_daily=None,
-        scrape_expatch=None,
-        scrape_bfa=None,
-        scrape_upbge=None,
-        scrape_upbge_weekly=None,
-    ):
+    def start_scraper(self, scrape_all_visible=False):
         self.set_status(t("act.prog.checking"), False)
         self.stop_auto_scrape_timer()
 
-        if scrape_stable is None:
-            scrape_stable = get_scrape_stable_builds()
-        if scrape_daily is None:
-            scrape_daily = get_scrape_daily_builds()
-        if scrape_expatch is None:
-            scrape_expatch = get_scrape_experimental_builds()
-        if scrape_bfa is None:
-            scrape_bfa = get_scrape_bfa_builds()
-        if scrape_upbge is None:
-            scrape_upbge = get_scrape_upbge_builds()
-        if scrape_upbge_weekly is None:
-            scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
+        scrape_stable = get_scrape_stable_builds()
+        scrape_daily = get_scrape_daily_builds()
+        scrape_expatch = get_scrape_experimental_builds()
+        scrape_bfa = get_scrape_bfa_builds()
+        scrape_upbge = get_scrape_upbge_builds()
+        scrape_upbge_weekly = get_scrape_upbge_weekly_builds()
+        if scrape_all_visible:
+            scrape_stable |= get_show_stable_builds()
+            scrape_daily |= get_show_daily_builds()
+            scrape_expatch |= get_show_experimental_and_patch_builds()
+            scrape_bfa |= get_show_bfa_builds()
+            scrape_upbge |= get_show_upbge_builds()
+            scrape_upbge_weekly |= get_show_upbge_weekly_builds()
 
         self.DownloadsPage.set_info_label_text(t("act.prog.checking"))
 
@@ -986,33 +959,20 @@ class BlenderLauncher(BaseWindow):
 
         self.LibraryPage.list_widget.insert_item(item, widget)
 
-    def update_visible_lists(
-        self,
-        force_l_stable=False,  # Force the library visibility of these
-        force_l_daily=False,
-        force_l_expatch=False,
-        force_l_bfa=False,
-        force_l_upbge=False,
-        force_l_upbge_weekly=False,
-        force_s_stable=False,  # Force the scraper visibility of these
-        force_s_daily=False,
-        force_s_expatch=False,
-        force_s_bfa=False,
-        force_s_upbge=False,
-        force_s_upbge_weekly=False,
-    ):
-        show_stable = force_l_stable or get_show_stable_builds()
-        show_daily = force_l_daily or get_show_daily_builds()
-        show_expatch = force_l_expatch or get_show_experimental_and_patch_builds()
-        show_bfa = force_l_bfa or get_show_bfa_builds()
-        show_upbge = force_l_upbge or get_show_upbge_builds()
-        show_upbge_weekly = force_l_upbge_weekly or get_show_upbge_weekly_builds()
-        scrape_stable = force_s_stable or get_scrape_stable_builds()
-        scrape_daily = force_s_daily or get_scrape_daily_builds()
-        scrape_expatch = force_s_expatch or get_scrape_experimental_builds()
-        scrape_bfa = force_s_bfa or get_scrape_bfa_builds()
-        scrape_upbge = force_s_upbge or get_scrape_upbge_builds()
-        scrape_upbge_weekly = force_s_upbge_weekly or get_scrape_upbge_weekly_builds()
+    def update_visible_lists(self, scrape_all_visible=False):
+        show_stable = get_show_stable_builds()
+        show_daily = get_show_daily_builds()
+        show_expatch = get_show_experimental_and_patch_builds()
+        show_bfa = get_show_bfa_builds()
+        show_upbge = get_show_upbge_builds()
+        show_upbge_weekly = get_show_upbge_weekly_builds()
+
+        scrape_stable = (scrape_all_visible and show_stable) or get_scrape_stable_builds()
+        scrape_daily = (scrape_all_visible and show_daily) or get_scrape_daily_builds()
+        scrape_expatch = (scrape_all_visible and show_expatch) or get_scrape_experimental_builds()
+        scrape_bfa = (scrape_all_visible and show_bfa) or get_scrape_bfa_builds()
+        scrape_upbge = (scrape_all_visible and show_upbge) or get_scrape_upbge_builds()
+        scrape_upbge_weekly = (scrape_all_visible and show_upbge_weekly) or get_scrape_upbge_weekly_builds()
 
         self.LibraryToolBox.update_visibility(0, show_stable)
         self.LibraryToolBox.update_visibility(1, show_daily)
