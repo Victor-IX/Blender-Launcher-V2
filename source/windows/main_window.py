@@ -722,6 +722,10 @@ class BlenderLauncher(BaseWindow):
     def destroy(self):
         self.quit_signal.emit()
         self.stop_auto_scrape_timer()
+        if self.scraper is not None and self.scraper.isRunning():
+            self.scraper.terminate()
+            self.scraper.wait()
+        self.task_queue.fullstop()
         self.tray_icon.hide()
         self.app.quit()
 
