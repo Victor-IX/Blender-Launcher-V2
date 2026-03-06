@@ -85,12 +85,12 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def __show(self, b: bool):
         if b:
             self.show()
-            self.parent.HeaderWidget.show()
-            self.parent.PlaceholderWidget.hide()
+            self.page.HeaderWidget.show()
+            self.page.PlaceholderWidget.hide()
         else:
             self.hide()
-            self.parent.HeaderWidget.hide()
-            self.parent.PlaceholderWidget.show()
+            self.page.HeaderWidget.hide()
+            self.page.PlaceholderWidget.show()
 
     def items(self):
         items = []

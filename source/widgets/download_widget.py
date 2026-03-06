@@ -49,7 +49,8 @@ class DownloadWidget(BaseBuildWidget):
             item=item,
             build_info=build_info,
         )
-        self.parent: BlenderLauncher = parent
+        # self.parent: BlenderLauncher = parent
+        self.launcher = parent
         self.list_widget = list_widget
         self.show_new = show_new
         self.installed: LibraryWidget | None = None
@@ -60,7 +61,7 @@ class DownloadWidget(BaseBuildWidget):
         self._is_removed = False
 
         self.progressBar = BaseProgressBarWidget()
-        self.progressBar.setFont(self.parent.font_8)
+        self.progressBar.setFont(self.launcher.font_8)
         self.progressBar.setFixedHeight(18)
         self.progressBar.hide()
 
@@ -184,15 +185,15 @@ class DownloadWidget(BaseBuildWidget):
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
 
-        assert self.parent.manager is not None
+        assert self.launcher.manager is not None
         self.set_state(DownloadState.DOWNLOADING)
         self.dl_task = DownloadTask(
-            manager=self.parent.manager,
+            manager=self.launcher.manager,
             link=self.build_info.link,
         )
         self.dl_task.progress.connect(self.progressBar.set_progress)
         self.dl_task.finished.connect(self.init_extractor)
-        self.parent.task_queue.append(self.dl_task)
+        self.launcher.task_queue.append(self.dl_task)
 
     def set_state(self, state: DownloadState) -> None:
         self.state = state
@@ -238,7 +239,7 @@ class DownloadWidget(BaseBuildWidget):
         t = ExtractTask(file=source, destination=dist, is_upbge=self.build_info.branch.startswith("upbge"))
         t.progress.connect(self.progressBar.set_progress)
         t.finished.connect(self.init_template_installer)
-        self.parent.task_queue.append(t)
+        self.launcher.task_queue.append(t)
 
     def init_template_installer(self, dist: Path, is_removed: bool) -> None:
         self._is_removed = is_removed
@@ -252,7 +253,7 @@ class DownloadWidget(BaseBuildWidget):
             self.progressBar.set_state(self.progressBar.State.COPYING)
             task = TemplateTask(destination=self.build_dir)
             task.finished.connect(self.download_get_info)
-            self.parent.task_queue.append(task)
+            self.launcher.task_queue.append(task)
         else:
             self.download_get_info()
 
@@ -280,7 +281,7 @@ class DownloadWidget(BaseBuildWidget):
         self.set_state(DownloadState.IDLE)
         self.cancelButton.hide()
         self.downloadButton.show()
-        self.parent.task_queue.remove_task(self.dl_task)
+        self.launcher.task_queue.remove_task(self.dl_task)
         self.build_state_widget.setDownload(False)
 
         # Reset the widget's button states if this was an update download
@@ -294,7 +295,7 @@ class DownloadWidget(BaseBuildWidget):
 
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)
-        if self.parent.platform == "Linux":
+        if self.launcher.platform == "Linux":
             archive_name = Path(self.build_info.link).with_suffix("").stem
         else:
             archive_name = Path(self.build_info.link).stem
@@ -327,7 +328,7 @@ class DownloadWidget(BaseBuildWidget):
         )
         t.finished.connect(self.download_rename)
         t.failure.connect(lambda e: logger.error(f"ReadBuildTask failed for {self.build_dir}: {e}"))
-        self.parent.task_queue.append(t)
+        self.launcher.task_queue.append(t)
 
     def download_rename(self, build_info: BuildInfo) -> None:
         self.set_state(DownloadState.RENAMING)
@@ -339,7 +340,7 @@ class DownloadWidget(BaseBuildWidget):
         )
         t.finished.connect(self.download_finished)
         t.failure.connect(lambda: print("Renaming failed"))
-        self.parent.task_queue.append(t)
+        self.launcher.task_queue.append(t)
 
     def download_finished(self, path: Path | None, is_removed: bool) -> None:
         if self._is_removed is False:
@@ -351,10 +352,10 @@ class DownloadWidget(BaseBuildWidget):
             path = self.build_dir
 
         if path is not None:
-            self.parent.draw_to_library(path, True, self.successful_read_callback)
+            self.launcher.draw_to_library(path, True, self.successful_read_callback)
 
             assert self.source_file is not None
-            self.parent.clear_temp(self.source_file)
+            self.launcher.clear_temp(self.source_file)
 
             if self.build_info.branch == "bforartists":
                 message = f"Bforartists {self.subversionLabel.text()} {self.build_info.commit_time}"
@@ -363,7 +364,7 @@ class DownloadWidget(BaseBuildWidget):
                 message = f"Blender {name}"
             message += " download finished!"
 
-            self.parent.show_message(
+            self.launcher.show_message(
                 message,
                 message_type=MessageType.DOWNLOADFINISHED,
             )
@@ -377,7 +378,7 @@ class DownloadWidget(BaseBuildWidget):
                 QTimer.singleShot(500, lambda: self.handle_portable_settings(updating_widget, widget))
             else:
                 QTimer.singleShot(500, lambda: self.remove_old_build(updating_widget))
-        self.parent.check_library_for_updates()
+        self.launcher.check_library_for_updates()
 
     def handle_portable_settings(self, old_widget: LibraryWidget, new_widget: LibraryWidget) -> None:
         """Handle portable settings transfer based on user choice."""
@@ -420,7 +421,7 @@ class DownloadWidget(BaseBuildWidget):
         popup = Popup.warning(
             message=t("msg.popup.portable_failure", error=error),
             buttons=[Popup.Button.CONT, Popup.Button.CANCEL],
-            parent=self.parent,
+            parent=self.launcher,
         )
 
         popup.accepted.connect(lambda: self._handle_portable_failure_choice(old_widget, True))

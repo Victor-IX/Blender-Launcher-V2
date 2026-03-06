@@ -321,7 +321,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BlenderStartupArguments = grp.add(QLineEdit())
                 self.BlenderStartupArguments.setText(str(get_blender_startup_arguments()))
                 self.BlenderStartupArguments.setToolTip(t("settings.blender_builds.blender_startup_arguments_tooltip"))
-                self.BlenderStartupArguments.setContextMenuPolicy(Qt.NoContextMenu)
+                self.BlenderStartupArguments.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
                 self.BlenderStartupArguments.setCursorPosition(0)
                 self.BlenderStartupArguments.editingFinished.connect(self.update_blender_startup_arguments)
 
@@ -330,7 +330,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BashArguments = grp.add(QLineEdit())
                 self.BashArguments.setText(str(get_bash_arguments()))
                 self.BashArguments.setToolTip(t("settings.blender_builds.bash_arguments_tooltip"))
-                self.BashArguments.setContextMenuPolicy(Qt.NoContextMenu)
+                self.BashArguments.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
                 self.BashArguments.setCursorPosition(0)
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
@@ -399,11 +399,11 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
         modifier_strings = []
 
-        if modifiers & Qt.ControlModifier:
+        if modifiers & Qt.KeyboardModifier.ControlModifier:
             modifier_strings.append("Ctrl")
-        if modifiers & Qt.AltModifier:
+        if modifiers & Qt.KeyboardModifier.AltModifier:
             modifier_strings.append("Alt")
-        if modifiers & Qt.ShiftModifier:
+        if modifiers & Qt.KeyboardModifier.ShiftModifier:
             modifier_strings.append("Shift")
         # TODO: Check if it's possible to use the Meta key
         # if modifiers & Qt.MetaModifier:
@@ -411,7 +411,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
         modifier_str = "+".join(modifier_strings)
 
-        if key > 0 and key not in {Qt.Key_Shift, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Meta}:
+        if key > 0 and key not in {Qt.Key.Key_Shift, Qt.Key.Key_Alt, Qt.Key.Key_Control, Qt.Key.Key_Meta}:
             key_str = QtGui.QKeySequence(key).toString()
             if modifier_str:
                 key_name = f"{modifier_str}+{key_str}"

@@ -203,7 +203,7 @@ class GeneralTabWidget(SettingsFormWidget):
         library_folder = str(get_library_folder())
         new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select_library"), library_folder)
         if new_library_folder and (library_folder != new_library_folder):
-            self.set_library_folder(Path(new_library_folder))
+            set_library_folder(Path(new_library_folder).as_posix())
 
     def set_library_folder_(self, p: Path):
         print("SETTTE", p)

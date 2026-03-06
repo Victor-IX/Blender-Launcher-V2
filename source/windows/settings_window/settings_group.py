@@ -333,8 +333,8 @@ class SettingsGroup(QFrame):
             self.collapsed.emit(True)
         self.contents.hide()
 
-        if self.parent():
-            self.parent().updateGeometry()
+        if (p:=self.parent()) is not None and isinstance(p, QWidget):
+            p.updateGeometry()
 
     @Slot()
     def uncollapse(self):
@@ -346,5 +346,5 @@ class SettingsGroup(QFrame):
 
         self.contents.show()
 
-        if self.parent():
-            self.parent().updateGeometry()
+        if (p:=self.parent()) is not None and isinstance(p, QWidget):
+            p.updateGeometry()
