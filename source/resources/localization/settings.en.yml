@@ -290,6 +290,14 @@ blender_builds:
     Installs a template on newly added builds to the Library tab
     DEFAULT: Off
   launching_builds: Launching Builds
+  on_blender_launch_action: On Blender Launch
+  on_blender_launch_action_tooltip: |
+    Action to perform on the Blender Launcher window when a Blender instance is started.
+    DEFAULT: Do Nothing
+  on_blender_launch_actions:
+    "0": Do Nothing
+    "1": Minimize
+    "2": Close
   quick_launch_global_shortcut: Quick Launch Global Shortcut
   quick_launch_global_shortcut_tooltip: |
     Enable a global shortcut to quickly launch Blender

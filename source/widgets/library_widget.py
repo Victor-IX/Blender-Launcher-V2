@@ -28,6 +28,7 @@ from modules.settings import (
     get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
+    get_on_blender_launch_action,
     get_show_update_button,
     set_favorite_path,
 )
@@ -634,6 +635,12 @@ class LibraryWidget(BaseBuildWidget):
     def observer_started(self):
         self.deleteAction.setEnabled(False)
         self.installTemplateAction.setEnabled(False)
+
+        action = get_on_blender_launch_action()
+        if action == 1:
+            self.parent.showMinimized()
+        elif action == 2:
+            self.parent.close()
 
         if self.child_widget is not None:
             self.child_widget.observer_started()
