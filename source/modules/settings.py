@@ -242,6 +242,14 @@ def set_launch_minimized_to_tray(is_checked):
     get_settings().setValue("launch_minimized_to_tray", is_checked)
 
 
+def get_on_blender_launch_action() -> int:
+    return get_settings().value("on_blender_launch_action", defaultValue=0, type=int)  # type: ignore
+
+
+def set_on_blender_launch_action(action: int):
+    get_settings().setValue("on_blender_launch_action", action)
+
+
 def get_dpi_scale_factor() -> float:
     return get_settings().value("dpi_scale_factor", defaultValue=1.0, type=float)  # type: ignore
 

@@ -291,6 +291,14 @@ blender_builds:
     ライブラリタブに新しく追加されたビルドにテンプレートをインストールします
     DEFAULT: Off
   launching_builds: ビルドの起動
+  on_blender_launch_action: Blender起動時の動作
+  on_blender_launch_action_tooltip: |
+    Blenderのインスタンスが起動されたときにBlender Launcherウィンドウに対して行う動作。
+    デフォルト: 何もしない
+  on_blender_launch_actions:
+    "0": 何もしない
+    "1": 最小化
+    "2": 閉じる
   quick_launch_global_shortcut: クイック起動グローバルショートカット
   quick_launch_global_shortcut_tooltip: |
     Blenderを素早く起動するためのグローバルショートカットを有効にします

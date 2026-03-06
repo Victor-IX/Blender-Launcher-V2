@@ -20,6 +20,7 @@ from modules.settings import (
     get_mark_as_favorite,
     get_minimum_blender_stable_version,
     get_new_builds_check_frequency,
+    get_on_blender_launch_action,
     get_quick_launch_key_seq,
     get_show_bfa_update_button,
     get_show_daily_archive_builds,
@@ -49,6 +50,7 @@ from modules.settings import (
     set_mark_as_favorite,
     set_minimum_blender_stable_version,
     set_new_builds_check_frequency,
+    set_on_blender_launch_action,
     set_quick_launch_key_seq,
     set_scrape_bfa_builds,
     set_scrape_daily_builds,
@@ -295,6 +297,17 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
         # self.launching_settings = SettingsGroup(t("settings.blender_builds.launching_builds"), parent=self)
         with self.group("settings.blender_builds.launching_builds") as grp:
+            # On Blender Launch action
+            self.OnBlenderLaunchAction = grp.add(
+                QComboBox(),
+                "settings.blender_builds.on_blender_launch_action",
+            )
+            self.OnBlenderLaunchAction.setToolTip(t("settings.blender_builds.on_blender_launch_action_tooltip"))
+            for i in range(3):
+                self.OnBlenderLaunchAction.addItem(t(f"settings.blender_builds.on_blender_launch_actions.{i}"))
+            self.OnBlenderLaunchAction.setCurrentIndex(get_on_blender_launch_action())
+            self.OnBlenderLaunchAction.activated[int].connect(set_on_blender_launch_action)
+
             plat = get_platform()
             if plat == "Windows":
                 # Run Blender using blender-launcher.exe

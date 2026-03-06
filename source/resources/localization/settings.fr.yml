@@ -283,6 +283,14 @@ blender_builds:
     Installe un modèle sur les builds nouvellement ajoutés à l'onglet Bibliothèque
     PAR DÉFAUT : Désactivé
   launching_builds: Lancement des builds
+  on_blender_launch_action: Au lancement de Blender
+  on_blender_launch_action_tooltip: |
+    Action à effectuer sur la fenêtre de Blender Launcher lorsqu'une instance de Blender est démarrée.
+    DÉFAUT: Ne rien faire
+  on_blender_launch_actions:
+    "0": Ne rien faire
+    "1": Réduire
+    "2": Fermer
   quick_launch_global_shortcut: Raccourci global de lancement rapide
   quick_launch_global_shortcut_tooltip: |
     Activer un raccourci global pour lancer rapidement Blender
