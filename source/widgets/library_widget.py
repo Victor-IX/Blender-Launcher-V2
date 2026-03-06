@@ -21,8 +21,8 @@ from modules.build_info import (
     launch_build,
 )
 from modules.enums import MessageType
-from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.file_utils import retry_on_permission_error
+from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.settings import (
     get_default_delete_action,
     get_favorite_path,

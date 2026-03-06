@@ -1,6 +1,7 @@
 import logging
 import time
-from typing import Callable, TypeVar
+from collections.abc import Callable
+from typing import TypeVar
 
 logger = logging.getLogger()
 
@@ -38,5 +39,5 @@ def retry_on_permission_error(
             if attempt + 1 < max_retries:
                 time.sleep(retry_delay)
 
-    logger.error(f"All {max_retries} attempts failed: {e}")
-    raise last_error
+    logger.error(f"All {max_retries} attempts failed: {last_error}")
+    raise last_error # type: ignore

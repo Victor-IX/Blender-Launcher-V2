@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
-from modules.platform_utils import find_app_bundle, get_platform, is_frozen
 from modules.file_utils import retry_on_permission_error
+from modules.platform_utils import find_app_bundle, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
