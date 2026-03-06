@@ -3,4 +3,4 @@ for %%I in (.) do set CurrentDir=%%~nxI
 if %CurrentDir%==scripts cd ..
 
 cd docs
-mkdocs serve
+mkdocs serve --livereload

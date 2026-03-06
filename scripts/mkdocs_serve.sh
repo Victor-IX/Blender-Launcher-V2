@@ -6,4 +6,4 @@ if [ "$(basename "$PWD")" = "scripts" ]; then
 fi
 
 cd docs
-mkdocs serve
+mkdocs serve --livereload
