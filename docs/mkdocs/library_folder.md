@@ -27,6 +27,21 @@ There is known issue related to Qt and some Linux distributions like Mint where 
     ├─ template
     └─ <a folder for every supported repo>
 ```
+### Supported Repos
+
+See [Blender Forks](blender_forks.md) for detailed information about the supported forks.
+
+```
+.
+└─ %Library Folder%
+    ├─ stable        # Official Blender stable releases
+    ├─ daily         # Official Blender daily builds
+    ├─ experimental  # Official Blender experimental branches
+    ├─ bforartists   # Bforartists builds
+    ├─ upbge-stable  # UPBGE stable releases
+    ├─ upbge-weekly  # UPBGE weekly/alpha builds
+    └─ custom        # Manual custom builds
+```
 
 ### Special folders
 

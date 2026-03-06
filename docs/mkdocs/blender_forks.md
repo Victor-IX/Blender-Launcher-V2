@@ -113,19 +113,7 @@ The launcher automatically identifies UPBGE builds by their directory structure 
 
 ### Library Folder Structure
 
-Each fork has its own folder in the library:
-
-```
-Library Folder/
-├── stable/          # Official Blender stable releases
-├── daily/           # Official Blender daily builds
-├── experimental/    # Official Blender experimental branches
-├── bforartists/     # Bforartists builds
-├── upbge-stable/    # UPBGE stable releases
-├── upbge-weekly/    # UPBGE weekly/alpha builds
-└── custom/          # Manual custom builds
-```
-
+Each fork has its own folder in the library
 See [Library Folder Structure](library_folder.md#structure) for more details.
 
 ### Visibility Settings
