@@ -41,9 +41,10 @@ from modules.winget_integration import register_with_winget, unregister_from_win
 from PySide6.QtWidgets import QComboBox, QPushButton
 from utils.i18n_init import Language
 from widgets.folder_select import FolderSelector
-from widgets.settings_form_widget import SettingsFormWidget
 from windows.file_dialog_window import FileDialogWindow
 from windows.popup_window import Popup
+
+from .settings_form_widget import SettingsFormWidget
 
 if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher

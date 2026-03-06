@@ -1,6 +1,7 @@
 from i18n import t
 from PySide6.QtWidgets import QFormLayout, QLabel, QWidget
-from widgets.settings_window.settings_group import SettingsGroup
+
+from .settings_group import SettingsGroup
 
 
 class SettingsFormWidgetRow:

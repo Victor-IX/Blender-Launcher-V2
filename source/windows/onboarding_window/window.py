@@ -13,7 +13,9 @@ from modules.platform_utils import get_platform
 from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QWizard
-from widgets.onboarding_setup.wizard_pages import (
+from windows.base_window import BaseWindow
+
+from .wizard_pages import (
     AppearancePage,
     BackgroundRunningPage,
     BasicOnboardingPage,
@@ -25,7 +27,6 @@ from widgets.onboarding_setup.wizard_pages import (
     ShortcutsPage,
     WelcomePage,
 )
-from windows.base_window import BaseWindow
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QCloseEvent
