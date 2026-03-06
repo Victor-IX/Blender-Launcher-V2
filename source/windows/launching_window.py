@@ -146,10 +146,10 @@ class LaunchingWindow(BaseWindow):
         self.central_layout.addWidget(self.cancel_button, 9, 0, 1, 1)
         self.central_layout.addWidget(self.launch_button, 9, 1, 1, 2)
 
-        self.__enabled_font = QFont(self.font_10)
+        self.__enabled_font = QFont(self.fonts.font_10)
         self.__enabled_font.setBold(True)
         self.__enabled_font.setWeight(QFont.Weight.Bold)
-        self.__disabled_font = QFont(self.font_8)
+        self.__disabled_font = QFont(self.fonts.font_8)
         self.__disabled_font.setItalic(True)
         self.__disabled_font.setWeight(QFont.Weight.Light)
 
