@@ -20,6 +20,7 @@ from modules.bl_instance_handler import BLInstanceHandler
 from modules.build_info import ReadBuildTask
 from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
+from modules.file_utils import retry_on_permission_error
 from modules.platform_utils import (
     _popen,
     get_cwd,
@@ -599,7 +600,8 @@ class BlenderLauncher(BaseWindow):
         cwd = get_cwd()
         source = cwd / bl_exe
         dist = cwd / blu_exe
-        shutil.copy(source, dist)
+
+        retry_on_permission_error(shutil.copy, source, dist)
 
         # Run 'Blender Launcher Updater.exe' with '-update' flag
         if self.platform == "Windows":

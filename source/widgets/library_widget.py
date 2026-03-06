@@ -22,6 +22,7 @@ from modules.build_info import (
 )
 from modules.enums import MessageType
 from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
+from modules.file_utils import retry_on_permission_error
 from modules.settings import (
     get_default_delete_action,
     get_favorite_path,
@@ -653,12 +654,12 @@ class LibraryWidget(BaseBuildWidget):
         _config_path = config_path.parent / ("_" + folder_name)
 
         if config_path.is_dir():
-            config_path.rename(_config_path)
+            retry_on_permission_error(config_path.rename, _config_path)
             self.makePortableAction.setText(t("act.a.port.add"))
             self.showConfigFolderAction.setText(t("act.a.config"))
         else:
             if _config_path.is_dir():
-                _config_path.rename(config_path)
+                retry_on_permission_error(_config_path.rename, config_path)
             else:
                 config_path.mkdir(parents=False, exist_ok=True)
             self.makePortableAction.setText(t("act.a.port.rem"))

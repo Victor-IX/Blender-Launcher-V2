@@ -9,6 +9,7 @@ from pathlib import Path
 
 import py7zr
 from modules.enums import MessageType
+from modules.file_utils import retry_on_permission_error
 from modules.platform_utils import _check_call, _check_output
 from modules.task import Task
 from PySide6.QtCore import Signal
@@ -321,14 +322,14 @@ class ExtractTask(Task):
         # Clean up corrupted file
         if self.file.exists():
             logger.info(f"Removing corrupted file: {self.file}")
-            self.file.unlink()
+            retry_on_permission_error(self.file.unlink)
 
     def run(self):
         is_removed = False
         try:
             if (self.destination / self.file.stem).exists():
                 is_removed = True
-                send2trash(self.destination / self.file.stem)
+                retry_on_permission_error(send2trash, self.destination / self.file.stem)
                 logger.debug(f"Removed existing file: {self.destination / self.file.stem}")
 
             result = extract(self.file, self.destination, self.progress.emit)

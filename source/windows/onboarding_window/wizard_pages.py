@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.platform_utils import find_app_bundle, get_platform, is_frozen
+from modules.file_utils import retry_on_permission_error
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
@@ -169,12 +170,12 @@ class ChooseLibraryPage(BasicOnboardingPage):
 
             self.prop_settings.exe_changed = True
             exe.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy(sys.executable, exe)
+            retry_on_permission_error(shutil.copy, sys.executable, exe)
             if platform == "Windows":  # delete the exe when closed
                 # self.launcher.delete_exe_on_reboot = True
                 ...
             else:  # delete the executable directly
-                Path(sys.executable).unlink()
+                retry_on_permission_error(Path(sys.executable).unlink)
 
 
 class RepoSelectPage(BasicOnboardingPage):

@@ -17,6 +17,7 @@ import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules.file_utils import retry_on_permission_error
 from modules.settings import get_auto_register_winget
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
@@ -274,7 +275,7 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
         cwd = get_cwd()
         source = cwd / bl_exe
         dist = cwd / blu_exe
-        shutil.copy(source, dist)
+        retry_on_permission_error(shutil.copy, source, dist)
 
         # Run the updater with the instanced flag
         if get_platform() == "Windows":
