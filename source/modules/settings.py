@@ -65,16 +65,22 @@ favorite_pages = {
     "Experimental Branches": 3,
 }
 
-library_subfolders = [
-    "custom",
+build_library_folders = [
     "stable",
     "daily",
     "experimental",
     "bforartists",
-    "template",
     "upbge-stable",
     "upbge-weekly",
+    "custom",
 ]
+
+other_library_folders = [
+    "template",
+]
+
+
+library_subfolders = build_library_folders + other_library_folders
 
 proxy_types = {
     "None": 0,

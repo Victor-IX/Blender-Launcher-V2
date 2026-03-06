@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from modules.platform_utils import get_platform
-from modules.settings import get_library_folder
+from modules.settings import build_library_folders, get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal
 
@@ -70,15 +70,7 @@ def get_blender_builds(folders: Iterable[str | Path]) -> Iterable[tuple[Path, bo
 
 @dataclass
 class DrawLibraryTask(Task):
-    folders: Iterable[str | Path] = (
-        "stable",
-        "daily",
-        "experimental",
-        "bforartists",
-        "upbge-stable",
-        "upbge-weekly",
-        "custom",
-    )
+    folders: Iterable[str | Path] = tuple(build_library_folders)
     found = Signal(Path)
     unrecognized = Signal(Path)
     finished = Signal()
