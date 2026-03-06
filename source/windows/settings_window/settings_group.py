@@ -124,15 +124,18 @@ class GroupContents(QWidget):
 
     _W = TypeVar("_W", bound=QWidget)
 
-    def add(self, widget: _W, label: str | None = None) -> _W:
+    def add(self, widget: _W, label: str | None = None, add_tooltip_to_widget: bool = True) -> _W:
         if label is not None:
+            if add_tooltip_to_widget:
+                _add_tooltip(label, widget)
+
+            label_widget = self._label(label)
+
             if isinstance(self.contents, QFormLayout):
-                self.contents.addRow(self._label(label), widget)
+                self.contents.addRow(label_widget, widget)
             else:
-                layout = QHBoxLayout()
-                layout.addWidget(self._label(label))
-                layout.addWidget(widget)
-                self.contents.addLayout(layout)
+                self.contents.addWidget(label_widget)
+                self.contents.addWidget(widget)
         else:
             if isinstance(self.contents, QFormLayout):
                 self.contents.addRow(widget)

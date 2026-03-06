@@ -302,7 +302,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 QComboBox(),
                 "settings.blender_builds.on_blender_launch_action",
             )
-            self.OnBlenderLaunchAction.setToolTip(t("settings.blender_builds.on_blender_launch_action_tooltip"))
             for i in range(3):
                 self.OnBlenderLaunchAction.addItem(t(f"settings.blender_builds.on_blender_launch_actions.{i}"))
             self.OnBlenderLaunchAction.setCurrentIndex(get_on_blender_launch_action())
