@@ -722,34 +722,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Running Blender Launcher">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#build-required-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build required resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the application
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -793,10 +765,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#preview-the-documentation" class="md-nav__link">
+  <a href="#previewing-the-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Preview the Documentation
+        Previewing the Documentation
       
     </span>
   </a>
@@ -804,10 +776,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#update-the-documentation" class="md-nav__link">
+  <a href="#edit-documentation-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Update the Documentation
+        Edit Documentation Files
       
     </span>
   </a>
@@ -815,10 +787,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#publish-the-documentation" class="md-nav__link">
+  <a href="#publish-the-documentation-collaborator-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Publish the Documentation
+        Publish the Documentation [Collaborator Only]
       
     </span>
   </a>
@@ -858,17 +830,6 @@
     <span class="md-ellipsis">
       
         Code Formatting and Linting
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#updating-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Updating Dependencies
       
     </span>
   </a>
@@ -1036,34 +997,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Running Blender Launcher">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#build-required-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build required resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the application
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1107,10 +1040,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#preview-the-documentation" class="md-nav__link">
+  <a href="#previewing-the-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Preview the Documentation
+        Previewing the Documentation
       
     </span>
   </a>
@@ -1118,10 +1051,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#update-the-documentation" class="md-nav__link">
+  <a href="#edit-documentation-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Update the Documentation
+        Edit Documentation Files
       
     </span>
   </a>
@@ -1129,10 +1062,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#publish-the-documentation" class="md-nav__link">
+  <a href="#publish-the-documentation-collaborator-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Publish the Documentation
+        Publish the Documentation [Collaborator Only]
       
     </span>
   </a>
@@ -1178,17 +1111,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#updating-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Updating Dependencies
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1212,27 +1134,21 @@
 
 
 <h1 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h1>
+<p>All actions mentioned in this page should be performed under the repository root folder i.e. <code>./Blender-Launcher-V2</code>.</p>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Python &gt;=3.10, &lt;3.14 </li>
+<li>Python &gt;=3.11, &lt;3.15</li>
+<li><a href="https://docs.astral.sh/uv/getting-started/">UV</a> (optional)</li>
 </ul>
-<div class="admonition info">
-<p class="admonition-title">Note</p>
-<p>All actions should be performed under repository root folder i.e. <code>./Blender-Launcher-V2</code></p>
-</div>
-<div class="admonition info">
-<p class="admonition-title">Project Manager</p>
-<p>It&rsquo;s recommended to use <a href="https://docs.astral.sh/uv/getting-started/">UV</a> as the project manager.</p>
-</div>
+<p>It&rsquo;s entirely optional to use <code>uv</code> as the project manager, but is strongly recommended as we use its tooling such as its lockfile and dependency resolution. Every shell snippet in this doc after the &ldquo;Setting Up&rdquo; step will use uv run as a prefix to indicate it needs to be run in the virtual environment.</p>
 <h2 id="setting-up-development-environment">Setting Up Development Environment<a class="headerlink" href="#setting-up-development-environment" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">PDM</label><label for="__tabbed_1_3">UV</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">PDM</label><label for="__tabbed_1_3">UV (recommended)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><strong>Install virtualenv:</strong></p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
-</code></pre></div>
-<p><strong>Create the virtual environment:</strong></p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>virtualenv<span class="w"> </span>--clear<span class="w"> </span>--download<span class="w"> </span>.venv
+<div class="highlight"><pre><span></span><code><span class="c1"># Install virtualenv:</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+<span class="c1"># Create the virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>virtualenv<span class="w"> </span>--clear<span class="w"> </span>--download<span class="w"> </span>.venv
 </code></pre></div>
 <p><strong>Activate the virtual environment:</strong></p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows (PowerShell)</label><label for="__tabbed_2_2">Windows (CMD)</label><label for="__tabbed_2_3">Linux/macOS</label></div>
@@ -1251,19 +1167,18 @@
 </div>
 </div>
 </div>
-<p><strong>Minimum set of packages for building executable:</strong></p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</code></pre></div>
-<p><strong>All packages including development tools:</strong></p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[docs,ruff,pytest]&quot;</span>
+<p><strong>Install dependencies:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Minimum set of packages for building the executable:</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<span class="c1"># All packages including development tools</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[docs,ruff,pytest]&quot;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p><strong>Install dependencies:</strong></p>
-<div class="highlight"><pre><span></span><code>pdm<span class="w"> </span>install
-</code></pre></div>
-<p><strong>Install with all development groups:</strong></p>
-<div class="highlight"><pre><span></span><code>pdm<span class="w"> </span>install<span class="w"> </span>--dev
+<div class="highlight"><pre><span></span><code><span class="c1"># Create the virtual environment &amp; install dependencies:</span>
+pdm<span class="w"> </span>install
+<span class="c1"># Install with all development groups:</span>
+pdm<span class="w"> </span>install<span class="w"> </span>-G:all
 </code></pre></div>
 <p><strong>Activate the virtual environment:</strong></p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Windows (PowerShell)</label><label for="__tabbed_3_2">Windows (CMD)</label><label for="__tabbed_3_3">Linux/macOS</label></div>
@@ -1287,14 +1202,10 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p><strong>Create the virtual environment:</strong></p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>venv
-</code></pre></div>
-<p><strong>Install dependencies:</strong></p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync
-</code></pre></div>
-<p><strong>Install with all extras:</strong></p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync<span class="w"> </span>--extra<span class="w"> </span>docs<span class="w"> </span>--extra<span class="w"> </span>ruff<span class="w"> </span>--extra<span class="w"> </span>pytest
+<div class="highlight"><pre><span></span><code><span class="c1"># Create the virtual environment &amp; install dependencies</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--frozen
+<span class="c1"># install with all extras (docs, ruff, pytest)</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 </code></pre></div>
 <p><strong>Activate the virtual environment:</strong></p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Windows (PowerShell)</label><label for="__tabbed_4_2">Windows (CMD)</label><label for="__tabbed_4_3">Linux/macOS</label></div>
@@ -1319,119 +1230,55 @@
 </div>
 </div>
 </div>
-<h2 id="running-blender-launcher">Running Blender Launcher<a class="headerlink" href="#running-blender-launcher" title="Permanent link">&para;</a></h2>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>As of (<a href="https://github.com/Victor-IX/Blender-Launcher-V2/commit/c90f33dfb710da509e50932bae3cbe5b588d8688">c90f33d</a>), cached Blender-Launcher-V2 files (such as resources_rc.py and global.qss) are no longer included in the source due to them artificially inflating git diffs. In order to generate them, run the <code>build_style.py</code> script located in the root project directory. Running Blender Launcher without these being built will result in an error.</p>
-</div>
-<h3 id="build-required-resources">Build required resources<a class="headerlink" href="#build-required-resources" title="Permanent link">&para;</a></h3>
-<p><strong>Generate the cached resource files:</strong></p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>build_style.py
+<h2 id="running-blender-launcher">Running Blender Launcher<sup id="fnref:resources"><a class="footnote-ref" href="#fn:resources">1</a></sup><a class="headerlink" href="#running-blender-launcher" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate the cached resource files:</span>
+<span class="c1"># This creates necessary files like `resources_rc.py` and `global.qss`.</span>
+<span class="c1"># This only needs to run once, unless you&#39;re updating widget styles.</span>
+uv<span class="w"> </span>run<span class="w"> </span>build_style.py
+
+<span class="c1"># Run the application</span>
+uv<span class="w"> </span>run<span class="w"> </span>source/main.py
 </code></pre></div>
-<p>This creates necessary files like <code>resources_rc.py</code> and <code>global.qss</code> that are required to run the application.</p>
-<h3 id="run-the-application">Run the application<a class="headerlink" href="#run-the-application" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">pip</label><label for="__tabbed_5_2">PDM</label><label for="__tabbed_5_3">UV</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>source/main.py
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pdm<span class="w"> </span>run<span class="w"> </span>bl
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>source/main.py
-</code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="building-blender-launcher-executable">Building Blender Launcher Executable<a class="headerlink" href="#building-blender-launcher-executable" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Executables made in PyInstaller must be built inside the target platform! You cannot build for a different platform other than your own.</p>
-</div>
+<h2 id="building-blender-launcher-executable">Building Blender Launcher Executable<sup id="fnref:build-notes"><a class="footnote-ref" href="#fn:build-notes">2</a></sup><a class="headerlink" href="#building-blender-launcher-executable" title="Permanent link">&para;</a></h2>
 <h3 id="build-the-executable">Build the executable<a class="headerlink" href="#build-the-executable" title="Permanent link">&para;</a></h3>
 <p><strong>Run the build script:</strong></p>
-<div class="tabbed-set tabbed-alternate" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Windows</label><label for="__tabbed_6_2">Linux</label><label for="__tabbed_6_3">macOS</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Windows</label><label for="__tabbed_5_2">Linux</label><label for="__tabbed_5_3">macOS</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/build_win.bat
+<div class="highlight"><pre><span></span><code>uv run ./scripts/build_win.bat
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/build_linux.sh
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>sh<span class="w"> </span>./scripts/build_linux.sh
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/build_mac.sh
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>sh<span class="w"> </span>./scripts/build_mac.sh
 </code></pre></div>
 </div>
 </div>
 </div>
-<p>This creates a standalone executable using PyInstaller.</p>
-<p><strong>Locate the output:</strong></p>
-<p>Look for bundled app under the <code>Blender-Launcher-V2/dist/release</code> folder.</p>
+<p>These scripts will create a standalone executable using PyInstaller. Once finished, the executable can be found under the <code>Blender-Launcher-V2/dist/release</code> folder.</p>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
-<h3 id="preview-the-documentation">Preview the Documentation<a class="headerlink" href="#preview-the-documentation" title="Permanent link">&para;</a></h3>
-<p><strong>Start the local documentation server:</strong></p>
-<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Windows</label><label for="__tabbed_7_2">Linux/macOS</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/mkdocs_serve.bat
+<h3 id="previewing-the-documentation">Previewing the Documentation<a class="headerlink" href="#previewing-the-documentation" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>docs
+<span class="c1"># prefix with `uv run` if not in the virtual env</span>
+uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>--livereload
 </code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/mkdocs_serve.sh
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>Then open <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> in a web browser.</p>
-<h3 id="update-the-documentation">Update the Documentation<a class="headerlink" href="#update-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Note</p>
-<p>You should never edit the documentation in the gh-pages branch; this branch is used to publish the documentation.</p>
-</div>
-<p><strong>Edit documentation files:</strong></p>
+or use the provided <code>scripts/mkdocs_serve</code> scripts.</p>
+<p>Then open the given link (likely <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>) in a web browser.</p>
+<h3 id="edit-documentation-files">Edit Documentation Files<sup id="fnref:update-gh-pages"><a class="footnote-ref" href="#fn:update-gh-pages">3</a></sup><a class="headerlink" href="#edit-documentation-files" title="Permanent link">&para;</a></h3>
 <p>Make the desired modifications in the .md files under the <code>docs/mkdocs</code> directory.</p>
-<h3 id="publish-the-documentation">Publish the Documentation<a class="headerlink" href="#publish-the-documentation" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>These scripts will only work if you have write access to the Blender-Launcher-V2 repo.</p>
-</div>
-<p><strong>Deploy to GitHub Pages:</strong></p>
-<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">Windows</label><label for="__tabbed_8_2">Linux/macOS</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/mkdocs_publish.bat
+<h3 id="publish-the-documentation-collaborator-only">Publish the Documentation [Collaborator Only]<sup id="fnref:collab-only"><a class="footnote-ref" href="#fn:collab-only">4</a></sup><a class="headerlink" href="#publish-the-documentation-collaborator-only" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">cd</span> docs
+uv run mkdocs gh-deploy
 </code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./scripts/mkdocs_publish.sh
-</code></pre></div>
-</div>
-</div>
-</div>
+<p>or use the provided <code>scripts/mkdocs_publish</code> scripts.</p>
 <p>This builds and publishes the documentation to the gh-pages branch.</p>
 <h2 id="common-development-tasks">Common Development Tasks<a class="headerlink" href="#common-development-tasks" title="Permanent link">&para;</a></h2>
 <h3 id="running-tests">Running Tests<a class="headerlink" href="#running-tests" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="9:3"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><input id="__tabbed_9_3" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">pip</label><label for="__tabbed_9_2">PDM</label><label for="__tabbed_9_3">UV</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pytest
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pdm<span class="w"> </span>run<span class="w"> </span>pytest
-</code></pre></div>
-</div>
-<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest
 </code></pre></div>
-</div>
-</div>
-</div>
 <h3 id="code-formatting-and-linting">Code Formatting and Linting<a class="headerlink" href="#code-formatting-and-linting" title="Permanent link">&para;</a></h3>
 <p><strong>Check code with Ruff:</strong></p>
 <div class="highlight"><pre><span></span><code>ruff<span class="w"> </span>check<span class="w"> </span>.
@@ -1439,22 +1286,27 @@
 <p><strong>Format code with Ruff:</strong></p>
 <div class="highlight"><pre><span></span><code>ruff<span class="w"> </span>format<span class="w"> </span>.
 </code></pre></div>
-<h3 id="updating-dependencies">Updating Dependencies<a class="headerlink" href="#updating-dependencies" title="Permanent link">&para;</a></h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="10:3"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><input id="__tabbed_10_3" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">pip</label><label for="__tabbed_10_2">PDM</label><label for="__tabbed_10_3">UV</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[docs,ruff,pytest]&quot;</span>
-</code></pre></div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:resources">
+<p>As of (<a href="https://github.com/Victor-IX/Blender-Launcher-V2/commit/c90f33dfb710da509e50932bae3cbe5b588d8688">c90f33d</a> ~v2.4.0), cached Blender-Launcher-V2 files (such as resources_rc.py and global.qss) are no longer included in the source due to them artificially inflating git diffs. </p>
+<p>In order to generate them, run the <code>build_style.py</code> script located in the root project directory. Running Blender Launcher without these being built will result in an error.&#160;<a class="footnote-backref" href="#fnref:resources" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:build-notes">
+<div class="admonition warning">
+<p class="admonition-title">Cross-platform compilation</p>
+<p>Executables made in PyInstaller must be built inside the target platform. <strong>You cannot build for a different platform other than your own.</strong></p>
 </div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>pdm<span class="w"> </span>update
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync<span class="w"> </span>--upgrade
-</code></pre></div>
-</div>
-</div>
+<p><a class="footnote-backref" href="#fnref:build-notes" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:update-gh-pages">
+<p><strong>You should never edit the documentation in the gh-pages branch;</strong> this branch is used to publish the documentation and is overwritten every time <code>mkdocs gh-deploy</code> is run.&#160;<a class="footnote-backref" href="#fnref:update-gh-pages" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:collab-only">
+<p>These scripts will only work if you have write access to the Blender-Launcher-V2 repo.&#160;<a class="footnote-backref" href="#fnref:collab-only" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
@@ -1509,7 +1361,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.footnote.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>

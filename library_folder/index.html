@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#library-folder" class="md-skip">
+        <a href="#changing-library-folder" class="md-skip">
           Skip to content
         </a>
       
@@ -319,8 +319,6 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -363,8 +361,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -393,6 +389,29 @@
   </a>
   
     <nav class="md-nav" aria-label="Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-repos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Repos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special folders
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Special folders">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -429,39 +448,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#daily" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        daily
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experimental" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        experimental
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        stable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#template" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -469,6 +455,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -910,8 +901,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -940,6 +929,29 @@
   </a>
   
     <nav class="md-nav" aria-label="Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-repos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Repos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special folders
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Special folders">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -976,39 +988,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#daily" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        daily
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experimental" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        experimental
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        stable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#template" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1016,6 +995,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1041,27 +1025,18 @@
 
 
 
-<h1 id="library-folder">Library Folder<a class="headerlink" href="#library-folder" title="Permanent link">&para;</a></h1>
-<p><strong>Library Folder</strong> - a directory on hard drive where all downloaded builds are stored.</p>
+  <h1>Library Folder</h1>
+
+<p>the Library Folder is the directory on your hard drive where every build you download is stored.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Don&rsquo;t create <strong>Library Folder</strong> inside UAC protected folders like <code>Program Files</code>. It is recommended to create a new directory on a non system drive or inside user folder like <code>Documents</code> to avoid any file collisions and have a nice structure.</p>
+<p>Don&rsquo;t create your <strong>Library Folder</strong> inside UAC protected folders like <code>Program Files</code> and don&rsquo;t run <strong>Blender Launcher</strong> with administrator rights. It is recommended to create a new directory on a non system drive or inside user folder like <code>Documents</code> to avoid any file collisions and have a nice structure. Doing otherwise can cause unexpected behavior in the program itself as well as Blender 3D.</p>
 </div>
 <h2 id="changing-library-folder">Changing Library Folder<a class="headerlink" href="#changing-library-folder" title="Permanent link">&para;</a></h2>
 <p>On first launch Blender Launcher will ask for choosing <strong>Library Folder</strong>. After it can be changed in <a href="../settings/#library-folder">Library Folder</a> section of <a href="../settings/">Settings Window</a>.</p>
 <p>There is known issue related to Qt and some Linux distributions like Mint where it fails to show folder browser dialog window. To pass this issue it is possible to set <strong>Library Folder</strong> via command line arguments:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Linux</label><label for="__tabbed_1_2">Windows CMD</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>./Blender\ Launcher -set-library-folder &quot;%PATH%&quot;
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;path/to/Blender Launcher&quot;</span><span class="w"> </span>-set-library-folder<span class="w"> </span><span class="s2">&quot;&lt;path&gt;&quot;</span>
 </code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>&quot;Blender Launcher.exe&quot; -set-library-folder &quot;%PATH%&quot;
-</code></pre></div>
-</div>
-</div>
-</div>
 <h2 id="structure">Structure<a class="headerlink" href="#structure" title="Permanent link">&para;</a></h2>
 <p><strong>Library Folder</strong> has the following structure:</p>
 <div class="highlight"><pre><span></span><code>.
@@ -1069,20 +1044,31 @@
     ├─ bl_symlink
     ├─ .temp
     ├─ custom
-    ├─ daily
-    ├─ experimental
-    ├─ stable
-    └─ template
+    ├─ template
+    └─ &lt;a folder for every supported repo&gt;
 </code></pre></div>
-<h3 id="bl_symlink"><code>bl_symlink</code><a class="headerlink" href="#bl_symlink" title="Permanent link">&para;</a></h3>
+<h3 id="supported-repos">Supported Repos<a class="headerlink" href="#supported-repos" title="Permanent link">&para;</a></h3>
+<p>See <a href="../blender_forks/">Blender Forks</a> for detailed information about the supported forks.</p>
+<div class="highlight"><pre><span></span><code>.
+└─ %Library Folder%
+    ├─ stable        # Official Blender stable releases
+    ├─ daily         # Official Blender daily builds
+    ├─ experimental  # Official Blender experimental branches
+    ├─ bforartists   # Bforartists builds
+    ├─ upbge-stable  # UPBGE stable releases
+    ├─ upbge-weekly  # UPBGE weekly/alpha builds
+    └─ custom        # Manual custom builds
+</code></pre></div>
+<h3 id="special-folders">Special folders<a class="headerlink" href="#special-folders" title="Permanent link">&para;</a></h3>
+<h4 id="bl_symlink"><code>bl_symlink</code><a class="headerlink" href="#bl_symlink" title="Permanent link">&para;</a></h4>
 <dl>
 <dd><strong>bl_symlink</strong> is a symbolic link that creates via <a href="../user_interface/#library-build-context-menu">library build context menu</a>.</dd>
 </dl>
-<h3 id="temp"><code>.temp</code><a class="headerlink" href="#temp" title="Permanent link">&para;</a></h3>
+<h4 id="temp"><code>.temp</code><a class="headerlink" href="#temp" title="Permanent link">&para;</a></h4>
 <dl>
-<dd><strong>.temp</strong> folder is used to store downloaded <code>*.zip</code> and <code>*.tar</code> files.</dd>
+<dd><strong>.temp</strong> folder is used to store downloaded <code>*.zip</code> and <code>*.tar</code> files. They should be deleted once every download task is complete.</dd>
 </dl>
-<h3 id="custom"><code>custom</code><a class="headerlink" href="#custom" title="Permanent link">&para;</a></h3>
+<h4 id="custom"><code>custom</code><a class="headerlink" href="#custom" title="Permanent link">&para;</a></h4>
 <dl>
 <dd>
 <p><strong>custom</strong> folder is used to store builds downloaded by user manually (e.g. from <a href="https://blender.community/c/graphicall/">GraphicAll</a>). To use custom builds with Blender Launcher they must be placed inside <strong>custom</strong> folder manually:</p>
@@ -1101,19 +1087,7 @@
 </code></pre></div>
 </dd>
 </dl>
-<h3 id="daily"><code>daily</code><a class="headerlink" href="#daily" title="Permanent link">&para;</a></h3>
-<dl>
-<dd><strong>daily</strong> folder is used to store <a href="https://builder.blender.org/download/daily/">daily builds</a>.</dd>
-</dl>
-<h3 id="experimental"><code>experimental</code><a class="headerlink" href="#experimental" title="Permanent link">&para;</a></h3>
-<dl>
-<dd><strong>experimental</strong> folder is used to store <a href="https://builder.blender.org/download/experimental/">experimental branches builds</a>.</dd>
-</dl>
-<h3 id="stable"><code>stable</code><a class="headerlink" href="#stable" title="Permanent link">&para;</a></h3>
-<dl>
-<dd><strong>stable</strong> folder is used to store <a href="https://download.blender.org/release/">stable builds</a>.</dd>
-</dl>
-<h3 id="template"><code>template</code><a class="headerlink" href="#template" title="Permanent link">&para;</a></h3>
+<h4 id="template"><code>template</code><a class="headerlink" href="#template" title="Permanent link">&para;</a></h4>
 <dl>
 <dd>
 <p><strong>template</strong> folder is used to store custom Blender preferences and scripts (e.g. <a href="https://github.com/HEAVYPOLY/HEAVYPOLY_Blender">HEAVYPOLY config</a>). Template represents a file structure similar to one existing in Blender build (e.g. <code>blender-2.91.0-windows64\2.91</code>):</p>
@@ -1186,7 +1160,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.footnote.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>

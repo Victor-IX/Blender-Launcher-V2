@@ -489,100 +489,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Initialization Options">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#executable-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Executable Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-detect-information" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto Detect Information
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subversion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subversion
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-hash" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build Hash
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#commit-time" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Time
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#branch-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Branch Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#custom-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#favorite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Favorite
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -928,100 +834,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Initialization Options">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#executable-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Executable Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-detect-information" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto Detect Information
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subversion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subversion
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-hash" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build Hash
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#commit-time" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commit Time
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#branch-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Branch Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#custom-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#favorite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Favorite
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1058,35 +870,29 @@
   <figcaption>Initialization Options</figcaption>
 </figure></p>
 </details>
-<h3 id="executable-name">Executable Name<a class="headerlink" href="#executable-name" title="Permanent link">&para;</a></h3>
-<p>Enter the name of the executable for the custom Blender version.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>This supports auto-completion and will show you the existing available executable files as you type.</p>
+<p><strong>Executable Name</strong>: Enter the name of the executable for the custom Blender version<sup id="fnref:exe"><a class="footnote-ref" href="#fn:exe">1</a></sup>.</p>
+<p><strong>Auto Detect Information button</strong>: If the executable file has been found, this option will be available. You can click on it to autofill all the build info fields.</p>
+<dl>
+<dt><strong>Subversion</strong>: Which Blender version you are initializing.</dt>
+<dd>Example format: 4.0.2</dd>
+<dd>This may change appearance depending on which repo/branch you are initializing if they use a custom versioning scheme.</dd>
+</dl>
+<p><strong>Build Hash</strong>: Unique commit ID. used to differentiate builds of the same &ldquo;version&rdquo; but were made at different points in time with different code.</p>
+<p><strong>Commit Time</strong>: Time when the build was created.</p>
+<p><strong>Branch Name</strong>: Name of the branch used to make the build<sup id="fnref:branch"><a class="footnote-ref" href="#fn:branch">2</a></sup>.</p>
+<p><strong>Custom Name</strong>: Name the build will have in the Blender Launcher.</p>
+<p><strong>Favorite</strong>: If the build is favorited, it has a special tab in the launcher.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:exe">
+<p>This supports auto-completion and will show you the existing available executable files as you type.&#160;<a class="footnote-backref" href="#fnref:exe" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:branch">
+<p>Note that branches don&rsquo;t always refer to which repo you are using. For instance, all <code>patch</code> builds, when installed, have a unique branch related to what pull request it was used for.&#160;<a class="footnote-backref" href="#fnref:branch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Make sure to input the correct executable name and do not select the BlenderLauncher.exe file. </p>
-</div>
-<h3 id="auto-detect-information">Auto Detect Information<a class="headerlink" href="#auto-detect-information" title="Permanent link">&para;</a></h3>
-<p>If the executable file has been found, the Auto Detect Option will be available. You can click on it to autofill all the build info fields.</p>
-<h3 id="subversion">Subversion<a class="headerlink" href="#subversion" title="Permanent link">&para;</a></h3>
-<p>Subversion corresponds to the Blender version you are initializing.
-Example format: 4.0.2</p>
-<h3 id="build-hash">Build Hash<a class="headerlink" href="#build-hash" title="Permanent link">&para;</a></h3>
-<p>Unique build ID.</p>
-<h3 id="commit-time">Commit Time<a class="headerlink" href="#commit-time" title="Permanent link">&para;</a></h3>
-<p>Time when the build was created. </p>
-<h3 id="branch-name">Branch Name<a class="headerlink" href="#branch-name" title="Permanent link">&para;</a></h3>
-<p>Name of the branch used to make the build.</p>
-<h3 id="custom-name">Custom Name<a class="headerlink" href="#custom-name" title="Permanent link">&para;</a></h3>
-<p>Name the build will have in the Blender Launcher.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>You can set any desired name here.</p>
-</div>
-<h3 id="favorite">Favorite<a class="headerlink" href="#favorite" title="Permanent link">&para;</a></h3>
-<p>Add the build to the Favorite builds in the Blender Launcher.</p>
 
 
 
@@ -1140,7 +946,7 @@ Example format: 4.0.2</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.footnote.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>

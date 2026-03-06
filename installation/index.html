@@ -331,10 +331,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#for-archlinux-users" class="md-nav__link">
+  <a href="#from-github" class="md-nav__link">
     <span class="md-ellipsis">
       
-        For Archlinux Users
+        From GitHub:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-aur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the AUR:
       
     </span>
   </a>
@@ -382,17 +393,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#important-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important Notes
-      
-    </span>
-  </a>
   
 </li>
       
@@ -905,10 +905,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#for-archlinux-users" class="md-nav__link">
+  <a href="#from-github" class="md-nav__link">
     <span class="md-ellipsis">
       
-        For Archlinux Users
+        From GitHub:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-the-aur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From the AUR:
       
     </span>
   </a>
@@ -959,17 +970,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#important-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important Notes
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -988,51 +988,42 @@
 
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">If you are upgrading from Blender Version Manager:</p>
+<p>Since <strong>Blender Launcher</strong> is written from scratch with a different concept in mind it is strongly recommended not to use a <strong>Root Folder</strong> as <strong>Library Folder</strong>. Otherwise delete all builds from <strong>Root Folder</strong> or move them to <code>%Library Folder%\daily</code> directory.</p>
+</div>
 <h2 id="installing-blender-launcher">Installing Blender Launcher<a class="headerlink" href="#installing-blender-launcher" title="Permanent link">&para;</a></h2>
+<h3 id="from-github">From <a href="https://github.com/Victor-IX/Blender-Launcher-V2/">GitHub</a>:<a class="headerlink" href="#from-github" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Download the latest release for your <strong>OS</strong> from the <a href="https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest">releases page</a>.</li>
 <li>Unpack the <code>Blender Launcher.exe</code> file.</li>
-<li>Run <code>Blender Launcher.exe</code>; for <strong>Windows</strong> users, you might get a security warning, just click on <code>More info</code> and then <code>Run anyway</code>.</li>
-<li>Set your installation preferences, and set the <a href="../library_folder/">Library Folder</a></li>
+<li>
+<p>Run <code>Blender Launcher.exe</code></p>
+<p>for <strong>Windows</strong> or <strong>MacOS</strong> users, you might get a security warning, just click on <code>More info</code> and then <code>Run anyway</code>.<sup id="fnref:err"><a class="footnote-ref" href="#fn:err">1</a></sup></p>
+</li>
+<li>
+<p>Set your installation preferences, and set the <a href="../library_folder/">Library Folder</a></p>
+</li>
 <li>Enjoy!</li>
 </ol>
-<div class="admonition warning">
-<p class="admonition-title">Windows Users</p>
-<p>Because the programs is built using <a href="https://github.com/pyinstaller/pyinstaller">PyInstaller</a>, your antivirus software may give a false positive warning. If that happens, you can whitelist the program in your antivirus software and report it as a false positive to your antivirus vendor.</p>
-<p>The false positives occur because some people use PyInstaller for malware and the only solution to not being flagged is to sign the executable with a code signing certificate (and this costs money 💸).</p>
-</div>
-<h3 id="for-archlinux-users">For Archlinux Users<a class="headerlink" href="#for-archlinux-users" title="Permanent link">&para;</a></h3>
+<h3 id="from-the-aur">From the AUR: <sup id="fnref:aur"><a class="footnote-ref" href="#fn:aur">2</a></sup><a class="headerlink" href="#from-the-aur" title="Permanent link">&para;</a></h3>
 <p>Install from AUR <a href="https://aur.archlinux.org/packages/blender-launcher-v2-bin">blender-launcher-v2-bin</a></p>
 <h2 id="updating-blender-launcher">Updating Blender Launcher<a class="headerlink" href="#updating-blender-launcher" title="Permanent link">&para;</a></h2>
 <h3 id="manual-update">Manual update<a class="headerlink" href="#manual-update" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Download latest release for your OS from the <a href="https://github.com/Victor-IX/Blender-Launcher-V2/releases/latest">releases page</a></li>
 <li>Quit any running instance of <strong>Blender Launcher</strong></li>
-<li>Unpack the <code>Blender Launcher.exe</code> file and replace existing one.</li>
+<li>Unpack the <code>Blender Launcher</code> executable and replace the existing one.</li>
 <li>You have succesfully updated. Enjoy!</li>
 </ol>
-<h3 id="automatic-update">Automatic update<a class="headerlink" href="#automatic-update" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">v1.15.1 and lower</p>
-<p>Automatic updates are not available if you are using a version of the Blender Launcher prior to version <code>1.15.2</code>.
-To update, you need to do a manual update of Blender Launcher.</p>
-</div>
+<h3 id="automatic-update">Automatic update<sup id="fnref:prior-to-1.15.2"><a class="footnote-ref" href="#fn:prior-to-1.15.2">3</a></sup><a class="headerlink" href="#automatic-update" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Press the <code>Update to version %.%.%</code> button in the right bottom corner of the window.</li>
-<li>Blender Luancher will then begin downloading and extracting the new version.</li>
+<li>Blender Launcher will then begin downloading and extracting the new version.</li>
 <li>Once this process is finished, wait for 5-30 seconds while the new version is configured.</li>
 <li>Once update, Blender Launcher should automatically launch.</li>
 <li>You have succesfully updated. Enjoy!</li>
 </ol>
-<h2 id="important-notes">Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Library Folder</p>
-<p>It is recommended to create a new folder on a non system drive or inside a user folder like <code>Documents</code> to avoid any file collisions and to have a nice structure.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Windows Users</p>
-<p>Don&rsquo;t use UAC protected folders like <code>Program Files</code> and don&rsquo;t run <strong>Blender Launcher</strong> with administrator rights. It can cause unexpected behavior in the  program itself as well as Blender 3D.</p>
-</div>
 <div class="admonition info">
 <p class="admonition-title">Linux Users</p>
 <ul>
@@ -1040,13 +1031,20 @@ To update, you need to do a manual update of Blender Launcher.</p>
 <li>Consider installing the <a href="https://extensions.gnome.org/extension/1031/topicons/">TopIcons Plus</a> extension for proper tray icon support.</li>
 </ul>
 </div>
-<div class="admonition info">
-<p class="admonition-title">About AUR Packages</p>
-<p>The AUR packages are based on this repo, but they are not maintained by core contributors of BLV2. </p>
-</div>
-<div class="admonition info">
-<p class="admonition-title">Blender Version Manager Users</p>
-<p>Since <strong>Blender Launcher</strong> is written from scratch with a different concept in mind it is strongly recommended not to use a <strong>Root Folder</strong> as <strong>Library Folder</strong>. Otherwise delete all builds from <strong>Root Folder</strong> or move them to <code>%Library Folder%\daily</code> directory.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:err">
+<p>Because the programs is built using PyInstaller, your antivirus software may give a false positive warning. See <a href="../FAQ/#why-can-blender-launcher-v2-be-flagged-by-antivirus">FAQ</a> for more.&#160;<a class="footnote-backref" href="#fnref:err" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:aur">
+<p>The AUR packages are based on this repo, but they are not maintained by core contributors of BLV2. It may be out of date.&#160;<a class="footnote-backref" href="#fnref:aur" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:prior-to-1.15.2">
+<p>Automatic updates are not available if you are using a version of the Blender Launcher prior to version <code>1.15.2</code>.</p>
+<p>To update, you need to do a manual update of Blender Launcher.&#160;<a class="footnote-backref" href="#fnref:prior-to-1.15.2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
@@ -1101,7 +1099,7 @@ To update, you need to do a manual update of Blender Launcher.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.footnote.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>

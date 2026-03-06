@@ -898,13 +898,14 @@
 <h1 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">&para;</a></h1>
 <h2 id="why-can-blender-launcher-v2-be-flagged-by-antivirus">Why can Blender-Launcher-V2 be flagged by antivirus?<a class="headerlink" href="#why-can-blender-launcher-v2-be-flagged-by-antivirus" title="Permanent link">&para;</a></h2>
 <p>Blender-Launcher-V2 is packaged with <strong>PyInstaller</strong>, which bundles Python, dependencies, and your code into a Windows executable. Some AV products may flag PyInstaller-built apps as suspicious due to <strong>heuristics/ML detection</strong> and “packed executable” patterns that are also used by malware. This is often a <strong>false positive</strong>, especially for new or low-download binaries.</p>
+<p>The only solution to not being flagged is to sign the executable with a code signing certificate (and this costs money 💸)</p>
 <p>Blender-Launcher-V2 is <strong>open source on GitHub</strong>, so you can review the code and/or build it yourself from source.</p>
 <p>It&rsquo;s safe to whitelist the program in your antivirus software and report it as a false positive to your antivirus vendor.</p>
 <h2 id="why-do-i-see-a-windows-security-popup-the-first-time-i-run-it">Why do I see a Windows security popup the first time I run it?<a class="headerlink" href="#why-do-i-see-a-windows-security-popup-the-first-time-i-run-it" title="Permanent link">&para;</a></h2>
 <p>Windows may show a <strong>SmartScreen / “Windows protected your PC”</strong> prompt when an app is new, not widely downloaded, or <strong>not code-signed</strong>. This warning is typically about <strong>publisher identity and reputation</strong>, not proof the app is malicious.</p>
 <p>To reduce these prompts, apps usually need <strong>code signing</strong> and time to build reputation through legitimate downloads.</p>
 <h2 id="where-can-i-find-the-blender-launcher-log-files">Where can I find the Blender Launcher log files?<a class="headerlink" href="#where-can-i-find-the-blender-launcher-log-files" title="Permanent link">&para;</a></h2>
-<p>Check the <a href="../troubleshooting/#where-are-the-log-files">Troubleshooting</a> page for more information about log file locations.</p>
+<p>Check the <a href="../troubleshooting/#log-file">Troubleshooting</a> page for more information about log file locations.</p>
 
 
 
@@ -958,7 +959,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.footnote.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
