@@ -3,6 +3,8 @@
 ## Why can Blender-Launcher-V2 be flagged by antivirus?
 Blender-Launcher-V2 is packaged with **PyInstaller**, which bundles Python, dependencies, and your code into a Windows executable. Some AV products may flag PyInstaller-built apps as suspicious due to **heuristics/ML detection** and “packed executable” patterns that are also used by malware. This is often a **false positive**, especially for new or low-download binaries.
 
+The only solution to not being flagged is to sign the executable with a code signing certificate (and this costs money 💸)
+
 Blender-Launcher-V2 is **open source on GitHub**, so you can review the code and/or build it yourself from source.
 
 It's safe to whitelist the program in your antivirus software and report it as a false positive to your antivirus vendor.

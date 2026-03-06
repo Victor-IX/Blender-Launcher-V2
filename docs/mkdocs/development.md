@@ -1,31 +1,23 @@
 # Development Setup
 
+All actions mentioned in this page should be performed under the repository root folder i.e. `./Blender-Launcher-V2`.
+
 ## Requirements
 
-- Python >=3.10, <3.14 
+- Python >=3.11, <3.15
+- [UV](https://docs.astral.sh/uv/getting-started/) (optional)
 
-!!! info "Note"
-    
-    All actions should be performed under repository root folder i.e. `./Blender-Launcher-V2`
-
-!!! info "Project Manager"
-    
-    It's recommended to use [UV](https://docs.astral.sh/uv/getting-started/) as the project manager.
+It's entirely optional to use `uv` as the project manager, but is strongly recommended as we use its tooling such as its lockfile and dependency resolution. Every shell snippet in this doc after the "Setting Up" step will use uv run as a prefix to indicate it needs to be run in the virtual environment.
 
 
 ## Setting Up Development Environment
 
 === "pip"
 
-    **Install virtualenv:**
-
     ```bash
+    # Install virtualenv:
     python -m pip install virtualenv
-    ```
-
-    **Create the virtual environment:**
-
-    ```bash
+    # Create the virtual environment
     python -m virtualenv --clear --download .venv
     ```
 
@@ -49,30 +41,22 @@
         source .venv/bin/activate
         ```
 
-    **Minimum set of packages for building executable:**
+    **Install dependencies:**
 
     ```bash
+    # Minimum set of packages for building the executable:
     pip install -e .
-    ```
-
-    **All packages including development tools:**
-
-    ```bash
+    # All packages including development tools
     pip install -e ".[docs,ruff,pytest]"
     ```
 
 === "PDM"
 
-    **Install dependencies:**
-
     ```bash
+    # Create the virtual environment & install dependencies:
     pdm install
-    ```
-
-    **Install with all development groups:**
-
-    ```bash
-    pdm install --dev
+    # Install with all development groups:
+    pdm install -G:all
     ```
 
     **Activate the virtual environment:**
@@ -101,24 +85,13 @@
     pdm run python source/main.py
     ```
 
-=== "UV"
-
-    **Create the virtual environment:**
+=== "UV (recommended)"
 
     ```bash
-    uv venv
-    ```
-
-    **Install dependencies:**
-
-    ```bash
-    uv sync
-    ```
-
-    **Install with all extras:**
-
-    ```bash
-    uv sync --extra docs --extra ruff --extra pytest
+    # Create the virtual environment & install dependencies
+    uv sync --frozen
+    # install with all extras (docs, ruff, pytest)
+    uv sync --all-extras
     ```
 
     **Activate the virtual environment:**
@@ -147,45 +120,19 @@
     uv run source/main.py
     ```
 
-## Running Blender Launcher
-
-!!! info
-    As of ([c90f33d](https://github.com/Victor-IX/Blender-Launcher-V2/commit/c90f33dfb710da509e50932bae3cbe5b588d8688)), cached Blender-Launcher-V2 files (such as resources_rc.py and global.qss) are no longer included in the source due to them artificially inflating git diffs. In order to generate them, run the `build_style.py` script located in the root project directory. Running Blender Launcher without these being built will result in an error.
-
-### Build required resources
-
-**Generate the cached resource files:**
+## Running Blender Launcher[^resources]
 
 ```bash
-python build_style.py
+# Generate the cached resource files:
+# This creates necessary files like `resources_rc.py` and `global.qss`.
+# This only needs to run once, unless you're updating widget styles.
+uv run build_style.py
+
+# Run the application
+uv run source/main.py
 ```
 
-This creates necessary files like `resources_rc.py` and `global.qss` that are required to run the application.
-
-### Run the application
-
-=== "pip"
-
-    ```bash
-    python source/main.py
-    ```
-
-=== "PDM"
-
-    ```bash
-    pdm run bl
-    ```
-
-=== "UV"
-
-    ```bash
-    uv run source/main.py
-    ```
-
-## Building Blender Launcher Executable
-
-!!! warning
-    Executables made in PyInstaller must be built inside the target platform! You cannot build for a different platform other than your own.
+## Building Blender Launcher Executable[^build-notes]
 
 ### Build the executable
 
@@ -194,75 +141,49 @@ This creates necessary files like `resources_rc.py` and `global.qss` that are re
 === "Windows"
 
     ```bat
-    ./scripts/build_win.bat
+    uv run ./scripts/build_win.bat
     ```
 
 === "Linux"
 
     ```bash
-    ./scripts/build_linux.sh
+    uv run sh ./scripts/build_linux.sh
     ```
 
 === "macOS"
 
     ```bash
-    ./scripts/build_mac.sh
+    uv run sh ./scripts/build_mac.sh
     ```
 
-This creates a standalone executable using PyInstaller.
-
-**Locate the output:**
-
-Look for bundled app under the `Blender-Launcher-V2/dist/release` folder.
+These scripts will create a standalone executable using PyInstaller. Once finished, the executable can be found under the `Blender-Launcher-V2/dist/release` folder.
 
 
 ## Documentation
 
-### Preview the Documentation
+### Previewing the Documentation
 
-**Start the local documentation server:**
+```bash
+cd docs
+# prefix with `uv run` if not in the virtual env
+uv run mkdocs serve --livereload
+```
+or use the provided `scripts/mkdocs_serve` scripts.
 
-=== "Windows"
+Then open the given link (likely [http://127.0.0.1:8000/](http://127.0.0.1:8000/)) in a web browser.
 
-    ```bat
-    ./scripts/mkdocs_serve.bat
-    ```
-
-=== "Linux/macOS"
-
-    ```bash
-    ./scripts/mkdocs_serve.sh
-    ```
-
-Then open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in a web browser.
-
-### Update the Documentation
-
-!!! warning "Note"
-    You should never edit the documentation in the gh-pages branch; this branch is used to publish the documentation.
-
-**Edit documentation files:**
+### Edit Documentation Files[^update-gh-pages]
 
 Make the desired modifications in the .md files under the `docs/mkdocs` directory.
 
-### Publish the Documentation
+### Publish the Documentation [Collaborator Only][^collab-only]
 
-!!! warning
-    These scripts will only work if you have write access to the Blender-Launcher-V2 repo.
+```bat
+cd docs
+uv run mkdocs gh-deploy
+```
 
-**Deploy to GitHub Pages:**
-
-=== "Windows"
-
-    ```bat
-    ./scripts/mkdocs_publish.bat
-    ```
-
-=== "Linux/macOS"
-
-    ```bash
-    ./scripts/mkdocs_publish.sh
-    ```
+or use the provided `scripts/mkdocs_publish` scripts.
 
 This builds and publishes the documentation to the gh-pages branch.
 
@@ -270,23 +191,9 @@ This builds and publishes the documentation to the gh-pages branch.
 
 ### Running Tests
 
-=== "pip"
-
-    ```bash
-    pytest
-    ```
-
-=== "PDM"
-
-    ```bash
-    pdm run pytest
-    ```
-
-=== "UV"
-
-    ```bash
-    uv run pytest
-    ```
+```bash
+uv run pytest
+```
 
 ### Code Formatting and Linting
 
@@ -302,22 +209,17 @@ ruff check .
 ruff format .
 ```
 
-### Updating Dependencies
+[^resources]:
+    As of ([c90f33d](https://github.com/Victor-IX/Blender-Launcher-V2/commit/c90f33dfb710da509e50932bae3cbe5b588d8688) ~v2.4.0), cached Blender-Launcher-V2 files (such as resources_rc.py and global.qss) are no longer included in the source due to them artificially inflating git diffs. 
+    
+    In order to generate them, run the `build_style.py` script located in the root project directory. Running Blender Launcher without these being built will result in an error.
 
-=== "pip"
+[^build-notes]:
+    !!! warning "Cross-platform compilation"
+        Executables made in PyInstaller must be built inside the target platform. **You cannot build for a different platform other than your own.**
 
-    ```bash
-    pip install --upgrade -e ".[docs,ruff,pytest]"
-    ```
+[^update-gh-pages]:  
+    **You should never edit the documentation in the gh-pages branch;** this branch is used to publish the documentation and is overwritten every time `mkdocs gh-deploy` is run.
 
-=== "PDM"
-
-    ```bash
-    pdm update
-    ```
-
-=== "UV"
-
-    ```bash
-    uv sync --upgrade
-    ```
+[^collab-only]:
+    These scripts will only work if you have write access to the Blender-Launcher-V2 repo.

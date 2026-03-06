@@ -1,10 +1,8 @@
-# Library Folder
-
-**Library Folder** - a directory on hard drive where all downloaded builds are stored.
+the Library Folder is the directory on your hard drive where every build you download is stored.
 
 !!! warning
 
-    Don't create **Library Folder** inside UAC protected folders like `Program Files`. It is recommended to create a new directory on a non system drive or inside user folder like `Documents` to avoid any file collisions and have a nice structure.
+    Don't create your **Library Folder** inside UAC protected folders like `Program Files` and don't run **Blender Launcher** with administrator rights. It is recommended to create a new directory on a non system drive or inside user folder like `Documents` to avoid any file collisions and have a nice structure. Doing otherwise can cause unexpected behavior in the program itself as well as Blender 3D.
 
 ## Changing Library Folder
 
@@ -12,17 +10,9 @@ On first launch Blender Launcher will ask for choosing **Library Folder**. After
 
 There is known issue related to Qt and some Linux distributions like Mint where it fails to show folder browser dialog window. To pass this issue it is possible to set **Library Folder** via command line arguments:
 
-=== "Linux"
-
-    ```
-    ./Blender\ Launcher -set-library-folder "%PATH%"
-    ```
-
-=== "Windows CMD"
-
-    ```
-    "Blender Launcher.exe" -set-library-folder "%PATH%"
-    ```
+```bash
+"path/to/Blender Launcher" -set-library-folder "<path>"
+```
 
 ## Structure
 
@@ -34,21 +24,36 @@ There is known issue related to Qt and some Linux distributions like Mint where 
     ├─ bl_symlink
     ├─ .temp
     ├─ custom
-    ├─ daily
-    ├─ experimental
-    ├─ stable
-    └─ template
+    ├─ template
+    └─ <a folder for every supported repo>
+```
+### Supported Repos
+
+See [Blender Forks](blender_forks.md) for detailed information about the supported forks.
+
+```
+.
+└─ %Library Folder%
+    ├─ stable        # Official Blender stable releases
+    ├─ daily         # Official Blender daily builds
+    ├─ experimental  # Official Blender experimental branches
+    ├─ bforartists   # Bforartists builds
+    ├─ upbge-stable  # UPBGE stable releases
+    ├─ upbge-weekly  # UPBGE weekly/alpha builds
+    └─ custom        # Manual custom builds
 ```
 
-### `bl_symlink`
+### Special folders
+
+#### `bl_symlink`
 
 :   **bl_symlink** is a symbolic link that creates via [library build context menu](user_interface.md#library-build-context-menu).
 
-### `.temp`
+#### `.temp`
 
-:   **.temp** folder is used to store downloaded `*.zip` and `*.tar` files.
+:   **.temp** folder is used to store downloaded `*.zip` and `*.tar` files. They should be deleted once every download task is complete.
 
-### `custom`
+#### `custom`
 
 :   **custom** folder is used to store builds downloaded by user manually (e.g. from [GraphicAll](https://blender.community/c/graphicall/)). To use custom builds with Blender Launcher they must be placed inside **custom** folder manually:
 
@@ -67,19 +72,7 @@ There is known issue related to Qt and some Linux distributions like Mint where 
             └─ ...
     ```
 
-### `daily`
-
-:   **daily** folder is used to store [daily builds](https://builder.blender.org/download/daily/).
-
-### `experimental`
-
-:   **experimental** folder is used to store [experimental branches builds](https://builder.blender.org/download/experimental/).
-
-### `stable`
-
-:   **stable** folder is used to store [stable builds](https://download.blender.org/release/).
-
-### `template`
+#### `template`
 
 :   **template** folder is used to store custom Blender preferences and scripts (e.g. [HEAVYPOLY config](https://github.com/HEAVYPOLY/HEAVYPOLY_Blender)). Template represents a file structure similar to one existing in Blender build (e.g. `blender-2.91.0-windows64\2.91`):
 
