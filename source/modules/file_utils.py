@@ -33,13 +33,10 @@ def retry_on_permission_error(
         try:
             return func(*args, **kwargs)
         except PermissionError as e:
-            attempt += 1
             last_error = e
-
-            if attempt >= max_retries:
+            if attempt + 1 >= max_retries:
                 logger.error(f"All {max_retries} attempts failed: {e}")
-                break
-
-            logger.warning(f"Attempt {attempt}/{max_retries} failed: {e}")
-            time.sleep(retry_delay)
+            else:
+                logger.warning(f"Attempt {attempt + 1}/{max_retries} failed: {e}")
+                time.sleep(retry_delay)
     raise last_error
