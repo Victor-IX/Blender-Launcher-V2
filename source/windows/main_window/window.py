@@ -48,7 +48,6 @@ from modules.settings import (
     get_new_builds_check_frequency,
     get_proxy_type,
     get_purge_temp_on_startup,
-    get_quick_launch_key_seq,
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
@@ -108,14 +107,7 @@ from windows.onboarding_window import OnboardingWindow
 from windows.popup_window import Popup
 from windows.settings_window import SettingsWindow
 
-try:
-    from pynput import keyboard
-
-    HOTKEYS_AVAILABLE = True
-except Exception as e:
-    logging.exception(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
-    HOTKEYS_AVAILABLE = False
-
+from .hotkey_handler import HotkeyHandler
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -160,6 +152,10 @@ class BlenderLauncher(BaseWindow):
         self.instance_handler = BLInstanceHandler(self.version, self)
         self.instance_handler.show_launcher.connect(self._show)
 
+        # Global Hotkeys
+        self.hotkey_handler = HotkeyHandler(self)
+        self.hotkey_handler.hk_triggered.connect(self.on_activate_quick_launch)
+
         self.quick_launch_fail_signal.connect(self.quick_launch_fail)
 
         # task queue
@@ -189,7 +185,6 @@ class BlenderLauncher(BaseWindow):
         self.new_downloads = False
         self.platform = get_platform()
         self.settings_window = None
-        self.hk_listener = None
         self.last_time_checked = get_last_time_checked_utc()
 
         if self.platform == "macOS":
@@ -542,30 +537,7 @@ class BlenderLauncher(BaseWindow):
             self._show()
 
         if get_enable_quick_launch_key_seq() is True:
-            self.setup_global_hotkeys_listener()
-
-    def setup_global_hotkeys_listener(self):
-        if self.hk_listener is not None:
-            self.hk_listener.stop()
-        if HOTKEYS_AVAILABLE:
-            key_seq = get_quick_launch_key_seq()
-            keys = key_seq.split("+")
-
-            for key in keys:
-                if len(key) > 1:
-                    key_seq = key_seq.replace(key, "<" + key + ">")
-
-            try:
-                self.hk_listener = keyboard.GlobalHotKeys({key_seq: self.on_activate_quick_launch})
-            except Exception:
-                self.dlg = Popup.warning(
-                    message=t("msg.popup.global_hotkeys_invalid"),
-                    buttons=Popup.Button.info(),
-                    parent=self,
-                )
-                return
-
-            self.hk_listener.start()
+            self.hotkey_handler.setup()
 
     def on_activate_quick_launch(self):
         if self.settings_window is None:
