@@ -839,9 +839,6 @@ class LibraryWidget(BaseBuildWidget):
         if code == 0:
             self.list_widget.remove_item(self.item)
 
-            if self.parent_widget is None:
-                self.parent.draw_from_cashed(self.build_info)
-
             return
         # TODO Child synchronization and reverting selection flags
         self.launchButton.set_text(t("act.launch"))

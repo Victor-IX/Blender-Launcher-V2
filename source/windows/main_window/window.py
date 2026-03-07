@@ -176,7 +176,6 @@ class BlenderLauncher(BaseWindow):
         self.status = "????"
         self.is_force_check_on = False
         self.app_state = AppState.IDLE
-        self.cashed_builds = []
         self.notification_pool = []
         self.windows = [self]
         self.timer = None
@@ -797,7 +796,6 @@ class BlenderLauncher(BaseWindow):
         # are at least once every two days. They are so easily gathered there's little loss here
         self.DownloadsPage.list_widget.clear_()
 
-        self.cashed_builds.clear()
         self.new_downloads = False
         self.app_state = AppState.CHECKINGBUILDS
 
@@ -815,10 +813,6 @@ class BlenderLauncher(BaseWindow):
             self.show_message(t("msg.updates.new_builds"), message_type=MessageType.NEWBUILDS)
 
         self.DownloadsPage.set_info_label_text(t("repo.no_builds"))
-
-        for widget in self.DownloadsPage.list_widget.widgets.copy():
-            if widget.build_info not in self.cashed_builds:
-                widget.destroy()
 
         # Re-sort all download lists after scraping is complete to ensure proper ordering
         self.DownloadsPage.list_widget.sortItems(self.DownloadsPage.sorting_order)
@@ -841,21 +835,11 @@ class BlenderLauncher(BaseWindow):
         self.set_status(t("act.prog.last_check", time=self.last_time_checked.strftime(DATETIME_FORMAT)), True)
         self.scraper_finished_signal.emit()
 
-    def draw_from_cashed(self, build_info):
-        if self.app_state == AppState.IDLE:
-            for cashed_build in self.cashed_builds:
-                if build_info == cashed_build:
-                    self.draw_to_downloads(cashed_build)
-                    return
-
     def draw_to_downloads(self, build_info: BuildInfo):
         if self.started and build_info.commit_time < self.last_time_checked:
             is_new = False
         else:
             is_new = True
-
-        if build_info not in self.cashed_builds:
-            self.cashed_builds.append(build_info)
 
         if not self.DownloadsPage.list_widget.contains_build_info(build_info):
             installed = self.LibraryPage.list_widget.widget_with_blinfo(build_info)
