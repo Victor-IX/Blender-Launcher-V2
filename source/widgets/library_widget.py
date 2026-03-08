@@ -1089,8 +1089,8 @@ class LibraryWidget(BaseBuildWidget):
         self.show_folder(path)
 
     def _destroyed(self):
-        if self.parent.quick_launch_build == self:
-            self.parent.quick_launch_build = None
+        if self.parent.quick_launch_handler.quick_launch_build == self:
+            self.parent.quick_launch_handler.remove_quick_launch()
 
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, _branch_width: int, commit_time_width: int):

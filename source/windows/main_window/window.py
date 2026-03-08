@@ -40,7 +40,6 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
-    get_favorite_path,
     get_first_time_setup_seen,
     get_last_time_checked_utc,
     get_launch_minimized_to_tray,
@@ -110,6 +109,7 @@ from windows.popup_window import Popup
 from windows.settings_window import SettingsWindow
 
 from .hotkey_handler import HotkeyHandler
+from .quick_launch_handler import QuickLaunchHandler
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -129,7 +129,6 @@ class BlenderLauncher(BaseWindow):
     show_signal = Signal()
     close_signal = Signal()
     quit_signal = Signal()
-    quick_launch_fail_signal = Signal()
     scraper_finished_signal = Signal()
 
     def __init__(
@@ -154,11 +153,12 @@ class BlenderLauncher(BaseWindow):
         self.instance_handler = BLInstanceHandler(self.version, self)
         self.instance_handler.show_launcher.connect(self._show)
 
+        # Quick Launch
+        self.quick_launch_handler = QuickLaunchHandler(self)
+
         # Global Hotkeys
         self.hotkey_handler = HotkeyHandler(self)
-        self.hotkey_handler.hk_triggered.connect(self.on_activate_quick_launch)
-
-        self.quick_launch_fail_signal.connect(self.quick_launch_fail)
+        self.hotkey_handler.hk_triggered.connect(self.quick_launch_handler.on_activate_quick_launch)
 
         # task queue
         self.task_queue = TaskQueue(
@@ -487,7 +487,7 @@ class BlenderLauncher(BaseWindow):
         show_favorites_action = QAction(self.icons.favorite, "Favorites", self)
         show_favorites_action.triggered.connect(self.show_favorites)
         quick_launch_action = QAction(self.icons.quick_launch, "Blender", self)
-        quick_launch_action.triggered.connect(self.quick_launch)
+        quick_launch_action.triggered.connect(self.quick_launch_handler.quick_launch)
 
         self.tray_menu = BaseMenuWidget(parent=self)
         self.tray_menu.setFont(self.font_10)
@@ -536,10 +536,6 @@ class BlenderLauncher(BaseWindow):
 
         if get_enable_quick_launch_key_seq() is True:
             self.hotkey_handler.setup()
-
-    def on_activate_quick_launch(self):
-        if self.settings_window is None:
-            self.quick_launch()
 
     def show_changelog(self):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
@@ -643,38 +639,11 @@ class BlenderLauncher(BaseWindow):
         self.UserToolBox.setCurrentWidget(self.FavoritesPage)
         self._show()
 
-    @Slot(QWidget)
-    def add_to_quick_launch(self, w: LibraryWidget):
-        self.remove_quick_launch()
-        if w.link.as_posix() != get_favorite_path():
-            set_favorite_path(w.link.as_posix())
-        self.quick_launch_build = w
-
-    @Slot()
-    def remove_quick_launch(self):
-        if self.quick_launch_build is not None:
-            self.quick_launch_build.remove_from_quick_launch()
-        self.quick_launch_build = None
-
-    def quick_launch(self):
-        try:
-            assert self.quick_launch_build
-            self.quick_launch_build.launch()
-        except Exception:
-            self.quick_launch_fail_signal.emit()
-
-    def quick_launch_fail(self):
-        self.dlg = Popup.setup(
-            parent=self,
-            message=t("msg.popup.quick_launch_tray"),
-            buttons=Popup.Button.info(),
-        )
-
     def tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
             self._show()
         elif reason == QSystemTrayIcon.ActivationReason.MiddleClick:
-            self.quick_launch()
+            self.quick_launch_handler.quick_launch()
             # INFO: Middle click dose not work anymore on new Windows versions with PyQt5
             # Middle click currently return the Trigger reason
         elif reason == QSystemTrayIcon.ActivationReason.Context:
@@ -726,7 +695,7 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsPage.list_widget.clear_()
             self.started = True
 
-        self.quick_launch_build = None
+        self.quick_launch_handler.remove_quick_launch()
 
         self.LibraryPage.list_widget.clear_()
 
@@ -892,7 +861,7 @@ class BlenderLauncher(BaseWindow):
     def draw_read_library(self, path, show_new, binfo: BuildInfo, successful_read_callback):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
-        widget.add_as_quick_launch.connect(self.add_to_quick_launch)
+        widget.add_as_quick_launch.connect(self.quick_launch_handler.set_quick_launch_build)
         if widget.is_quick_launch():
             widget.add_to_quick_launch()
 
