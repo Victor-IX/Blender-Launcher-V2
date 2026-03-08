@@ -40,6 +40,7 @@ from modules.settings import (
     get_enable_download_notifications,
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
+    get_favorite_path,
     get_first_time_setup_seen,
     get_last_time_checked_utc,
     get_launch_minimized_to_tray,
@@ -69,6 +70,7 @@ from modules.settings import (
     is_library_folder_valid,
     purge_temp_folder,
     set_dont_show_resource_warning,
+    set_favorite_path,
     set_last_time_checked_utc,
     set_library_folder,
     set_tray_icon_notified,
@@ -172,7 +174,6 @@ class BlenderLauncher(BaseWindow):
         self.version: Version = version
         self.offline = offline
         self.build_cache = build_cache
-        self.quick_launch_build: LibraryWidget | None = None
         self.status = "????"
         self.app_state = AppState.IDLE
         self.windows = [self]
@@ -291,9 +292,9 @@ class BlenderLauncher(BaseWindow):
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
             self.LibraryToolBox.tab_changed.connect(
-                lambda idx: self.DownloadsToolBox.setCurrentIndex(idx)
-                if self.DownloadsToolBox.isTabVisible(idx)
-                else None
+                lambda idx: (
+                    self.DownloadsToolBox.setCurrentIndex(idx) if self.DownloadsToolBox.isTabVisible(idx) else None
+                )
             )
             self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
         else:
@@ -642,6 +643,19 @@ class BlenderLauncher(BaseWindow):
         self.UserToolBox.setCurrentWidget(self.FavoritesPage)
         self._show()
 
+    @Slot(QWidget)
+    def add_to_quick_launch(self, w: LibraryWidget):
+        self.remove_quick_launch()
+        if w.link.as_posix() != get_favorite_path():
+            set_favorite_path(w.link.as_posix())
+        self.quick_launch_build = w
+
+    @Slot()
+    def remove_quick_launch(self):
+        if self.quick_launch_build is not None:
+            self.quick_launch_build.remove_from_quick_launch()
+        self.quick_launch_build = None
+
     def quick_launch(self):
         try:
             assert self.quick_launch_build
@@ -878,6 +892,9 @@ class BlenderLauncher(BaseWindow):
     def draw_read_library(self, path, show_new, binfo: BuildInfo, successful_read_callback):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
+        widget.add_as_quick_launch.connect(self.add_to_quick_launch)
+        if widget.is_quick_launch():
+            widget.add_to_quick_launch()
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         if successful_read_callback is not None:

@@ -33,7 +33,7 @@ from modules.settings import (
     set_favorite_path,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
-from PySide6.QtCore import Qt, QUrl, Slot
+from PySide6.QtCore import Qt, QUrl, Signal, Slot
 from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 from threads.observer import Observer
@@ -59,6 +59,8 @@ logger = logging.getLogger()
 
 
 class LibraryWidget(BaseBuildWidget):
+    add_as_quick_launch = Signal(QWidget)
+
     def __init__(
         self,
         parent: BlenderLauncher,
@@ -308,22 +310,22 @@ class LibraryWidget(BaseBuildWidget):
         if self.show_new:
             self.build_state_widget.setNewBuild(True)
 
-            if get_mark_as_favorite() == 0:
-                pass
-            elif get_mark_as_favorite() == 1 and self.branch == "stable":
-                self.add_to_quick_launch()
-            elif get_mark_as_favorite() == 2 and self.branch == "daily":
-                self.add_to_quick_launch()
-            elif get_mark_as_favorite() == 3:
-                self.add_to_quick_launch()
-        elif get_favorite_path() == self.link.as_posix():
-            self.add_to_quick_launch()
-
         self.setEnabled(True)
         self.list_widget.sortItems()
 
         if self.build_info.is_favorite and self.parent_widget is None:
             self.add_to_favorites()
+
+    def is_quick_launch(self):
+        return (
+            self.show_new
+            and (
+                get_mark_as_favorite() != 0
+                or (get_mark_as_favorite() == 1 and self.branch == "stable")
+                or (get_mark_as_favorite() == 2 and self.branch == "daily")
+                or (get_mark_as_favorite() == 3)
+            )
+        ) or (get_favorite_path() == self.link.as_posix())
 
     def context_menu(self):
         self.update_delete_action(self.hovering_and_shifting)
@@ -858,13 +860,10 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def add_to_quick_launch(self):
-        if (self.parent.quick_launch_build is not None) and (self.parent.quick_launch_build.link != self.link):
-            self.parent.quick_launch_build.remove_from_quick_launch()
-
-        set_favorite_path(self.link.as_posix())
-        self.parent.quick_launch_build = self
+        self.add_as_quick_launch.emit(self)
 
         self.launchButton.setIcon(self.parent.icons.quick_launch)
+
         self.addToQuickLaunchAction.setEnabled(False)
 
         # TODO Make more optimal and simpler synchronization
