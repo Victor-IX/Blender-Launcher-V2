@@ -175,7 +175,6 @@ class BlenderLauncher(BaseWindow):
         self.favorite: LibraryWidget | None = None
         self.status = "????"
         self.app_state = AppState.IDLE
-        self.notification_pool = []
         self.windows = [self]
         self.timer = None
         self.started = True
@@ -620,10 +619,10 @@ class BlenderLauncher(BaseWindow):
         ):
             return
 
-        if value not in self.notification_pool:
-            if value is not None:
-                self.notification_pool.append(value)
-            self.tray_icon.showMessage("Blender Launcher", message, self.icons.taskbar, 10000)
+        # if value not in self.notification_pool:
+        #     if value is not None:
+        #         self.notification_pool.append(value)
+        self.tray_icon.showMessage("Blender Launcher", message, self.icons.taskbar, 10000)
 
     def message_from_error(self, err: Exception):
         self.show_message(t("msg.err.generic", err=err), MessageType.ERROR)
