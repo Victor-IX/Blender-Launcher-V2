@@ -174,7 +174,6 @@ class BlenderLauncher(BaseWindow):
         self.build_cache = build_cache
         self.favorite: LibraryWidget | None = None
         self.status = "????"
-        self.is_force_check_on = False
         self.app_state = AppState.IDLE
         self.notification_pool = []
         self.windows = [self]
@@ -961,9 +960,8 @@ class BlenderLauncher(BaseWindow):
             self.status = status
 
         if is_force_check_on is not None:
-            self.is_force_check_on = is_force_check_on
+            self.ForceCheckNewBuilds.setEnabled(is_force_check_on)
 
-        self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
         self.statusbarLabel.setText(self.status)
 
     def set_version(self, latest_tag, patch_notes):
