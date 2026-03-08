@@ -77,9 +77,7 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
-    QLabel,
     QPushButton,
-    QStatusBar,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -104,6 +102,7 @@ from windows.settings_window import SettingsWindow
 
 from .hotkey_handler import HotkeyHandler
 from .quick_launch_handler import QuickLaunchHandler
+from .status_bar import LauncherStatusBar
 from .tray_handler import TrayHandler
 
 if TYPE_CHECKING:
@@ -169,7 +168,6 @@ class BlenderLauncher(BaseWindow):
         self.version: Version = version
         self.offline = offline
         self.build_cache = build_cache
-        self.status = "????"
         self.app_state = AppState.IDLE
         self.windows = [self]
         self.timer = None
@@ -446,27 +444,10 @@ class BlenderLauncher(BaseWindow):
         self.update_visible_lists()
 
         # Status bar
-        self.status_bar = QStatusBar(self)
+        self.status_bar = LauncherStatusBar(self)
         self.setStatusBar(self.status_bar)
-        self.status_bar.setContentsMargins(0, 0, 0, 2)
-        self.status_bar.setFont(self.font_10)
-        self.statusbarLabel = QLabel()
-        self.ForceCheckNewBuilds = QPushButton(t("act.a.check"))
-        self.ForceCheckNewBuilds.setEnabled(False)
-        self.ForceCheckNewBuilds.setToolTip(t("act.a.check_tooltip"))
-        self.ForceCheckNewBuilds.clicked.connect(self.force_check)
-        self.NewVersionButton = QPushButton()
-        self.NewVersionButton.hide()
-        self.NewVersionButton.clicked.connect(self.show_update_window)
-        self.statusbarVersion = QPushButton(str(self.version))
-        self.statusbarVersion.clicked.connect(self.show_changelog)
-        self.statusbarVersion.setToolTip(t("act.a.version_tooltip"))
-        self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
-        self.status_bar.addPermanentWidget(QLabel("│"))
-        self.status_bar.addPermanentWidget(self.statusbarLabel)
-        self.status_bar.addPermanentWidget(QLabel(""), 1)
-        self.status_bar.addPermanentWidget(self.NewVersionButton)
-        self.status_bar.addPermanentWidget(self.statusbarVersion)
+        self.status_bar.force_check.connect(self.force_check)
+        self.status_bar.update.connect(self.show_update_window)
 
         # Draw library
         self.draw_library()
@@ -496,11 +477,6 @@ class BlenderLauncher(BaseWindow):
         # or     tray icon and no launch minimized to tray
         if not is_frozen() or get_show_tray_icon() ^ get_launch_minimized_to_tray():
             self._show()
-
-
-    def show_changelog(self):
-        url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
-        QDesktopServices.openUrl(url)
 
     def open_docs(self):
         QDesktopServices.openUrl("https://Victor-IX.github.io/Blender-Launcher-V2")
@@ -548,7 +524,6 @@ class BlenderLauncher(BaseWindow):
         self.show()
         self.activateWindow()
 
-        self.set_status()
         self.show_signal.emit()
 
         # TODO: Reimplement custom button on the window taskbar app preview previewer (Launch and Quit)
@@ -577,9 +552,6 @@ class BlenderLauncher(BaseWindow):
         ):
             return
 
-        # if value not in self.notification_pool:
-        #     if value is not None:
-        #         self.notification_pool.append(value)
         self.tray_handler.message(message)
 
     def message_from_error(self, err: Exception):
@@ -630,7 +602,7 @@ class BlenderLauncher(BaseWindow):
         self.app.quit()
 
     def draw_library(self, clear=False):
-        self.set_status(t("act.prog.reading_local"), False)
+        self.status_bar.set_status(t("act.prog.reading_local"), False)
 
         if clear:
             self.cm = ConnectionManager(version=self.version, proxy_type=get_proxy_type())
@@ -683,7 +655,7 @@ class BlenderLauncher(BaseWindow):
         logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
-        self.set_status(t("msg.err.connection_failed", time=utcnow))
+        self.status_bar.set_status(t("msg.err.connection_failed", time=utcnow))
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
@@ -704,7 +676,7 @@ class BlenderLauncher(BaseWindow):
             self.update_visible_lists()
 
     def start_scraper(self, scrape_all_visible=False):
-        self.set_status(t("act.prog.checking"), False)
+        self.status_bar.set_status(t("act.prog.checking"), False)
         self.stop_auto_scrape_timer()
 
         scrape_stable = get_scrape_stable_builds()
@@ -759,7 +731,10 @@ class BlenderLauncher(BaseWindow):
 
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
-        self.set_status(t("act.prog.last_check", time=self.scraper.last_time_checked.strftime(DATETIME_FORMAT)), True)
+        self.status_bar.set_status(
+            t("act.prog.last_check", time=self.scraper.last_time_checked.strftime(DATETIME_FORMAT)),
+            True,
+        )
         self.scraper_finished_signal.emit()
 
     def draw_to_downloads(self, build_info: BuildInfo):
@@ -886,15 +861,6 @@ class BlenderLauncher(BaseWindow):
         lst.setFocus(Qt.FocusReason.ShortcutFocusReason)
         widget.setFocus(Qt.FocusReason.ShortcutFocusReason)
 
-    def set_status(self, status=None, is_force_check_on=None):
-        if status is not None:
-            self.status = status
-
-        if is_force_check_on is not None:
-            self.ForceCheckNewBuilds.setEnabled(is_force_check_on)
-
-        self.statusbarLabel.setText(self.status)
-
     def set_version(self, latest_tag, patch_notes):
         if self.version.build is not None and "dev" in self.version.build:
             return
@@ -909,8 +875,7 @@ class BlenderLauncher(BaseWindow):
         logging.debug(f"Latest version on GitHub is {latest}")
 
         if latest > current:
-            self.NewVersionButton.setText(t("msg.updates.update_to_version", version=latest_tag.replace("v", "")))
-            self.NewVersionButton.show()
+            self.status_bar.new_version(latest_tag)
             self.latest_tag = latest_tag
             if patch_notes is not None:
                 patch_note_text = patch_note_cleaner(patch_notes)
@@ -929,7 +894,7 @@ class BlenderLauncher(BaseWindow):
             popup.accepted.connect(self.show_update_window)
 
         else:
-            self.NewVersionButton.hide()
+            self.status_bar.new_version_button.hide()
 
     def show_settings_window(self):
         self.settings_window = SettingsWindow(parent=self)
