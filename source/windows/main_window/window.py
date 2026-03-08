@@ -122,7 +122,6 @@ class AppState(Enum):
 class BlenderLauncher(BaseWindow):
     show_signal = Signal()
     close_signal = Signal()
-    quit_signal = Signal()
     scraper_finished_signal = Signal()
 
     def __init__(
@@ -161,7 +160,6 @@ class BlenderLauncher(BaseWindow):
             on_spawn=self.on_worker_creation,
         )
         self.task_queue.start()
-        self.quit_signal.connect(self.task_queue.fullstop)
 
         # Global scope
         self.app = app
@@ -514,8 +512,7 @@ class BlenderLauncher(BaseWindow):
             _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
 
         # Destroy currently running Blender Launcher instance
-        self.instance_handler.server.close()
-        self.destroy()
+        self.quit_()
 
     def _show(self):
         if self.isMinimized():
@@ -595,10 +592,10 @@ class BlenderLauncher(BaseWindow):
         self.timer.daemon = True
         self.timer.start()
 
-    def destroy(self):
-        self.quit_signal.emit()
+    def _destroyed(self, *args, **kwargs):
+        super()._destroyed()
         self.stop_auto_scrape_timer()
-        self.tray_handler.deleteLater()
+        self.task_queue.fullstop()
         self.app.quit()
 
     def draw_library(self, clear=False):
@@ -914,10 +911,10 @@ class BlenderLauncher(BaseWindow):
                 parent=self,
             )
 
-            self.dlg.accepted.connect(self.destroy)
+            self.dlg.accepted.connect(self.deleteLater)
             return
 
-        self.destroy()
+        self.deleteLater()
 
     @Slot(int, int, int)
     def _sync_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
@@ -940,11 +937,11 @@ class BlenderLauncher(BaseWindow):
             if not get_tray_icon_notified():
                 self.show_message(t("msg.popup.tray_notify"))
                 set_tray_icon_notified()
-            event.ignore()
             self.hide()
             self.close_signal.emit()
         else:
             self.quit_()
+        event.ignore()
 
     def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
@@ -962,4 +959,4 @@ class BlenderLauncher(BaseWindow):
             app = Path(sys.executable).parent.parent.parent
             _popen(f"open -n {shlex.quote(str(app))}")
 
-        self.destroy()
+        self.deleteLater()
