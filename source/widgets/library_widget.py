@@ -858,11 +858,11 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def add_to_quick_launch(self):
-        if (self.parent.favorite is not None) and (self.parent.favorite.link != self.link):
-            self.parent.favorite.remove_from_quick_launch()
+        if (self.parent.quick_launch_build is not None) and (self.parent.quick_launch_build.link != self.link):
+            self.parent.quick_launch_build.remove_from_quick_launch()
 
         set_favorite_path(self.link.as_posix())
-        self.parent.favorite = self
+        self.parent.quick_launch_build = self
 
         self.launchButton.setIcon(self.parent.icons.quick_launch)
         self.addToQuickLaunchAction.setEnabled(False)
@@ -1090,8 +1090,8 @@ class LibraryWidget(BaseBuildWidget):
         self.show_folder(path)
 
     def _destroyed(self):
-        if self.parent.favorite == self:
-            self.parent.favorite = None
+        if self.parent.quick_launch_build == self:
+            self.parent.quick_launch_build = None
 
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, _branch_width: int, commit_time_width: int):

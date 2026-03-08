@@ -172,7 +172,7 @@ class BlenderLauncher(BaseWindow):
         self.version: Version = version
         self.offline = offline
         self.build_cache = build_cache
-        self.favorite: LibraryWidget | None = None
+        self.quick_launch_build: LibraryWidget | None = None
         self.status = "????"
         self.app_state = AppState.IDLE
         self.windows = [self]
@@ -644,8 +644,8 @@ class BlenderLauncher(BaseWindow):
 
     def quick_launch(self):
         try:
-            assert self.favorite
-            self.favorite.launch()
+            assert self.quick_launch_build
+            self.quick_launch_build.launch()
         except Exception:
             self.quick_launch_fail_signal.emit()
 
@@ -712,7 +712,7 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsPage.list_widget.clear_()
             self.started = True
 
-        self.favorite = None
+        self.quick_launch_build = None
 
         self.LibraryPage.list_widget.clear_()
 
