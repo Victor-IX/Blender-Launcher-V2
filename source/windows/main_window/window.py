@@ -73,14 +73,13 @@ from modules.settings import (
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
-from PySide6.QtGui import QAction, QDesktopServices
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
     QPushButton,
     QStatusBar,
-    QSystemTrayIcon,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -89,7 +88,6 @@ from semver import Version
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper
-from widgets.base_menu_widget import BaseMenuWidget
 from widgets.base_page_widget import BasePageWidget
 from widgets.base_tool_box_widget import BaseToolBoxWidget
 from widgets.datetime_widget import DATETIME_FORMAT
@@ -106,6 +104,7 @@ from windows.settings_window import SettingsWindow
 
 from .hotkey_handler import HotkeyHandler
 from .quick_launch_handler import QuickLaunchHandler
+from .tray_handler import TrayHandler
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -472,41 +471,14 @@ class BlenderLauncher(BaseWindow):
         # Draw library
         self.draw_library()
 
-        # Setup tray icon context Menu
-        quit_action = QAction(t("act.quit"), self)
-        quit_action.triggered.connect(self.quit_)
-        hide_action = QAction(t("act.hide"), self)
-        hide_action.triggered.connect(self.close)
-        show_action = QAction(t("act.show"), self)
-        show_action.triggered.connect(self._show)
-        show_favorites_action = QAction(self.icons.favorite, "Favorites", self)
-        show_favorites_action.triggered.connect(self.show_favorites)
-        quick_launch_action = QAction(self.icons.quick_launch, "Blender", self)
-        quick_launch_action.triggered.connect(self.quick_launch_handler.quick_launch)
-
-        self.tray_menu = BaseMenuWidget(parent=self)
-        self.tray_menu.setFont(self.font_10)
-        self.tray_menu.addActions(
-            [
-                quick_launch_action,
-                show_favorites_action,
-                show_action,
-                hide_action,
-                quit_action,
-            ]
-        )
-
-        # Setup tray icon
-        self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(self.icons.taskbar)
-        self.tray_icon.setToolTip("Blender Launcher")
-        self.tray_icon.activated.connect(self.tray_icon_activated)
-        self.tray_icon.messageClicked.connect(self._show)
-
-        # Linux doesn't handle QSystemTrayIcon.Context activation reason,
-        # so add context menu as regular one
-        if self.platform == "Linux":
-            self.tray_icon.setContextMenu(self.tray_menu)
+        # Tray Handler
+        self.tray_handler = TrayHandler(self)
+        self.tray_handler.set_visible((not is_frozen()) or get_show_tray_icon())
+        self.tray_handler.quit.connect(self.quit_)
+        self.tray_handler.close.connect(self.close)
+        self.tray_handler.trigger.connect(self._show)
+        self.tray_handler.favs.connect(self.show_favorites)
+        self.tray_handler.quick_launch.connect(self.quick_launch_handler.quick_launch)
 
         # Force style update
         if polish is True:
@@ -515,22 +487,16 @@ class BlenderLauncher(BaseWindow):
             style.unpolish(self.app)
             style.polish(self.app)
 
-        # Show window
-        if is_frozen():
-            if get_show_tray_icon():
-                self.tray_icon.show()
+        if get_enable_quick_launch_key_seq():
+            self.hotkey_handler.setup()
 
-                if get_launch_minimized_to_tray() is False:
-                    self._show()
-            else:
-                self.tray_icon.hide()
-                self._show()
-        else:
-            self.tray_icon.show()
+        # Show window
+        #     outside of frozen executable (?)
+        # or  no tray icon and launch minimized to tray (invalid)
+        # or     tray icon and no launch minimized to tray
+        if not is_frozen() or get_show_tray_icon() ^ get_launch_minimized_to_tray():
             self._show()
 
-        if get_enable_quick_launch_key_seq() is True:
-            self.hotkey_handler.setup()
 
     def show_changelog(self):
         url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
@@ -614,7 +580,7 @@ class BlenderLauncher(BaseWindow):
         # if value not in self.notification_pool:
         #     if value is not None:
         #         self.notification_pool.append(value)
-        self.tray_icon.showMessage("Blender Launcher", message, self.icons.taskbar, 10000)
+        self.tray_handler.message(message)
 
     def message_from_error(self, err: Exception):
         self.show_message(t("msg.err.generic", err=err), MessageType.ERROR)
@@ -631,18 +597,7 @@ class BlenderLauncher(BaseWindow):
 
     def show_favorites(self):
         self.TabWidget.setCurrentWidget(self.UserTab)
-        self.UserToolBox.setCurrentWidget(self.FavoritesPage)
         self._show()
-
-    def tray_icon_activated(self, reason):
-        if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            self._show()
-        elif reason == QSystemTrayIcon.ActivationReason.MiddleClick:
-            self.quick_launch_handler.quick_launch()
-            # INFO: Middle click dose not work anymore on new Windows versions with PyQt5
-            # Middle click currently return the Trigger reason
-        elif reason == QSystemTrayIcon.ActivationReason.Context:
-            self.tray_menu.trigger()
 
     def stop_auto_scrape_timer(self):
         if self.timer is not None:
@@ -671,7 +626,7 @@ class BlenderLauncher(BaseWindow):
     def destroy(self):
         self.quit_signal.emit()
         self.stop_auto_scrape_timer()
-        self.tray_icon.hide()
+        self.tray_handler.deleteLater()
         self.app.quit()
 
     def draw_library(self, clear=False):

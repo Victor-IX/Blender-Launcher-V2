@@ -228,7 +228,7 @@ class GeneralTabWidget(SettingsFormWidget):
     def toggle_show_tray_icon(self, is_checked):
         set_show_tray_icon(is_checked)
         self.LaunchMinimizedToTrayCheckBox.setEnabled(is_checked)
-        self.launcher.tray_icon.setVisible(is_checked)
+        self.launcher.tray_handler.set_visible(is_checked)
 
     def set_launch_timer_duration(self, val: int):
         if val <= 0:
