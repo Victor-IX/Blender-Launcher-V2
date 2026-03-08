@@ -6,11 +6,10 @@ import shlex
 import shutil
 import sys
 import threading
-from datetime import datetime
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from time import localtime, mktime, strftime
+from time import localtime, strftime
 from typing import TYPE_CHECKING
 
 from i18n import t
@@ -41,7 +40,6 @@ from modules.settings import (
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
     get_first_time_setup_seen,
-    get_last_time_checked_utc,
     get_launch_minimized_to_tray,
     get_library_folder,
     get_make_error_popup,
@@ -69,8 +67,6 @@ from modules.settings import (
     is_library_folder_valid,
     purge_temp_folder,
     set_dont_show_resource_warning,
-    set_favorite_path,
-    set_last_time_checked_utc,
     set_library_folder,
     set_tray_icon_notified,
 )
@@ -183,7 +179,6 @@ class BlenderLauncher(BaseWindow):
         self.new_downloads = False
         self.platform = get_platform()
         self.settings_window = None
-        self.last_time_checked = get_last_time_checked_utc()
 
         if self.platform == "macOS":
             self.app.aboutToQuit.connect(self.quit_)
@@ -798,10 +793,6 @@ class BlenderLauncher(BaseWindow):
         # Re-sort all download lists after scraping is complete to ensure proper ordering
         self.DownloadsPage.list_widget.sortItems(self.DownloadsPage.sorting_order)
 
-        utcnow = localtime()
-        dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
-        set_last_time_checked_utc(dt)
-        self.last_time_checked = dt
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
@@ -813,11 +804,11 @@ class BlenderLauncher(BaseWindow):
 
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
-        self.set_status(t("act.prog.last_check", time=self.last_time_checked.strftime(DATETIME_FORMAT)), True)
+        self.set_status(t("act.prog.last_check", time=self.scraper.last_time_checked.strftime(DATETIME_FORMAT)), True)
         self.scraper_finished_signal.emit()
 
     def draw_to_downloads(self, build_info: BuildInfo):
-        if self.started and build_info.commit_time < self.last_time_checked:
+        if self.started and build_info.commit_time < self.scraper.last_time_checked:
             is_new = False
         else:
             is_new = True
