@@ -1,13 +1,13 @@
-from PySide6.QtCore import Signal
 import json
 import logging
-from collections.abc import Generator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TypedDict
 
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import labels_cache_path
+from modules.task import Task
+from PySide6.QtCore import Signal
 
 logger = logging.getLogger()
 
@@ -27,9 +27,7 @@ class Pr(TypedDict):  # Only relevant fields
 class PrLabelFetcher:
     def __init__(self, man: ConnectionManager):
         self.manager = man
-
         self.path = labels_cache_path()
-
         self._label_cache: LabelCache = LabelCache.try_from_file(self.path) or LabelCache({})
 
     def fetch_one(self, pr: int) -> Pr | None:
@@ -45,10 +43,7 @@ class PrLabelFetcher:
         else:
             url = PULLS_LINK
 
-        # url += "&state=open"
-
         r = self.manager.request("GET", url)
-
         if r is None:
             logger.error("Failed to fetch PR labels")
             return None
@@ -62,44 +57,42 @@ class PrLabelFetcher:
                 break
             labels = _pr_labels(d)
             # if every label found in the current page has already been fetched, early exit
-            if len(self._label_cache.found.keys() - labels.keys()) == 0:
+            if len(self._label_cache.keys() - labels.keys()) == 0:
                 break
 
-            self._label_cache.found.update(labels)
+            self._label_cache.update(labels)
 
     def get_cached(self, x: int) -> str | None:
-        return self._label_cache.found.get(x)
+        return self._label_cache.get(x)
 
     def get(self, x: int) -> str | None:
         # check if we already know it
-        if x in self._label_cache.found:
-            return self._label_cache.found[x]
+        if x in self._label_cache:
+            return self._label_cache[x]
 
         logger.debug("PR %s missing, searching...", x)
 
         pr = self.fetch_one(x)
         if pr is not None:
             self.__add_to_cache(x, pr["title"].strip())
-            return self._label_cache.found[x]
+            return self._label_cache[x]
         return None
 
     def __add_to_cache(self, x: int, v: str):
-        self._label_cache.largest = max(self._label_cache.largest, x)
-        self._label_cache.found[x] = v
+        self._label_cache[x] = v
 
     def save(self):
         self._label_cache.write(self.path)
+
+    def __del__(self):
+        self.save()
 
 
 def _pr_labels(lst: list[Pr]) -> dict[int, str]:
     return {pr["number"]: pr["title"].strip() for pr in lst}
 
 
-@dataclass
-class LabelCache:
-    found: dict[int, str]
-    largest: int = 0
-
+class LabelCache(dict[int, str]):
     @classmethod
     def try_from_file(cls, file: Path):
         if not file.exists():
@@ -107,25 +100,22 @@ class LabelCache:
             return None
 
         try:
-            d = {}
-            largest = 0
+            d = cls()
             with file.open("r", encoding="utf-8") as f:
                 for line in f:
                     n, label = line.strip().split(":", 1)
                     d[int(n)] = label
-                    largest = max(largest, int(n))
             logger.debug(f"Loaded cache from {file}")
-            return cls(d, largest=largest)
+            return d
         except (json.decoder.JSONDecodeError, OSError) as e:
             logger.exception(f"Failed to load cache {file}: {e}")
             return None
 
     def write(self, file: Path):
         with file.open("w", encoding="utf-8") as f:
-            for n, label in sorted(self.found.items()):
+            for n, label in sorted(self.items()):
                 f.write(f"{n}:{label.strip()}\n")
 
-from modules.task import Task
 
 @dataclass
 class FetchPrTask(Task):
@@ -133,6 +123,7 @@ class FetchPrTask(Task):
     manager: ConnectionManager
 
     finished = Signal(str)
+
     def run(self):
         fetcher = PrLabelFetcher(self.manager)
         label = fetcher.get(self.number)

@@ -1,22 +1,16 @@
-from __future__ import annotations
-
 import json
 import logging
+from collections.abc import Generator
 from datetime import UTC, datetime
 from re import Pattern
-from typing import TYPE_CHECKING
 
 import regex as re
 from modules.build_info import BuildInfo, parse_blender_ver
+from modules.connection_manager import ConnectionManager
 from modules.platform_utils import get_architecture, get_platform
 from modules.settings import get_fetch_pr_names_during_scrape
 from threads.scraping.base import BuildScraper, regex_filter
 from threads.scraping.pr_labels import PrLabelFetcher
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from modules.connection_manager import ConnectionManager
 
 logger = logging.getLogger()
 
