@@ -1,3 +1,4 @@
+from PySide6.QtCore import Signal
 import json
 import logging
 from collections.abc import Generator
@@ -123,3 +124,16 @@ class LabelCache:
         with file.open("w", encoding="utf-8") as f:
             for n, label in sorted(self.found.items()):
                 f.write(f"{n}:{label.strip()}\n")
+
+from modules.task import Task
+
+@dataclass
+class FetchPrTask(Task):
+    number: int
+    manager: ConnectionManager
+
+    finished = Signal(str)
+    def run(self):
+        fetcher = PrLabelFetcher(self.manager)
+        label = fetcher.get(self.number)
+        self.finished.emit(label)

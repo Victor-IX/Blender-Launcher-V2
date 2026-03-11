@@ -289,6 +289,14 @@ blender_builds:
   install_template_tooltip: |
     Installs a template on newly added builds to the Library tab
     DEFAULT: Off
+
+  pr_custom_names:
+    title: Custom PR names
+    fetch_during_scrape: Fetch PR names during scrape
+    fetch_during_scrape_tooltip: |
+      PR names will be fetched from projects.blender.org/blender/blender/pulls/.
+      DEFAULT: Off
+
   launching_builds: Launching Builds
   on_blender_launch_action: On Blender Launch
   on_blender_launch_action_tooltip: |

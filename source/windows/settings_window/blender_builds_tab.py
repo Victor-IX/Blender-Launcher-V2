@@ -15,6 +15,7 @@ from modules.settings import (
     get_daily_update_behavior,
     get_enable_quick_launch_key_seq,
     get_experimental_update_behavior,
+    get_fetch_pr_names_during_scrape,
     get_install_template,
     get_launch_blender_no_console,
     get_mark_as_favorite,
@@ -45,6 +46,7 @@ from modules.settings import (
     set_daily_update_behavior,
     set_enable_quick_launch_key_seq,
     set_experimental_update_behavior,
+    set_fetch_pr_names_during_scrape,
     set_install_template,
     set_launch_blender_no_console,
     set_mark_as_favorite,
@@ -278,6 +280,13 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 "settings.blender_builds.install_template",
                 default=get_install_template(),
                 setter=set_install_template,
+            )
+
+        with self.group("settings.blender_builds.pr_custom_names.title") as grp:
+            grp.add_checkbox(
+                "settings.blender_builds.pr_custom_names.fetch_during_scrape",
+                default=get_fetch_pr_names_during_scrape(),
+                setter=set_fetch_pr_names_during_scrape,
             )
 
         # Launching builds settings

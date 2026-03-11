@@ -92,6 +92,8 @@ a:
   release_notes: Show Release Notes
   release_notes_patch: Show Patch Details
   release_notes_pr: Show PR Details
+  fetch_pr_name: Fetch PR name
+
   folder_build: Show Build Folders
   config: Show Config Folder
   config_portable: Show Portable Config Folder

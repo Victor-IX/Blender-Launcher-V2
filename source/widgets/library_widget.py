@@ -209,6 +209,9 @@ class LibraryWidget(BaseBuildWidget):
         self.updateBlenderBuildAction.setToolTip(t("act.a.update_tooltip"))
         self.updateBlenderBuildAction.setVisible(False)
 
+        self.fetchPrNameAction = QAction(t("act.a.fetch_pr_name"))
+        self.fetchPrNameAction.triggered.connect(self.fetch_pr_name)
+
         self.registerExtentionAction = QAction(t("act.a.register"))
         self.registerExtentionAction.setToolTip(t("act.a.register_tooltip"))
         self.registerExtentionAction.triggered.connect(self.register_extension)
@@ -297,6 +300,7 @@ class LibraryWidget(BaseBuildWidget):
                 if exp.search(self.build_info.branch):
                     self.showReleaseNotesAction.setText(t("act.a.release_notes_pr"))
                     self.menu.addAction(self.showReleaseNotesAction)
+                    self.menu.addAction(self.fetchPrNameAction)
 
         self.menu.addAction(self.showBuildFolderAction)
         self.menu.addAction(self.showConfigFolderAction)
@@ -741,6 +745,28 @@ class LibraryWidget(BaseBuildWidget):
     def rename_branch_rejected(self):
         self.lineEdit.hide()
         self.branchLabel.show()
+
+    @Slot()
+    def fetch_pr_name(self):
+        # Assuming this can only be run when self is a pr build
+        from threads.scraping.pr_labels import FetchPrTask
+
+        m = re.search(r"pr(\d+)", self.build_info.branch, re.IGNORECASE)
+        if m is None:
+            return
+        num = m.group(1)
+
+        fetcher = FetchPrTask(int(num), self.parent.manager)
+        fetcher.finished.connect(self.rename)
+        print(fetcher)
+        self.parent.task_queue.append(fetcher)
+
+    def rename(self, custom_name: str):
+        print("Renaming to {custom_name}")
+        self.build_info.custom_name = custom_name
+        self.branchLabel.set_text(self.build_info.display_label)
+        self.branchLabel.setElidedText()
+        self.write_build_info()
 
     def write_build_info(self):
         self.build_info_writer = WriteBuildTask(

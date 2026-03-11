@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import regex as re
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.platform_utils import get_architecture, get_platform
+from modules.settings import get_fetch_pr_names_during_scrape
 from threads.scraping.base import BuildScraper, regex_filter
 from threads.scraping.pr_labels import PrLabelFetcher
 
@@ -108,7 +109,9 @@ class ScraperPatch(ScraperAutomated):
         self.pr_label_updater = PrLabelFetcher(self.manager)
 
     def scrape(self) -> Generator[BuildInfo, None, None]:
-        self.pr_label_updater.cache_latest_pages()
+        if get_fetch_pr_names_during_scrape():
+            self.pr_label_updater.cache_latest_pages()
+
         not_found: list[tuple[int, BuildInfo]] = []
         for binfo in super().scrape():
             v = binfo.semversion
@@ -121,6 +124,10 @@ class ScraperPatch(ScraperAutomated):
                 else:
                     binfo.custom_name = f"{n}: {name}"
                     yield binfo
+
+        if not get_fetch_pr_names_during_scrape():
+            yield from super().scrape()
+            return
 
         while not_found:
             n, build = not_found.pop()
