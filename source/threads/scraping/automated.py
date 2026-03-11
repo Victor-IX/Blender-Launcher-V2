@@ -3,11 +3,14 @@ from __future__ import annotations
 import json
 import logging
 from datetime import UTC, datetime
+from re import Pattern
 from typing import TYPE_CHECKING
 
+import regex as re
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.platform_utils import get_architecture, get_platform
 from threads.scraping.base import BuildScraper, regex_filter
+from threads.scraping.pr_labels import PrLabelFetcher
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -93,3 +96,37 @@ class ScraperAutomated(BuildScraper):
             dt,
             branch_type,
         )
+
+
+PR_MATCH: Pattern[str] = re.compile(r"PR(\d+)")
+
+
+class ScraperPatch(ScraperAutomated):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.pr_label_updater = PrLabelFetcher(self.manager)
+
+    def scrape(self) -> Generator[BuildInfo, None, None]:
+        self.pr_label_updater.cache_latest_pages()
+        not_found: list[tuple[int, BuildInfo]] = []
+        for binfo in super().scrape():
+            v = binfo.semversion
+
+            if v.prerelease is not None and (m := PR_MATCH.match(v.prerelease)):
+                n = int(m.group(1))
+                name = self.pr_label_updater.get_cached(n)
+                if name is None:
+                    not_found.append((n, binfo))
+                else:
+                    binfo.custom_name = f"{n}: {name}"
+                    yield binfo
+
+        while not_found:
+            n, build = not_found.pop()
+            name = self.pr_label_updater.get(n)
+            if name is not None:
+                build.custom_name = f"{n}: {name}"
+            yield build
+
+        self.pr_label_updater.save()

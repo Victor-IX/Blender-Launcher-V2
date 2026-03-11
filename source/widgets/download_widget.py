@@ -322,6 +322,7 @@ class DownloadWidget(BaseBuildWidget):
                 build_hash=None,
                 commit_time=self.build_info.commit_time,
                 branch=self.build_info.branch,
+                custom_name=self.build_info.custom_name,
                 custom_executable=self.build_info.custom_executable,
             ),
             archive_name=archive_name,

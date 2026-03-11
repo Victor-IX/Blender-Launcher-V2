@@ -18,7 +18,7 @@ from modules.settings import (
     get_show_patch_archive_builds,
 )
 from PySide6.QtCore import QThread, Signal
-from threads.scraping.automated import ScraperAutomated
+from threads.scraping.automated import ScraperAutomated, ScraperPatch
 from threads.scraping.bfa import ScraperBfa
 from threads.scraping.launcher_updates import LauncherDataUpdater
 from threads.scraping.stable import ScraperStable
@@ -58,6 +58,7 @@ class Scraper(QThread):
         self.scraper_bfa = ScraperBfa()
         self.scraper_upbge_stable = ScraperUpbgeStable(self.manager)
         self.scraper_upbge_weekly = ScraperUpbgeWeekly(self.manager)
+        self.scraper_patch = ScraperPatch(self.manager, "patch")
 
         self.launcher_data_updater = LauncherDataUpdater(self.manager)
 
@@ -127,4 +128,6 @@ class Scraper(QThread):
         b = "patch"
         if get_show_patch_archive_builds():
             b += "/archive"
-        yield ScraperAutomated(self.manager, b)
+        if b != self.scraper_patch.branch:
+            self.scraper_patch = ScraperPatch(self.manager, b)
+        yield self.scraper_patch
