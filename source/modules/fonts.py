@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from functools import cache
-from typing import Self, cast
 
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QFontDatabase
 
-font_path = ":resources/fonts/OpenSans-SemiBold.ttf"
+_font_path = ":resources/fonts/OpenSans-SemiBold.ttf"
 
 
 @dataclass(frozen=True)
@@ -16,6 +14,7 @@ class Fonts:
     def get(cls) -> "Fonts":
         global _fonts
         if _fonts is None:
+            QFontDatabase.addApplicationFont(_font_path)
             font_10 = QFont("Open Sans SemiBold", 10)
             font_10.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
             font_8 = QFont("Open Sans SemiBold", 8)
