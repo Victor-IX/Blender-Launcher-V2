@@ -37,7 +37,7 @@ class TrayHandler(QObject):
         quick_launch_action.triggered.connect(self.quick_launch)
 
         self.tray_menu = BaseMenuWidget(parent=self.parent())
-        self.tray_menu.setFont(self.parent().font_10)
+        self.tray_menu.setFont(parent.fonts.font_10)
         self.tray_menu.addActions(
             [
                 quick_launch_action,

@@ -22,6 +22,7 @@ class LauncherStatusBar(QStatusBar):
 
         self.version = parent.version
         self.setContentsMargins(0, 0, 0, 2)
+        self.setFont(parent.fonts.font_10)
 
         self.status = "????"
 
