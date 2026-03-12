@@ -17,12 +17,14 @@ import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.file_utils import retry_on_permission_error
+from modules.fonts import Fonts
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
 from modules.settings import get_auto_register_winget
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
 from modules.winget_integration import register_with_winget
+from PySide6.QtCore import QFile, QTextStream
 from PySide6.QtWidgets import QApplication
 from semver import Version
 from utils.dpi import apply_scale_factor
@@ -194,6 +196,13 @@ def main():
         app.setApplicationName("blender-launcher-v2")
         app.setStyle("Fusion")
         app.setApplicationVersion(str(version))
+
+        # app style
+        file = QFile(":resources/styles/global.qss")
+        file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text)
+        style_sheet = QTextStream(file).readAll()
+        app.setStyleSheet(style_sheet)
+        app.setFont(Fonts.get().font_10)
 
     set_lib_folder: Path | None = args.set_library_folder
     if set_lib_folder is not None:

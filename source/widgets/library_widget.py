@@ -22,6 +22,7 @@ from modules.build_info import (
 )
 from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
+from modules.fonts import Fonts
 from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.settings import (
     get_default_delete_action,
@@ -164,7 +165,7 @@ class LibraryWidget(BaseBuildWidget):
 
         # Context menu
         self.menu_extended = BaseMenuWidget(parent=self)
-        self.menu_extended.setFont(self.parent.font_10)
+        self.menu_extended.setFont(Fonts.get().font_10)
 
         # For checking if shift is held on menus
         self.menu.enable_shifting()
@@ -242,7 +243,7 @@ class LibraryWidget(BaseBuildWidget):
         self.freezeUpdate.triggered.connect(self.freeze_update)
 
         self.debugMenu = BaseMenuWidget(t("act.a.d.d"), parent=self)
-        self.debugMenu.setFont(self.parent.font_10)
+        self.debugMenu.setFont(Fonts.get().font_10)
 
         self.debugLogAction = QAction(t("act.a.d.log"))
         self.debugLogAction.triggered.connect(lambda: self.launch(exe="blender_debug_log.cmd"))
@@ -422,12 +423,12 @@ class LibraryWidget(BaseBuildWidget):
         self.launchButton.set_text(t("act.lprev"))
         self._launch_icon = self.launchButton.icon()
         self.launchButton.setIcon(self.parent.icons.file)
-        self.launchButton.setFont(self.parent.font_8)
+        self.launchButton.setFont(Fonts.get().font_8)
 
     def _stopped_shift_hovering(self):
         self.launchButton.set_text(t("act.launch"))
         self.launchButton.setIcon(self._launch_icon or self.parent.icons.none)
-        self.launchButton.setFont(self.parent.font_10)
+        self.launchButton.setFont(Fonts.get().font_10)
 
     def enterEvent(self, _e):
         self._hovered = True

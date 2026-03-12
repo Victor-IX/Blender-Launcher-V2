@@ -7,6 +7,7 @@ from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.fonts import Fonts
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QDesktopServices
@@ -34,7 +35,7 @@ class BaseBuildWidget(QWidget):
         self.customContextMenuRequested.connect(self.context_menu)
 
         self.menu = BaseMenuWidget(parent=self)
-        self.menu.setFont(self.parent.font_10)
+        self.menu.setFont(Fonts.get().font_10)
 
         self.showReleaseNotesAction = QAction(t("act.a.release_notes"))
         self.showReleaseNotesAction.triggered.connect(self.show_release_notes)

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
+from modules.fonts import Fonts
 from modules.settings import get_install_template, get_library_folder
 from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
@@ -49,7 +50,6 @@ class DownloadWidget(BaseBuildWidget):
             item=item,
             build_info=build_info,
         )
-        # self.parent: BlenderLauncher = parent
         self.launcher = parent
         self.list_widget = list_widget
         self.show_new = show_new
@@ -61,7 +61,7 @@ class DownloadWidget(BaseBuildWidget):
         self._is_removed = False
 
         self.progressBar = BaseProgressBarWidget()
-        self.progressBar.setFont(self.launcher.font_8)
+        self.progressBar.setFont(Fonts.get().font_8)
         self.progressBar.setFixedHeight(18)
         self.progressBar.hide()
 
