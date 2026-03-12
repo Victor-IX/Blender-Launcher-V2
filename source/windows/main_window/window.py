@@ -913,6 +913,8 @@ class BlenderLauncher(BaseWindow):
 
             self.dlg.accepted.connect(self.deleteLater)
             return
+        else:
+            self.task_queue.set_making_threads(False)
 
         self.deleteLater()
 
