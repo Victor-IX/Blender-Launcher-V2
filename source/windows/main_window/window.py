@@ -915,6 +915,7 @@ class BlenderLauncher(BaseWindow):
             return
         else:
             self.task_queue.set_making_threads(False)
+            self.task_queue.fullstop()
 
         self.deleteLater()
 
