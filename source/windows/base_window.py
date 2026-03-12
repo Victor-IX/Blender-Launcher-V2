@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from modules.connection_manager import ConnectionManager
+from modules.fonts import Fonts
 from modules.icons import Icons
 from modules.settings import get_use_system_titlebar
-from PySide6.QtCore import QFile, Qt, QTextStream
-from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 if TYPE_CHECKING:
@@ -22,8 +22,9 @@ class BaseWindow(QMainWindow):
         if parent is not None:
             self.launcher: BlenderLauncher = parent
 
-        # Setup icons
+        # Setup icons & fonts
         self.icons = Icons.get()
+        self.fonts = Fonts.get()
 
         if parent is None and app is not None:
             self.app = app
@@ -33,20 +34,6 @@ class BaseWindow(QMainWindow):
             self.cm = ConnectionManager(version=version)
             self.cm.setup()
             self.manager = self.cm.manager
-
-            # Setup font
-            QFontDatabase.addApplicationFont(":resources/fonts/OpenSans-SemiBold.ttf")
-            self.font_10 = QFont("Open Sans SemiBold", 10)
-            self.font_10.setHintingPreference(QFont.PreferNoHinting)
-            self.font_8 = QFont("Open Sans SemiBold", 8)
-            self.font_8.setHintingPreference(QFont.PreferNoHinting)
-            self.app.setFont(self.font_10)
-
-            # Setup style
-            file = QFile(":resources/styles/global.qss")
-            file.open(QFile.ReadOnly | QFile.Text)
-            self.style_sheet = QTextStream(file).readAll()
-            self.app.setStyleSheet(self.style_sheet)
 
         self.using_system_bar = get_use_system_titlebar()
         self.set_system_titlebar(self.using_system_bar)
