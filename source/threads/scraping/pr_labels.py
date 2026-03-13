@@ -51,7 +51,11 @@ class PrLabelFetcher:
             logger.error("Failed to fetch PR labels")
             return None
 
-        return json.loads(r.data)
+        try:
+            return json.loads(r.data)
+        except json.JSONDecodeError as e:
+            logger.exception(f"Invalid or broken JSON returned when fetching {url}: {e}")
+            return None
 
     def cache_latest_pages(self):
         for idx in range(MAX_PAGE_REQUESTS):
@@ -73,7 +77,7 @@ class PrLabelFetcher:
         if x in self._label_cache:
             return self._label_cache[x]
 
-        logger.debug("PR {x} missing, searching...")
+        logger.debug(f"PR {x} missing, searching...")
 
         pr = self.fetch_one(x)
         if pr is not None:

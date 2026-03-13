@@ -102,8 +102,11 @@ class ScraperPatch(ScraperAutomated):
         self.pr_label_updater = PrLabelFetcher(self.manager)
 
     def scrape(self) -> Generator[BuildInfo, None, None]:
-        if get_fetch_pr_names_during_scrape():
-            self.pr_label_updater.cache_latest_pages()
+        if not get_fetch_pr_names_during_scrape():
+            yield from super().scrape()
+            return
+            
+        self.pr_label_updater.cache_latest_pages()
 
         not_found: list[tuple[int, BuildInfo]] = []
         for binfo in super().scrape():
