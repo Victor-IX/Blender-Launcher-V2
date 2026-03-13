@@ -2,12 +2,12 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
+from typing import Self, TypedDict
 
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import labels_cache_path
 from modules.task import Task
-from PySide6.QtCore import Signal
+from PySide6.QtCore import QReadWriteLock, Signal
 
 logger = logging.getLogger()
 
@@ -27,10 +27,9 @@ class PrLabelFetcher:
     def __init__(self, man: ConnectionManager):
         self.manager = man
         self.path = labels_cache_path()
-        self._label_cache: LabelCache = LabelCache.try_from_file(self.path) or LabelCache({})
+        self._label_cache: LabelCache = LabelCache.try_from_file(self.path) or LabelCache()
 
     def fetch_one(self, pr: int) -> Pr | None:
-        lnk = INDIVIDUAL_PULLS.format(pr)
         r = self.manager.request("GET", INDIVIDUAL_PULLS.format(pr))
         if r is None:
             logger.error(f"Failed to fetch PR {pr}")
@@ -97,8 +96,17 @@ def _pr_labels(lst: list[Pr]) -> dict[int, str]:
 
 
 class LabelCache(dict[int, str]):
+    _lock = QReadWriteLock()
+
     @classmethod
-    def try_from_file(cls, file: Path):
+    def try_from_file(cls, file: Path) -> Self | None:
+        cls._lock.lockForRead()
+        f = cls._try_from_file(file)
+        cls._lock.unlock()
+        return f
+
+    @classmethod
+    def _try_from_file(cls, file: Path) -> Self | None:
         if not file.exists():
             logger.info(f"Cache file {file} does not exist, creating new cache")
             return None
@@ -111,14 +119,22 @@ class LabelCache(dict[int, str]):
                     d[int(n)] = label
             logger.debug(f"Loaded cache from {file}")
             return d
-        except (OSError) as e:
+        except OSError as e:
             logger.exception(f"Failed to load cache {file}: {e}")
             return None
 
     def write(self, file: Path):
+        # first, reread the file if it exists and union self and other
+        other = self.try_from_file(file)
+        if other is not None:
+            self |= other
+
+        # write the new cache down
+        self._lock.lockForWrite()
         with file.open("w", encoding="utf-8") as f:
             for n, label in sorted(self.items()):
                 f.write(f"{n}:{label.strip()}\n")
+        self._lock.unlock()
 
 
 @dataclass
