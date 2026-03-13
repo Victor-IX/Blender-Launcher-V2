@@ -107,7 +107,7 @@ class LabelCache(dict[int, str]):
                     d[int(n)] = label
             logger.debug(f"Loaded cache from {file}")
             return d
-        except (json.decoder.JSONDecodeError, OSError) as e:
+        except (OSError) as e:
             logger.exception(f"Failed to load cache {file}: {e}")
             return None
 
