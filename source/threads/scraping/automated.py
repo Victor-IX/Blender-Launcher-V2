@@ -1,8 +1,9 @@
 import json
 import logging
+import re
 from collections.abc import Generator
 from datetime import UTC, datetime
-import re
+
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import get_architecture, get_platform

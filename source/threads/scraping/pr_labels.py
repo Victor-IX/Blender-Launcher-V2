@@ -30,11 +30,16 @@ class PrLabelFetcher:
         self._label_cache: LabelCache = LabelCache.try_from_file(self.path) or LabelCache({})
 
     def fetch_one(self, pr: int) -> Pr | None:
+        lnk = INDIVIDUAL_PULLS.format(pr)
         r = self.manager.request("GET", INDIVIDUAL_PULLS.format(pr))
         if r is None:
             logger.error(f"Failed to fetch PR {pr}")
             return None
-        return json.loads(r.data)
+        try:
+            return json.loads(r.data)
+        except json.JSONDecodeError as e:
+            logger.exception(f"Invalid or broken JSON returned when fetching PR #{pr}: {e}")
+            return None
 
     def fetch(self, page: int | None = None) -> list[Pr] | None:
         if page is not None:
@@ -56,7 +61,7 @@ class PrLabelFetcher:
                 break
             labels = _pr_labels(d)
             # if every label found in the current page has already been fetched, early exit
-            if len(self._label_cache.keys() - labels.keys()) == 0:
+            if len(labels.keys() - self._label_cache.keys()) == 0:
                 break
 
             self._label_cache.update(labels)
@@ -126,4 +131,7 @@ class FetchPrTask(Task):
     def run(self):
         fetcher = PrLabelFetcher(self.manager)
         label = fetcher.get(self.number)
+        if label is None:
+            raise KeyError(f"Could not find name of PR #{self.number}!")
+            return
         self.finished.emit(label)
