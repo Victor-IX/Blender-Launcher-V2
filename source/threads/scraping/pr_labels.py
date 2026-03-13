@@ -21,7 +21,6 @@ MAX_PAGE_REQUESTS = 4
 class Pr(TypedDict):  # Only relevant fields
     number: int
     title: str
-    # ...
 
 
 class PrLabelFetcher:
@@ -33,7 +32,7 @@ class PrLabelFetcher:
     def fetch_one(self, pr: int) -> Pr | None:
         r = self.manager.request("GET", INDIVIDUAL_PULLS.format(pr))
         if r is None:
-            logger.error("Failed to fetch PR ", pr)
+            logger.error(f"Failed to fetch PR {pr}")
             return None
         return json.loads(r.data)
 
@@ -70,7 +69,7 @@ class PrLabelFetcher:
         if x in self._label_cache:
             return self._label_cache[x]
 
-        logger.debug("PR %s missing, searching...", x)
+        logger.debug("PR {x} missing, searching...")
 
         pr = self.fetch_one(x)
         if pr is not None:
