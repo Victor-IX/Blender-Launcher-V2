@@ -758,11 +758,9 @@ class LibraryWidget(BaseBuildWidget):
 
         fetcher = FetchPrTask(int(num), self.parent.manager)
         fetcher.finished.connect(self.rename)
-        print(fetcher)
         self.parent.task_queue.append(fetcher)
 
     def rename(self, custom_name: str):
-        print(f"Renaming to {custom_name}")
         self.build_info.custom_name = custom_name
         self.branchLabel.set_text(self.build_info.display_label)
         self.branchLabel.setElidedText()
