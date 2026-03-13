@@ -29,6 +29,7 @@ from modules.settings import (
     get_library_folder,
     get_mark_as_favorite,
     get_on_blender_launch_action,
+    get_prepend_prnum_on_prlabel,
     get_show_update_button,
     set_favorite_path,
 )
@@ -757,7 +758,12 @@ class LibraryWidget(BaseBuildWidget):
         num = m.group(1)
 
         fetcher = FetchPrTask(int(num), self.parent.manager)
-        fetcher.finished.connect(lambda label: self.rename(f"{num}: {label}"))
+
+        if get_prepend_prnum_on_prlabel():
+            fetcher.finished.connect(lambda label: self.rename(f"{num}: {label}"))
+        else:
+            fetcher.finished.connect(self.rename)
+
         self.parent.task_queue.append(fetcher)
 
     def rename(self, custom_name: str):

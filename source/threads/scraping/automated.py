@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import get_architecture, get_platform
-from modules.settings import get_fetch_pr_names_during_scrape
+from modules.settings import get_fetch_pr_names_during_scrape, get_prepend_prnum_on_prlabel
 from threads.scraping.base import BuildScraper, regex_filter
 from threads.scraping.pr_labels import PrLabelFetcher
 
@@ -108,6 +108,8 @@ class ScraperPatch(ScraperAutomated):
 
         self.label_fetcher.cache_latest_pages()
 
+        prepend_prnum = get_prepend_prnum_on_prlabel()
+
         unlabeled: list[tuple[int, BuildInfo]] = []
         for binfo in super().scrape():
             v = binfo.semversion
@@ -120,13 +122,13 @@ class ScraperPatch(ScraperAutomated):
             if name is None:
                 unlabeled.append((n, binfo))
             else:
-                binfo.custom_name = f"{n}: {name}"
+                binfo.custom_name = f"{n}: {name}" if prepend_prnum else name
                 yield binfo
 
         for n, build in unlabeled:
             name = self.label_fetcher.get(n)
             if name is not None:
-                build.custom_name = f"{n}: {name}"
+                binfo.custom_name = f"{n}: {name}" if prepend_prnum else name
             yield build
 
         self.label_fetcher.save()

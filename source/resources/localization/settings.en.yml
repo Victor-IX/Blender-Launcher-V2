@@ -296,6 +296,12 @@ blender_builds:
     fetch_during_scrape_tooltip: |
       PR names will be fetched from projects.blender.org/blender/blender/pulls/.
       DEFAULT: Off
+    prepend_pr_number: Prepend PR number in the custom name
+    prepend_pr_number_tooltip: |
+      PR Builds when fetched will have their number on the front of them.
+      "Label" -> "xxxxx: Label"
+      DEFAULT: On
+
 
   launching_builds: Launching Builds
   on_blender_launch_action: On Blender Launch

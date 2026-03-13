@@ -22,6 +22,7 @@ from modules.settings import (
     get_minimum_blender_stable_version,
     get_new_builds_check_frequency,
     get_on_blender_launch_action,
+    get_prepend_prnum_on_prlabel,
     get_quick_launch_key_seq,
     get_show_bfa_update_button,
     get_show_daily_archive_builds,
@@ -53,6 +54,7 @@ from modules.settings import (
     set_minimum_blender_stable_version,
     set_new_builds_check_frequency,
     set_on_blender_launch_action,
+    set_prepend_prnum_on_prlabel,
     set_quick_launch_key_seq,
     set_scrape_bfa_builds,
     set_scrape_daily_builds,
@@ -287,6 +289,12 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 "settings.blender_builds.pr_custom_names.fetch_during_scrape",
                 default=get_fetch_pr_names_during_scrape(),
                 setter=set_fetch_pr_names_during_scrape,
+            )
+
+            grp.add_checkbox(
+                "settings.blender_builds.pr_custom_names.prepend_pr_number",
+                default=get_prepend_prnum_on_prlabel(),
+                setter=set_prepend_prnum_on_prlabel,
             )
 
         # Launching builds settings
