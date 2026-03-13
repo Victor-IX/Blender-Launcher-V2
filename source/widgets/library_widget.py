@@ -757,7 +757,7 @@ class LibraryWidget(BaseBuildWidget):
         num = m.group(1)
 
         fetcher = FetchPrTask(int(num), self.parent.manager)
-        fetcher.finished.connect(self.rename)
+        fetcher.finished.connect(lambda label: self.rename(f"{num}: {label}"))
         self.parent.task_queue.append(fetcher)
 
     def rename(self, custom_name: str):
