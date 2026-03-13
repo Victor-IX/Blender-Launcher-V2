@@ -99,37 +99,34 @@ class ScraperPatch(ScraperAutomated):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.pr_label_updater = PrLabelFetcher(self.manager)
+        self.label_fetcher = PrLabelFetcher(self.manager)
 
     def scrape(self) -> Generator[BuildInfo, None, None]:
         if not get_fetch_pr_names_during_scrape():
             yield from super().scrape()
             return
-            
-        self.pr_label_updater.cache_latest_pages()
 
-        not_found: list[tuple[int, BuildInfo]] = []
+        self.label_fetcher.cache_latest_pages()
+
+        unlabeled: list[tuple[int, BuildInfo]] = []
         for binfo in super().scrape():
             v = binfo.semversion
+            if v.prerelease is None or (m := PR_MATCH.match(v.prerelease)) is None:
+                yield binfo
+                continue
 
-            if v.prerelease is not None and (m := PR_MATCH.match(v.prerelease)):
-                n = int(m.group(1))
-                name = self.pr_label_updater.get_cached(n)
-                if name is None:
-                    not_found.append((n, binfo))
-                else:
-                    binfo.custom_name = f"{n}: {name}"
-                    yield binfo
+            n = int(m.group(1))
+            name = self.label_fetcher.get_cached(n)
+            if name is None:
+                unlabeled.append((n, binfo))
+            else:
+                binfo.custom_name = f"{n}: {name}"
+                yield binfo
 
-        if not get_fetch_pr_names_during_scrape():
-            yield from super().scrape()
-            return
-
-        while not_found:
-            n, build = not_found.pop()
-            name = self.pr_label_updater.get(n)
+        for n, build in unlabeled:
+            name = self.label_fetcher.get(n)
             if name is not None:
                 build.custom_name = f"{n}: {name}"
             yield build
 
-        self.pr_label_updater.save()
+        self.label_fetcher.save()
