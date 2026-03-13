@@ -2,9 +2,7 @@ import json
 import logging
 from collections.abc import Generator
 from datetime import UTC, datetime
-from re import Pattern
-
-import regex as re
+import re
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import get_architecture, get_platform
@@ -93,7 +91,7 @@ class ScraperAutomated(BuildScraper):
         )
 
 
-PR_MATCH: Pattern[str] = re.compile(r"PR(\d+)")
+PR_MATCH: re.Pattern[str] = re.compile(r"PR(\d+)")
 
 
 class ScraperPatch(ScraperAutomated):
