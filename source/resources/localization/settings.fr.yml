@@ -282,6 +282,14 @@ blender_builds:
   install_template_tooltip: |
     Installe un modèle sur les builds nouvellement ajoutés à l'onglet Bibliothèque
     PAR DÉFAUT : Désactivé
+
+  pr_custom_names:
+    title: Noms des PR
+    fetch_during_scrape: Récupérer les noms de PR lors du scraping
+    fetch_during_scrape_tooltip: |
+      Les noms de PR seront récupérés depuis projects.blender.org/blender/blender/pulls/.
+      PAR DÉFAUT : Désactivé
+
   launching_builds: Lancement des builds
   on_blender_launch_action: Au lancement de Blender
   on_blender_launch_action_tooltip: |

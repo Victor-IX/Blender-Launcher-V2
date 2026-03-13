@@ -92,6 +92,8 @@ a:
   release_notes: Afficher les notes de version
   release_notes_patch: Afficher les détails du correctif
   release_notes_pr: Afficher les détails de la PR
+  fetch_pr_name: Récupérer le nom de la PR
+
   folder_build: Afficher les dossiers du build
   config: Afficher le dossier de configuration
   config_portable: Afficher le dossier de configuration portable
