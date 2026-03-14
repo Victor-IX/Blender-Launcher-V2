@@ -7,7 +7,7 @@ from typing import Self, TypedDict
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import labels_cache_path
 from modules.task import Task
-from PySide6.QtCore import QReadWriteLock, Signal
+from PySide6.QtCore import QMutex, Signal
 
 logger = logging.getLogger()
 
@@ -100,17 +100,10 @@ def _pr_labels(lst: list[Pr]) -> dict[int, str]:
 
 
 class LabelCache(dict[int, str]):
-    _lock = QReadWriteLock()
+    _lock = QMutex()
 
     @classmethod
     def try_from_file(cls, file: Path) -> Self | None:
-        cls._lock.lockForRead()
-        f = cls._try_from_file(file)
-        cls._lock.unlock()
-        return f
-
-    @classmethod
-    def _try_from_file(cls, file: Path) -> Self | None:
         if not file.exists():
             logger.info(f"Cache file {file} does not exist, creating new cache")
             return None
@@ -128,13 +121,13 @@ class LabelCache(dict[int, str]):
             return None
 
     def write(self, file: Path):
+        self._lock.lock()
         # first, reread the file if it exists and union self and other
         other = self.try_from_file(file)
         if other is not None:
             self |= other
 
         # write the new cache down
-        self._lock.lockForWrite()
         try:
             with file.open("w", encoding="utf-8") as f:
                 for n, label in sorted(self.items()):
