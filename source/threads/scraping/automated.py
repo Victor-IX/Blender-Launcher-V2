@@ -128,7 +128,7 @@ class ScraperPatch(ScraperAutomated):
         for n, build in unlabeled:
             name = self.label_fetcher.get(n)
             if name is not None:
-                binfo.custom_name = f"{n}: {name}" if prepend_prnum else name
+                build.custom_name = f"{n}: {name}" if prepend_prnum else name
             yield build
 
         self.label_fetcher.save()

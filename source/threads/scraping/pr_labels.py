@@ -58,7 +58,7 @@ class PrLabelFetcher:
             return None
 
     def cache_latest_pages(self):
-        for idx in range(MAX_PAGE_REQUESTS):
+        for idx in range(1, MAX_PAGE_REQUESTS + 1):
             d = self.fetch(idx)
             if d is None:
                 break
@@ -135,10 +135,14 @@ class LabelCache(dict[int, str]):
 
         # write the new cache down
         self._lock.lockForWrite()
-        with file.open("w", encoding="utf-8") as f:
-            for n, label in sorted(self.items()):
-                f.write(f"{n}:{label.strip()}\n")
-        self._lock.unlock()
+        try:
+            with file.open("w", encoding="utf-8") as f:
+                for n, label in sorted(self.items()):
+                    f.write(f"{n}:{label.strip()}\n")
+        except OSError as e:
+            logger.exception(f"Failed to write cache {file}: {e}")
+        finally:
+            self._lock.unlock()
 
 
 @dataclass
@@ -153,5 +157,4 @@ class FetchPrTask(Task):
         label = fetcher.get(self.number)
         if label is None:
             raise KeyError(f"Could not find name of PR #{self.number}!")
-            return
         self.finished.emit(label)
