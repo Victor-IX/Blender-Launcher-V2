@@ -266,6 +266,9 @@ def stable_cache_path() -> Path:
 def bfa_cache_path() -> Path:
     return get_cache_path() / "bforartists_builds.json"
 
+def labels_cache_path() -> Path:
+    return get_cache_path() / "pr_labels"
+
 
 def get_blender_config_folder(
     config_folder_name: str = "Blender Foundation", config_subfolder_name: str = "blender"

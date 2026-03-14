@@ -1,18 +1,15 @@
-from __future__ import annotations
-
 import json
 import logging
+import re
+from collections.abc import Generator
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo, parse_blender_ver
+from modules.connection_manager import ConnectionManager
 from modules.platform_utils import get_architecture, get_platform
+from modules.settings import get_fetch_pr_names_during_scrape, get_prepend_prnum_on_prlabel
 from threads.scraping.base import BuildScraper, regex_filter
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from modules.connection_manager import ConnectionManager
+from threads.scraping.pr_labels import PrLabelFetcher
 
 logger = logging.getLogger()
 
@@ -93,3 +90,45 @@ class ScraperAutomated(BuildScraper):
             dt,
             branch_type,
         )
+
+
+PR_MATCH: re.Pattern[str] = re.compile(r"PR(\d+)")
+
+
+class ScraperPatch(ScraperAutomated):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.label_fetcher = PrLabelFetcher(self.manager)
+
+    def scrape(self) -> Generator[BuildInfo, None, None]:
+        if not get_fetch_pr_names_during_scrape():
+            yield from super().scrape()
+            return
+
+        self.label_fetcher.cache_latest_pages()
+
+        prepend_prnum = get_prepend_prnum_on_prlabel()
+
+        unlabeled: list[tuple[int, BuildInfo]] = []
+        for binfo in super().scrape():
+            v = binfo.semversion
+            if v.prerelease is None or (m := PR_MATCH.match(v.prerelease)) is None:
+                yield binfo
+                continue
+
+            n = int(m.group(1))
+            name = self.label_fetcher.get_cached(n)
+            if name is None:
+                unlabeled.append((n, binfo))
+            else:
+                binfo.custom_name = f"{n}: {name}" if prepend_prnum else name
+                yield binfo
+
+        for n, build in unlabeled:
+            name = self.label_fetcher.get(n)
+            if name is not None:
+                build.custom_name = f"{n}: {name}" if prepend_prnum else name
+            yield build
+
+        self.label_fetcher.save()
