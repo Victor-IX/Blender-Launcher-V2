@@ -290,6 +290,19 @@ blender_builds:
   install_template_tooltip: |
     ライブラリタブに新しく追加されたビルドにテンプレートをインストールします
     DEFAULT: Off
+
+  pr_custom_names:
+    title: PRカスタム名
+    fetch_during_scrape: スクレイピング中にPR名を取得
+    fetch_during_scrape_tooltip: |
+      PR名はprojects.blender.org/blender/blender/pulls/から取得されます。
+      DEFAULT: Off
+    prepend_pr_number: カスタム名にPR番号を付加する
+    prepend_pr_number_tooltip: |
+      取得されたPRビルドの先頭に、その番号が表示されるようになります。
+      "Label" -> "xxxxx: Label"
+      DEFAULT: On
+
   launching_builds: ビルドの起動
   on_blender_launch_action: Blender起動時の動作
   on_blender_launch_action_tooltip: |

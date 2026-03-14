@@ -854,6 +854,22 @@ def set_show_patch_archive_builds(b: bool):
     get_settings().setValue("show_patch_archive_builds", b)
 
 
+def get_fetch_pr_names_during_scrape() -> bool:
+    return get_settings().value("pr_names_fetch_during_scrape", defaultValue=False, type=bool)  # type: ignore
+
+
+def set_fetch_pr_names_during_scrape(b: bool):
+    get_settings().setValue("pr_names_fetch_during_scrape", b)
+
+
+def get_prepend_prnum_on_prlabel() -> bool:
+    return get_settings().value("prepend_pr_number_on_label", defaultValue=True, type=bool)  # type: ignore
+
+
+def set_prepend_prnum_on_prlabel(b: bool):
+    get_settings().setValue("prepend_pr_number_on_label", b)
+
+
 def get_make_error_popup() -> bool:
     return get_settings().value("error_popup", defaultValue=True, type=bool)  # type: ignore
 

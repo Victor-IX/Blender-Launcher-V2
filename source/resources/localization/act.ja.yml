@@ -92,6 +92,8 @@ a:
   release_notes: リリースノートを表示
   release_notes_patch: パッチ詳細を表示
   release_notes_pr: PR詳細を表示
+  fetch_pr_name: PR名を取得
+
   folder_build: ビルドフォルダを表示
   config: 設定フォルダを表示
   config_portable: ポータブル設定フォルダを表示

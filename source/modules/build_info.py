@@ -210,7 +210,7 @@ class BuildInfo:
             return self.subversion == other.subversion and self.branch == other.branch
 
     @property
-    def semversion(self):
+    def semversion(self) -> Version:
         return parse_blender_ver(self.subversion)
 
     @property
@@ -223,6 +223,8 @@ class BuildInfo:
 
     @property
     def display_label(self):
+        if self.custom_name:
+            return self.custom_name
         return self._display_label(self.branch, self.semversion, self.subversion)
 
     @property
