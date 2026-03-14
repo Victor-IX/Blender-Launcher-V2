@@ -80,6 +80,6 @@ class TrayHandler(QObject):
         self.tray_icon.showMessage(
             "Blender Launcher",
             msg,
-            icon=self.parent().icons.taskbar,  # type: ignore
-            msecs=10000,
+            self.parent().icons.taskbar,  # type: ignore
+            10000,
         )
