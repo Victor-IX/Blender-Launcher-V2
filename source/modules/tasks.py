@@ -30,6 +30,7 @@ class TaskQueue(deque[Task]):
         self.parent = parent
         self.workers: dict[TaskWorker, Task | None] = {}
         self.on_spawn: Callable[[TaskWorker], Any] | None = on_spawn
+        self._making_threads = True
         for i in range(worker_count):
             self.spawn_new_worker(readd_on_crash=new_workers_on_crash, name=str(i))
 
@@ -48,7 +49,8 @@ class TaskQueue(deque[Task]):
 
             def remake_worker():
                 self.workers.pop(w)
-                self.spawn_new_worker(start, readd_on_crash, name)
+                if self._making_threads:
+                    self.spawn_new_worker(start, readd_on_crash, name)
 
             w.finished.connect(remake_worker)
 
@@ -77,6 +79,9 @@ class TaskQueue(deque[Task]):
                 worker.fullstop()
                 if item is not None:
                     logging.debug(f"Stopped {worker} {item}")
+
+    def set_making_threads(self, b: bool):
+        self._making_threads = b
 
     def remove_task(self, task: Task) -> bool:
         """Removes a task from the queue if it exists, or kills the thread that is running the task.

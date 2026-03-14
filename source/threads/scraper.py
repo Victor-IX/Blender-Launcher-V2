@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from itertools import chain
+from time import localtime, mktime
 from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
 from modules.platform_utils import get_architecture, get_platform
 from modules.settings import (
+    get_last_time_checked_utc,
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
@@ -16,6 +19,7 @@ from modules.settings import (
     get_show_daily_archive_builds,
     get_show_experimental_archive_builds,
     get_show_patch_archive_builds,
+    set_last_time_checked_utc,
 )
 from PySide6.QtCore import QThread, Signal
 from threads.scraping.automated import ScraperAutomated, ScraperPatch
@@ -42,6 +46,9 @@ class Scraper(QThread):
         self.parent = parent
         self.manager = man
         self.build_cache = build_cache
+
+        self.last_time_checked = get_last_time_checked_utc()
+        self.finished.connect(self.update_last_time_checked)
 
         self.platform = get_platform()
         self.architecture = get_architecture()
@@ -131,3 +138,9 @@ class Scraper(QThread):
         if b != self.scraper_patch.branch:
             self.scraper_patch = ScraperPatch(self.manager, b)
         yield self.scraper_patch
+
+    def update_last_time_checked(self):
+        utcnow = localtime()
+        dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
+        set_last_time_checked_utc(dt)
+        self.last_time_checked = dt

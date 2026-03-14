@@ -6,11 +6,10 @@ import shlex
 import shutil
 import sys
 import threading
-from datetime import datetime
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from time import localtime, mktime, strftime
+from time import localtime, strftime
 from typing import TYPE_CHECKING
 
 from i18n import t
@@ -41,14 +40,12 @@ from modules.settings import (
     get_enable_new_builds_notifications,
     get_enable_quick_launch_key_seq,
     get_first_time_setup_seen,
-    get_last_time_checked_utc,
     get_launch_minimized_to_tray,
     get_library_folder,
     get_make_error_popup,
     get_new_builds_check_frequency,
     get_proxy_type,
     get_purge_temp_on_startup,
-    get_quick_launch_key_seq,
     get_scrape_bfa_builds,
     get_scrape_daily_builds,
     get_scrape_experimental_builds,
@@ -70,21 +67,17 @@ from modules.settings import (
     is_library_folder_valid,
     purge_temp_folder,
     set_dont_show_resource_warning,
-    set_last_time_checked_utc,
     set_library_folder,
     set_tray_icon_notified,
 )
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
 from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
-from PySide6.QtGui import QAction, QDesktopServices
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
-    QLabel,
     QPushButton,
-    QStatusBar,
-    QSystemTrayIcon,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -93,7 +86,6 @@ from semver import Version
 from threads.library_drawer import DrawLibraryTask
 from threads.remover import RemovalTask
 from threads.scraper import Scraper
-from widgets.base_menu_widget import BaseMenuWidget
 from widgets.base_page_widget import BasePageWidget
 from widgets.base_tool_box_widget import BaseToolBoxWidget
 from widgets.datetime_widget import DATETIME_FORMAT
@@ -108,14 +100,10 @@ from windows.onboarding_window import OnboardingWindow
 from windows.popup_window import Popup
 from windows.settings_window import SettingsWindow
 
-try:
-    from pynput import keyboard
-
-    HOTKEYS_AVAILABLE = True
-except Exception as e:
-    logging.exception(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
-    HOTKEYS_AVAILABLE = False
-
+from .hotkey_handler import HotkeyHandler
+from .quick_launch_handler import QuickLaunchHandler
+from .status_bar import LauncherStatusBar
+from .tray_handler import TrayHandler
 
 if TYPE_CHECKING:
     from modules.build_info import BuildInfo
@@ -134,8 +122,6 @@ class AppState(Enum):
 class BlenderLauncher(BaseWindow):
     show_signal = Signal()
     close_signal = Signal()
-    quit_signal = Signal()
-    quick_launch_fail_signal = Signal()
     scraper_finished_signal = Signal()
 
     def __init__(
@@ -160,7 +146,12 @@ class BlenderLauncher(BaseWindow):
         self.instance_handler = BLInstanceHandler(self.version, self)
         self.instance_handler.show_launcher.connect(self._show)
 
-        self.quick_launch_fail_signal.connect(self.quick_launch_fail)
+        # Quick Launch
+        self.quick_launch_handler = QuickLaunchHandler(self)
+
+        # Global Hotkeys
+        self.hotkey_handler = HotkeyHandler(self)
+        self.hotkey_handler.hk_triggered.connect(self.quick_launch_handler.on_activate_quick_launch)
 
         # task queue
         self.task_queue = TaskQueue(
@@ -169,19 +160,13 @@ class BlenderLauncher(BaseWindow):
             on_spawn=self.on_worker_creation,
         )
         self.task_queue.start()
-        self.quit_signal.connect(self.task_queue.fullstop)
 
         # Global scope
         self.app = app
         self.version: Version = version
         self.offline = offline
         self.build_cache = build_cache
-        self.favorite: LibraryWidget | None = None
-        self.status = "????"
-        self.is_force_check_on = False
         self.app_state = AppState.IDLE
-        self.cashed_builds = []
-        self.notification_pool = []
         self.windows = [self]
         self.timer = None
         self.started = True
@@ -189,8 +174,6 @@ class BlenderLauncher(BaseWindow):
         self.new_downloads = False
         self.platform = get_platform()
         self.settings_window = None
-        self.hk_listener = None
-        self.last_time_checked = get_last_time_checked_utc()
 
         if self.platform == "macOS":
             self.app.aboutToQuit.connect(self.quit_)
@@ -299,9 +282,9 @@ class BlenderLauncher(BaseWindow):
     def toggle_sync_library_and_downloads_pages(self, is_sync):
         if is_sync:
             self.LibraryToolBox.tab_changed.connect(
-                lambda idx: self.DownloadsToolBox.setCurrentIndex(idx)
-                if self.DownloadsToolBox.isTabVisible(idx)
-                else None
+                lambda idx: (
+                    self.DownloadsToolBox.setCurrentIndex(idx) if self.DownloadsToolBox.isTabVisible(idx) else None
+                )
             )
             self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
         else:
@@ -459,66 +442,22 @@ class BlenderLauncher(BaseWindow):
         self.update_visible_lists()
 
         # Status bar
-        self.status_bar = QStatusBar(self)
+        self.status_bar = LauncherStatusBar(self)
         self.setStatusBar(self.status_bar)
-        self.status_bar.setContentsMargins(0, 0, 0, 2)
-        self.status_bar.setFont(self.fonts.font_10)
-        self.statusbarLabel = QLabel()
-        self.ForceCheckNewBuilds = QPushButton(t("act.a.check"))
-        self.ForceCheckNewBuilds.setEnabled(False)
-        self.ForceCheckNewBuilds.setToolTip(t("act.a.check_tooltip"))
-        self.ForceCheckNewBuilds.clicked.connect(self.force_check)
-        self.NewVersionButton = QPushButton()
-        self.NewVersionButton.hide()
-        self.NewVersionButton.clicked.connect(self.show_update_window)
-        self.statusbarVersion = QPushButton(str(self.version))
-        self.statusbarVersion.clicked.connect(self.show_changelog)
-        self.statusbarVersion.setToolTip(t("act.a.version_tooltip"))
-        self.status_bar.addPermanentWidget(self.ForceCheckNewBuilds)
-        self.status_bar.addPermanentWidget(QLabel("│"))
-        self.status_bar.addPermanentWidget(self.statusbarLabel)
-        self.status_bar.addPermanentWidget(QLabel(""), 1)
-        self.status_bar.addPermanentWidget(self.NewVersionButton)
-        self.status_bar.addPermanentWidget(self.statusbarVersion)
+        self.status_bar.force_check.connect(self.force_check)
+        self.status_bar.update.connect(self.show_update_window)
 
         # Draw library
         self.draw_library()
 
-        # Setup tray icon context Menu
-        quit_action = QAction(t("act.quit"), self)
-        quit_action.triggered.connect(self.quit_)
-        hide_action = QAction(t("act.hide"), self)
-        hide_action.triggered.connect(self.close)
-        show_action = QAction(t("act.show"), self)
-        show_action.triggered.connect(self._show)
-        show_favorites_action = QAction(self.icons.favorite, "Favorites", self)
-        show_favorites_action.triggered.connect(self.show_favorites)
-        quick_launch_action = QAction(self.icons.quick_launch, "Blender", self)
-        quick_launch_action.triggered.connect(self.quick_launch)
-
-        self.tray_menu = BaseMenuWidget(parent=self)
-        self.tray_menu.setFont(self.fonts.font_10)
-        self.tray_menu.addActions(
-            [
-                quick_launch_action,
-                show_favorites_action,
-                show_action,
-                hide_action,
-                quit_action,
-            ]
-        )
-
-        # Setup tray icon
-        self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(self.icons.taskbar)
-        self.tray_icon.setToolTip("Blender Launcher")
-        self.tray_icon.activated.connect(self.tray_icon_activated)
-        self.tray_icon.messageClicked.connect(self._show)
-
-        # Linux doesn't handle QSystemTrayIcon.Context activation reason,
-        # so add context menu as regular one
-        if self.platform == "Linux":
-            self.tray_icon.setContextMenu(self.tray_menu)
+        # Tray Handler
+        self.tray_handler = TrayHandler(self)
+        self.tray_handler.set_visible((not is_frozen()) or get_show_tray_icon())
+        self.tray_handler.quit.connect(self.quit_)
+        self.tray_handler.close.connect(self.close)
+        self.tray_handler.trigger.connect(self._show)
+        self.tray_handler.favs.connect(self.show_favorites)
+        self.tray_handler.quick_launch.connect(self.quick_launch_handler.quick_launch)
 
         # Force style update
         if polish is True:
@@ -527,53 +466,15 @@ class BlenderLauncher(BaseWindow):
             style.unpolish(self.app)
             style.polish(self.app)
 
+        if get_enable_quick_launch_key_seq():
+            self.hotkey_handler.setup()
+
         # Show window
-        if is_frozen():
-            if get_show_tray_icon():
-                self.tray_icon.show()
-
-                if get_launch_minimized_to_tray() is False:
-                    self._show()
-            else:
-                self.tray_icon.hide()
-                self._show()
-        else:
-            self.tray_icon.show()
+        #     outside of frozen executable (?)
+        # or  no tray icon and launch minimized to tray (invalid)
+        # or     tray icon and no launch minimized to tray
+        if not is_frozen() or get_show_tray_icon() ^ get_launch_minimized_to_tray():
             self._show()
-
-        if get_enable_quick_launch_key_seq() is True:
-            self.setup_global_hotkeys_listener()
-
-    def setup_global_hotkeys_listener(self):
-        if self.hk_listener is not None:
-            self.hk_listener.stop()
-        if HOTKEYS_AVAILABLE:
-            key_seq = get_quick_launch_key_seq()
-            keys = key_seq.split("+")
-
-            for key in keys:
-                if len(key) > 1:
-                    key_seq = key_seq.replace(key, "<" + key + ">")
-
-            try:
-                self.hk_listener = keyboard.GlobalHotKeys({key_seq: self.on_activate_quick_launch})
-            except Exception:
-                self.dlg = Popup.warning(
-                    message=t("msg.popup.global_hotkeys_invalid"),
-                    buttons=Popup.Button.info(),
-                    parent=self,
-                )
-                return
-
-            self.hk_listener.start()
-
-    def on_activate_quick_launch(self):
-        if self.settings_window is None:
-            self.quick_launch()
-
-    def show_changelog(self):
-        url = f"https://github.com/Victor-IX/Blender-Launcher-V2/releases/tag/v{self.version!s}"
-        QDesktopServices.openUrl(url)
 
     def open_docs(self):
         QDesktopServices.openUrl("https://Victor-IX.github.io/Blender-Launcher-V2")
@@ -611,8 +512,7 @@ class BlenderLauncher(BaseWindow):
             _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
 
         # Destroy currently running Blender Launcher instance
-        self.instance_handler.server.close()
-        self.destroy()
+        self.quit_()
 
     def _show(self):
         if self.isMinimized():
@@ -621,7 +521,6 @@ class BlenderLauncher(BaseWindow):
         self.show()
         self.activateWindow()
 
-        self.set_status()
         self.show_signal.emit()
 
         # TODO: Reimplement custom button on the window taskbar app preview previewer (Launch and Quit)
@@ -650,10 +549,7 @@ class BlenderLauncher(BaseWindow):
         ):
             return
 
-        if value not in self.notification_pool:
-            if value is not None:
-                self.notification_pool.append(value)
-            self.tray_icon.showMessage("Blender Launcher", message, self.icons.taskbar, 10000)
+        self.tray_handler.message(message)
 
     def message_from_error(self, err: Exception):
         self.show_message(t("msg.err.generic", err=err), MessageType.ERROR)
@@ -670,32 +566,7 @@ class BlenderLauncher(BaseWindow):
 
     def show_favorites(self):
         self.TabWidget.setCurrentWidget(self.UserTab)
-        self.UserToolBox.setCurrentWidget(self.FavoritesPage)
         self._show()
-
-    def quick_launch(self):
-        try:
-            assert self.favorite
-            self.favorite.launch()
-        except Exception:
-            self.quick_launch_fail_signal.emit()
-
-    def quick_launch_fail(self):
-        self.dlg = Popup.setup(
-            parent=self,
-            message=t("msg.popup.quick_launch_tray"),
-            buttons=Popup.Button.info(),
-        )
-
-    def tray_icon_activated(self, reason):
-        if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            self._show()
-        elif reason == QSystemTrayIcon.ActivationReason.MiddleClick:
-            self.quick_launch()
-            # INFO: Middle click dose not work anymore on new Windows versions with PyQt5
-            # Middle click currently return the Trigger reason
-        elif reason == QSystemTrayIcon.ActivationReason.Context:
-            self.tray_menu.trigger()
 
     def stop_auto_scrape_timer(self):
         if self.timer is not None:
@@ -721,14 +592,14 @@ class BlenderLauncher(BaseWindow):
         self.timer.daemon = True
         self.timer.start()
 
-    def destroy(self):
-        self.quit_signal.emit()
+    def _destroyed(self, *args, **kwargs):
+        super()._destroyed()
         self.stop_auto_scrape_timer()
-        self.tray_icon.hide()
+        self.task_queue.fullstop()
         self.app.quit()
 
     def draw_library(self, clear=False):
-        self.set_status(t("act.prog.reading_local"), False)
+        self.status_bar.set_status(t("act.prog.reading_local"), False)
 
         if clear:
             self.cm = ConnectionManager(version=self.version, proxy_type=get_proxy_type())
@@ -743,7 +614,7 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsPage.list_widget.clear_()
             self.started = True
 
-        self.favorite = None
+        self.quick_launch_handler.remove_quick_launch()
 
         self.LibraryPage.list_widget.clear_()
 
@@ -781,7 +652,7 @@ class BlenderLauncher(BaseWindow):
         logger.error("Connection_error")
 
         utcnow = strftime(("%H:%M"), localtime())
-        self.set_status(t("msg.err.connection_failed", time=utcnow))
+        self.status_bar.set_status(t("msg.err.connection_failed", time=utcnow))
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
@@ -802,7 +673,7 @@ class BlenderLauncher(BaseWindow):
             self.update_visible_lists()
 
     def start_scraper(self, scrape_all_visible=False):
-        self.set_status(t("act.prog.checking"), False)
+        self.status_bar.set_status(t("act.prog.checking"), False)
         self.stop_auto_scrape_timer()
 
         scrape_stable = get_scrape_stable_builds()
@@ -825,7 +696,6 @@ class BlenderLauncher(BaseWindow):
         # are at least once every two days. They are so easily gathered there's little loss here
         self.DownloadsPage.list_widget.clear_()
 
-        self.cashed_builds.clear()
         self.new_downloads = False
         self.app_state = AppState.CHECKINGBUILDS
 
@@ -844,17 +714,9 @@ class BlenderLauncher(BaseWindow):
 
         self.DownloadsPage.set_info_label_text(t("repo.no_builds"))
 
-        for widget in self.DownloadsPage.list_widget.widgets.copy():
-            if widget.build_info not in self.cashed_builds:
-                widget.destroy()
-
         # Re-sort all download lists after scraping is complete to ensure proper ordering
         self.DownloadsPage.list_widget.sortItems(self.DownloadsPage.sorting_order)
 
-        utcnow = localtime()
-        dt = datetime.fromtimestamp(mktime(utcnow)).astimezone()
-        set_last_time_checked_utc(dt)
-        self.last_time_checked = dt
         self.app_state = AppState.IDLE
 
         if get_check_for_new_builds_automatically() is True:
@@ -866,24 +728,17 @@ class BlenderLauncher(BaseWindow):
 
     def ready_to_scrape(self):
         self.app_state = AppState.IDLE
-        self.set_status(t("act.prog.last_check", time=self.last_time_checked.strftime(DATETIME_FORMAT)), True)
+        self.status_bar.set_status(
+            t("act.prog.last_check", time=self.scraper.last_time_checked.strftime(DATETIME_FORMAT)),
+            True,
+        )
         self.scraper_finished_signal.emit()
 
-    def draw_from_cashed(self, build_info):
-        if self.app_state == AppState.IDLE:
-            for cashed_build in self.cashed_builds:
-                if build_info == cashed_build:
-                    self.draw_to_downloads(cashed_build)
-                    return
-
     def draw_to_downloads(self, build_info: BuildInfo):
-        if self.started and build_info.commit_time < self.last_time_checked:
+        if self.started and build_info.commit_time < self.scraper.last_time_checked:
             is_new = False
         else:
             is_new = True
-
-        if build_info not in self.cashed_builds:
-            self.cashed_builds.append(build_info)
 
         if not self.DownloadsPage.list_widget.contains_build_info(build_info):
             installed = self.LibraryPage.list_widget.widget_with_blinfo(build_info)
@@ -924,6 +779,9 @@ class BlenderLauncher(BaseWindow):
     def draw_read_library(self, path, show_new, binfo: BuildInfo, successful_read_callback):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
+        widget.add_as_quick_launch.connect(self.quick_launch_handler.set_quick_launch_build)
+        if widget.is_quick_launch():
+            widget.add_to_quick_launch()
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         if successful_read_callback is not None:
@@ -1000,16 +858,6 @@ class BlenderLauncher(BaseWindow):
         lst.setFocus(Qt.FocusReason.ShortcutFocusReason)
         widget.setFocus(Qt.FocusReason.ShortcutFocusReason)
 
-    def set_status(self, status=None, is_force_check_on=None):
-        if status is not None:
-            self.status = status
-
-        if is_force_check_on is not None:
-            self.is_force_check_on = is_force_check_on
-
-        self.ForceCheckNewBuilds.setEnabled(self.is_force_check_on)
-        self.statusbarLabel.setText(self.status)
-
     def set_version(self, latest_tag, patch_notes):
         if self.version.build is not None and "dev" in self.version.build:
             return
@@ -1024,8 +872,7 @@ class BlenderLauncher(BaseWindow):
         logging.debug(f"Latest version on GitHub is {latest}")
 
         if latest > current:
-            self.NewVersionButton.setText(t("msg.updates.update_to_version", version=latest_tag.replace("v", "")))
-            self.NewVersionButton.show()
+            self.status_bar.new_version(latest_tag)
             self.latest_tag = latest_tag
             if patch_notes is not None:
                 patch_note_text = patch_note_cleaner(patch_notes)
@@ -1044,7 +891,7 @@ class BlenderLauncher(BaseWindow):
             popup.accepted.connect(self.show_update_window)
 
         else:
-            self.NewVersionButton.hide()
+            self.status_bar.new_version_button.hide()
 
     def show_settings_window(self):
         self.settings_window = SettingsWindow(parent=self)
@@ -1064,10 +911,15 @@ class BlenderLauncher(BaseWindow):
                 parent=self,
             )
 
-            self.dlg.accepted.connect(self.destroy)
+            self.dlg.accepted.connect(self._force_quit)
             return
 
-        self.destroy()
+        self._force_quit()
+
+    def _force_quit(self):
+        self.task_queue.set_making_threads(False)
+        self.task_queue.fullstop()
+        self.deleteLater()
 
     @Slot(int, int, int)
     def _sync_column_widths(self, version_width: int, branch_width: int, commit_time_width: int):
@@ -1090,11 +942,11 @@ class BlenderLauncher(BaseWindow):
             if not get_tray_icon_notified():
                 self.show_message(t("msg.popup.tray_notify"))
                 set_tray_icon_notified()
-            event.ignore()
             self.hide()
             self.close_signal.emit()
         else:
             self.quit_()
+        event.ignore()
 
     def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
@@ -1112,4 +964,4 @@ class BlenderLauncher(BaseWindow):
             app = Path(sys.executable).parent.parent.parent
             _popen(f"open -n {shlex.quote(str(app))}")
 
-        self.destroy()
+        self.deleteLater()

@@ -138,14 +138,13 @@ class SettingsWindow(BaseWindow):
         if self.old_enable_quick_launch_key_seq != enable_quick_launch_key_seq:
             # Restart hotkeys listener
             if enable_quick_launch_key_seq is True:
-                self.launcher.setup_global_hotkeys_listener()
+                self.launcher.hotkey_handler.setup()
             # Stop hotkeys listener
-            elif self.launcher.hk_listener is not None:
-                self.launcher.hk_listener.stop()
+            self.launcher.hotkey_handler.stop()
         # Only key sequence was changed
         # Restart hotkeys listener
         elif self.old_quick_launch_key_seq != quick_launch_key_seq and enable_quick_launch_key_seq:
-            self.launcher.setup_global_hotkeys_listener()
+            self.launcher.hotkey_handler.setup()
 
         """Update connection"""
         use_custom_tls_certificates = get_use_custom_tls_certificates()
