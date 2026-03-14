@@ -911,12 +911,14 @@ class BlenderLauncher(BaseWindow):
                 parent=self,
             )
 
-            self.dlg.accepted.connect(self.deleteLater)
+            self.dlg.accepted.connect(self._force_quit)
             return
-        else:
-            self.task_queue.set_making_threads(False)
-            self.task_queue.fullstop()
 
+        self._force_quit()
+
+    def _force_quit(self):
+        self.task_queue.set_making_threads(False)
+        self.task_queue.fullstop()
         self.deleteLater()
 
     @Slot(int, int, int)

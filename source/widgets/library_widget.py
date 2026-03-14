@@ -321,8 +321,7 @@ class LibraryWidget(BaseBuildWidget):
         return (
             self.show_new
             and (
-                get_mark_as_favorite() != 0
-                or (get_mark_as_favorite() == 1 and self.branch == "stable")
+                (get_mark_as_favorite() == 1 and self.branch == "stable")
                 or (get_mark_as_favorite() == 2 and self.branch == "daily")
                 or (get_mark_as_favorite() == 3)
             )
