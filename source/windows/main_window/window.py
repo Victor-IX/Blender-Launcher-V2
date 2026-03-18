@@ -72,7 +72,7 @@ from modules.settings import (
 )
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
-from PySide6.QtCore import QSize, Qt, QTimer, Signal, Slot
+from PySide6.QtCore import QMetaMethod, QSize, Qt, QTimer, Signal, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
@@ -288,18 +288,11 @@ class BlenderLauncher(BaseWindow):
             )
             self.DownloadsToolBox.tab_changed.connect(self.LibraryToolBox.setCurrentIndex)
         else:
-            if self.isSignalConnected(self.LibraryToolBox, "tab_changed()"):
+            if self.LibraryToolBox.isSignalConnected(QMetaMethod.fromSignal(self.LibraryToolBox.tab_changed)):
                 self.LibraryToolBox.tab_changed.disconnect()
 
-            if self.isSignalConnected(self.DownloadsToolBox, "tab_changed()"):
+            if self.DownloadsToolBox.isSignalConnected(QMetaMethod.fromSignal(self.LibraryToolBox.tab_changed)):
                 self.DownloadsToolBox.tab_changed.disconnect()
-
-    def isSignalConnected(self, obj, name):
-        index = obj.metaObject().indexOfMethod(name)
-        if index == -1:
-            return False
-        method = obj.metaObject().method(index)
-        return obj.isSignalConnected(method)
 
     def draw(self, polish=False):
         # Header
