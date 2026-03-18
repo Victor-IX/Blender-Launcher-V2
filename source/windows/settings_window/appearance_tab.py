@@ -88,7 +88,7 @@ class AppearanceTabWidget(SettingsFormWidget):
             self.DefaultTabComboBox.addItems(tabs.keys())
             self.DefaultTabComboBox.setToolTip(t("settings.appearance.tabs.default_tab_tooltip"))
             self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
-            self.DefaultTabComboBox.activated[int].connect(self.change_default_tab)
+            self.DefaultTabComboBox.activated[int].connect(set_default_tab)
 
             # Sync Library and Downloads pages
             grp.add_checkbox(
@@ -114,9 +114,6 @@ class AppearanceTabWidget(SettingsFormWidget):
     def toggle_system_titlebar(self, is_checked):
         set_use_system_titlebar(is_checked)
         self.launcher.update_system_titlebar(is_checked)
-
-    def change_default_tab(self, index: int):
-        set_default_tab(index)
 
     def toggle_sync_library_and_downloads_pages(self, is_checked):
         set_sync_library_and_downloads_pages(is_checked)
