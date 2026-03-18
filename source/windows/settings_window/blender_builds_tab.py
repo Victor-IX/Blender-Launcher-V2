@@ -376,28 +376,22 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         set_update_behavior(behavior)
 
     def change_update_stable_behavior(self, index: int):
-        behavior = self.UpdateStableBehavior.itemText(index)
-        set_stable_update_behavior(behavior)
+        set_stable_update_behavior(index)
 
     def change_update_daily_behavior(self, index: int):
-        behavior = self.UpdateDailyBehavior.itemText(index)
-        set_daily_update_behavior(behavior)
+        set_daily_update_behavior(index)
 
     def change_update_experimental_behavior(self, index: int):
-        behavior = self.UpdateExperimentalBehavior.itemText(index)
-        set_experimental_update_behavior(behavior)
+        set_experimental_update_behavior(index)
 
     def change_update_bfa_behavior(self, index: int):
-        behavior = self.UpdateBFABehavior.itemText(index)
-        set_bfa_update_behavior(behavior)
+        set_bfa_update_behavior(index)
 
     def change_update_upbge_stable_behavior(self, index: int):
-        behavior = self.UpdateUPBGEStableBehavior.itemText(index)
-        set_upbge_stable_update_behavior(behavior)
+        set_upbge_stable_update_behavior(index)
 
     def change_update_upbge_weekly_behavior(self, index: int):
-        behavior = self.UpdateUPBGEWeeklyBehavior.itemText(index)
-        set_upbge_weekly_update_behavior(behavior)
+        set_upbge_weekly_update_behavior(index)
 
     def toggle_mark_as_favorite(self, is_checked):
         if is_checked:
