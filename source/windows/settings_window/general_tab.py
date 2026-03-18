@@ -279,8 +279,7 @@ class GeneralTabWidget(SettingsFormWidget):
             self.unregister_file_association_button.setEnabled(False)
 
     def change_default_delete_action(self, index: int):
-        action = self.default_delete_action.itemText(index)
-        set_default_delete_action(action)
+        set_default_delete_action(index)
 
     def toggle_purge_temp_on_startup(self, is_checked):
         set_purge_temp_on_startup(is_checked)
