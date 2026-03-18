@@ -352,8 +352,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
     def change_mark_as_favorite(self, index: int):
-        page = self.MarkAsFavorite.itemText(index)
-        set_mark_as_favorite(page)
+        set_mark_as_favorite(index + 1)
 
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)
@@ -395,9 +394,9 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
 
     def toggle_mark_as_favorite(self, is_checked):
         if is_checked:
-            set_mark_as_favorite(self.MarkAsFavorite.currentText())
+            set_mark_as_favorite(self.MarkAsFavorite.currentIndex() + 1)
         else:
-            set_mark_as_favorite("Disable")
+            set_mark_as_favorite(0)
 
     def update_quick_launch_key_seq(self):
         key_seq = self.QuickLaunchKeySeq.text()

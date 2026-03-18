@@ -61,11 +61,9 @@ downloads_pages = {
 }
 
 favorite_pages = {
-    "Disable": 0,
-    "Stable Releases": 1,
-    "Daily Builds": 2,
-    "Experimental Branches": 3,
-}
+    "Disable": "disable",
+} | downloads_pages
+
 
 build_library_folders = [
     "stable",
