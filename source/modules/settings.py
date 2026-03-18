@@ -131,7 +131,7 @@ def dropdown_setting(
         v = get_settings().value(name)
         if v is None:
             return default
-        if v.isdigit():
+        if isinstance(v, int) or v.isdigit():
             return int(v)  # backcompat
         return gindex[v]
 
@@ -498,12 +498,7 @@ def set_enable_quick_launch_key_seq(is_checked):
     get_settings().setValue("enable_quick_launch_key_seq", is_checked)
 
 
-def get_proxy_type() -> int:
-    return get_settings().value("proxy/type", defaultValue=0, type=int)  # type: ignore
-
-
-def set_proxy_type(proxy_type):
-    get_settings().setValue("proxy/type", proxy_types[proxy_type])
+get_proxy_type, set_proxy_type = dropdown_setting("proxy/type", proxy_types.values(), default=0)
 
 
 def get_proxy_host() -> str:

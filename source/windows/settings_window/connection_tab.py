@@ -136,8 +136,7 @@ class ConnectionTabWidget(SettingsFormWidget):
             self.ProxyPasswordLineEdit.editingFinished.connect(self.update_proxy_password)
 
     def change_proxy_type(self, index: int):
-        proxy_type = self.ProxyTypeComboBox.itemText(index)
-        set_proxy_type(proxy_type)
+        set_proxy_type(index)
 
     def update_proxy_host(self):
         host = self.ProxyHostLineEdit.text()
