@@ -1,0 +1,93 @@
+title: Blender Launcher 首次设置
+
+welcome:
+  title: 欢迎使用 Blender Launcher %{v}
+  text: |
+    在本次首次设置中，我们将引导您完成最常用的设置配置。
+    您只需执行一次此操作。
+    所有这些设置以后都可以更改。
+
+library:
+  title: Blender Launcher 库位置
+  subtitle: 确保此文件夹有足够的存储空间来下载和存储您想要的所有构建版本。
+
+  move_exe: 将可执行文件移动到库
+  move_exe_tooltip: 将程序的可执行文件移动到指定位置。首次设置完成后，后续运行需要引用此位置。
+
+  perm_warning:
+    Windows: "警告: 请勿使用 C:/Program Files/... 作为库位置或任何您可能没有权限的位置"
+    Linux: "警告: 请勿使用 /bin 作为库位置或任何您可能没有权限的位置"
+
+  location: "库位置:"
+
+  path_warning: 程序的可执行文件位于 %{home} 之外，可能缺少将可执行文件移动到库所需的权限！
+
+repo_select:
+  title: Blender 仓库可见性
+  subtitle: 启用/禁用某些Blender构建版本的可见性/抓取。
+
+shortcuts:
+  title: 快捷方式和文件关联
+  subtitle: 创建Blender Launcher快捷方式并注册文件关联，以直接使用Blender Launcher打开.blend文件
+
+  start_menu: 添加到开始菜单
+  desktop: 添加到桌面
+
+file_association:
+  name: 注册文件关联
+  Linux: |
+    为了在Linux上使用Blender Launcher启动blend文件，我们将在请求的位置生成一个.desktop文件。\
+    它包含MIME类型数据，告诉桌面环境（DE）程序期望处理的文件类型，作为副作用，程序也会在应用程序启动器中可见。
+
+    我们的默认位置通常是桌面环境搜索应用程序条目的位置。
+  Windows: |
+    为了在Windows上使用Blender Launcher启动blend文件，我们将更新注册表以将启动器与.blend扩展名关联。\
+    要在安装后撤销此操作，设置的一般选项卡中有一个标记的面板。您可以在那里找到注销启动器的按钮。
+
+    将鼠标悬停在此文本上以查看将更改哪些注册表键以及原因。
+  win_reg_key: |
+    将更改以下键:
+    创建 Software\Classes\blenderlauncherv2.blend\shell\open\command -- 将启动器公开为软件类
+    更新 Software\Classes\.blend\OpenWithProgids -- 将启动器添加到.blend的"打开方式..."列表
+    创建 Software\Classes\blenderlauncherv2.blend\DefaultIcon -- 设置Blender Launcher为默认应用程序时的图标
+    注销启动器时将删除/降级这些键
+
+appearance:
+  title: Blender Launcher 外观
+  subtitle: 配置Blender Launcher的外观
+
+
+  titlebar: 使用系统标题栏
+  titlebar_label: 这将禁用自定义标题栏并使用操作系统的默认标题栏。
+  titlebar_label_linux: |
+    这将禁用自定义标题栏并使用操作系统的默认标题栏。
+
+    在Linux Wayland环境中，建议使用此选项，因为您将能够
+    使用标题栏移动和调整窗口大小。
+    我们的主要移动和调整大小方法在X11上效果最佳。
+
+  dpi_scaling: |
+    这将更改程序的DPI因子。
+    根据显示器的像素密度自动缩放用户界面，乘以该值。
+    在MacOS等屏幕上内容太小无法阅读时很有帮助
+
+background:
+  title: 在后台运行Blender Launcher
+  subtitle: Blender Launcher可以通过系统托盘图标在后台保持运行。这对于读取效率和其他功能很有用，但并非完全必要。
+  show_tray_icon: 在后台运行Blender Launcher（最小化到托盘）
+
+committing:
+  title: 正在提交设置更改...
+  subtitle: 这应该不到一秒钟。
+
+  finished_page: 已完成页面 "%{page}"
+
+error:
+  title: 设置过程中发生错误！
+  continue: 仍然继续吗？
+
+
+  occurred: |
+    %{finished_pages}
+    页面 %{page} 发生错误！
+    %{exc}

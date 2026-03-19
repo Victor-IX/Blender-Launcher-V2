@@ -1,0 +1,24 @@
+stable_tooltip: 生产就绪的构建版本。
+daily_tooltip: 每天创建的构建版本。包含最新功能和错误修复，但可能不稳定。
+experimental_tooltip: 这些包含可能进入官方Blender版本的新功能。可能非常不稳定。
+upbge_tooltip: UPBGE稳定版构建版本 - 用于游戏开发的Blender分支。
+upbge_weekly_tooltip: 包含最新功能的UPBGE每周构建版本。
+
+
+visibility_tooltip: |
+  在启动器视图中显示/隐藏此仓库。
+  如果禁用，则将自动禁用获取，
+  除非其他仓库共享获取行为。
+
+download_tooltip: |
+  启用/禁用获取此仓库。
+  如果在按下"检查"按钮时按住SHIFT键强制检查，
+  则无论获取设置如何，所有可见类别都将下载。
+
+no_builds: 未找到此类型的构建版本！
+
+upload_time: 上传时间
+commit_time: 提交时间
+
+no_new_builds: 没有可用的新构建版本
+nothing: 暂无内容可显示

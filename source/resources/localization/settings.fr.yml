@@ -21,7 +21,7 @@ general:
     worker_count_tooltip: |
       Détermine le nombre d'opérations d'E/S pouvant être effectuées simultanément, ex. Téléchargement, Suppression, Extraction
       PAR DÉFAUT : <nombre de cœurs> * (3/4)
-    worker_count_warning: "(Attention : valeur supérieure à {cnt} (nombre de cœurs) !!)"
+    worker_count_warning: "(Attention : valeur supérieure à %{cnt} (nombre de cœurs) !!)"
     prerelease: Utiliser les versions préliminaires
     prerelease_tooltip: |
       Lors de la vérification d'une nouvelle version de Blender Launcher, vérifier les versions préliminaires.

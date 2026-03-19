@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 if getattr(sys, "frozen", False):
     LOCALIZATION_PATH = Path(getattr(sys, "_MEIPASS", "")) / "localization/"
 else:
-    LOCALIZATION_PATH = Path("source/resources/localization").resolve()
+    # 修复: 使用相对于当前文件的路径, 而不是硬编码
+    # Fix: use a path relative to the current file instead of hardcoding it
+    LOCALIZATION_PATH = Path(__file__).parent.parent / "resources" / "localization"
 
 i18n.load_path.append(LOCALIZATION_PATH)
 
@@ -23,6 +25,7 @@ class Language(StrEnum):
     SPANISH = "es"
     FRENCH = "fr"
     JAPANESE = "ja"
+    CHINESE = "zh"
 
     @property
     def display_name(self) -> str:
@@ -32,6 +35,7 @@ class Language(StrEnum):
             Language.SPANISH: "Español",
             Language.FRENCH: "Français",
             Language.JAPANESE: "日本語",
+            Language.CHINESE: "中文",
         }
         return names[self]
 
@@ -71,6 +75,10 @@ def _get_saved_language() -> str | None:
 
 # Determine locale: saved preference takes priority over OS detection
 loc = _get_saved_language() or _detect_os_locale()
+
+# 添加中文语言代码映射支持
+if loc.lower() in ("chinese",):
+    loc = "zh"
 
 i18n.set("plural_few", 1)
 i18n.set("enable_memoization", True)

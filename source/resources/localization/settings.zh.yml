@@ -1,0 +1,333 @@
+general:
+  app:
+    label: 应用程序
+    library_folder: "库文件夹:"
+
+    language: 语言
+    language_tooltip: |
+      选择Blender Launcher的显示语言。
+      "自动"会自动检测您的系统语言。
+      需要重启才能生效。
+      DEFAULT: Auto
+
+    system_start: 系统启动时启动
+    system_start_tooltip: |
+      系统启动时启动应用程序。
+      DEFAULT: Off
+    launch_minimized: 启动时最小化到托盘
+    launch_minimized_tooltip: |
+      启动时最小化到系统托盘。
+      DEFAULT: Off
+    minimize: 最小化到托盘
+    minimize_tooltip: |
+      关闭应用程序时会将其最小化到系统托盘，而不是完全关闭
+      DEFAULT: Off
+    worker_count: 工作线程数
+    worker_count_tooltip: |
+      决定可以同时进行的IO操作数量，例如：下载、删除、解压
+      DEFAULT: <cpu count> * (3/4)
+    worker_count_warning: "(警告: 数值超过 %{cnt} (cpu count) !!)"
+    prerelease: 使用预发布版本
+    prerelease_tooltip: |
+      检查Blender Launcher新版本时，同时检查预发布版本。
+      警告: 这些版本可能存在漏洞！主要用于测试新功能。
+      DEFAULT: Off
+
+    create_shortcut: 创建Blender Launcher %{shortcut_type}
+    shortcut_type:
+      windows: 快捷方式
+      linux: 桌面文件
+      macos: 快捷方式
+  migratel2u: 将本地设置迁移到用户设置
+
+  file_assoc:
+    label: 文件关联
+
+    register: 注册文件关联
+    register_tooltip: |
+      将Blender Launcher添加到可打开.blend文件的程序列表中
+
+    unregister: 取消注册文件关联
+    unregister_tooltip: |
+      将Blender Launcher从可打开.blend文件的程序列表中移除
+
+    launch_timer_duration: 启动计时器时长 (秒)
+    launch_timer_duration_tooltip: |
+      决定打开blend文件时有多少时间可以更改要启动的构建版本
+      DEFAULT: 3s
+    launch_timer_suffix:
+      "-1": " (已禁用)"
+      "0": "秒 (立即)"
+      more: "秒"
+
+  winget:
+    label: WinGet 集成
+
+    info: 向WinGet包管理器注册Blender Launcher，以便通过'winget update'实现自动更新。
+    register: 向WinGet注册
+    register_tooltip: |
+      向WinGet注册此安装，以便可以通过'winget update'进行更新
+    unregister: 从WinGet取消注册
+    unregister_tooltip: |
+      移除此安装的WinGet注册
+
+  advanced:
+    label: 高级
+
+    delete_actions:
+      "0": 移至回收站
+      "1": 永久删除
+    default_delete_action: 默认删除操作
+    default_delete_action_tooltip: |
+      设置右键菜单中删除构建版本的默认操作
+      按住Shift键时可使用另一选项
+      DEFAULT: Send to Trash
+
+    purge_temp: 启动时清理临时文件夹
+    purge_temp_tooltip: |
+      Blender Launcher启动时自动清空临时下载文件夹。
+      DEFAULT: On
+
+    purge_temp_now: 立即清理临时文件夹
+    purge_temp_now_tooltip: |
+        立即清空临时下载文件夹中的所有文件
+
+
+
+appearance:
+  window_related: 窗口相关
+  use_system_titlebar: 使用系统标题栏
+  use_system_titlebar_tooltip: |
+    使用系统标题栏而非自定义标题栏
+    DEFAULT: False
+  dpi_scale_factor: DPI缩放因子
+  dpi_scale_factor_overridden: DPI缩放因子 (被QT_SCALE_FACTOR环境变量覆盖！)
+  dpi_scale_factor_tooltip: |
+    更改应用程序的DPI缩放
+    按因子缩放用户界面，使内容更易阅读和使用
+    DEFAULT: 1.0
+  notifications:
+    label: 通知
+    new_builds: 有新构建版本可用
+    new_builds_tooltip: |
+      有新构建版本可用时显示通知
+      DEFAULT: True
+    finished_downloading: 下载完成
+    finished_downloading_tooltip: |
+      下载完成时显示通知
+      DEFAULT: True
+    errors: 错误
+    errors_tooltip: |
+      发生错误时显示通知
+      DEFAULT: True
+  tabs:
+    label: 标签页
+    default_tab: 默认标签页
+    default_tab_tooltip: |
+      应用程序启动时打开的默认标签页
+      DEFAULT: Library
+    sync_library_and_downloads_pages: 同步库和下载页面
+    sync_library_and_downloads_pages_tooltip: |
+      将选中的库标签页与相应的下载标签页同步
+      DEFAULT: True
+    default_library_page: 默认库页面
+    default_library_page_tooltip: |
+      库标签页中默认打开的页面
+      DEFAULT: Stable Releases
+    default_downloads_page: 默认下载页面
+    default_downloads_page_tooltip: |
+      下载标签页中默认打开的页面
+      DEFAULT: Stable Releases
+
+connection:
+  proxy_settings: 代理
+  use_custom_tls_certificates: 使用自定义TLS证书
+  use_custom_tls_certificates_tooltip: |
+    使用自定义TLS证书进行连接
+    DEFAULT: False
+  proxy_type_tooltip: |
+    连接使用的代理类型
+    DEFAULT: None
+  proxy_host_tooltip: |
+    代理服务器的IP地址
+    DEFAULT: 255.255.255.255
+  proxy_port_tooltip: |
+    代理服务器的端口号
+    DEFAULT: 9999
+  proxy_user_tooltip: 用于代理服务器认证的用户名
+  proxy_password_tooltip: 用于代理服务器认证的密码
+  authentication_settings: 连接认证
+  user_id: 用户ID
+  user_id_tooltip: |
+    用于Blender网站认证的用户ID
+    DEFAULT: Random UUID
+    FORMAT: 8-64 characters (a-z, A-Z, 0-9, -)
+  github_token: GitHub令牌
+  github_token_tooltip: |
+    可选: GitHub个人访问令牌，用于避免速率限制
+    如果您频繁调用GitHub API，建议设置此项
+    如不需要请留空
+  github_token_info_button_tooltip: 点击查看GitHub令牌文档
+  proxy_type: 类型
+  proxy_ip: IP
+  proxy_host: 主机
+  proxy_port: 端口
+  proxy_user: 代理用户
+  proxy_password: 密码
+
+  keyring_unavailable_title: 密钥环不可用
+  keyring_unavailable_message: |
+    无法将GitHub令牌存储到安全的系统密钥环中。
+
+    令牌已保存到您的设置文件中。
+    这比密钥环存储安全性较低。
+
+    请考虑为您的系统安装密钥环支持。
+
+blender_builds:
+  visibility_and_downloading: 可见性与下载
+  checking_for_builds: 检查构建版本
+  minimum_stable_blender_version_tooltip: |
+    要抓取的最低稳定版Blender版本
+    DEFAULT: 3.2
+  check_automatically: 自动检查
+  check_automatically_tooltip: |
+    自动检查新的Blender构建版本
+    DEFAULT: Off
+  new_builds_check_frequency_tooltip: |
+    检查新Blender构建版本的时间间隔
+    DEFAULT: 12h
+    MINIMUM: 6h
+  interval_prefix: "间隔: "
+  interval_suffix: 小时
+  on_startup: 启动时
+  on_startup_tooltip: |
+    Blender Launcher启动时检查新的Blender构建版本
+    DEFAULT: On
+  show_daily_archive_builds: 显示每日归档构建版本
+  show_daily_archive_builds_tooltip: |
+    显示每日归档构建版本
+    DEFAULT: Off
+  show_experimental_archive_builds: 显示实验性归档构建版本
+  show_experimental_archive_builds_tooltip: |
+    显示实验性归档构建版本
+    DEFAULT: Off
+  show_patch_archive_builds: 显示补丁归档构建版本
+  show_patch_archive_builds_tooltip: |
+    显示补丁归档构建版本
+    DEFAULT: Off
+  minimum_stable_build_to_scrape: 要抓取的最低稳定构建版本
+  downloading_and_saving_builds: 下载与保存构建版本
+  show_update_button: 显示更新按钮
+  update_behavior_tooltip: |
+    定义更新行为
+    DEFAULT: Patch
+  use_advanced_update_button: 使用高级更新按钮
+  use_advanced_update_button_tooltip: |
+    启用高级更新设置，以自定义每个Blender分支的更新行为
+    DEFAULT: Off
+  show_update_button_tooltip_normal: |
+    显示更新按钮以快速更新Blender构建版本
+    DEFAULT: On
+  show_update_button_tooltip_disabled: |
+    显示更新按钮以快速更新Blender构建版本
+    此选项因启用了高级更新按钮而被禁用
+    禁用'使用高级更新按钮'以使用此选项
+    DEFAULT: On
+  show_stable_update_button: 显示稳定版更新按钮
+  show_stable_update_button_tooltip: |
+    显示更新按钮以快速更新稳定版本
+    DEFAULT: On
+  update_stable_behavior_tooltip: |
+    定义稳定版本的更新行为
+    DEFAULT: Patch
+  show_daily_update_button: 显示每日更新按钮
+  show_daily_update_button_tooltip: |
+    显示更新按钮以快速更新每日构建版本
+    DEFAULT: On
+  update_daily_behavior_tooltip: |
+    定义每日构建版本的更新行为
+    DEFAULT: Patch
+  show_experimental_update_button: 显示实验性更新按钮
+  show_experimental_update_button_tooltip: |
+    显示更新按钮以快速更新实验性构建版本
+    DEFAULT: On
+  update_experimental_behavior_tooltip: |
+    定义实验性构建版本的更新行为
+    DEFAULT: Patch
+  show_bfa_update_button: 显示BFA更新按钮
+  show_bfa_update_button_tooltip: |
+    显示更新按钮以快速更新BFA构建版本
+    DEFAULT: On
+  update_bfa_behavior_tooltip: |
+    定义BFA构建版本的更新行为
+    DEFAULT: Patch
+  show_upbge_stable_update_button: 显示UPBGE稳定版更新按钮
+  show_upbge_stable_update_button_tooltip: |
+    显示更新按钮以快速更新UPBGE稳定构建版本
+    DEFAULT: On
+  update_upbge_stable_behavior_tooltip: |
+    定义UPBGE稳定构建版本的更新行为
+    DEFAULT: Minor
+  show_upbge_weekly_update_button: 显示UPBGE每周更新按钮
+  show_upbge_weekly_update_button_tooltip: |
+    显示更新按钮以快速更新UPBGE每周构建版本
+    DEFAULT: On
+  update_upbge_weekly_behavior_tooltip: |
+    定义UPBGE每周构建版本的更新行为
+    DEFAULT: Minor
+  mark_as_favorite: 标记为收藏
+  mark_as_favorite_tooltip: |
+    将标签页标记为收藏以便快速访问
+    DEFAULT: Off
+  select_favorite_tab_tooltip: |
+    选择要标记为收藏的标签页
+    DEFAULT: Stable Releases
+  install_template: 安装模板
+  install_template_tooltip: |
+    在库标签页中新添加的构建版本上安装模板
+    DEFAULT: Off
+
+  pr_custom_names:
+    title: 自定义PR名称
+    fetch_during_scrape: 抓取时获取PR名称
+    fetch_during_scrape_tooltip: |
+      PR名称将从projects.blender.org/blender/blender/pulls/获取。
+      DEFAULT: Off
+    prepend_pr_number: 在自定义名称前添加PR编号
+    prepend_pr_number_tooltip: |
+      获取的PR构建版本将在其名称前显示编号。
+      "Label" -> "xxxxx: Label"
+      DEFAULT: On
+
+
+  launching_builds: 启动构建版本
+  on_blender_launch_action: Blender启动时操作
+  on_blender_launch_action_tooltip: |
+    启动Blender实例时对Blender Launcher窗口执行的操作。
+    DEFAULT: Do Nothing
+  on_blender_launch_actions:
+    "0": 无操作
+    "1": 最小化
+    "2": 关闭
+  quick_launch_global_shortcut: 快速启动全局快捷键
+  quick_launch_global_shortcut_tooltip: |
+    启用全局快捷键以快速启动Blender
+    DEFAULT: On
+  quick_launch_key_seq_tooltip: |
+    快速启动Blender的全局快捷键
+    DEFAULT: ctrl + f11
+  hide_console_on_startup: 启动时隐藏控制台
+  hide_console_on_startup_tooltip: |
+    启动Blender时隐藏控制台窗口
+    DEFAULT: On
+  blender_startup_arguments_tooltip: |
+    启动Blender时传递的参数（在Blender可执行文件之后，即 [… <参数>]）
+    DEFAULT: None
+    Example: --background
+  bash_arguments_tooltip: |
+    启动Blender时传递给bash的指令（在Blender可执行文件之前，即 [<参数> …]）
+    DEFAULT: None
+    Example: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
+  bash_arguments: "Bash参数:"
+  startup_arguments: "启动参数:"
