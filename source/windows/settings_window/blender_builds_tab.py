@@ -184,7 +184,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.UpdateBehavior.addItems(list(update_behavior.keys()))
                 self.UpdateBehavior.setToolTip(t("settings.blender_builds.update_behavior_tooltip"))
                 self.UpdateBehavior.setCurrentIndex(get_update_behavior())
-                self.UpdateBehavior.activated[int].connect(self.change_update_behavior)
+                self.UpdateBehavior.activated[int].connect(set_update_behavior)
 
             # Advanced Update
             with grp.checked_vgroup(
@@ -202,7 +202,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateStableBehavior.addItems(list(update_behavior.keys()))
                     self.UpdateStableBehavior.setToolTip(t("settings.blender_builds.update_stable_behavior_tooltip"))
                     self.UpdateStableBehavior.setCurrentIndex(get_stable_update_behavior())
-                    self.UpdateStableBehavior.activated[int].connect(self.change_update_stable_behavior)
+                    self.UpdateStableBehavior.activated[int].connect(set_stable_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_daily_update_button",
@@ -213,7 +213,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateDailyBehavior.addItems(list(update_behavior.keys()))
                     self.UpdateDailyBehavior.setToolTip(t("settings.blender_builds.update_daily_behavior_tooltip"))
                     self.UpdateDailyBehavior.setCurrentIndex(get_daily_update_behavior())
-                    self.UpdateDailyBehavior.activated[int].connect(self.change_update_daily_behavior)
+                    self.UpdateDailyBehavior.activated[int].connect(set_daily_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_experimental_update_button",
@@ -226,7 +226,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_experimental_behavior_tooltip")
                     )
                     self.UpdateExperimentalBehavior.setCurrentIndex(get_experimental_update_behavior())
-                    self.UpdateExperimentalBehavior.activated[int].connect(self.change_update_experimental_behavior)
+                    self.UpdateExperimentalBehavior.activated[int].connect(set_experimental_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_bfa_update_button",
@@ -237,7 +237,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateBFABehavior.addItems(list(update_behavior.keys()))
                     self.UpdateBFABehavior.setToolTip(t("settings.blender_builds.update_bfa_behavior_tooltip"))
                     self.UpdateBFABehavior.setCurrentIndex(get_bfa_update_behavior())
-                    self.UpdateBFABehavior.activated[int].connect(self.change_update_bfa_behavior)
+                    self.UpdateBFABehavior.activated[int].connect(set_bfa_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_upbge_stable_update_button",
@@ -250,7 +250,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_upbge_stable_behavior_tooltip")
                     )
                     self.UpdateUPBGEStableBehavior.setCurrentIndex(get_upbge_stable_update_behavior())
-                    self.UpdateUPBGEStableBehavior.activated[int].connect(self.change_update_upbge_stable_behavior)
+                    self.UpdateUPBGEStableBehavior.activated[int].connect(set_upbge_stable_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_upbge_weekly_update_button",
@@ -263,7 +263,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_upbge_weekly_behavior_tooltip")
                     )
                     self.UpdateUPBGEWeeklyBehavior.setCurrentIndex(get_upbge_weekly_update_behavior())
-                    self.UpdateUPBGEWeeklyBehavior.activated[int].connect(self.change_update_upbge_weekly_behavior)
+                    self.UpdateUPBGEWeeklyBehavior.activated[int].connect(set_upbge_weekly_update_behavior)
 
             # Mark As Favorite
             with grp.checked_hgroup(
@@ -275,7 +275,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.MarkAsFavorite.addItems([fav for fav in favorite_pages if fav != "Disable"])
                 self.MarkAsFavorite.setToolTip(t("settings.blender_builds.select_favorite_tab_tooltip"))
                 self.MarkAsFavorite.setCurrentIndex(max(get_mark_as_favorite() - 1, 0))
-                self.MarkAsFavorite.activated[int].connect(self.change_mark_as_favorite)
+                self.MarkAsFavorite.activated[int].connect(lambda x: set_mark_as_favorite(x + 1))
 
             # Install Template
             grp.add_checkbox(
@@ -351,10 +351,6 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BashArguments.setCursorPosition(0)
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
-    def change_mark_as_favorite(self, index: int):
-        page = self.MarkAsFavorite.itemText(index)
-        set_mark_as_favorite(page)
-
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)
         set_minimum_blender_stable_version(minimum)
@@ -371,39 +367,11 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
         self.UpdateBehavior.setEnabled(is_checked)
         set_show_update_button(is_checked)
 
-    def change_update_behavior(self, index: int):
-        behavior = self.UpdateBehavior.itemText(index)
-        set_update_behavior(behavior)
-
-    def change_update_stable_behavior(self, index: int):
-        behavior = self.UpdateStableBehavior.itemText(index)
-        set_stable_update_behavior(behavior)
-
-    def change_update_daily_behavior(self, index: int):
-        behavior = self.UpdateDailyBehavior.itemText(index)
-        set_daily_update_behavior(behavior)
-
-    def change_update_experimental_behavior(self, index: int):
-        behavior = self.UpdateExperimentalBehavior.itemText(index)
-        set_experimental_update_behavior(behavior)
-
-    def change_update_bfa_behavior(self, index: int):
-        behavior = self.UpdateBFABehavior.itemText(index)
-        set_bfa_update_behavior(behavior)
-
-    def change_update_upbge_stable_behavior(self, index: int):
-        behavior = self.UpdateUPBGEStableBehavior.itemText(index)
-        set_upbge_stable_update_behavior(behavior)
-
-    def change_update_upbge_weekly_behavior(self, index: int):
-        behavior = self.UpdateUPBGEWeeklyBehavior.itemText(index)
-        set_upbge_weekly_update_behavior(behavior)
-
     def toggle_mark_as_favorite(self, is_checked):
         if is_checked:
-            set_mark_as_favorite(self.MarkAsFavorite.currentText())
+            set_mark_as_favorite(self.MarkAsFavorite.currentIndex() + 1)
         else:
-            set_mark_as_favorite("Disable")
+            set_mark_as_favorite(0)
 
     def update_quick_launch_key_seq(self):
         key_seq = self.QuickLaunchKeySeq.text()

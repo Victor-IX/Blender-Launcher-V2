@@ -188,7 +188,7 @@ class GeneralTabWidget(SettingsFormWidget):
             self.default_delete_action.addItems(delete_action.keys())
             self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
             self.default_delete_action.setCurrentIndex(get_default_delete_action())
-            self.default_delete_action.activated[int].connect(self.change_default_delete_action)
+            self.default_delete_action.activated[int].connect(set_default_delete_action)
 
             # Purge Temp on Startup
             grp.add_checkbox(
@@ -277,10 +277,6 @@ class GeneralTabWidget(SettingsFormWidget):
         else:
             self.register_file_association_button.setEnabled(True)
             self.unregister_file_association_button.setEnabled(False)
-
-    def change_default_delete_action(self, index: int):
-        action = self.default_delete_action.itemText(index)
-        set_default_delete_action(action)
 
     def toggle_purge_temp_on_startup(self, is_checked):
         set_purge_temp_on_startup(is_checked)

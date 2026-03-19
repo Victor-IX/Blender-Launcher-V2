@@ -323,14 +323,20 @@ class LibraryWidget(BaseBuildWidget):
             self.add_to_favorites()
 
     def is_quick_launch(self):
-        return (
-            self.show_new
-            and (
-                (get_mark_as_favorite() == 1 and self.branch == "stable")
-                or (get_mark_as_favorite() == 2 and self.branch == "daily")
-                or (get_mark_as_favorite() == 3)
-            )
-        ) or (get_favorite_path() == self.link.as_posix())
+        if not self.show_new:
+            return False
+        if get_favorite_path() == self.link.as_posix():
+            return True
+
+        return [
+            False,
+            self.branch == "stable",
+            self.branch == "daily",
+            "PR" in self.branch or "D" in self.branch,
+            self.branch == "bforartists",
+            self.branch == "upbge-stable",
+            self.branch == "upbge-stable",
+        ][get_mark_as_favorite()]
 
     def context_menu(self):
         self.update_delete_action(self.hovering_and_shifting)

@@ -87,7 +87,7 @@ class ConnectionTabWidget(SettingsFormWidget):
             self.ProxyTypeComboBox.addItems(proxy_types.keys())
             self.ProxyTypeComboBox.setToolTip(t("settings.connection.proxy_type_tooltip"))
             self.ProxyTypeComboBox.setCurrentIndex(get_proxy_type())
-            self.ProxyTypeComboBox.activated[int].connect(self.change_proxy_type)
+            self.ProxyTypeComboBox.activated[int].connect(set_proxy_type)
 
             # Proxy URL
             with grp.hgroup("settings.connection.proxy_ip") as url:
@@ -134,10 +134,6 @@ class ConnectionTabWidget(SettingsFormWidget):
             self.ProxyPasswordLineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
             self.ProxyPasswordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
             self.ProxyPasswordLineEdit.editingFinished.connect(self.update_proxy_password)
-
-    def change_proxy_type(self, index: int):
-        proxy_type = self.ProxyTypeComboBox.itemText(index)
-        set_proxy_type(proxy_type)
 
     def update_proxy_host(self):
         host = self.ProxyHostLineEdit.text()
