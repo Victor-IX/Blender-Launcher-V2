@@ -110,7 +110,7 @@ class GeneralTabWidget(SettingsFormWidget):
 
                 def warn_cpu_count(v: int):
                     if v > cpu_count:
-                        spin.setSuffix(t("settings.general.app.worker_count_warning"))
+                        spin.setSuffix(t("settings.general.app.worker_count_warning", cnt=cpu_count))
                     else:
                         spin.setSuffix("")
 

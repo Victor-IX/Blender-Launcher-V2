@@ -1,0 +1,110 @@
+# 弹窗
+ok: 确定
+accept: 接受
+cancel: 取消
+quit: 退出
+hide: 隐藏
+show: 显示
+next: 下一步
+prev: 上一步
+back: 返回
+cont: 继续
+finish: 完成
+"yes": "是"
+"no": "否"
+retry: 重试
+update: 更新
+later: 稍后
+
+update_library: 将Blender更新到最新版本
+restart_now: 立即重启
+trash: 回收站
+remove: 移除
+delete: 删除
+dont_show_again: 不再显示
+migrate: 迁移
+overwrite: 覆盖
+general_folder: 打开通用配置文件夹
+keep_both_versions: 保留两个版本
+move_to_new: 移动到新版本
+remove_settings: 删除设置
+
+reload: 重新加载
+reload_tooltip: 从磁盘重新加载自定义构建版本
+
+# 左侧图标
+launch: 启动
+download: 下载
+installed: 已安装
+lprev: " 上一个"
+updating: 更新中
+deleting: 删除中
+init: 初始化
+
+prog:
+  downloading: 下载中
+  extracting: 解压中
+  copying: 正在复制数据...
+  progress: "%{title}: %{progress} / %{total} MB"
+
+  reading_local: 读取本地构建版本
+  checking: 检查新构建版本
+  last_check: 上次检查时间 %{time}
+
+# 操作
+a:
+  settings_win: 显示设置窗口
+  docs: 打开文档
+
+
+  prev: 打开上一个文件
+  prev_tooltip: |
+    此操作打开该构建版本中最后使用的文件。
+    (在执行参数后追加 `--open-last`)
+    快捷键: Shift + 启动 或双击
+  quick_launch: 添加到快速启动
+  fav:
+    add: 添加到收藏夹
+    rem: 从收藏夹移除
+  update: 更新Blender构建版本
+  update_tooltip: 将此构建版本更新到最新版本
+  d:
+    d: 调试
+    log: 调试日志
+    factory: 恢复出厂设置启动
+    gpu: GPU调试
+    glitch: GPU故障解决调试
+  rename: 重命名分支
+
+  register: 注册扩展
+  register_tooltip: 将此构建版本用于.blend文件并显示缩略图
+  shortcut: 创建快捷方式
+  symlink: 创建符号链接
+  template: 安装模板
+  port:
+    add: 设为便携版
+    rem: 取消便携版
+  hash: 复制构建版本哈希
+  freeze:
+    add: 冻结更新
+    rem: 解除冻结更新
+
+  release_notes: 显示发行说明
+  release_notes_patch: 显示补丁详情
+  release_notes_pr: 显示PR详情
+  fetch_pr_name: 获取PR名称
+
+  folder_build: 显示构建版本文件夹
+  config: 显示配置文件夹
+  config_portable: 显示便携配置文件夹
+
+  edit: 编辑构建版本...
+  delete: 从磁盘删除
+  trash: 移至回收站
+
+  check: 检查
+  check_tooltip: |
+      在线检查新构建版本
+      (按住SHIFT键可强制检查稳定版和自动构建版本)
+
+  version_tooltip: 当前运行的Blender Launcher版本。点击查看更新日志。

@@ -1,0 +1,14 @@
+title: 构建版本条目创建器
+
+text: "为以下路径创建新构建版本: %{path}"
+
+exe: "可执行文件名: "
+
+autodetect: 自动检测信息
+
+svn: "子版本: "
+hash: "构建版本哈希: "
+ctime: "提交时间: "
+branch: "分支名称: "
+custom: "自定义名称: "
+fav: "收藏: "

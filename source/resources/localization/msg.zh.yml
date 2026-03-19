@@ -1,0 +1,160 @@
+success: 成功
+info: 信息
+setup: 设置
+warning: 警告
+error: 错误
+
+err:
+  no_hash: "无法复制构建版本哈希: 此构建版本无可用哈希。"
+
+  rename_branch: "无法重命名分支: 分支名称不能为空。"
+  no_base_config: 无法确定配置文件夹路径。
+  no_config_version: 未找到此版本的配置文件夹。
+  folder_invalid: |
+    所选文件夹不是有效的文件夹或
+    没有写入权限！
+  library_no_write: 所选文件夹没有写入权限！
+  argparse: |
+    解析参数时发生错误:
+    %{args}
+    %{err}
+
+  generic: |
+    发生错误: %{err}
+    查看日志以获取更多详细信息。
+
+  cant_write: 请求的位置没有写入权限！
+  damaged: 构建版本 %{build} 已损坏！
+  port:
+    no_build_dir: 找不到新构建版本目录。
+    no_settings: 没有找到可转移的便携设置。
+
+  no_resources: |
+    资源加载失败！启动器仍可运行，
+    但样式将损坏。
+
+  connection_failed: "错误: 在 %{time} 连接失败"
+
+updates:
+  download_before_update: |
+    要更新Blender Launcher，
+    请先完成所有正在进行的下载！
+
+  new_version_available: |
+    新版本 %{version} 可用！
+
+    %{patch_notes}
+
+  no_release_notes: 无可用发行说明。
+
+  update_to_version: 更新到版本 %{version}
+
+  new_builds: 有新的Blender构建版本可用！
+
+popup:
+  dest: 选择目标位置
+  select: 选择文件夹
+  select_library: 选择库文件夹
+  first_time_select_library: |
+    选择Blender构建版本的
+    存储位置
+
+  blver_mismatch: |
+    检测到尝试启动不同版本的
+    Blender Launcher！
+    请终止当前运行的
+    版本以继续此操作！
+    当前运行: %{running}
+    给定版本: %{given}
+
+  tasks_in_progress: |
+    仍有任务正在进行中！
+    %{tasks}
+    您确定要退出吗？
+
+  apply_the_following: |
+    重启Blender Launcher以
+    应用以下设置:
+    %{pending}
+
+  relative_path_found: |
+    所选路径是相对于可执行文件路径的。
+    是否要以相对路径形式保存？
+    如果文件夹可能移动，这将很有用。
+
+  global_hotkeys_invalid: |
+    全局热键序列未被识别！
+    请尝试使用其他组合键
+
+  quick_launch_tray: |
+    通过右键菜单
+    将构建版本添加到快速启动以从托盘运行
+
+  tray_notify: |
+    Blender Launcher已最小化到系统托盘。
+    在设置中禁用"显示托盘图标"以禁用此功能。
+
+  ask_delete_or_trash: |
+    您要删除还是
+    将所选构建版本移至回收站？
+
+  ask_remove_from_drive:
+    one: |
+      您确定要
+      删除此构建版本吗？
+    many: |
+      您确定要
+      删除 %{count} 个构建版本吗？
+
+  ask_send_to_trash:
+    one: |
+      您确定要
+      将此构建版本移至回收站吗？
+    many: |
+      您确定要
+      将 %{count} 个构建版本移至回收站吗？
+
+  major_version_update: |
+    从 %{current} 更新到 %{update} 将使用一组新的Blender首选项
+
+    您要从库中删除旧构建版本 (%{current}) 吗？
+
+  update_already_in_progress: |
+    已有构建版本正在更新到
+    版本 %{version}。
+
+  update_portable_settings: |
+    此构建版本使用便携设置。
+
+    您想如何处理便携设置文件夹？
+
+  portable_failure: |
+    转移便携设置失败:
+    %{error}
+
+    您要继续更新还是取消？
+
+  mv_confirm: |
+    您确定要移动
+    %{start}
+    到
+    %{end} 吗？
+
+  mv_overwrite_confirm: |
+    用户设置已存在！
+    您确定要移动
+    %{start}
+    到
+    %{end} 吗？
+
+  purge:
+    success: 临时文件夹已成功清理！
+    error: 清理临时文件夹失败。某些文件可能正在使用中。
+
+  winget:
+    register:
+      success: 已成功向WinGet注册！<br>现在可以通过 'winget update VictorIX.BlenderLauncher' 进行更新
+      error: 向WinGet注册失败。查看日志了解详情。
+    unregister:
+      success: 已成功从WinGet注销。
+      error: 从WinGet注销失败。查看日志了解详情。

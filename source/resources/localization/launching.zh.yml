@@ -1,0 +1,25 @@
+status:
+  reading: 正在读取构建版本...
+  found: 找到 %{count} 个构建版本
+  header: "检测到的头部版本: %{version}"
+
+
+help: |
+  版本查询可以使用 ^ 和 - 来根据构建版本的年限搜索特定版本。
+  有效的版本查询示例:
+
+any_v_placeholder: 任意 (*.*.*)
+
+chrono:
+  latest: 最新 (^)
+  any: 任意 (*)
+  oldest: 最旧 (-)
+
+version: "版本选择: "
+branch: "分支: "
+bhash: "构建版本哈希: "
+date: "日期选择: "
+
+save_current: 为在 %{short_v} 中创建的.blend文件保存当前搜索
+
+timer: 将在 %{time} 秒后启动
