@@ -64,8 +64,8 @@ popup:
     de Blender Launcher a été détectée !
     Veuillez fermer la version en cours
     d'exécution pour continuer !
-    En cours d'exécution : {running}
-    Version donnée : {given}
+    En cours d'exécution : %{running}
+    Version donnée : %{given}
 
   tasks_in_progress: |
     Des tâches sont encore en cours !
