@@ -16,6 +16,7 @@ class Icons:
     close: QIcon
     expand_more: QIcon
     expand_less: QIcon
+    search: QIcon
     folder: QIcon
     favorite: QIcon
     fake: QIcon
@@ -39,6 +40,7 @@ class Icons:
             load_icon(color, "close"),
             load_icon(color, "expand_more"),
             load_icon(color, "expand_less"),
+            load_icon(color, "search"),
             load_icon(color, "folder"),
             load_icon(color, "favorite"),
             load_icon(color, "fake"),

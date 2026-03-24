@@ -24,6 +24,7 @@ class BasicBuildInfo:
     build_hash: str
     commit_time: datetime.datetime
     folder: str | None = None
+    custom_name: str | None = None
 
     @property
     def major(self):
@@ -51,7 +52,12 @@ class BasicBuildInfo:
             build_hash=buildinfo.build_hash if buildinfo.build_hash is not None else "",
             commit_time=buildinfo.commit_time.astimezone(utc),
             folder=folder,
+            custom_name=buildinfo.custom_name,
         )
+
+    @property
+    def fuzzy_text(self) -> str:
+        return f"{self.version} {self.branch.casefold()} {self.custom_name.casefold() if self.custom_name is not None else ''} {self.build_hash} {self.commit_time} {self.folder}"
 
 
 # VersionSearchQuerySyntax (NOT SEMVER COMPATIBLE!):
@@ -146,6 +152,7 @@ def _parse(s: str) -> dict:
 
 
 class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
+    fuzzy_text: str | None
     folder: str | None
     build_hash: str | None
     major: int | str
@@ -165,6 +172,8 @@ class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/p
 @dataclass(frozen=True, slots=True, kw_only=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
+
+    fuzzy_text: str | None = None
 
     folder: str | None = None
 
@@ -272,7 +281,7 @@ def _relevant_places(vsq: VersionSearchQuery) -> tuple[str, ...]:
 
 
 def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
-    versions = list(versions)
+    versions: list[BasicBuildInfo] = list(versions)
     relevant_places = s.relevant_places()
     for place in relevant_places:
         getter = attrgetter(place)
@@ -291,9 +300,50 @@ def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) ->
             versions = [v for v in versions if getter(v) == min_p]
         elif isinstance(p, tuple):
             versions = [v for v in versions if any(getter(v) == q for q in p)]
+        elif place == "fuzzy_text":
+            versions = fuzzy_search_by_str(versions, p)
         else:
             versions = [v for v in versions if getter(v) == p]
 
         if not versions:
             return versions
     return list(versions)
+
+
+def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBuildInfo]:
+    search = search.casefold()
+    from fuzzysearch import Match, find_near_matches
+
+    exact_matches: list[BasicBuildInfo] = []
+    close_matches: dict[int, list[BasicBuildInfo]] = {}
+
+    any_matches = False
+    l_dist = 0
+    while not any_matches and l_dist < 4:
+        l_dist += 1
+        for b in lst:
+
+            s = b.fuzzy_text.casefold()
+            matches: list[Match] = find_near_matches(
+                search,
+                s,
+                max_l_dist=l_dist,
+                max_deletions=1,
+                max_substitutions=1,
+                max_insertions=0,
+            )
+            if matches:
+                print(matches)
+                any_matches = True
+                if any(m.matched == search for m in matches):
+                    exact_matches.append(b)
+                else:
+                    maxdist = max(m.dist for m in matches)
+                    close_matches.setdefault(maxdist, []).append(b)
+
+    all_matches = exact_matches
+    # prioritize builds that are closer to the target
+    for _dist, builds in sorted(close_matches.items()):
+        all_matches.extend(builds)
+
+    return all_matches

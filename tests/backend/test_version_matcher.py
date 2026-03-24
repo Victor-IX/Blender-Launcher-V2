@@ -56,6 +56,29 @@ def test_matcher():
     print("test_binfo_matcher successful!")
 
 
+def test_fuzzy_search():
+    assert VersionSearchQuery(fuzzy_text="stbe").match(builds) == [b for b in builds if b.branch == "stable"]
+    assert VersionSearchQuery(fuzzy_text="daly").match(builds) == [b for b in builds if b.branch == "daily"]
+    assert VersionSearchQuery(fuzzy_text="07 16").match(builds) == [
+        BasicBuildInfo(
+            version=Version(major=3, minor=6, patch=14, prerelease=None, build=None),
+            branch="lts",
+            build_hash="",
+            commit_time=datetime.datetime(2024, 7, 16, 0, 0, tzinfo=datetime.timezone.utc),
+            folder=None,
+            custom_name=None,
+        ),
+        BasicBuildInfo(
+            version=Version(major=4, minor=2, patch=0, prerelease=None, build=None),
+            branch="stable",
+            build_hash="",
+            commit_time=datetime.datetime(2024, 7, 16, 0, 0, tzinfo=datetime.timezone.utc),
+            folder=None,
+            custom_name=None,
+        ),
+    ]
+
+
 def test_vsq_serialization():
     for query in (
         VersionSearchQuery.any(),
@@ -111,8 +134,3 @@ def test_search_query_parser():
         pass
 
     print("test_search_query_parser successful!")
-
-
-test_matcher()
-test_vsq_serialization()
-test_search_query_parser()

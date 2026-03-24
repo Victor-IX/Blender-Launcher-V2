@@ -22,7 +22,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         super().__init__(parent)
         self.page: BasePageWidget = parent
         self.tab_filter = VersionSearchQuery.any()
-        self.user_given_searcher = None
+        self.search_filter = None
 
         self.widgets: set[_WT] = set()
         self._query_cache: dict[VersionSearchQuery, set[_WT]] = {}
@@ -41,8 +41,8 @@ class BaseListWidget(Generic[_WT], QListWidget):
     @property
     def query(self) -> VersionSearchQuery:
         q = self.tab_filter
-        if self.user_given_searcher is not None:
-            q |= self.user_given_searcher
+        if self.search_filter is not None:
+            q |= self.search_filter
         return q
 
     def __str__(self):
@@ -174,6 +174,10 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
     def update_tab_filter(self, tab_filter: VersionSearchQuery):
         self.tab_filter = tab_filter
+        self.update_all_visibility()
+
+    def update_search_filter(self, search_filter: VersionSearchQuery | None):
+        self.search_filter = search_filter
         self.update_all_visibility()
 
     def update_all_visibility(self):

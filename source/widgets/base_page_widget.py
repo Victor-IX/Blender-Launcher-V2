@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSplitter, QVBoxLayout, QWidget
 from widgets.base_list_widget import _WT, BaseListWidget
+from widgets.search_bar import SearchBarWidget, SearchButtonWidget
 
 
 class SortingType(Enum):
@@ -90,6 +91,11 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.PlaceholderLayout.addLayout(self.ReloadBtnLayout)
         self.PlaceholderLayout.addStretch()
 
+        # Search bar
+        self.SearchBar = SearchBarWidget(self)
+        self.SearchBar.query.connect(self.list_widget.update_search_filter)
+        self.SearchBar.hide()
+
         # Header Widget
         self.HeaderWidget = QWidget()
         self.HeaderWidget.hide()
@@ -104,6 +110,9 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.HeaderReloadButton.clicked.connect(parent.reload_custom_builds)
         self.HeaderReloadButton.setFixedWidth(95)  # Match launchButton width in list items
         self.HeaderReloadButton.setEnabled(show_reload)
+
+        self.HeaderSearchButton = SearchButtonWidget(parent.icons, parent=self)
+        self.HeaderSearchButton.state_updated.connect(self.update_search_visible)
 
         # Create splitter for resizable columns
         self.headerSplitter = QSplitter(Qt.Orientation.Horizontal)
@@ -151,9 +160,11 @@ class BasePageWidget(QWidget, Generic[_WT]):
 
         self.HeaderLayout.addWidget(self.HeaderReloadButton)
         self.HeaderLayout.addWidget(self.headerSplitter, stretch=1)
-        self.HeaderLayout.addSpacing(34)
+        self.HeaderLayout.addWidget(self.HeaderSearchButton)
+        # self.HeaderLayout.addSpacing(34)
 
         # Final layout
+        self.layout.addWidget(self.SearchBar)
         self.layout.addWidget(self.HeaderWidget)
         self.layout.addWidget(self.PlaceholderWidget)
         self.layout.addWidget(self.list_widget)
@@ -189,6 +200,11 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.EmptyReloadButton.setVisible(visible)
         self.HeaderReloadButton.setText(t("act.reload") * visible)
         self.HeaderReloadButton.setEnabled(visible)
+
+    def update_search_visible(self, state: SearchButtonWidget.State):
+        self.SearchBar.setVisible(state == SearchButtonWidget.State.OPEN)
+        if state == SearchButtonWidget.State.CLOSED:
+            self.list_widget.update_search_filter(None)
 
     def _on_splitter_moved(self, pos, index):
         """Handle splitter movement - debounce save and emit signal."""
