@@ -38,7 +38,6 @@ def generate_blender_shortcut(folder, name, destination: Path):
         wscript.save()
     elif platform == "Linux":
         _exec = library_folder / folder / "blender"
-        icon = library_folder / folder / "blender.svg"
 
         kws = (
             "3d;cg;modeling;animation;painting;"
@@ -46,6 +45,7 @@ def generate_blender_shortcut(folder, name, destination: Path):
             "video tracking;rendering;render engine;"
             "cycles;game engine;python;"
         )
+        from shlex import quote
 
         desktop_entry = "\n".join(
             [
@@ -53,12 +53,13 @@ def generate_blender_shortcut(folder, name, destination: Path):
                 f"Name={name}",
                 "Comment=3D modeling, animation, rendering and post-production",
                 f"Keywords={kws}",
-                "Icon={}".format(icon.as_posix().replace(" ", r"\ ")),
+                "Icon=blender",
                 "Terminal=false",
                 "Type=Application",
+                "PrefersNonDefaultGPU=true",
                 "Categories=Graphics;3DGraphics;",
                 "MimeType=application/x-blender;",
-                "Exec={} %f".format(_exec.as_posix().replace(" ", r"\ ")),
+                f"Exec={quote(_exec)} %f",
             ]
         )
         with open(destination, "w", encoding="utf-8") as file:
