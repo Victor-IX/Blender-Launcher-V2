@@ -2,7 +2,8 @@
 Name=Blender Launcher
 GenericName=Launcher
 Exec=/usr/bin/blenderlauncher
-Terminal=false
+MimeType=application/x-blender;
 Icon=blenderlauncher
+Terminal=false
 Type=Application
-
+Categories=Graphics;3DGraphics
