@@ -40,4 +40,4 @@ def retry_on_permission_error(
                 time.sleep(retry_delay)
 
     logger.error(f"All {max_retries} attempts failed: {last_error}")
-    raise last_error # type: ignore
+    raise last_error  # type: ignore

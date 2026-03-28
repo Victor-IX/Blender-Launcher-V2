@@ -21,7 +21,7 @@ class QuickLaunchHandler(QObject):
 
     @Slot()
     def on_activate_quick_launch(self):
-        if self.parent().settings_window is None: # type: ignore
+        if self.parent().settings_window is None:  # type: ignore
             self.quick_launch()
 
     @Slot(QWidget)

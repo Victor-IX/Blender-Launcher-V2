@@ -333,7 +333,7 @@ class SettingsGroup(QFrame):
             self.collapsed.emit(True)
         self.contents.hide()
 
-        if (p:=self.parent()) is not None and isinstance(p, QWidget):
+        if (p := self.parent()) is not None and isinstance(p, QWidget):
             p.updateGeometry()
 
     @Slot()
@@ -346,5 +346,5 @@ class SettingsGroup(QFrame):
 
         self.contents.show()
 
-        if (p:=self.parent()) is not None and isinstance(p, QWidget):
+        if (p := self.parent()) is not None and isinstance(p, QWidget):
             p.updateGeometry()

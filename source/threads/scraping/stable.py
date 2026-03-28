@@ -96,7 +96,7 @@ class ScraperStable(BuildScraper):
         for release in releases:
             href = release["href"]
             if not isinstance(href, str):
-                logger.warning("Unexpected type for href: %s", href)
+                logger.warning(f"Unexpected type for href: {href}")
                 continue
             match = re.search(pattern=BLENDER_X_X, string=href)
             if match is None:
