@@ -415,7 +415,7 @@ def fill_blender_info(exe: Path, info: BuildInfo | None = None) -> tuple[datetim
     if s := re.search("build hash: (.*)", version):
         build_hash = s[1].rstrip()
 
-    if info is not None and info.subversion is not None:
+    if info is not None and info.subversion:
         subversion = info.subversion
     elif s := re.search(r"(?:Blender|Bforartists) (.*)", version):
         subversion = s[1].rstrip()
