@@ -32,9 +32,9 @@ from utils.logger import setup_logging
 
 version = Version(
     2,
-    6,
-    1,
-    # prerelease="rc.2",
+    7,
+    0,
+    prerelease="rc.1",
 )
 
 
