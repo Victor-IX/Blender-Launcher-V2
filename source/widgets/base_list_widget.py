@@ -60,6 +60,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.count_changed()
         self.widgets.add(widget)
         self._binfos_cache = None
+        self._query_cache.clear()
         self.update_visibility(item, widget)
 
     def insert_item(self, item, widget, index=0):
@@ -69,12 +70,14 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.count_changed()
         self.widgets.add(widget)
         self._binfos_cache = None
+        self._query_cache.clear()
         self.update_visibility(item, widget)
 
     def remove_item(self, item):
         if (w := self.itemWidget(item)) is not None:
             self.widgets.remove(w)
             self._binfos_cache = None
+            self._query_cache.clear()
         row = self.row(item)
         self.takeItem(row)
         self.count_changed()
