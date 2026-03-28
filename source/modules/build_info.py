@@ -130,21 +130,18 @@ def parse_blender_ver(s: str, search=False) -> Version:
         patch = 0
         prerelease = None
 
-        try:
-            g = None
-            if search:
-                for matcher in matchers:
-                    if (m := matcher.search(s)) is not None:
-                        g = m
-                        break
-            else:
-                for matcher in matchers:
-                    if (m := matcher.match(s)) is not None:
-                        g = m
-                        break
-            assert g is not None
-        except (StopIteration, AssertionError):
-            """No matcher gave any valid version"""
+        g = None
+        if search:
+            for matcher in matchers:
+                if (m := matcher.search(s)) is not None:
+                    g = m
+                    break
+        else:
+            for matcher in matchers:
+                if (m := matcher.match(s)) is not None:
+                    g = m
+                    break
+        if g is None:
             raise ValueError("No valid version found") from e
 
         major = int(g.group("ma"))
