@@ -154,7 +154,6 @@ def parse_blender_ver(s: str, search=False) -> Version:
                 prerelease = None
 
         return Version(major=major, minor=minor, patch=patch, prerelease=prerelease)
-        # print(f"Parsed {s} to {v} using {matcher}")
 
 
 oldver_cutoff = Version(2, 83, 0)
@@ -181,6 +180,20 @@ class BuildInfo:
     def __post_init__(self):
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
+
+    def is_valid(self) -> bool:
+        """Check whether critical fields contain usable data."""
+        if not self.subversion:
+            return False
+        try:
+            parse_blender_ver(self.subversion)
+        except (ValueError, Exception):
+            return False
+        if not self.branch:
+            return False
+        if not isinstance(self.commit_time, datetime):
+            return False
+        return True
 
     def __eq__(self, other: BuildInfo) -> bool:
         if other is None:
@@ -295,11 +308,11 @@ class BuildInfo:
     def from_dict(cls, link: str, blinfo: dict):
         try:
             dt = datetime.fromisoformat(blinfo["commit_time"])
-        except ValueError:  # old file version compatibility
+        except (ValueError, KeyError):  # old file version compatibility or missing key
             try:
                 dt = datetime.strptime(blinfo["commit_time"], "%d-%b-%y-%H:%M").astimezone()
             except Exception:
-                dt = dateparser.parse(blinfo["commit_time"])
+                dt = dateparser.parse(blinfo.get("commit_time", ""))
                 if dt is None:
                     dt = datetime.now().astimezone()
                 else:
@@ -307,12 +320,12 @@ class BuildInfo:
 
         return cls(
             link,
-            blinfo["subversion"],
-            blinfo["build_hash"],
+            blinfo.get("subversion", ""),
+            blinfo.get("build_hash", None),
             dt,
-            blinfo["branch"],
-            blinfo["custom_name"],
-            blinfo["is_favorite"],
+            blinfo.get("branch", ""),
+            blinfo.get("custom_name", ""),
+            blinfo.get("is_favorite", False),
             blinfo.get("custom_executable", ""),
             blinfo.get("is_frozen", False),
         )
@@ -350,8 +363,11 @@ class BuildInfo:
     def write_to(self, path: Path):
         data = self.to_dict()
         blinfo = path / ".blinfo"
-        with blinfo.open("w", encoding="utf-8") as file:
-            json.dump(data, file)
+        try:
+            with blinfo.open("w", encoding="utf-8") as file:
+                json.dump(data, file)
+        except OSError as e:
+            logger.warning(f"Failed to write .blinfo for {path}: {e}")
         return data
 
     def __lt__(self, other: BuildInfo):
@@ -436,24 +452,19 @@ def read_blender_version(
     old_build_info: BuildInfo | None = None,
     archive_name=None,
 ) -> BuildInfo:
-    # Track if we have valid old build info that we can reuse
     reuse_old_info = False
+    found_nonstandard_path = False
     corrected_exe_path = None
 
     if old_build_info is not None and old_build_info.custom_executable:
         exe_path = path / old_build_info.custom_executable
-        # If the custom executable doesn't exist, fall back to auto-detection
+
         if not exe_path.exists():
             logger.warning(f"Custom executable not found: {exe_path}, falling back to auto-detection for {path.name}")
-            # We still have the build info, just need to find the correct executable path
             reuse_old_info = True
         else:
-            # Custom executable path is valid, use it
             corrected_exe_path = exe_path
             logger.debug(f"Using custom executable: {exe_path}")
-
-    # Track if we found a non-standard path that should be saved as custom_executable
-    found_nonstandard_path = False
 
     if corrected_exe_path is None:
         platform = get_platform()
@@ -595,6 +606,20 @@ def fill_build_info(
             )
             new_build_info.write_to(path)
             return new_build_info
+
+        # Validate blinfo; regenerate if corrupt
+        if not build_info.is_valid():
+            logger.warning(
+                f"Invalid .blinfo data for {path} (subversion={build_info.subversion!r}, branch={build_info.branch!r}), regenerating"
+            )
+            new_build_info = read_blender_version(
+                path,
+                build_info,
+                archive_name,
+            )
+            new_build_info.write_to(path)
+            return new_build_info
+
         return build_info
 
     # Generating new build information
