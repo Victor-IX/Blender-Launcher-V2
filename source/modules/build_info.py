@@ -199,8 +199,8 @@ class BuildInfo:
         if other is None:
             return False
 
-        if (self.build_hash is not None) and (other.build_hash is not None):
-            return self.build_hash == other.build_hash
+        if self.build_hash and other.build_hash:
+            return self.build_hash == other.build_hash and self.branch == other.branch
 
         # Compare by semver major.minor.patch (ignore prerelease differences)
         # This allows matching when one side has no build_hash (e.g. stable
