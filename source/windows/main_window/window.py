@@ -461,11 +461,8 @@ class BlenderLauncher(BaseWindow):
         if get_enable_quick_launch_key_seq():
             self.hotkey_handler.setup()
 
-        # Show window
-        #     outside of frozen executable (?)
-        # or  no tray icon and launch minimized to tray (invalid)
-        # or     tray icon and no launch minimized to tray
-        if not is_frozen() or get_show_tray_icon() ^ get_launch_minimized_to_tray():
+        # Show window unless the user opted to launch minimized to tray
+        if not (get_show_tray_icon() and get_launch_minimized_to_tray()):
             self._show()
 
     def open_docs(self):
