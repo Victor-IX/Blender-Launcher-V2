@@ -138,7 +138,7 @@ class LibraryWidget(BaseBuildWidget):
         self.layout.addWidget(self.branchLabel, stretch=1)
 
         # Connect to column width changes from the page widget
-        page_widget = self.list_widget.parent
+        page_widget = self.list_widget.page
         if page_widget is not None:
             page_widget.column_widths_changed.connect(self._update_column_widths)
             # Apply initial column widths
