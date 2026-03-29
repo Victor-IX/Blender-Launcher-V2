@@ -22,7 +22,6 @@ from modules.settings import (
     get_use_pre_release_builds,
     get_worker_thread_count,
     migrate_config,
-    purge_temp_folder,
     set_auto_register_winget,
     set_default_delete_action,
     set_language,
@@ -39,6 +38,7 @@ from modules.settings import (
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
 from modules.winget_integration import register_with_winget, unregister_from_winget
 from PySide6.QtWidgets import QComboBox, QPushButton
+from threads.remover import purge_temp_folder
 from utils.i18n_init import Language
 from widgets.folder_select import FolderSelector
 from windows.file_dialog_window import FileDialogWindow

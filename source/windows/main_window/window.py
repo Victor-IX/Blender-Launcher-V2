@@ -65,7 +65,6 @@ from modules.settings import (
     get_use_system_titlebar,
     get_worker_thread_count,
     is_library_folder_valid,
-    purge_temp_folder,
     set_dont_show_resource_warning,
     set_library_folder,
     set_tray_icon_notified,
@@ -84,7 +83,7 @@ from PySide6.QtWidgets import (
 )
 from semver import Version
 from threads.library_drawer import DrawLibraryTask
-from threads.remover import RemovalTask
+from threads.remover import RemovalTask, purge_temp_folder
 from threads.scraper import Scraper
 from widgets.base_page_widget import BasePageWidget
 from widgets.base_tool_box_widget import BaseToolBoxWidget

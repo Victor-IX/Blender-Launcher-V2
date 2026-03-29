@@ -956,22 +956,6 @@ def set_purge_temp_on_startup(is_checked: bool):
     get_settings().setValue("purge_temp_on_startup", is_checked)
 
 
-def purge_temp_folder():
-    """Purge all files in the temp folder."""
-    temp_folder = Path(get_library_folder()) / ".temp"
-    if temp_folder.exists() and temp_folder.is_dir():
-        try:
-            for item in temp_folder.iterdir():
-                if item.is_file():
-                    item.unlink()
-                elif item.is_dir():
-                    shutil.rmtree(item)
-            return True
-        except Exception:
-            return False
-    return True
-
-
 def get_auto_register_winget() -> bool:
     return get_settings().value("auto_register_winget", defaultValue=True, type=bool)  # type: ignore
 
