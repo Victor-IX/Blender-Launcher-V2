@@ -129,7 +129,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             self.MinStableBlenderVer.addItems(keys)
             self.MinStableBlenderVer.setToolTip(t("settings.blender_builds.minimum_stable_blender_version_tooltip"))
             self.MinStableBlenderVer.setCurrentText(get_minimum_blender_stable_version())
-            self.MinStableBlenderVer.activated[int].connect(self.change_minimum_blender_stable_version)
+            self.MinStableBlenderVer.activated.connect(self.change_minimum_blender_stable_version)
 
             # Whether to check for new builds based on a timer
             with grp.checked_hgroup(
@@ -184,7 +184,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.UpdateBehavior.addItems(list(update_behavior.keys()))
                 self.UpdateBehavior.setToolTip(t("settings.blender_builds.update_behavior_tooltip"))
                 self.UpdateBehavior.setCurrentIndex(get_update_behavior())
-                self.UpdateBehavior.activated[int].connect(set_update_behavior)
+                self.UpdateBehavior.activated.connect(set_update_behavior)
 
             # Advanced Update
             with grp.checked_vgroup(
@@ -202,7 +202,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateStableBehavior.addItems(list(update_behavior.keys()))
                     self.UpdateStableBehavior.setToolTip(t("settings.blender_builds.update_stable_behavior_tooltip"))
                     self.UpdateStableBehavior.setCurrentIndex(get_stable_update_behavior())
-                    self.UpdateStableBehavior.activated[int].connect(set_stable_update_behavior)
+                    self.UpdateStableBehavior.activated.connect(set_stable_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_daily_update_button",
@@ -213,7 +213,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateDailyBehavior.addItems(list(update_behavior.keys()))
                     self.UpdateDailyBehavior.setToolTip(t("settings.blender_builds.update_daily_behavior_tooltip"))
                     self.UpdateDailyBehavior.setCurrentIndex(get_daily_update_behavior())
-                    self.UpdateDailyBehavior.activated[int].connect(set_daily_update_behavior)
+                    self.UpdateDailyBehavior.activated.connect(set_daily_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_experimental_update_button",
@@ -226,7 +226,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_experimental_behavior_tooltip")
                     )
                     self.UpdateExperimentalBehavior.setCurrentIndex(get_experimental_update_behavior())
-                    self.UpdateExperimentalBehavior.activated[int].connect(set_experimental_update_behavior)
+                    self.UpdateExperimentalBehavior.activated.connect(set_experimental_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_bfa_update_button",
@@ -237,7 +237,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     self.UpdateBFABehavior.addItems(list(update_behavior.keys()))
                     self.UpdateBFABehavior.setToolTip(t("settings.blender_builds.update_bfa_behavior_tooltip"))
                     self.UpdateBFABehavior.setCurrentIndex(get_bfa_update_behavior())
-                    self.UpdateBFABehavior.activated[int].connect(set_bfa_update_behavior)
+                    self.UpdateBFABehavior.activated.connect(set_bfa_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_upbge_stable_update_button",
@@ -250,7 +250,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_upbge_stable_behavior_tooltip")
                     )
                     self.UpdateUPBGEStableBehavior.setCurrentIndex(get_upbge_stable_update_behavior())
-                    self.UpdateUPBGEStableBehavior.activated[int].connect(set_upbge_stable_update_behavior)
+                    self.UpdateUPBGEStableBehavior.activated.connect(set_upbge_stable_update_behavior)
 
                 with advanced.checked_hgroup(
                     "settings.blender_builds.show_upbge_weekly_update_button",
@@ -263,7 +263,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         t("settings.blender_builds.update_upbge_weekly_behavior_tooltip")
                     )
                     self.UpdateUPBGEWeeklyBehavior.setCurrentIndex(get_upbge_weekly_update_behavior())
-                    self.UpdateUPBGEWeeklyBehavior.activated[int].connect(set_upbge_weekly_update_behavior)
+                    self.UpdateUPBGEWeeklyBehavior.activated.connect(set_upbge_weekly_update_behavior)
 
             # Mark As Favorite
             with grp.checked_hgroup(
@@ -275,7 +275,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.MarkAsFavorite.addItems([fav for fav in favorite_pages if fav != "Disable"])
                 self.MarkAsFavorite.setToolTip(t("settings.blender_builds.select_favorite_tab_tooltip"))
                 self.MarkAsFavorite.setCurrentIndex(max(get_mark_as_favorite() - 1, 0))
-                self.MarkAsFavorite.activated[int].connect(lambda x: set_mark_as_favorite(x + 1))
+                self.MarkAsFavorite.activated.connect(lambda x: set_mark_as_favorite(x + 1))
 
             # Install Template
             grp.add_checkbox(
@@ -322,7 +322,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             for i in range(3):
                 self.OnBlenderLaunchAction.addItem(t(f"settings.blender_builds.on_blender_launch_actions.{i}"))
             self.OnBlenderLaunchAction.setCurrentIndex(get_on_blender_launch_action())
-            self.OnBlenderLaunchAction.activated[int].connect(set_on_blender_launch_action)
+            self.OnBlenderLaunchAction.activated.connect(set_on_blender_launch_action)
 
             plat = get_platform()
             if plat == "Windows":

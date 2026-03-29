@@ -85,10 +85,10 @@ class AppearanceTabWidget(SettingsFormWidget):
         # Tabs
         with self.group("settings.appearance.tabs.label") as grp:
             self.DefaultTabComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_tab")
-            self.DefaultTabComboBox.addItems(tabs.keys())
+            self.DefaultTabComboBox.addItems(list(tabs.keys()))
             self.DefaultTabComboBox.setToolTip(t("settings.appearance.tabs.default_tab_tooltip"))
             self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
-            self.DefaultTabComboBox.activated[int].connect(set_default_tab)
+            self.DefaultTabComboBox.activated.connect(set_default_tab)
 
             # Sync Library and Downloads pages
             grp.add_checkbox(
@@ -99,17 +99,17 @@ class AppearanceTabWidget(SettingsFormWidget):
 
             # Default Library Page
             self.DefaultLibraryPageComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_library_page")
-            self.DefaultLibraryPageComboBox.addItems(library_pages)
+            self.DefaultLibraryPageComboBox.addItems(list(library_pages))
             self.DefaultLibraryPageComboBox.setToolTip(t("settings.appearance.tabs.default_library_page_tooltip"))
             self.DefaultLibraryPageComboBox.setCurrentIndex(get_default_library_page())
-            self.DefaultLibraryPageComboBox.activated[int].connect(self.change_default_library_page)
+            self.DefaultLibraryPageComboBox.activated.connect(self.change_default_library_page)
 
             # Default Downloads Page
             self.DefaultDownloadsPageComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_downloads_page")
-            self.DefaultDownloadsPageComboBox.addItems(downloads_pages)
+            self.DefaultDownloadsPageComboBox.addItems(list(downloads_pages))
             self.DefaultDownloadsPageComboBox.setToolTip(t("settings.appearance.tabs.default_downloads_page_tooltip"))
             self.DefaultDownloadsPageComboBox.setCurrentIndex(get_default_downloads_page())
-            self.DefaultDownloadsPageComboBox.activated[int].connect(self.change_default_downloads_page)
+            self.DefaultDownloadsPageComboBox.activated.connect(self.change_default_downloads_page)
 
     def toggle_system_titlebar(self, is_checked):
         set_use_system_titlebar(is_checked)

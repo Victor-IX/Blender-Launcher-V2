@@ -26,7 +26,7 @@ class BaseWindow(QMainWindow):
         self.icons = Icons.get()
         self.fonts = Fonts.get()
 
-        if parent is None and app is not None:
+        if parent is None and app is not None and version is not None:
             self.app = app
             self.version = version
 

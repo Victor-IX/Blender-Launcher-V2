@@ -84,10 +84,10 @@ class ConnectionTabWidget(SettingsFormWidget):
 
             # Proxy Type
             self.ProxyTypeComboBox = grp.add(QComboBox(), "settings.connection.proxy_type")
-            self.ProxyTypeComboBox.addItems(proxy_types.keys())
+            self.ProxyTypeComboBox.addItems(list(proxy_types.keys()))
             self.ProxyTypeComboBox.setToolTip(t("settings.connection.proxy_type_tooltip"))
             self.ProxyTypeComboBox.setCurrentIndex(get_proxy_type())
-            self.ProxyTypeComboBox.activated[int].connect(set_proxy_type)
+            self.ProxyTypeComboBox.activated.connect(set_proxy_type)
 
             # Proxy URL
             with grp.hgroup("settings.connection.proxy_ip") as url:

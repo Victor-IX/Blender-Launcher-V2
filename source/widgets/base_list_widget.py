@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 from PySide6.QtCore import Qt
@@ -50,8 +50,8 @@ class BaseListWidget(Generic[_WT], QListWidget):
         widget = [widget.build_info for widget in self.widgets]
         return f"BaseListWidget build info: {widget}"
 
-    def itemWidget(self, item) -> _WT | None:  # type: ignore
-        return super().itemWidget(item)
+    def itemWidget(self, item) -> _WT | None:
+        return cast("_WT | None", super().itemWidget(item))
 
     def add_item(self, item, widget):
         item.setSizeHint(widget.sizeHint())

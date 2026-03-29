@@ -22,7 +22,7 @@ class UnrecoBuildWidget(BaseBuildWidget):
             item=item,
             build_info=BuildInfo.from_blender_path(path),
         )
-        self.parent: BlenderLauncher = parent
+        self.launcher: BlenderLauncher = parent
         self.path = path
         self.list_widget = list_widget
 
@@ -48,13 +48,13 @@ class UnrecoBuildWidget(BaseBuildWidget):
         self.setLayout(self.main_hl)
 
     def init_unrecognized(self):
-        dlg = CustomBuildDialogWindow(self.parent, self.path)
+        dlg = CustomBuildDialogWindow(self.launcher, self.path)
         dlg.accepted.connect(self.new_build)
 
     @Slot(BuildInfo)
     def new_build(self, binfo: BuildInfo):
         binfo.write_to(self.path)
-        self.parent.draw_to_library(self.path, True)
+        self.launcher.draw_to_library(self.path, True)
         self.destroy()
 
     def context_menu(self):

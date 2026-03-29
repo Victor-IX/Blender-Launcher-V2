@@ -191,9 +191,7 @@ class BuildInfo:
             return False
         if not self.branch:
             return False
-        if not isinstance(self.commit_time, datetime):
-            return False
-        return True
+        return isinstance(self.commit_time, datetime)
 
     def __eq__(self, other: BuildInfo) -> bool:
         if other is None:
@@ -321,7 +319,7 @@ class BuildInfo:
         return cls(
             link,
             blinfo.get("subversion", ""),
-            blinfo.get("build_hash", None),
+            blinfo.get("build_hash"),
             dt,
             blinfo.get("branch", ""),
             blinfo.get("custom_name", ""),

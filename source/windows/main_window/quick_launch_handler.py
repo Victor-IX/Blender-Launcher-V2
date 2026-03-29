@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from i18n import t
 from modules.settings import (
     get_favorite_path,
@@ -5,8 +9,12 @@ from modules.settings import (
 )
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtWidgets import QWidget
-from widgets.library_widget import LibraryWidget
 from windows.popup_window import Popup
+
+if TYPE_CHECKING:
+    from widgets.library_widget import LibraryWidget
+
+    from .window import BlenderLauncher
 
 
 class QuickLaunchHandler(QObject):
@@ -14,14 +22,15 @@ class QuickLaunchHandler(QObject):
     """
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent)
+        self.launcher: BlenderLauncher = parent
         self.quick_launch_build = None
         self.quick_launch_fail_signal.connect(self.quick_launch_fail)
 
     @Slot()
     def on_activate_quick_launch(self):
-        if self.parent().settings_window is None:  # type: ignore
+        if self.launcher.settings_window is None:
             self.quick_launch()
 
     @Slot(QWidget)
@@ -46,7 +55,7 @@ class QuickLaunchHandler(QObject):
 
     def quick_launch_fail(self):
         self.dlg = Popup.setup(
-            parent=self.parent(),
+            parent=self.launcher,
             message=t("msg.popup.quick_launch_tray"),
             buttons=Popup.Button.info(),
         )

@@ -87,13 +87,15 @@ def get_tag(
         return None
 
     else:
-        url = r.geturl()
-        tag = url.rsplit("/", 1)[-1]
+        redirect_url = r.geturl()
 
         r.release_conn()
         r.close()
 
-        return tag
+        if redirect_url is None:
+            return None
+
+        return redirect_url.rsplit("/", 1)[-1]
 
 
 def get_api_data(connection_manager: ConnectionManager, file: str) -> dict | None:

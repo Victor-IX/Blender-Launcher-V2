@@ -3,12 +3,12 @@ from __future__ import annotations
 import logging
 import os
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.platform_utils import get_platform
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QDateTime, Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
     QCompleter,
@@ -26,6 +26,7 @@ from widgets.lintable_line_edit import LintableLineEdit
 from windows.base_window import BaseWindow
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from pathlib import Path
 
     from windows.main_window import BlenderLauncher
@@ -53,8 +54,8 @@ class CustomBuildDialogWindow(BaseWindow):
         self.resize(160, 60)
 
         policy = QSizePolicy(
-            QSizePolicy.MinimumExpanding,
-            QSizePolicy.MinimumExpanding,
+            QSizePolicy.Policy.MinimumExpanding,
+            QSizePolicy.Policy.MinimumExpanding,
         )
         policy.setHorizontalStretch(0)
         policy.setVerticalStretch(0)
@@ -209,7 +210,7 @@ class CustomBuildDialogWindow(BaseWindow):
             str(self.path),
             self.subversion_edit.text(),
             self.hash_edit.text(),
-            self.commit_time.dateTime().toPython(),
+            cast("datetime", self.commit_time.dateTime().toPython()),
             self.branch_edit.text(),
             self.custom_name.text(),
             self.favorite.isChecked(),
@@ -288,7 +289,7 @@ class CustomBuildDialogWindow(BaseWindow):
         if not self.hash_edit.text():
             self.hash_edit.setText(binfo.build_hash)
 
-        self.commit_time.setDateTime(binfo.commit_time)
+        self.commit_time.setDateTime(QDateTime.fromSecsSinceEpoch(int(binfo.commit_time.timestamp())))
 
         if not self.branch_edit.text():
             self.branch_edit.setText(binfo.branch)

@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
 import dateparser
-from bs4 import BeautifulSoup, SoupStrainer
+from bs4 import BeautifulSoup
+from bs4.filter import SoupStrainer
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.platform_utils import get_architecture, get_platform, stable_cache_path
 from modules.scraper_cache import ScraperCache
@@ -110,6 +111,8 @@ class ScraperStable(BuildScraper):
                     date_str = " ".join(date_sibling.strip().split()[:2])
                     with contextlib.suppress(ValueError):
                         modified_date = dateparser.parse(date_str)
+                        if modified_date is None:
+                            continue
                         if ver not in self.cache:
                             logger.debug(f"Creating new folder for version {ver}")
                             folder = self.cache.new_build(ver)
@@ -214,7 +217,9 @@ class ScraperStable(BuildScraper):
                     date = match.group(1)
                     time = match.group(2)
                     datetime_str = f"{date} {time} GMT"
-                    commit_time = dateparser.parse(datetime_str).astimezone()
+                    parsed_time = dateparser.parse(datetime_str)
+                    if parsed_time is not None:
+                        commit_time = parsed_time.astimezone()
 
         build_hash: str | None = None
         stem = Path(link).stem

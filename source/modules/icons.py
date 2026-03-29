@@ -31,7 +31,7 @@ class Icons:
 
     @classmethod
     @cache
-    def get(cls, color=WHITE):
+    def get(cls, color=WHITE) -> "Icons":
         return cls(
             load_icon(color, "settings"),
             load_icon(color, "wiki"),

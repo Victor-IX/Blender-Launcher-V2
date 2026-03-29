@@ -1,10 +1,11 @@
-from functools import wraps
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.platform_utils import get_platform
 from PySide6.QtCore import QObject, Signal
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QSystemTrayIcon
 from widgets.base_menu_widget import BaseMenuWidget
 
@@ -13,16 +14,16 @@ if TYPE_CHECKING:
 
 
 class TrayHandler(QObject):
-    """ """
-
     quit = Signal()
     close = Signal()
     trigger = Signal()
     favs = Signal()
     quick_launch = Signal()
 
-    def __init__(self, parent: "BlenderLauncher"):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent)
+
+        self.launcher: BlenderLauncher = parent
 
         # Setup tray icon context Menu
         quit_action = QAction(t("act.quit"), self)
@@ -31,12 +32,12 @@ class TrayHandler(QObject):
         hide_action.triggered.connect(self.close)
         show_action = QAction(t("act.show"), self)
         show_action.triggered.connect(self.trigger)
-        show_favorites_action = QAction(self.parent().icons.favorite, "Favorites", self)
+        show_favorites_action = QAction(self.launcher.icons.favorite, "Favorites", self)
         show_favorites_action.triggered.connect(self.favs)
-        quick_launch_action = QAction(self.parent().icons.quick_launch, "Blender", self)
+        quick_launch_action = QAction(self.launcher.icons.quick_launch, "Blender", self)
         quick_launch_action.triggered.connect(self.quick_launch)
 
-        self.tray_menu = BaseMenuWidget(parent=self.parent())
+        self.tray_menu = BaseMenuWidget(parent=self.launcher)
         self.tray_menu.setFont(parent.fonts.font_10)
         self.tray_menu.addActions(
             [
@@ -50,7 +51,7 @@ class TrayHandler(QObject):
 
         # Setup tray icon
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(self.parent().icons.taskbar)
+        self.tray_icon.setIcon(self.launcher.icons.taskbar)
         self.tray_icon.setToolTip("Blender Launcher")
         self.tray_icon.activated.connect(self.tray_icon_activated)
         self.tray_icon.messageClicked.connect(self.trigger)
@@ -80,6 +81,6 @@ class TrayHandler(QObject):
         self.tray_icon.showMessage(
             "Blender Launcher",
             msg,
-            self.parent().icons.taskbar,  # type: ignore
+            self.launcher.icons.taskbar,
             10000,
         )

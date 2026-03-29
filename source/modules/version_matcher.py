@@ -155,6 +155,13 @@ class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
     commit_time: datetime.datetime | str | None
 
 
+class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/patch
+    folder: str | None
+    build_hash: str | None
+    branch: tuple[str, ...] | None
+    commit_time: datetime.datetime | str | None
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
@@ -200,7 +207,7 @@ class VersionSearchQuery:
         major: int | str,
         minor: int | str,
         patch: int | str,
-        **extra_args: Unpack[VSQKwargs],
+        **extra_args: Unpack[VSQExtraKwargs],
     ):
         """A constructor with major, minor, and patch at the front"""
         return cls(major=major, minor=minor, patch=patch, **extra_args)

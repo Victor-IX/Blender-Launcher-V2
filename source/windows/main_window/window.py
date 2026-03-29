@@ -166,7 +166,7 @@ class BlenderLauncher(BaseWindow):
         self.offline = offline
         self.build_cache = build_cache
         self.app_state = AppState.IDLE
-        self.windows = [self]
+        self.windows: list[BaseWindow] = [self]
         self.timer = None
         self.started = True
         self.latest_tag = ""
@@ -437,7 +437,7 @@ class BlenderLauncher(BaseWindow):
         self.status_bar = LauncherStatusBar(self)
         self.setStatusBar(self.status_bar)
         self.status_bar.force_check.connect(self.force_check)
-        self.status_bar.update.connect(self.show_update_window)
+        self.status_bar.update_requested.connect(self.show_update_window)
 
         # Draw library
         self.draw_library()

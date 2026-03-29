@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.settings import (
@@ -6,6 +9,9 @@ from modules.settings import (
 )
 from PySide6.QtCore import QObject, Signal
 from windows.popup_window import Popup
+
+if TYPE_CHECKING:
+    from .window import BlenderLauncher
 
 try:
     from pynput import keyboard
@@ -26,8 +32,9 @@ class HotkeyHandler(QObject):
 
     hk_triggered = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: BlenderLauncher):
         super().__init__(parent)
+        self.launcher: BlenderLauncher = parent
         self.__hk_listener = None
 
     def setup(self):
@@ -46,7 +53,7 @@ class HotkeyHandler(QObject):
                 self.dlg = Popup.warning(
                     message=t("msg.popup.global_hotkeys_invalid"),
                     buttons=Popup.Button.info(),
-                    parent=self.parent(),
+                    parent=self.launcher,
                 )
                 return
 

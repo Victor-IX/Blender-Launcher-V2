@@ -269,7 +269,7 @@ class ShortcutsPage(BasicOnboardingPage):
                     exe=str(self.prop_settings.exe_location),
                 )
             if self.addtodesk.isChecked():
-                desktop = Path(shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0))
+                desktop = Path(shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0))
 
                 try:
                     generate_program_shortcut(

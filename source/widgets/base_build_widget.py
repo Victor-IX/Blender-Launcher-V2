@@ -27,7 +27,6 @@ logger = logging.getLogger()
 class BaseBuildWidget(QWidget):
     def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo) -> None:
         super().__init__(parent)
-        self.parent: BlenderLauncher = parent
         self.item: BaseListWidgetItem = item
         self.build_info: BuildInfo = build_info
 

@@ -185,10 +185,10 @@ class GeneralTabWidget(SettingsFormWidget):
         with self.group("settings.general.advanced.label") as grp:
             # Default Deletion Action
             self.default_delete_action = grp.add(QComboBox(), "settings.general.advanced.default_delete_action")
-            self.default_delete_action.addItems(delete_action.keys())
+            self.default_delete_action.addItems(list(delete_action.keys()))
             self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
             self.default_delete_action.setCurrentIndex(get_default_delete_action())
-            self.default_delete_action.activated[int].connect(set_default_delete_action)
+            self.default_delete_action.activated.connect(set_default_delete_action)
 
             # Purge Temp on Startup
             grp.add_checkbox(

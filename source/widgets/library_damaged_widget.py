@@ -36,7 +36,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         )
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
 
-        self.parent: BlenderLauncher = parent
+        self.launcher: BlenderLauncher = parent
         self.link = Path(link)
         self.list_widget = list_widget
 
@@ -69,7 +69,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_delete_or_trash"),
             buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
-            parent=self.parent,
+            parent=self.launcher,
         )
 
         self.dlg.custom_signal.connect(self.removal_response)
@@ -84,7 +84,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         path = get_library_folder() / self.link
         a = RemovalTask(path, trash=trash)
         a.finished.connect(self.remover_completed)
-        self.parent.task_queue.append(a)
+        self.launcher.task_queue.append(a)
 
         self.launchButton.set_text(t("act.deleting"))
         self.setEnabled(False)

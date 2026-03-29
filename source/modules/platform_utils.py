@@ -21,7 +21,8 @@ def get_platform() -> Literal["Windows", "Linux", "macOS"]:
     }
 
     if sys.platform not in platforms:
-        return sys.platform
+        msg = f"Unsupported platform: {sys.platform}"
+        raise RuntimeError(msg)
 
     return platforms[sys.platform]
 
@@ -106,7 +107,7 @@ def _popen(args):
         stdout=None,
         stderr=None,
         close_fds=True,
-        preexec_fn=os.setpgrp,
+        preexec_fn=getattr(os, "setpgrp", None),
         env=env,
     )
 

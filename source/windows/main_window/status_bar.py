@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class LauncherStatusBar(QStatusBar):
     force_check = Signal()
-    update = Signal(bool)
+    update_requested = Signal(bool)
 
     def __init__(self, parent: "BlenderLauncher"):
         super().__init__(parent)
@@ -35,7 +35,7 @@ class LauncherStatusBar(QStatusBar):
         self.new_version_button = QPushButton(self)
         self.new_version_button.setToolTip(t("act.a.version_tooltip"))
         self.new_version_button.hide()
-        self.new_version_button.clicked.connect(self.update)
+        self.new_version_button.clicked.connect(self.update_requested)
         self.statusbar_version = QPushButton(str(self.version), self)
         self.statusbar_version.setToolTip(t("act.a.version_tooltip"))
         self.statusbar_version.clicked.connect(self.changelog)
