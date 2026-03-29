@@ -63,12 +63,16 @@ from modules.settings import (
     get_tray_icon_notified,
     get_use_pre_release_builds,
     get_use_system_titlebar,
+    get_window_geometry,
+    get_window_maximized,
     get_worker_thread_count,
     is_library_folder_valid,
     purge_temp_folder,
     set_dont_show_resource_warning,
     set_library_folder,
     set_tray_icon_notified,
+    set_window_geometry,
+    set_window_maximized,
 )
 from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
@@ -135,7 +139,13 @@ class BlenderLauncher(BaseWindow):
         super().__init__(app=app, version=version)
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
-        self.setMaximumWidth(1250)
+
+        # Restore saved window geometry
+        geometry = get_window_geometry()
+        if geometry is not None:
+            self.restoreGeometry(geometry)
+        self._saved_maximized = get_window_maximized()
+
         widget = QWidget(self)
         self.CentralLayout = QVBoxLayout(widget)
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
@@ -512,6 +522,11 @@ class BlenderLauncher(BaseWindow):
             self.showNormal()
 
         self.show()
+
+        if self._saved_maximized:
+            self.showMaximized()
+            self._saved_maximized = False
+
         self.activateWindow()
 
         self.show_signal.emit()
@@ -930,7 +945,13 @@ class BlenderLauncher(BaseWindow):
             page_widget.column_widths_changed.emit(version_width, branch_width, commit_time_width)
         self._syncing_column_widths = False
 
+    def _save_window_geometry(self):
+        set_window_maximized(self.isMaximized())
+        if not self.isMaximized():
+            set_window_geometry(self.saveGeometry().data())
+
     def closeEvent(self, event):
+        self._save_window_geometry()
         if get_show_tray_icon():
             if not get_tray_icon_notified():
                 self.show_message(t("msg.popup.tray_notify"))
