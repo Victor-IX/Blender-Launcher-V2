@@ -61,6 +61,7 @@ def perform_uninstall(quiet: bool = False) -> None:
 
 def _remove_startup_entry() -> None:
     """Remove the 'Launch when system starts' registry entry."""
+    assert sys.platform == "win32"
     try:
         import winreg
 
@@ -182,6 +183,7 @@ def _schedule_self_deletion() -> None:
     Uses a detached cmd process that waits briefly then deletes the exe
     and its parent directory if empty.
     """
+    assert sys.platform == "win32"
     try:
         exe_path = Path(sys.executable).resolve()
         exe_dir = exe_path.parent

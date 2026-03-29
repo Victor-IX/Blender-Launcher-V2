@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 
 import contextlib
 import logging
@@ -1012,7 +1013,7 @@ class LibraryWidget(BaseBuildWidget):
 
         platform = get_platform()
 
-        if platform == "Windows":
+        if sys.platform == "win32":
             os.startfile(folder_path.as_posix())
         elif platform == "macOS":
             subprocess.call(["open", folder_path.as_posix()])

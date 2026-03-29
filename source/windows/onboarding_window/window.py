@@ -186,7 +186,7 @@ class OnboardingWindow(BaseWindow):
 
     def delete_with_timeout(self, pth: Path):
         """Creates a batch script that deletes the path"""
-        assert get_platform() == "Windows", (
+        assert sys.platform == "win32", (
             "There is no reason to call OnboardingWindow.delete_with_timeout on Linux/Mac"
         )
         # create the batch script

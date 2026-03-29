@@ -261,6 +261,7 @@ class ShortcutsPage(BasicOnboardingPage):
                 register_windows_filetypes(exe=str(self.prop_settings.exe_location))
 
         elif self.platform == "Windows":
+            assert sys.platform == "win32"
             from win32comext.shell import shell, shellcon
 
             if self.addtostart.isChecked():
