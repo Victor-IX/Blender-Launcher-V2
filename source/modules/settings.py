@@ -978,3 +978,19 @@ def get_auto_register_winget() -> bool:
 
 def set_auto_register_winget(is_enabled: bool):
     get_settings().setValue("auto_register_winget", is_enabled)
+
+
+def get_window_geometry() -> bytes | None:
+    return get_settings().value("Internal/window_geometry")  # type: ignore
+
+
+def set_window_geometry(geometry: bytes):
+    get_settings().setValue("Internal/window_geometry", geometry)
+
+
+def get_window_maximized() -> bool:
+    return get_settings().value("Internal/window_maximized", defaultValue=False, type=bool)  # type: ignore
+
+
+def set_window_maximized(maximized: bool):
+    get_settings().setValue("Internal/window_maximized", maximized)
