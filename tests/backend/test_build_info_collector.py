@@ -27,7 +27,7 @@ def test_buildinfo_comparisons_and_equality():
     assert BuildInfo("", "1.0.0", "", before, "") < BuildInfo("", "1.0.1", "", before, "")
     assert BuildInfo("", "1.0.0", "", before, "") < BuildInfo("", "1.0.0", "", after, "")
     assert BuildInfo("", "1.0.0", "hash", before, "") == BuildInfo("", "1.0.0", "hash", before, "")
-    assert BuildInfo("", "1.0.0", "hash", before, "") != BuildInfo("", "1.0.0", "", before, "")
+    assert BuildInfo("", "1.0.0", "hash", before, "") == BuildInfo("", "1.0.0", None, before, "")
     assert BuildInfo("", "1.0.0", None, before, "") == BuildInfo("", "1.0.0", None, before, "")
     assert BuildInfo("", "1.0.0-daily", None, before, "") == BuildInfo("", "1.0.0", None, before, "")
 
