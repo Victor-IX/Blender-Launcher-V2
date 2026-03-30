@@ -155,9 +155,14 @@ class ConnectionManager(QObject):
                 else:
                     logger.debug(f"GitHub API request to: {_url} (no token configured)")
 
-            return self.manager.request(
+            response = self.manager.request(
                 _method, _url, fields=fields, headers=merged_headers if merged_headers else None, **urlopen_kw
             )
+            if response is not None and response.status == 401:
+                logger.warning("Request returned a 401 response; your credentials are possibly expired!")
+
+            return response
+
         except Exception:
             self.error.emit()
             return None
