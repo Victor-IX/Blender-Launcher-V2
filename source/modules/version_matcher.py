@@ -160,6 +160,8 @@ class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
     patch: int | str
     branch: tuple[str, ...] | None
     commit_time: datetime.datetime | str | None
+    after: datetime.datetime | None
+    before: datetime.datetime | None
 
 
 class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/patch
@@ -167,6 +169,8 @@ class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/p
     build_hash: str | None
     branch: tuple[str, ...] | None
     commit_time: datetime.datetime | str | None
+    after: datetime.datetime | None
+    before: datetime.datetime | None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -194,6 +198,12 @@ class VersionSearchQuery:
 
     commit_time: datetime.datetime | str | None = None
     "When the build was made (in UTC)"
+
+    after: datetime.datetime | None = None
+    "Filter builds after this date"
+
+    before: datetime.datetime | None = None
+    "Filter builds before this date"
 
     def __post_init__(self):
         for pos in (self.major, self.minor, self.patch, self.commit_time):
@@ -262,6 +272,12 @@ class VersionSearchQuery:
     def with_commit_time(self, commit_time: datetime.datetime | str | None = None):
         return replace(self, commit_time=commit_time)
 
+    def with_after(self, after: datetime.datetime | None = None):
+        return replace(self, after=after)
+
+    def with_before(self, before: datetime.datetime | None = None):
+        return replace(self, before=before)
+
     def relevant_places(self) -> tuple[str, ...]:
         return _relevant_places(self)
 
@@ -286,24 +302,27 @@ def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) ->
     for place in relevant_places:
         getter = attrgetter(place)
         p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
-        if p == "*" or p is None:
-            continue  # all versions match (should be unreachable due to relevant_places)
-        if p == "^":
-            # get the max number for `place` in version
-            max_p = max(getter(v) for v in versions)
-
-            versions = [v for v in versions if getter(v) == max_p]
-        elif p == "-":
-            # get the min number for `place` in version
-            min_p = min(getter(v) for v in versions)
-
-            versions = [v for v in versions if getter(v) == min_p]
-        elif isinstance(p, tuple):
-            versions = [v for v in versions if any(getter(v) == q for q in p)]
-        elif place == "fuzzy_text":
-            versions = fuzzy_search_by_str(versions, p)
-        else:
-            versions = [v for v in versions if getter(v) == p]
+        match (place, p):
+            case ("*" | None, _):
+                ...  # all versions match (should be unreachable due to relevant_places)
+            case ("after", time):
+                versions = [v for v in versions if v.commit_time >= time]
+            case ("before", time):
+                versions = [v for v in versions if v.commit_time <= time]
+            case ("fuzzy_text", txt):
+                versions = fuzzy_search_by_str(versions, txt)
+            case (_, "^"):
+                # get the max number for `place` in version
+                max_p = max(getter(v) for v in versions)
+                versions = [v for v in versions if getter(v) == max_p]
+            case (_, "-"):
+                # get the min number for `place` in version
+                min_p = min(getter(v) for v in versions)
+                versions = [v for v in versions if getter(v) == min_p]
+            case (_, p) if isinstance(p, tuple):
+                versions = [v for v, x in zip(versions, map(getter, versions), strict=True) if any(x == q for q in p)]
+            case (_, p):
+                versions = [v for v in versions if getter(v) == p]
 
         if not versions:
             return versions
@@ -322,7 +341,6 @@ def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBui
     while not any_matches and l_dist < 4:
         l_dist += 1
         for b in lst:
-
             s = b.fuzzy_text.casefold()
             matches: list[Match] = find_near_matches(
                 search,
@@ -333,7 +351,6 @@ def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBui
                 max_insertions=0,
             )
             if matches:
-                print(matches)
                 any_matches = True
                 if any(m.matched == search for m in matches):
                     exact_matches.append(b)

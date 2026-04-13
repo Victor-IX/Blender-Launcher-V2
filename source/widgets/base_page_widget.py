@@ -203,6 +203,8 @@ class BasePageWidget(QWidget, Generic[_WT]):
 
     def update_search_visible(self, state: SearchButtonWidget.State):
         self.SearchBar.setVisible(state == SearchButtonWidget.State.OPEN)
+        if state == SearchButtonWidget.State.OPEN:
+            self.SearchBar.fuzzy_text.setFocus()
         if state == SearchButtonWidget.State.CLOSED:
             self.list_widget.update_search_filter(None)
 

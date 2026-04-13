@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import datetime
+
 from i18n import t
 from modules.version_matcher import VersionSearchQuery
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import QDate, Qt, Signal, Slot
 from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
 from PySide6.QtWidgets import (
     QApplication,
+    QCheckBox,
     QComboBox,
+    QDateEdit,
     QFrame,
     QGridLayout,
     QLabel,
@@ -28,20 +32,74 @@ class SearchBarWidget(QFrame):
         # self.setFrameShape(QFrame.Shape.Panel)
 
         self.grid = QGridLayout(self)
-        self.grid.setContentsMargins(0, 0, 0, 0)
-
-        self.grid.addWidget(QLabel("Hiiii", self), 1, 0, 1, 1)
+        self.grid.setContentsMargins(5, 5, 5, 5)
 
         self.fuzzy_text = QLineEdit(self)
-        self.fuzzy_text.setPlaceholderText("Search . . .")
-        self.fuzzy_text.returnPressed.connect(self.query_updated)
-        self.grid.addWidget(self.fuzzy_text, 0, 0, 1, 2)
+        self.fuzzy_text.setPlaceholderText(t("act.search") + " . . .")
+        self.fuzzy_text.textChanged.connect(self.query_updated)
+        self.grid.addWidget(self.fuzzy_text, 0, 0, 1, 4)
+
+        self.after_checkbox = QCheckBox(t("act.after"), self)
+        self.after_checkbox.stateChanged.connect(self.query_updated)
+        self.grid.addWidget(self.after_checkbox, 1, 0)
+
+        self.date_after = QDateEdit(self)
+        self.date_after.setCalendarPopup(True)
+        self.date_after.setDate(QDate.currentDate().addYears(-1))
+        self.date_after.setEnabled(False)
+        self.date_after.dateChanged.connect(self.query_updated)
+        self.grid.addWidget(self.date_after, 1, 1)
+
+        self.after_checkbox.stateChanged.connect(
+            lambda state: self.date_after.setEnabled(state == Qt.CheckState.Checked.value)
+        )
+
+        self.before_checkbox = QCheckBox(t("act.before"), self)
+        self.before_checkbox.stateChanged.connect(self.query_updated)
+        self.grid.addWidget(self.before_checkbox, 1, 2)
+
+        self.date_before = QDateEdit(self)
+        self.date_before.setCalendarPopup(True)
+        self.date_before.setDate(QDate.currentDate())
+        self.date_before.setEnabled(False)
+        self.date_before.dateChanged.connect(self.query_updated)
+        self.grid.addWidget(self.date_before, 1, 3)
+
+        self.before_checkbox.stateChanged.connect(
+            lambda state: self.date_before.setEnabled(state == Qt.CheckState.Checked.value)
+        )
 
     def query_updated(self):
         self._q = self._generate_query()
         self.query.emit(self._q)
 
     def _generate_query(self) -> VersionSearchQuery:
+        after = None
+        if self.after_checkbox.isChecked():
+            qdate = self.date_after.date()
+            after = datetime.datetime(
+                qdate.year(),
+                qdate.month(),
+                qdate.day(),
+                tzinfo=datetime.timezone.utc,
+            )
+
+        before = None
+        if self.before_checkbox.isChecked():
+            qdate = self.date_before.date()
+            # Set to end of day
+            before = datetime.datetime(
+                qdate.year(),
+                qdate.month(),
+                qdate.day(),
+                23,
+                59,
+                59,
+                tzinfo=datetime.timezone.utc,
+            )
+
         return VersionSearchQuery(
             fuzzy_text=self.fuzzy_text.text() or None,
+            after=after,
+            before=before,
         )

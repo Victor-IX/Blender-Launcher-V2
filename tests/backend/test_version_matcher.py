@@ -79,6 +79,25 @@ def test_fuzzy_search():
     ]
 
 
+def test_date_range_filtering():
+    # after May 2020
+    results = VersionSearchQuery(after=datetime.datetime(2020, 5, 1, tzinfo=utc)).match(builds)
+    expected = [b for b in builds if b.commit_time >= datetime.datetime(2020, 5, 1, tzinfo=utc)]
+    assert results == expected
+
+    # before June 2020
+    results = VersionSearchQuery(before=datetime.datetime(2020, 6, 1, tzinfo=utc)).match(builds)
+    expected = [b for b in builds if b.commit_time <= datetime.datetime(2020, 6, 1, tzinfo=utc)]
+    assert results == expected
+
+    # range
+    start = datetime.datetime(2020, 4, 1, tzinfo=utc)
+    end = datetime.datetime(2020, 6, 1, tzinfo=utc)
+    results = VersionSearchQuery(after=start, before=end).match(builds)
+    expected = [b for b in builds if start <= b.commit_time <= end]
+    assert results == expected
+
+
 def test_vsq_serialization():
     for query in (
         VersionSearchQuery.any(),
