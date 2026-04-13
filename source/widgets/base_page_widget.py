@@ -4,7 +4,7 @@ from typing import Generic
 from i18n import t
 from modules.settings import get_column_widths, get_list_sorting_type, set_column_widths, set_list_sorting_type
 from modules.version_matcher import VersionSearchQuery
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSplitter, QVBoxLayout, QWidget
 from widgets.base_list_widget import _WT, BaseListWidget
@@ -65,6 +65,7 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.InfoLabelLayout.addWidget(self.InfoLabel)
 
         self.list_widget: BaseListWidget[_WT] = BaseListWidget(self, extended_selection=extended_selection)
+        self.list_widget.visible_count_changed.connect(self.list_count_changed)
         self.list_widget.hide()
 
         self.InfoLayout = QHBoxLayout()
@@ -175,6 +176,17 @@ class BasePageWidget(QWidget, Generic[_WT]):
 
     def set_info_label_text(self, text):
         self.InfoLabel.setText(text)
+
+    @Slot(int)
+    def list_count_changed(self, cnt: int):
+        if cnt > 0:
+            self.list_widget.show()
+            self.HeaderWidget.show()
+            self.PlaceholderWidget.hide()
+        else:
+            self.list_widget.hide()
+            self.HeaderWidget.hide()
+            self.PlaceholderWidget.show()
 
     def set_sorting_type(self, sorting_type):
         if sorting_type == self.sorting_type:

@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFontMetrics
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QAbstractItemView, QFrame, QListWidget, QListWidgetItem
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.library_widget import LibraryWidget
@@ -18,6 +17,8 @@ _WT = TypeVar("_WT", bound=BaseBuildWidget)
 
 
 class BaseListWidget(Generic[_WT], QListWidget):
+    visible_count_changed = Signal(int)
+
     def __init__(self, parent: BasePageWidget, extended_selection=False):
         super().__init__(parent)
         self.page: BasePageWidget = parent
@@ -25,9 +26,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.search_filter = None
 
         self.widgets: set[_WT] = set()
-        self._query_cache: dict[VersionSearchQuery, set[_WT]] = {}
-        self._binfos_cache: tuple[dict[BasicBuildInfo, list[_WT]], set[_WT]] | None = None
-        self.metrics = QFontMetrics(self.font())
+        self._binfos_cache: dict[BasicBuildInfo | None, set[_WT]] = {None: set()}
 
         self.setFrameShape(QFrame.Shape.NoFrame)
         self.setSortingEnabled(True)
@@ -56,43 +55,30 @@ class BaseListWidget(Generic[_WT], QListWidget):
         item.setSizeHint(widget.sizeHint())
         self.addItem(item)
         self.setItemWidget(item, widget)
-        self.count_changed()
         self.widgets.add(widget)
-        self._binfos_cache = None
-        self._query_cache.clear()
+        self._cache_widget(widget)
         self.update_visibility(item, widget)
+        self.visible_count_changed.emit(len(self.widgets))
 
     def insert_item(self, item, widget, index=0):
         item.setSizeHint(widget.sizeHint())
         self.insertItem(index, item)
         self.setItemWidget(item, widget)
-        self.count_changed()
         self.widgets.add(widget)
-        self._binfos_cache = None
-        self._query_cache.clear()
+        self._cache_widget(widget)
         self.update_visibility(item, widget)
+        self.visible_count_changed.emit(len(self.widgets))
+
+    def _cache_widget(self, widget):
+        self._binfos_cache.setdefault(self.basic_from_widget(widget), set()).add(widget)
 
     def remove_item(self, item):
         if (w := self.itemWidget(item)) is not None:
             self.widgets.remove(w)
-            self._binfos_cache = None
-            self._query_cache.clear()
+            self._binfos_cache[self.basic_from_widget(w)].remove(w)
         row = self.row(item)
         self.takeItem(row)
-        self.count_changed()
-
-    def count_changed(self):
-        self.__show(self.count() > 0)
-
-    def __show(self, b: bool):
-        if b:
-            self.show()
-            self.page.HeaderWidget.show()
-            self.page.PlaceholderWidget.hide()
-        else:
-            self.hide()
-            self.page.HeaderWidget.hide()
-            self.page.PlaceholderWidget.show()
+        self.visible_count_changed.emit(len(self.widgets))
 
     def items(self):
         items = []
@@ -116,9 +102,9 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def clear_(self):
         self.clear()
         self.widgets.clear()
-        self._binfos_cache = None
+        self._binfos_cache = {None: set()}
         self._query_cache = {}
-        self.count_changed()
+        self.visible_count_changed.emit(0)
 
     @staticmethod
     def basic_from_widget(widget: _WT) -> BasicBuildInfo | None:
@@ -138,39 +124,24 @@ class BaseListWidget(Generic[_WT], QListWidget):
             folder = widget.build_info.branch
         return BasicBuildInfo.from_buildinfo(build_info, folder=folder)
 
-    def basic_build_infos(self) -> tuple[dict[BasicBuildInfo, list[_WT]], set[_WT]]:
-        if self._binfos_cache is not None:
-            return self._binfos_cache
+    def get_matching_builds(self, search: VersionSearchQuery) -> list[_WT]:
+        binfo_to_widget = self._binfos_cache
+        unknown_widgets = binfo_to_widget[None]
 
-        binfo_to_widgets: dict[BasicBuildInfo, list[_WT]] = {}
-        unknown_widgets: set[_WT] = set()
+        # binfo_to_widget, unknown_widgets = self.basic_build_infos()
+        # gather all matching widgets in the order returned by search.match
+        matching_binfos = search.match(b for b in binfo_to_widget if b is not None)
 
-        for widget in self.widgets:
-            binfo = self.basic_from_widget(widget)
-            if binfo is None:
-                continue
+        # Flatten matching widgets from binfos
+        shown_widgets: list[_WT] = []
+        for b in matching_binfos:
+            shown_widgets.extend(binfo_to_widget[b])
 
-            if (lst := binfo_to_widgets.get(binfo)) is not None:
-                lst.append(widget)
-            else:
-                binfo_to_widgets[binfo] = [widget]
+        # Add broken widgets to the results
+        if unknown_widgets:
+            shown_widgets.extend(w for w in unknown_widgets if w not in shown_widgets)
 
-        self._binfos_cache = (binfo_to_widgets, unknown_widgets)
-
-        return self._binfos_cache
-
-    def get_matching_builds(self, search: VersionSearchQuery):
-        if search not in self._query_cache:
-            binfo_to_widget, unknown_widgets = self.basic_build_infos()
-            # gather all matching widgets
-            shown_widgets: set[_WT] = {w for b in search.match(list(binfo_to_widget)) for w in binfo_to_widget[b]}
-
-            # add broken widgets to the results
-            shown_widgets |= unknown_widgets
-
-            self._query_cache[search] = shown_widgets
-
-        return self._query_cache[search]
+        return shown_widgets
 
     def update_tab_filter(self, tab_filter: VersionSearchQuery):
         self.tab_filter = tab_filter
@@ -181,16 +152,13 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.update_all_visibility()
 
     def update_all_visibility(self):
-        visible_builds = self.get_matching_builds(self.query)
+        visible_widgets = self.get_matching_builds(self.query)
+        visible_set = set(visible_widgets)
 
-        hidden_widgets = self.widgets - visible_builds
+        for widget in self.widgets:
+            widget.item.setHidden(widget not in visible_set)
 
-        for widget in visible_builds:
-            widget.item.setHidden(False)
-        for widget in hidden_widgets:
-            widget.item.setHidden(True)
-
-        self.__show(len(hidden_widgets) != len(self.items()))
+        self.visible_count_changed.emit(len(visible_widgets))
 
     def update_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
         if widget is None and (widget := self.itemWidget(item)) is None:
@@ -200,11 +168,6 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         q = self.query
         success = bool(q.match([binfo]))
-        if (s := self._query_cache.get(q)) is not None:
-            if success:
-                s |= {widget}
-            else:
-                s -= {widget}
 
         item.setHidden(not success)
 
