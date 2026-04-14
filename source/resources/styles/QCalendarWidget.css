@@ -1,0 +1,32 @@
+QCalendarWidget QWidget{
+background-color:#1F1F1F;
+color: #E6E6E6;
+
+}
+
+QCalendarWidget QToolButton{
+color: #E6E6E6;
+}
+
+QCalendarWidget QMenu{
+    background-color: black;
+}
+
+QCalendarWidget QAbstractItemView:enabled {
+    color: #E6E6E6;  /* Text color for dates */
+    selection-background-color: black;
+    selection-color: white;
+}
+
+QCalendarWidget QSpinBox{
+    background-color: black;
+}
+
+#qt_calendar_prevmonth {
+    icon-size: 30px;
+    qproperty-icon: url(:resources/icons/expand_left.svg);
+}
+#qt_calendar_nextmonth {
+    icon-size: 30px;
+    qproperty-icon: url(:resources/icons/expand_more.svg);
+}
