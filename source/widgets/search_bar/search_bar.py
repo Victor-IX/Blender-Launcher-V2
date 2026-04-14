@@ -4,20 +4,13 @@ import datetime
 
 from i18n import t
 from modules.version_matcher import VersionSearchQuery
-from PySide6.QtCore import QDate, Qt, Signal, Slot
-from PySide6.QtGui import QFont, QFontMetrics, QKeyEvent
+from PySide6.QtCore import QDate, Qt, Signal
 from PySide6.QtWidgets import (
-    QApplication,
     QCheckBox,
-    QComboBox,
     QDateEdit,
     QFrame,
     QGridLayout,
-    QLabel,
     QLineEdit,
-    QListWidget,
-    QPushButton,
-    QWidget,
 )
 
 
@@ -27,9 +20,7 @@ class SearchBarWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        # self.setMinimumHeight(100)
         self.setProperty("SettingsGroup", True)
-        # self.setFrameShape(QFrame.Shape.Panel)
 
         self.grid = QGridLayout(self)
         self.grid.setContentsMargins(5, 5, 5, 5)
@@ -81,7 +72,7 @@ class SearchBarWidget(QFrame):
                 qdate.year(),
                 qdate.month(),
                 qdate.day(),
-                tzinfo=datetime.timezone.utc,
+                tzinfo=datetime.UTC,
             )
 
         before = None
@@ -95,7 +86,7 @@ class SearchBarWidget(QFrame):
                 23,
                 59,
                 59,
-                tzinfo=datetime.timezone.utc,
+                tzinfo=datetime.UTC,
             )
 
         return VersionSearchQuery(
