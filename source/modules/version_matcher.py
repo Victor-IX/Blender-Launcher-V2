@@ -80,7 +80,7 @@ VERSION_SEARCH_SYNTAX = "<major_num>.<minor>.<patch>[-<branch>][+<build_hash>][@
 
 VERSION_SEARCH_REGEX = re.compile(
     r"""^
-    ([\^\-\*]|\d+)\.([\^\-\*]|\d+)\.([\^\-\*]|\d+)
+    ([\^\-\*]|\d+)\.([\^\-\*]|\d+)(?:\.([\^\-\*]|\d+))?
     (?:\-([^\@\s\+]+))?
     (?:\+([\d\w]+))?
     (?:\@([\^\-\*]|[\dT\+\:Z\ \^\-]+))?
@@ -131,6 +131,8 @@ def _parse(s: str) -> dict:
         major = int(major)
     if minor.isnumeric():
         minor = int(minor)
+    if patch is None:
+        patch = "*"
     if patch.isnumeric():
         patch = int(patch)
     if branch is not None:
