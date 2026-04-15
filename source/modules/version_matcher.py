@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass, replace
 from functools import cache, lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, TypedDict, Unpack
+from typing import TYPE_CHECKING, Self, TypedDict, Unpack
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -215,7 +215,7 @@ class VersionSearchQuery:
             raise ValueError("branch cannot be temporally matched")
 
     @classmethod
-    def parse(cls, s: str):
+    def parse(cls, s: str) -> Self:
         """Parse a query from a string. does not support branch and commit_time"""
 
         return cls(**_parse(s))
@@ -259,6 +259,9 @@ class VersionSearchQuery:
         d = {place: getattr(self, place) for place in self.__slots__}
         d.update({place: getattr(other, place) for place in other.relevant_places()})
         return self.__class__(**d)
+
+    def with_fuzzy_text(self, fuzzy_text: str | None = None):
+        return replace(self, fuzzy_text=fuzzy_text)
 
     def with_folder(self, folder: str | None = None):
         return replace(self, folder=folder)

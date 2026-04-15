@@ -44,6 +44,7 @@ class SearchBarWidget(QFrame):
         self.after_checkbox.stateChanged.connect(
             lambda state: self.date_after.setEnabled(state == Qt.CheckState.Checked.value)
         )
+        self.after_checkbox.stateChanged.connect(lambda _: self.query_updated)
 
         self.before_checkbox = QCheckBox(t("act.before"), self)
         self.before_checkbox.stateChanged.connect(self.query_updated)
@@ -59,12 +60,14 @@ class SearchBarWidget(QFrame):
         self.before_checkbox.stateChanged.connect(
             lambda state: self.date_before.setEnabled(state == Qt.CheckState.Checked.value)
         )
+        self.before_checkbox.stateChanged.connect(lambda _: self.query_updated)
 
     def query_updated(self):
         self._q = self._generate_query()
         self.query.emit(self._q)
 
     def _generate_query(self) -> VersionSearchQuery:
+        query = VersionSearchQuery()
         after = None
         if self.after_checkbox.isChecked():
             qdate = self.date_after.date()
@@ -74,6 +77,7 @@ class SearchBarWidget(QFrame):
                 qdate.day(),
                 tzinfo=datetime.UTC,
             )
+            query = query.with_after(after)
 
         before = None
         if self.before_checkbox.isChecked():
@@ -88,9 +92,17 @@ class SearchBarWidget(QFrame):
                 59,
                 tzinfo=datetime.UTC,
             )
+            query = query.with_before(before)
 
-        return VersionSearchQuery(
-            fuzzy_text=self.fuzzy_text.text() or None,
-            after=after,
-            before=before,
-        )
+        # try to parse fuzzy text into a query
+        text = self.fuzzy_text.text().strip()
+        if text:
+            possible_version, remaining = text.split(" ", 1)
+            try:
+                q: VersionSearchQuery = VersionSearchQuery.parse(possible_version)
+                query |= q.with_fuzzy_text(remaining)
+            except ValueError as _e:
+                print(_e)
+                query = query.with_fuzzy_text(text)
+
+        return query
