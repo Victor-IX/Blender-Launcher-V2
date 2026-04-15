@@ -106,8 +106,6 @@ class ScraperPatch(ScraperAutomated):
             yield from super().scrape()
             return
 
-        self.label_fetcher.cache_latest_pages()
-
         prepend_prnum = get_prepend_prnum_on_prlabel()
 
         unlabeled: list[tuple[int, BuildInfo]] = []
@@ -124,6 +122,9 @@ class ScraperPatch(ScraperAutomated):
             else:
                 binfo.custom_name = f"{n}: {name}" if prepend_prnum else name
                 yield binfo
+
+        if unlabeled:
+            self.label_fetcher.cache_latest_pages()
 
         for n, build in unlabeled:
             name = self.label_fetcher.get(n)
