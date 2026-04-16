@@ -338,13 +338,9 @@ def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBui
     search = search.casefold()
     from fuzzysearch import Match, find_near_matches
 
-    exact_matches: list[BasicBuildInfo] = []
-    close_matches: dict[int, list[BasicBuildInfo]] = {}
-
-    any_matches = False
+    ret = []
     l_dist = 0
-    while not any_matches and l_dist < 4:
-        l_dist += 1
+    while not ret and l_dist < 4:
         for b in lst:
             s = b.fuzzy_text.casefold()
             matches: list[Match] = find_near_matches(
@@ -353,19 +349,10 @@ def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBui
                 max_l_dist=l_dist,
                 max_deletions=1,
                 max_substitutions=1,
-                max_insertions=0,
+                max_insertions=1,
             )
             if matches:
-                any_matches = True
-                if any(m.matched == search for m in matches):
-                    exact_matches.append(b)
-                else:
-                    maxdist = max(m.dist for m in matches)
-                    close_matches.setdefault(maxdist, []).append(b)
+                ret.append(b)
+        l_dist += 1
 
-    all_matches = exact_matches
-    # prioritize builds that are closer to the target
-    for _dist, builds in sorted(close_matches.items()):
-        all_matches.extend(builds)
-
-    return all_matches
+    return ret

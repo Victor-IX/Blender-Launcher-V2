@@ -159,6 +159,7 @@ class BaseListWidget(Generic[_WT], QListWidget):
             widget.item.setHidden(widget not in visible_set)
 
         self.visible_count_changed.emit(len(visible_widgets))
+        return visible_widgets
 
     def update_visibility(self, item: QListWidgetItem, widget: _WT | None = None):
         if widget is None and (widget := self.itemWidget(item)) is None:
