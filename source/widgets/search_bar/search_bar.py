@@ -68,7 +68,7 @@ class SearchBarWidget(QFrame):
 
     def _generate_query(self) -> VersionSearchQuery:
         query = VersionSearchQuery()
-        after = None
+
         if self.after_checkbox.isChecked():
             qdate = self.date_after.date()
             after = datetime.datetime(
@@ -79,7 +79,6 @@ class SearchBarWidget(QFrame):
             )
             query = query.with_after(after)
 
-        before = None
         if self.before_checkbox.isChecked():
             qdate = self.date_before.date()
             # Set to end of day
@@ -97,12 +96,15 @@ class SearchBarWidget(QFrame):
         # try to parse fuzzy text into a query
         text = self.fuzzy_text.text().strip()
         if text:
-            possible_version, remaining = text.split(" ", 1)
+            splitted = text.split(" ", 1)
+            possible_version = splitted.pop(0)
             try:
                 q: VersionSearchQuery = VersionSearchQuery.parse(possible_version)
-                query |= q.with_fuzzy_text(remaining)
+                if splitted:
+                    q = q.with_fuzzy_text(splitted[0])
+
+                query |= q
             except ValueError as _e:
-                print(_e)
                 query = query.with_fuzzy_text(text)
 
         return query
