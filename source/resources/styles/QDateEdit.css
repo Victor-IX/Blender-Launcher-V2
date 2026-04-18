@@ -1,0 +1,10 @@
+QDateEdit {
+    background-color: #1F1F1F;
+    color: #E6E6E6;
+    border: 1px solid #444444;
+    padding: 1px;
+}
+
+QDateEdit:disabled {
+    color: #828282;
+}

@@ -56,6 +56,48 @@ def test_matcher():
     print("test_binfo_matcher successful!")
 
 
+def test_fuzzy_search():
+    assert VersionSearchQuery(fuzzy_text="stbe").match(builds) == [b for b in builds if b.branch == "stable"]
+    assert VersionSearchQuery(fuzzy_text="daly").match(builds) == [b for b in builds if b.branch == "daily"]
+    assert VersionSearchQuery(fuzzy_text="07 16").match(builds) == [
+        BasicBuildInfo(
+            version=Version(major=3, minor=6, patch=14, prerelease=None, build=None),
+            branch="lts",
+            build_hash="",
+            commit_time=datetime.datetime(2024, 7, 16, 0, 0, tzinfo=datetime.UTC),
+            folder=None,
+            custom_name=None,
+        ),
+        BasicBuildInfo(
+            version=Version(major=4, minor=2, patch=0, prerelease=None, build=None),
+            branch="stable",
+            build_hash="",
+            commit_time=datetime.datetime(2024, 7, 16, 0, 0, tzinfo=datetime.UTC),
+            folder=None,
+            custom_name=None,
+        ),
+    ]
+
+
+def test_date_range_filtering():
+    # after May 2020
+    results = VersionSearchQuery(after=datetime.datetime(2020, 5, 1, tzinfo=utc)).match(builds)
+    expected = [b for b in builds if b.commit_time >= datetime.datetime(2020, 5, 1, tzinfo=utc)]
+    assert results == expected
+
+    # before June 2020
+    results = VersionSearchQuery(before=datetime.datetime(2020, 6, 1, tzinfo=utc)).match(builds)
+    expected = [b for b in builds if b.commit_time <= datetime.datetime(2020, 6, 1, tzinfo=utc)]
+    assert results == expected
+
+    # range
+    start = datetime.datetime(2020, 4, 1, tzinfo=utc)
+    end = datetime.datetime(2020, 6, 1, tzinfo=utc)
+    results = VersionSearchQuery(after=start, before=end).match(builds)
+    expected = [b for b in builds if start <= b.commit_time <= end]
+    assert results == expected
+
+
 def test_vsq_serialization():
     for query in (
         VersionSearchQuery.any(),
@@ -111,8 +153,3 @@ def test_search_query_parser():
         pass
 
     print("test_search_query_parser successful!")
-
-
-test_matcher()
-test_vsq_serialization()
-test_search_query_parser()

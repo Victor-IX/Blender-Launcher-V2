@@ -31,6 +31,9 @@ remove_settings: Remove Settings
 
 reload: Reload
 reload_tooltip: Reload Custom Builds from disk
+search: Search
+after: After
+before: Before
 
 # left icon
 launch: Launch

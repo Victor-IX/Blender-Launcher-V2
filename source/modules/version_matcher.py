@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass, replace
 from functools import cache, lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, TypedDict, Unpack
+from typing import TYPE_CHECKING, Self, TypedDict, Unpack
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -24,6 +24,7 @@ class BasicBuildInfo:
     build_hash: str
     commit_time: datetime.datetime
     folder: str | None = None
+    custom_name: str | None = None
 
     @property
     def major(self):
@@ -51,7 +52,12 @@ class BasicBuildInfo:
             build_hash=buildinfo.build_hash if buildinfo.build_hash is not None else "",
             commit_time=buildinfo.commit_time.astimezone(utc),
             folder=folder,
+            custom_name=buildinfo.custom_name,
         )
+
+    @property
+    def fuzzy_text(self) -> str:
+        return f"{self.version} {self.branch.casefold()} {self.custom_name.casefold() if self.custom_name is not None else ''} {self.build_hash} {self.commit_time} {self.folder}"
 
 
 # VersionSearchQuerySyntax (NOT SEMVER COMPATIBLE!):
@@ -74,7 +80,7 @@ VERSION_SEARCH_SYNTAX = "<major_num>.<minor>.<patch>[-<branch>][+<build_hash>][@
 
 VERSION_SEARCH_REGEX = re.compile(
     r"""^
-    ([\^\-\*]|\d+)\.([\^\-\*]|\d+)\.([\^\-\*]|\d+)
+    ([\^\-\*]|\d+)\.([\^\-\*]|\d+)(?:\.([\^\-\*]|\d+))?
     (?:\-([^\@\s\+]+))?
     (?:\+([\d\w]+))?
     (?:\@([\^\-\*]|[\dT\+\:Z\ \^\-]+))?
@@ -125,6 +131,8 @@ def _parse(s: str) -> dict:
         major = int(major)
     if minor.isnumeric():
         minor = int(minor)
+    if patch is None:
+        patch = "*"
     if patch.isnumeric():
         patch = int(patch)
     if branch is not None:
@@ -146,6 +154,7 @@ def _parse(s: str) -> dict:
 
 
 class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
+    fuzzy_text: str | None
     folder: str | None
     build_hash: str | None
     major: int | str
@@ -153,6 +162,8 @@ class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
     patch: int | str
     branch: tuple[str, ...] | None
     commit_time: datetime.datetime | str | None
+    after: datetime.datetime | None
+    before: datetime.datetime | None
 
 
 class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/patch
@@ -160,11 +171,15 @@ class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/p
     build_hash: str | None
     branch: tuple[str, ...] | None
     commit_time: datetime.datetime | str | None
+    after: datetime.datetime | None
+    before: datetime.datetime | None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class VersionSearchQuery:
     """A dataclass for a search query. The attributes are ordered by priority"""
+
+    fuzzy_text: str | None = None
 
     folder: str | None = None
 
@@ -186,6 +201,12 @@ class VersionSearchQuery:
     commit_time: datetime.datetime | str | None = None
     "When the build was made (in UTC)"
 
+    after: datetime.datetime | None = None
+    "Filter builds after this date"
+
+    before: datetime.datetime | None = None
+    "Filter builds before this date"
+
     def __post_init__(self):
         for pos in (self.major, self.minor, self.patch, self.commit_time):
             if isinstance(pos, str) and pos not in ["^", "*", "-"]:
@@ -196,7 +217,7 @@ class VersionSearchQuery:
             raise ValueError("branch cannot be temporally matched")
 
     @classmethod
-    def parse(cls, s: str):
+    def parse(cls, s: str) -> Self:
         """Parse a query from a string. does not support branch and commit_time"""
 
         return cls(**_parse(s))
@@ -241,6 +262,9 @@ class VersionSearchQuery:
         d.update({place: getattr(other, place) for place in other.relevant_places()})
         return self.__class__(**d)
 
+    def with_fuzzy_text(self, fuzzy_text: str | None = None):
+        return replace(self, fuzzy_text=fuzzy_text)
+
     def with_folder(self, folder: str | None = None):
         return replace(self, folder=folder)
 
@@ -252,6 +276,12 @@ class VersionSearchQuery:
 
     def with_commit_time(self, commit_time: datetime.datetime | str | None = None):
         return replace(self, commit_time=commit_time)
+
+    def with_after(self, after: datetime.datetime | None = None):
+        return replace(self, after=after)
+
+    def with_before(self, before: datetime.datetime | None = None):
+        return replace(self, before=before)
 
     def relevant_places(self) -> tuple[str, ...]:
         return _relevant_places(self)
@@ -272,28 +302,55 @@ def _relevant_places(vsq: VersionSearchQuery) -> tuple[str, ...]:
 
 
 def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) -> list[BasicBuildInfo]:
-    versions = list(versions)
+    versions: list[BasicBuildInfo] = list(versions)
     relevant_places = s.relevant_places()
     for place in relevant_places:
         getter = attrgetter(place)
         p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
-        if p == "*" or p is None:
-            continue  # all versions match (should be unreachable due to relevant_places)
-        if p == "^":
-            # get the max number for `place` in version
-            max_p = max(getter(v) for v in versions)
-
-            versions = [v for v in versions if getter(v) == max_p]
-        elif p == "-":
-            # get the min number for `place` in version
-            min_p = min(getter(v) for v in versions)
-
-            versions = [v for v in versions if getter(v) == min_p]
-        elif isinstance(p, tuple):
-            versions = [v for v in versions if any(getter(v) == q for q in p)]
-        else:
-            versions = [v for v in versions if getter(v) == p]
+        match (place, p):
+            case ("after", time):
+                versions = [v for v in versions if v.commit_time >= time]
+            case ("before", time):
+                versions = [v for v in versions if v.commit_time <= time]
+            case ("fuzzy_text", txt):
+                versions = fuzzy_search_by_str(versions, txt)
+            case (_, "^"):
+                # get the max number for `place` in version
+                max_p = max(getter(v) for v in versions)
+                versions = [v for v in versions if getter(v) == max_p]
+            case (_, "-"):
+                # get the min number for `place` in version
+                min_p = min(getter(v) for v in versions)
+                versions = [v for v in versions if getter(v) == min_p]
+            case (_, p) if isinstance(p, tuple):
+                versions = [v for v, x in zip(versions, map(getter, versions), strict=True) if any(x == q for q in p)]
+            case (_, p):
+                versions = [v for v in versions if getter(v) == p]
 
         if not versions:
             return versions
     return list(versions)
+
+
+def fuzzy_search_by_str(lst: list[BasicBuildInfo], search: str) -> list[BasicBuildInfo]:
+    search = search.casefold()
+    from fuzzysearch import Match, find_near_matches
+
+    ret = []
+    l_dist = 0
+    while not ret and l_dist < 4:
+        for b in lst:
+            s = b.fuzzy_text.casefold()
+            matches: list[Match] = find_near_matches(
+                search,
+                s,
+                max_l_dist=l_dist,
+                max_deletions=1,
+                max_substitutions=1,
+                max_insertions=1,
+            )
+            if matches:
+                ret.append(b)
+        l_dist += 1
+
+    return ret
