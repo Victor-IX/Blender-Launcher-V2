@@ -22,6 +22,8 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def __init__(self, parent: BasePageWidget, extended_selection=False):
         super().__init__(parent)
         self.page: BasePageWidget = parent
+        self._old_sorting_type = None
+        self._old_sorting_order = None
         self.tab_filter = VersionSearchQuery.any()
         self.search_filter = None
 
@@ -150,6 +152,13 @@ class BaseListWidget(Generic[_WT], QListWidget):
     def update_search_filter(self, search_filter: VersionSearchQuery | None):
         self.search_filter = search_filter
         self.update_all_visibility()
+        if search_filter is not None:
+            self._old_sorting_type = self.page.sorting_type
+            self._old_sorting_order = self.page.sorting_order
+        else:
+            self.page.sorting_order = self._old_sorting_order
+            self.page.set_sorting_type(self._old_sorting_type, toggle_order=False)
+
 
     def update_all_visibility(self):
         visible_widgets = self.get_matching_builds(self.query)

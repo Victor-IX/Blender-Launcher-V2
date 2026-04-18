@@ -188,8 +188,8 @@ class BasePageWidget(QWidget, Generic[_WT]):
             self.HeaderWidget.hide()
             self.PlaceholderWidget.show()
 
-    def set_sorting_type(self, sorting_type):
-        if sorting_type == self.sorting_type:
+    def set_sorting_type(self, sorting_type, toggle_order=True):
+        if toggle_order and sorting_type == self.sorting_type:
             self.sorting_order = (
                 Qt.SortOrder.DescendingOrder
                 if self.sorting_order == Qt.SortOrder.AscendingOrder
