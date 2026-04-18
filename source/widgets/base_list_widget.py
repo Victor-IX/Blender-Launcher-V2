@@ -105,7 +105,6 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self.clear()
         self.widgets.clear()
         self._binfos_cache = {None: set()}
-        self._query_cache = {}
         self.visible_count_changed.emit(0)
 
     @staticmethod
