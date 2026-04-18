@@ -308,8 +308,6 @@ def match_versions(s: VersionSearchQuery, versions: Iterable[BasicBuildInfo]) ->
         getter = attrgetter(place)
         p: str | tuple[str, ...] | int | datetime.datetime | None = getter(s)
         match (place, p):
-            case ("*" | None, _):
-                ...  # all versions match (should be unreachable due to relevant_places)
             case ("after", time):
                 versions = [v for v in versions if v.commit_time >= time]
             case ("before", time):

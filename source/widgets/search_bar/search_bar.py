@@ -44,7 +44,6 @@ class SearchBarWidget(QFrame):
         self.after_checkbox.stateChanged.connect(
             lambda state: self.date_after.setEnabled(state == Qt.CheckState.Checked.value)
         )
-        self.after_checkbox.stateChanged.connect(lambda _: self.query_updated)
 
         self.before_checkbox = QCheckBox(t("act.before"), self)
         self.before_checkbox.stateChanged.connect(self.query_updated)
@@ -60,7 +59,6 @@ class SearchBarWidget(QFrame):
         self.before_checkbox.stateChanged.connect(
             lambda state: self.date_before.setEnabled(state == Qt.CheckState.Checked.value)
         )
-        self.before_checkbox.stateChanged.connect(lambda _: self.query_updated)
 
     def query_updated(self):
         self._q = self._generate_query()
