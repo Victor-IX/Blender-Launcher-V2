@@ -12,3 +12,7 @@ ctime: "コミット日時: "
 branch: "ブランチ名: "
 custom: "カスタム名: "
 fav: "お気に入り: "
+
+user_config: User Config Directory
+user_scripts: User Scripts Directory  
+user_datafiles: User Data Files Directory
