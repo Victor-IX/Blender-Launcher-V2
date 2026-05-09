@@ -779,8 +779,15 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
 def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
     args = get_args(info, exe, launch_mode)
+    extra_env = {}
+    if info.user_config_dir:
+        extra_env["BLENDER_USER_CONFIG"] = info.user_config_dir
+    if info.user_scripts_dir:
+        extra_env["BLENDER_USER_SCRIPTS"] = info.user_scripts_dir
+    if info.user_datafiles_dir:
+        extra_env["BLENDER_USER_DATAFILES"] = info.user_datafiles_dir
     logger.debug(f"Running build with args {args!s}")
-    return _popen(args)
+    return _popen(args, extra_env=extra_env or None)
 
 
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:

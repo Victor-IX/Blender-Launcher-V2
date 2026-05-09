@@ -188,6 +188,16 @@ class CustomBuildDialogWindow(BaseWindow):
         add_row(self.custom_name, t("custom_build.custom"))
         add_row(self.favorite, t("custom_build.fav"))
 
+        # User config paths
+
+        self.user_config_dir = QLineEdit(self)
+        self.user_scripts_dir = QLineEdit(self)
+        self.user_datafiles_dir = QLineEdit(self)
+
+        add_row(self.user_config_dir, t("custom_build.user_config"))
+        add_row(self.user_scripts_dir, t("custom_build.user_scripts"))
+        add_row(self.user_datafiles_dir, t("custom_build.user_datafiles"))
+
         # Label
         self.central_layout.addWidget(self.text_label)
         self.central_layout.addSpacing(10)
