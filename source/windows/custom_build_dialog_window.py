@@ -302,12 +302,12 @@ class CustomBuildDialogWindow(BaseWindow):
         if not self.hash_edit.text():
             self.hash_edit.setText(binfo.build_hash)
 
-        if binfo.user_config_dir:
-            self.user_config_dir.setText(binfo.user_config_dir)
-        if binfo.user_scripts_dir:
-            self.user_scripts_dir.setText(binfo.user_scripts_dir)
-        if binfo.user_datafiles_dir:
-            self.user_datafiles_dir.setText(binfo.user_datafiles_dir)
+        if not self.user_config_dir.text():
+            self.user_config_dir.setText(binfo.user_config_dir or "")
+        if not self.user_scripts_dir.text():
+            self.user_scripts_dir.setText(binfo.user_scripts_dir or "")
+        if not self.user_datafiles_dir.text():
+            self.user_datafiles_dir.setText(binfo.user_datafiles_dir or "")
 
         self.commit_time.setDateTime(QDateTime.fromSecsSinceEpoch(int(binfo.commit_time.timestamp())))
 
