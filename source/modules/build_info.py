@@ -326,9 +326,9 @@ class BuildInfo:
             blinfo.get("is_favorite", False),
             blinfo.get("custom_executable", ""),
             blinfo.get("is_frozen", False),
-            blinfo.get("user_config_dir"),
-            blinfo.get("user_scripts_dir"),
-            blinfo.get("user_datafiles_dir"),
+            user_config_dir=blinfo.get("user_config_dir"),
+            user_scripts_dir=blinfo.get("user_scripts_dir"),
+            user_datafiles_dir=blinfo.get("user_datafiles_dir"),
         )
 
     def to_dict(self):
