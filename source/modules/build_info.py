@@ -176,6 +176,9 @@ class BuildInfo:
     is_favorite: bool = False
     custom_executable: str | None = None
     is_frozen: bool = False
+    user_config_dir: str | None = None
+    user_scripts_dir: str | None = None
+    user_datafiles_dir: str | None = None
 
     def __post_init__(self):
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
