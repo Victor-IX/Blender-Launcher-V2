@@ -326,6 +326,9 @@ class BuildInfo:
             blinfo.get("is_favorite", False),
             blinfo.get("custom_executable", ""),
             blinfo.get("is_frozen", False),
+            blinfo.get("user_config_dir"),
+            blinfo.get("user_scripts_dir"),
+            blinfo.get("user_datafiles_dir"),
         )
 
     def to_dict(self):
@@ -341,6 +344,9 @@ class BuildInfo:
                     "is_favorite": self.is_favorite,
                     "custom_executable": self.custom_executable,
                     "is_frozen": self.is_frozen,
+                    "user_config_dir": self.user_config_dir,
+                    "user_scripts_dir": self.user_scripts_dir,
+                    "user_datafiles_dir": self.user_datafiles_dir,
                 }
             ],
         }
