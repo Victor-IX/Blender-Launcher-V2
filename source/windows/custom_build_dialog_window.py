@@ -21,9 +21,11 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout,
     QWidget,
+
 )
 from widgets.lintable_line_edit import LintableLineEdit
-from windows.base_window import BaseWindow
+from windows.base_window import (BaseWindow)
+from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -40,6 +42,27 @@ class PopupIcon(Enum):
 class CustomBuildDialogWindow(BaseWindow):
     accepted = Signal(BuildInfo)
     cancelled = Signal()
+
+    def _make_dir_picker(self, line_edit: QLineEdit):
+        btn = QPushButton("...", self)
+        btn.setFixedWidth(30)
+        btn.clicked.connect(lambda: self._pick_dir(line_edit))
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(line_edit)
+        layout.addWidget(btn)
+        widget = QWidget(self)
+        widget.setLayout(layout)
+        return widget
+
+    def _pick_dir(self, line_edit: QLineEdit):
+        folder = FileDialogWindow().get_directory(
+            parent=self,
+            title=t("custom_build.pick_dir"),
+            directory=line_edit.text() or "",
+        )
+        if folder:
+            line_edit.setText(folder)
 
     def __init__(
         self,
@@ -194,9 +217,9 @@ class CustomBuildDialogWindow(BaseWindow):
         self.user_scripts_dir = QLineEdit(self)
         self.user_datafiles_dir = QLineEdit(self)
 
-        add_row(self.user_config_dir, t("custom_build.user_config"))
-        add_row(self.user_scripts_dir, t("custom_build.user_scripts"))
-        add_row(self.user_datafiles_dir, t("custom_build.user_datafiles"))
+        add_row(self._make_dir_picker(self.user_config_dir), t("custom_build.user_config"))
+        add_row(self._make_dir_picker(self.user_scripts_dir), t("custom_build.user_scripts"))
+        add_row(self._make_dir_picker(self.user_datafiles_dir), t("custom_build.user_datafiles"))
 
         # Label
         self.central_layout.addWidget(self.text_label)
