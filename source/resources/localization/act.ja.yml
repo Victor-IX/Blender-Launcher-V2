@@ -31,6 +31,9 @@ remove_settings: 設定を削除
 
 reload: 再読み込み
 reload_tooltip: カスタムビルドをディスクから再読み込み
+search: 検索
+after: 開始
+before: 終了
 
 # 左アイコン
 launch: 起動
