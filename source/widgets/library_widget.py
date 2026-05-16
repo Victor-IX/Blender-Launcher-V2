@@ -198,7 +198,7 @@ class LibraryWidget(BaseBuildWidget):
         self.addToFavoritesAction.setIcon(self.launcher.icons.favorite)
         self.addToFavoritesAction.triggered.connect(self.add_to_favorites)
 
-        self.removeFromFavoritesAction = QAction(t("act.fav.rem"), self)
+        self.removeFromFavoritesAction = QAction(t("act.a.fav.rem"), self)
         self.removeFromFavoritesAction.setIcon(self.launcher.icons.favorite)
         self.removeFromFavoritesAction.triggered.connect(self.remove_from_favorites)
 
