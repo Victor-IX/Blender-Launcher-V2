@@ -101,12 +101,22 @@ class BaseWindow(QMainWindow):
             if launcher.isVisible():
                 x = launcher.x() + (launcher.width() - self.width()) * 0.5
                 y = launcher.y() + (launcher.height() - self.height()) * 0.5
+                screen = launcher.screen() or launcher.app.primaryScreen()
             else:
-                size = launcher.app.screens()[0].size()
-                x = (size.width() - self.width()) * 0.5
-                y = (size.height() - self.height()) * 0.5
+                screen = launcher.app.primaryScreen()
+                geo = screen.availableGeometry()
+                x = geo.left() + (geo.width() - self.width()) * 0.5
+                y = geo.top() + (geo.height() - self.height()) * 0.5
 
-            self.move(int(x), int(y))
+            # Clamp to the screen's available area so the header stays reachable when the
+            # window is taller than the screen (e.g. macOS with a high DPI scale factor).
+            avail = screen.availableGeometry()
+            max_x = avail.left() + max(0, avail.width() - self.width())
+            max_y = avail.top() + max(0, avail.height() - self.height())
+            x = max(avail.left(), min(int(x), max_x))
+            y = max(avail.top(), min(int(y), max_y))
+
+            self.move(x, y)
             event.accept()
 
     def _destroyed(self):
