@@ -160,7 +160,7 @@ class SettingsWindow(BaseWindow):
             pending_to_restart.append(
                 t("settings.connection.use_custom_tls_certificates")
                 + checkdct[self.old_use_custom_tls_certificates]
-                + "🠆"
+                + "→"
                 + checkdct[use_custom_tls_certificates]
             )
 
@@ -168,23 +168,23 @@ class SettingsWindow(BaseWindow):
             r_proxy_types = dict(zip(proxy_types.values(), proxy_types.keys(), strict=True))
 
             pending_to_restart.append(
-                f"{t('settings.connection.proxy_type')}: {r_proxy_types[self.old_proxy_type]}🠆{r_proxy_types[proxy_type]}"
+                f"{t('settings.connection.proxy_type')}: {r_proxy_types[self.old_proxy_type]}→{r_proxy_types[proxy_type]}"
             )
 
         if self.old_proxy_host != proxy_host:
-            pending_to_restart.append(f"{t('settings.connection.proxy_host')}: {self.old_proxy_host}🠆{proxy_host}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_host')}: {self.old_proxy_host}→{proxy_host}")
 
         if self.old_proxy_port != proxy_port:
-            pending_to_restart.append(f"{t('settings.connection.proxy_port')}: {self.old_proxy_port}🠆{proxy_port}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_port')}: {self.old_proxy_port}→{proxy_port}")
 
         if self.old_proxy_user != proxy_user:
-            pending_to_restart.append(f"{t('settings.connection.proxy_user')}: {self.old_proxy_user}🠆{proxy_user}")
+            pending_to_restart.append(f"{t('settings.connection.proxy_user')}: {self.old_proxy_user}→{proxy_user}")
 
         if self.old_proxy_password != proxy_password:
             pending_to_restart.append(t("settings.connection.proxy_password"))
 
         if self.old_user_id != user_id:
-            pending_to_restart.append(f"{t('settings.connection.user_id')}: {self.old_user_id}🠆{user_id}")
+            pending_to_restart.append(f"{t('settings.connection.user_id')}: {self.old_user_id}→{user_id}")
 
         """Update build check frequency"""
         check_for_new_builds_automatically = get_check_for_new_builds_automatically()
@@ -202,7 +202,7 @@ class SettingsWindow(BaseWindow):
 
         if self.old_dpi_scale_factor != dpi_scale_factor:
             pending_to_restart.append(
-                f"{t('settings.appearance.dpi_scale_factor')}: {self.old_dpi_scale_factor:.2f}🠆{dpi_scale_factor:.2f}",
+                f"{t('settings.appearance.dpi_scale_factor')}: {self.old_dpi_scale_factor:.2f}→{dpi_scale_factor:.2f}",
             )
 
         """Update worker thread count"""
@@ -210,14 +210,14 @@ class SettingsWindow(BaseWindow):
 
         if self.old_thread_count != worker_thread_count:
             pending_to_restart.append(
-                f"{t('settings.general.app.worker_count')}: {self.old_thread_count}🠆{worker_thread_count}"
+                f"{t('settings.general.app.worker_count')}: {self.old_thread_count}→{worker_thread_count}"
             )
 
         """Update language"""
         language = get_language()
 
         if self.old_language != language:
-            pending_to_restart.append(f"{t('settings.general.app.language')}: {self.old_language}🠆{language}")
+            pending_to_restart.append(f"{t('settings.general.app.language')}: {self.old_language}→{language}")
 
         return pending_to_restart
 
