@@ -1,6 +1,7 @@
 import locale
 import logging
 import os
+import subprocess
 import sys
 from enum import StrEnum
 from pathlib import Path
@@ -50,6 +51,21 @@ def _detect_os_locale() -> str:
             loc = locale.windows_locale[windll.GetUserDefaultUILanguage()]
         except (KeyError, OSError):
             loc = "en_US"
+    elif sys.platform == "darwin":
+        # On macOS, LANG and friends are not set when launched from Finder/Dock,
+        # and Qt/Python's locale detection does not consult the system settings,
+        # so read AppleLocale (e.g. "ja_JP") directly via `defaults`.
+        try:
+            result = subprocess.run(
+                ["defaults", "read", "-g", "AppleLocale"],
+                capture_output=True,
+                text=True,
+                timeout=2,
+                check=True,
+            )
+            loc = result.stdout.strip() or "en_US"
+        except (subprocess.SubprocessError, OSError):
+            loc = os.environ.get("LANG") or locale.getlocale()[0] or "en_US"
     elif (x := os.environ.get("LANG")) is not None:
         loc = x
     elif (x := locale.getlocale()[0]) is not None:
