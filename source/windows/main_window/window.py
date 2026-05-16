@@ -275,7 +275,7 @@ class BlenderLauncher(BaseWindow):
         else:
             self.dlg = Popup.warning(
                 parent=self,
-                message=t("err.folder_invalid"),
+                message=t("msg.err.folder_invalid"),
                 buttons=Popup.Button.RETRY,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)

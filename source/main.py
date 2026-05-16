@@ -263,7 +263,7 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
     else:
         logging.error("Failed to set library folder")
         Popup.warning(
-            message=t("msg.err.library_invalid"),
+            message=t("msg.err.folder_invalid"),
             buttons=Popup.Button.QUIT,
             app=app,
         ).show()
