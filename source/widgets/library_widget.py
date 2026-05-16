@@ -378,7 +378,7 @@ class LibraryWidget(BaseBuildWidget):
             self.launch(launch_mode=LaunchOpenLast())
 
     def mouseReleaseEvent(self, event):
-        if event.button == Qt.MouseButton.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             if self.show_new is True:
                 self.build_state_widget.setNewBuild(False)
                 self.show_new = False
