@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
@@ -73,6 +74,17 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
     def _cache_widget(self, widget):
         self._binfos_cache.setdefault(self.basic_from_widget(widget), set()).add(widget)
+
+    def widget_with_link(self, link: Path) -> _WT | None:
+        # LibraryWidget/LibraryDamagedWidget use `link`; UnrecoBuildWidget uses `path`.
+        try:
+            return next(
+                widget
+                for widget in self.widgets
+                if getattr(widget, "link", None) == link or getattr(widget, "path", None) == link
+            )
+        except StopIteration:
+            return None
 
     def remove_item(self, item):
         if (w := self.itemWidget(item)) is not None:
@@ -180,8 +192,12 @@ class BaseListWidget(Generic[_WT], QListWidget):
 
         item.setHidden(not success)
 
-    def clear_by_branch(self, branch: str):
-        widgets_to_remove = [widget for widget in self.widgets if widget.build_info.branch == branch]
+    def clear_by_folder(self, folder: str):
+        def widget_folder(w):
+            path = getattr(w, "link", None) or getattr(w, "path", None)
+            return Path(path).parent.name if path is not None else None
+
+        widgets_to_remove = [widget for widget in self.widgets if widget_folder(widget) == folder]
         for widget in widgets_to_remove:
             items = [self.item(i) for i in range(self.count()) if self.itemWidget(self.item(i)) == widget]
             for item in items:
