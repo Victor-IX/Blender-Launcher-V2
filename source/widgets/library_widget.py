@@ -927,6 +927,13 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def add_to_favorites(self):
+        # Replace any stale favourites entry: __init__ caches display state from
+        # build_info, so reusing the widget would show stale labels after edits.
+        # Path-keyed because BuildInfo.__eq__ ignores path.
+        stale = self.launcher.FavoritesPage.list_widget.widget_with_link(self.link)
+        if stale is not None:
+            self.launcher.FavoritesPage.list_widget.remove_item(stale.item)
+
         item = BaseListWidgetItem()
         widget = LibraryWidget(
             self.launcher,
@@ -936,8 +943,7 @@ class LibraryWidget(BaseBuildWidget):
             build_info=self.build_info,
             parent_widget=self,
         )
-        if not self.launcher.FavoritesPage.list_widget.contains_build_info(self.build_info):
-            self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
+        self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
         self.child_widget = widget
 
         self.removeFromFavoritesAction.setVisible(True)
@@ -948,13 +954,21 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def remove_from_favorites(self):
-        widget = self.parent_widget or self
-        assert widget.child_widget is not None
-        self.launcher.FavoritesPage.list_widget.remove_item(widget.child_widget.item)
+        # Either side may be None if a reload destroyed its counterpart.
+        if self.list_widget is self.launcher.FavoritesPage.list_widget:
+            fav_widget = self
+            lib_widget = self.parent_widget
+        else:
+            lib_widget = self
+            fav_widget = self.child_widget
 
-        widget.child_widget = None
-        widget.removeFromFavoritesAction.setVisible(False)
-        widget.addToFavoritesAction.setVisible(True)
+        if fav_widget is not None:
+            self.launcher.FavoritesPage.list_widget.remove_item(fav_widget.item)
+
+        if lib_widget is not None:
+            lib_widget.child_widget = None
+            lib_widget.removeFromFavoritesAction.setVisible(False)
+            lib_widget.addToFavoritesAction.setVisible(True)
 
         self.build_info.is_favorite = False
         self.build_info_writer = WriteBuildTask(self.link, self.build_info)
@@ -1125,6 +1139,14 @@ class LibraryWidget(BaseBuildWidget):
         self.show_folder(path)
 
     def _destroyed(self):
+        # Sever cross-links so the surviving counterpart doesn't dereference a dead C++ object.
+        if self.child_widget is not None:
+            self.child_widget.parent_widget = None
+            self.child_widget = None
+        if self.parent_widget is not None:
+            self.parent_widget.child_widget = None
+            self.parent_widget = None
+
         if self.launcher.quick_launch_handler.quick_launch_build == self:
             self.launcher.quick_launch_handler.remove_quick_launch()
 

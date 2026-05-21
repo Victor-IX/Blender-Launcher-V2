@@ -631,7 +631,7 @@ class BlenderLauncher(BaseWindow):
         self.task_queue.append(self.library_drawer)
 
     def reload_custom_builds(self):
-        self.LibraryPage.list_widget.clear_by_branch("custom")
+        self.LibraryPage.list_widget.clear_by_folder("custom")
         self.library_drawer = DrawLibraryTask(["custom"])
         self.library_drawer.found.connect(self.draw_to_library)
         self.library_drawer.unrecognized.connect(self.draw_unrecognized)
@@ -781,6 +781,16 @@ class BlenderLauncher(BaseWindow):
         self.task_queue.append(a)
 
     def draw_read_library(self, path, show_new, binfo: BuildInfo, successful_read_callback):
+        # Scan callbacks are uncancellable, so a stale read can land after a
+        # new scan starts. Dedupe; replace any damaged placeholder.
+        existing = self.LibraryPage.list_widget.widget_with_link(path)
+        if isinstance(existing, LibraryWidget):
+            if successful_read_callback is not None:
+                successful_read_callback(existing)
+            return existing
+        if existing is not None:
+            self.LibraryPage.list_widget.remove_item(existing.item)
+
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
         widget.add_as_quick_launch.connect(self.quick_launch_handler.set_quick_launch_build)
@@ -796,6 +806,9 @@ class BlenderLauncher(BaseWindow):
     def draw_damaged_library(self, path: Path, exc: Exception | None = None):
         if exc:
             logger.error(f"Failed to read build info for {path}: {exc}")
+
+        if self.LibraryPage.list_widget.widget_with_link(path) is not None:
+            return None
 
         item = BaseListWidgetItem()
         widget = LibraryDamagedWidget(self, item, path, self.LibraryPage.list_widget)
@@ -816,6 +829,9 @@ class BlenderLauncher(BaseWindow):
             "upbge-weekly",
             "custom",
         ):
+            return
+
+        if self.LibraryPage.list_widget.widget_with_link(path) is not None:
             return
 
         item = BaseListWidgetItem()
