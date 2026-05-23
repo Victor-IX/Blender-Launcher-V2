@@ -85,8 +85,10 @@ def get_environment():
     return env
 
 
-def _popen(args):
+def _popen(args, extra_env: dict | None = None):
     env = get_environment()
+    if extra_env:
+        env.update(extra_env)
     if get_platform() == "Windows":
         DETACHED_PROCESS = 0x00000008
         return Popen(

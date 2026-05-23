@@ -12,3 +12,7 @@ ctime: "提交时间: "
 branch: "分支名称: "
 custom: "自定义名称: "
 fav: "收藏: "
+
+user_config: User Config Directory
+user_scripts: User Scripts Directory  
+user_datafiles: User Data Files Directory

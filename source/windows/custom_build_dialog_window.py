@@ -21,9 +21,11 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout,
     QWidget,
+
 )
 from widgets.lintable_line_edit import LintableLineEdit
-from windows.base_window import BaseWindow
+from windows.base_window import (BaseWindow)
+from windows.file_dialog_window import FileDialogWindow
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -40,6 +42,27 @@ class PopupIcon(Enum):
 class CustomBuildDialogWindow(BaseWindow):
     accepted = Signal(BuildInfo)
     cancelled = Signal()
+
+    def _make_dir_picker(self, line_edit: QLineEdit):
+        btn = QPushButton("...", self)
+        btn.setFixedWidth(30)
+        btn.clicked.connect(lambda: self._pick_dir(line_edit))
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(line_edit)
+        layout.addWidget(btn)
+        widget = QWidget(self)
+        widget.setLayout(layout)
+        return widget
+
+    def _pick_dir(self, line_edit: QLineEdit):
+        folder = FileDialogWindow().get_directory(
+            parent=self,
+            title=t("custom_build.pick_dir"),
+            directory=line_edit.text() or "",
+        )
+        if folder:
+            line_edit.setText(folder)
 
     def __init__(
         self,
@@ -188,6 +211,16 @@ class CustomBuildDialogWindow(BaseWindow):
         add_row(self.custom_name, t("custom_build.custom"))
         add_row(self.favorite, t("custom_build.fav"))
 
+        # User config paths
+
+        self.user_config_dir = QLineEdit(self)
+        self.user_scripts_dir = QLineEdit(self)
+        self.user_datafiles_dir = QLineEdit(self)
+
+        add_row(self._make_dir_picker(self.user_config_dir), t("custom_build.user_config"))
+        add_row(self._make_dir_picker(self.user_scripts_dir), t("custom_build.user_scripts"))
+        add_row(self._make_dir_picker(self.user_datafiles_dir), t("custom_build.user_datafiles"))
+
         # Label
         self.central_layout.addWidget(self.text_label)
         self.central_layout.addSpacing(10)
@@ -215,6 +248,9 @@ class CustomBuildDialogWindow(BaseWindow):
             self.custom_name.text(),
             self.favorite.isChecked(),
             self.executable_choice.text(),
+            user_config_dir=self.user_config_dir.text() or None,
+            user_scripts_dir=self.user_scripts_dir.text() or None,
+            user_datafiles_dir=self.user_datafiles_dir.text() or None,
         )
 
     def accept(self):
@@ -288,6 +324,13 @@ class CustomBuildDialogWindow(BaseWindow):
             self.subversion_edit.setText(str(binfo.subversion))
         if not self.hash_edit.text():
             self.hash_edit.setText(binfo.build_hash)
+
+        if not self.user_config_dir.text():
+            self.user_config_dir.setText(binfo.user_config_dir or "")
+        if not self.user_scripts_dir.text():
+            self.user_scripts_dir.setText(binfo.user_scripts_dir or "")
+        if not self.user_datafiles_dir.text():
+            self.user_datafiles_dir.setText(binfo.user_datafiles_dir or "")
 
         self.commit_time.setDateTime(QDateTime.fromSecsSinceEpoch(int(binfo.commit_time.timestamp())))
 

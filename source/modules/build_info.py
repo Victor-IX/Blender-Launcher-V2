@@ -176,6 +176,9 @@ class BuildInfo:
     is_favorite: bool = False
     custom_executable: str | None = None
     is_frozen: bool = False
+    user_config_dir: str | None = None
+    user_scripts_dir: str | None = None
+    user_datafiles_dir: str | None = None
 
     def __post_init__(self):
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
@@ -326,6 +329,9 @@ class BuildInfo:
             blinfo.get("is_favorite", False),
             blinfo.get("custom_executable", ""),
             blinfo.get("is_frozen", False),
+            user_config_dir=blinfo.get("user_config_dir"),
+            user_scripts_dir=blinfo.get("user_scripts_dir"),
+            user_datafiles_dir=blinfo.get("user_datafiles_dir"),
         )
 
     def to_dict(self):
@@ -341,6 +347,9 @@ class BuildInfo:
                     "is_favorite": self.is_favorite,
                     "custom_executable": self.custom_executable,
                     "is_frozen": self.is_frozen,
+                    "user_config_dir": self.user_config_dir,
+                    "user_scripts_dir": self.user_scripts_dir,
+                    "user_datafiles_dir": self.user_datafiles_dir,
                 }
             ],
         }
@@ -773,8 +782,15 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
 def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
     args = get_args(info, exe, launch_mode)
+    extra_env = {}
+    if info.user_config_dir:
+        extra_env["BLENDER_USER_CONFIG"] = info.user_config_dir
+    if info.user_scripts_dir:
+        extra_env["BLENDER_USER_SCRIPTS"] = info.user_scripts_dir
+    if info.user_datafiles_dir:
+        extra_env["BLENDER_USER_DATAFILES"] = info.user_datafiles_dir
     logger.debug(f"Running build with args {args!s}")
-    return _popen(args)
+    return _popen(args, extra_env=extra_env or None)
 
 
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:

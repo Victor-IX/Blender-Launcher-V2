@@ -12,3 +12,7 @@ ctime: "Date du commit : "
 branch: "Nom de la branche : "
 custom: "Nom personnalisé : "
 fav: "Favori : "
+
+user_config: User Config Directory
+user_scripts: User Scripts Directory  
+user_datafiles: User Data Files Directory
