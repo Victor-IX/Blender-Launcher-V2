@@ -39,7 +39,12 @@ def perform_uninstall(quiet: bool = False) -> None:
         sys.exit(1)
 
     if not quiet:
-        answer = input("Are you sure you want to uninstall Blender Launcher? [y/N] ")
+        try:
+            answer = input("Are you sure you want to uninstall Blender Launcher? [y/N] ")
+        except (RuntimeError, EOFError):
+            # stdin is unavailable (e.g. launched without a console via WinGet)
+            logger.info("stdin not available, proceeding with uninstall automatically")
+            answer = "y"
         if answer.lower() not in ("y", "yes"):
             logger.info("Uninstall cancelled by user")
             sys.exit(0)

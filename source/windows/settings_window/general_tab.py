@@ -310,7 +310,7 @@ class GeneralTabWidget(SettingsFormWidget):
             )
 
     def unregister_from_winget(self):
-        success = unregister_from_winget()
+        success = unregister_from_winget(sys.executable, str(self.launcher.version))
         if success:
             set_auto_register_winget(False)
             self.refresh_winget_buttons()

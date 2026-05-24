@@ -147,12 +147,12 @@ def unregister_windows_filetypes():
 
     # remove it from the OpenWithProgids list
     with (
+        contextlib.suppress(FileNotFoundError),
         winreg.OpenKeyEx(
             winreg.HKEY_CURRENT_USER,
             r"Software\Classes\.blend\OpenWithProgids",
             access=winreg.KEY_SET_VALUE,
         ) as command_key,
-        contextlib.suppress(FileNotFoundError),
     ):
         winreg.DeleteValue(command_key, "blenderlauncherv2.blend")
         logging.debug("Deleted value blenderlauncherv2.blend from .blend\\OpenWithProgids")
@@ -160,12 +160,12 @@ def unregister_windows_filetypes():
     # remove it from the OpenWithProgids list for .blend1
     # we need to keep this for deprecation purposes
     with (
+        contextlib.suppress(FileNotFoundError),
         winreg.OpenKeyEx(
             winreg.HKEY_CURRENT_USER,
             r"Software\Classes\.blend1\OpenWithProgids",
             access=winreg.KEY_SET_VALUE,
         ) as command_key,
-        contextlib.suppress(FileNotFoundError),
     ):
         winreg.DeleteValue(command_key, "blenderlauncherv2.blend")
         logging.debug("Deleted value blenderlauncherv2.blend from .blend1\\OpenWithProgids")
