@@ -126,8 +126,12 @@ class ScraperPatch(ScraperAutomated):
         if unlabeled:
             self.label_fetcher.cache_latest_pages()
 
+            still_missing = [n for n, _ in unlabeled if self.label_fetcher.get_cached(n) is None]
+            if still_missing:
+                self.label_fetcher.fetch_parallel(still_missing)
+
         for n, build in unlabeled:
-            name = self.label_fetcher.get(n)
+            name = self.label_fetcher.get_cached(n)
             if name is not None:
                 build.custom_name = f"{n}: {name}" if prepend_prnum else name
             yield build

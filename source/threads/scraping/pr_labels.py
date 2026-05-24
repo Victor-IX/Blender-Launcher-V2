@@ -1,5 +1,6 @@
 import json
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Self, TypedDict
@@ -50,7 +51,6 @@ class PrLabelFetcher:
         if r is None:
             logger.error("Failed to fetch PR labels")
             return None
-
         try:
             return json.loads(r.data)
         except json.JSONDecodeError as e:
@@ -84,6 +84,19 @@ class PrLabelFetcher:
             self.__add_to_cache(x, pr["title"].strip())
             return self._label_cache[x]
         return None
+
+    def fetch_parallel(self, prs: list[int], max_workers: int = 10) -> None:
+        """Fetch multiple PRs concurrently and populate the cache."""
+        if not prs:
+            return
+
+        with ThreadPoolExecutor(max_workers=min(max_workers, len(prs))) as pool:
+            futures = {pool.submit(self.fetch_one, pr): pr for pr in prs}
+            for future in as_completed(futures):
+                pr = futures[future]
+                result = future.result()
+                if result is not None:
+                    self.__add_to_cache(pr, result["title"].strip())
 
     def __add_to_cache(self, x: int, v: str):
         self._label_cache[x] = v
