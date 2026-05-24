@@ -681,12 +681,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
             if cexe:
                 b3d_exe = library_folder / info.link / cexe
             else:
-                if (
-                    get_launch_blender_no_console()
-                    and (launcher := (library_folder / info.link / "blender-launcher.exe")).exists()
-                ):
-                    b3d_exe = launcher
-                elif (bfa_exe := (library_folder / info.link / "bforartists.exe")).exists():
+                if (bfa_exe := (library_folder / info.link / "bforartists.exe")).exists():
                     b3d_exe = bfa_exe
                 else:
                     b3d_exe = library_folder / info.link / "blender.exe"
@@ -774,7 +769,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
     args = get_args(info, exe, launch_mode)
     logger.debug(f"Running build with args {args!s}")
-    return _popen(args)
+    return _popen(args, no_console=get_launch_blender_no_console())
 
 
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:

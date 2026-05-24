@@ -85,21 +85,35 @@ def get_environment():
     return env
 
 
-def _popen(args):
+def _popen(args, no_console: bool = True):
     env = get_environment()
     if get_platform() == "Windows":
-        DETACHED_PROCESS = 0x00000008
-        return Popen(
-            args,
-            shell=True,
-            stdin=None,
-            stdout=None,
-            stderr=None,
-            close_fds=True,
-            creationflags=DETACHED_PROCESS,
-            start_new_session=True,
-            env=env,
-        )
+        from subprocess import CREATE_NO_WINDOW
+
+        if no_console:
+            return Popen(
+                args,
+                shell=False,
+                stdin=None,
+                stdout=None,
+                stderr=None,
+                close_fds=True,
+                creationflags=CREATE_NO_WINDOW,
+                start_new_session=True,
+                env=env,
+            )
+        else:
+            CREATE_NEW_CONSOLE = 0x00000010
+            return Popen(
+                args,
+                shell=False,
+                stdin=None,
+                stdout=None,
+                stderr=None,
+                close_fds=True,
+                creationflags=CREATE_NEW_CONSOLE,
+                env=env,
+            )
 
     return Popen(
         args,

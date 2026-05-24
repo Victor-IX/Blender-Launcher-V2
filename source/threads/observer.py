@@ -15,16 +15,17 @@ class Observer(QThread):
 
     def run(self):
         while self.parent:
-            for proc in self.processes:
-                if proc.poll() is not None:
-                    proc.kill()
-                    self.processes.remove(proc)
-                    proc_count = len(self.processes)
+            finished = [proc for proc in self.processes if proc.poll() is not None]
+            for proc in finished:
+                proc.kill()
+                self.processes.remove(proc)
 
-                    if proc_count > 0:
-                        self.count_changed.emit(proc_count)
-                    else:
-                        return
+            if finished:
+                proc_count = len(self.processes)
+                if proc_count > 0:
+                    self.count_changed.emit(proc_count)
+                else:
+                    return
 
             QThread.sleep(1)
 
