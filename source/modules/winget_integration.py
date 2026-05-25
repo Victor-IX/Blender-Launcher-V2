@@ -170,7 +170,7 @@ def _update_winget_tracking_key(winreg, package_id: str, exe_path: Path, version
                     winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, str(exe_path))
                     winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f'"{exe_path}" uninstall')
                     winreg.SetValueEx(key, "QuietUninstallString", 0, winreg.REG_SZ, f'"{exe_path}" uninstall --quiet')
-                logger.info(f"Updated winget tracking key: {subkey_name} → v{version}")
+                logger.info(f"Updated winget tracking key: {subkey_name} -> v{version}")
     except FileNotFoundError:
         pass
 
