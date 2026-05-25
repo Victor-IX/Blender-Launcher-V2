@@ -1,5 +1,5 @@
 {
-    "api_file_version": "22.0",
+    "api_file_version": "23.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -3495,6 +3495,24 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.2/blender-4.2.21-windows-x64.zip",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.2.21",
+                                "build_hash": null,
+                                "commit_time": "2026-05-19T07:21:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.2/blender-4.2.3-windows-x64.zip",
                     {
                         "file_version": "1.5",
@@ -3621,7 +3639,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-04-21T07:41:00"
+            "modified_date": "2026-05-19T07:23:00"
         },
         "4.3.0": {
             "assets": [
@@ -3960,6 +3978,42 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.10-windows-arm64.zip",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.10",
+                                "build_hash": null,
+                                "commit_time": "2026-05-19T07:24:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.10-windows-x64.zip",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.10",
+                                "build_hash": null,
+                                "commit_time": "2026-05-19T07:23:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.5/blender-4.5.2-windows-arm64.zip",
                     {
                         "file_version": "1.5",
@@ -4248,7 +4302,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-04-21T07:41:00"
+            "modified_date": "2026-05-19T07:24:00"
         },
         "5.0.0": {
             "assets": [
@@ -4400,9 +4454,45 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender5.1/blender-5.1.2-windows-arm64.zip",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "5.1.2",
+                                "build_hash": null,
+                                "commit_time": "2026-05-19T07:10:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender5.1/blender-5.1.2-windows-x64.zip",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "5.1.2",
+                                "build_hash": null,
+                                "commit_time": "2026-05-19T07:10:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2026-04-14T07:28:00"
+            "modified_date": "2026-05-19T07:10:00"
         }
     }
 }
