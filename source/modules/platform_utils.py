@@ -88,9 +88,14 @@ def get_environment():
 def _popen(args, no_console: bool = True):
     env = get_environment()
     if get_platform() == "Windows":
-        from subprocess import CREATE_NO_WINDOW
+        import subprocess
+
+        CREATE_NEW_CONSOLE = 0x00000010
 
         if no_console:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = 0  # SW_HIDE
             return Popen(
                 args,
                 shell=False,
@@ -98,12 +103,12 @@ def _popen(args, no_console: bool = True):
                 stdout=None,
                 stderr=None,
                 close_fds=True,
-                creationflags=CREATE_NO_WINDOW,
+                creationflags=CREATE_NEW_CONSOLE,
+                startupinfo=startupinfo,
                 start_new_session=True,
                 env=env,
             )
         else:
-            CREATE_NEW_CONSOLE = 0x00000010
             return Popen(
                 args,
                 shell=False,
