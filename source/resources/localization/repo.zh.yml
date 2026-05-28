@@ -1,6 +1,7 @@
 stable_tooltip: 生产就绪的构建版本。
 daily_tooltip: 每天创建的构建版本。包含最新功能和错误修复，但可能不稳定。
 experimental_tooltip: 这些包含可能进入官方Blender版本的新功能。可能非常不稳定。
+bforartists_tooltip: 一个旨在改善用户界面的热门Blender分支。
 upbge_tooltip: UPBGE稳定版构建版本 - 用于游戏开发的Blender分支。
 upbge_weekly_tooltip: 包含最新功能的UPBGE每周构建版本。
 

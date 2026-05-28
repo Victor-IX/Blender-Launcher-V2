@@ -1,11 +1,13 @@
 
 
 general:
+  label: General
   app:
     label: Application
     library_folder: "Library Folder:"
 
     language: Language
+    language_auto: Auto
     language_tooltip: |
       Select the display language for Blender Launcher.
       "Auto" detects your system language automatically.
@@ -97,6 +99,7 @@ general:
 
 
 appearance:
+  label: Appearance
   window_related: Window Related
   use_system_titlebar: Use System Title Bar
   use_system_titlebar_tooltip: |
@@ -142,6 +145,7 @@ appearance:
       DEFAULT: Stable Releases
 
 connection:
+  label: Connection
   proxy_settings: Proxy
   use_custom_tls_certificates: Use Custom TLS Certificates
   use_custom_tls_certificates_tooltip: |
@@ -187,6 +191,7 @@ connection:
     Consider installing keyring support for your system.
 
 blender_builds:
+  label: Blender Builds
   visibility_and_downloading: Visibility and Downloading
   checking_for_builds: Checking For Builds
   minimum_stable_blender_version_tooltip: |

@@ -1,9 +1,11 @@
 
 
 general:
+  label: Général
   app:
     label: Application
     library_folder: "Dossier de la bibliothèque :"
+    language_auto: Auto
 
     system_start: Lancer au démarrage du système
     system_start_tooltip: |
@@ -90,6 +92,7 @@ general:
 
 
 appearance:
+  label: Apparence
   window_related: Fenêtrage
   use_system_titlebar: Utiliser la barre de titre système
   use_system_titlebar_tooltip: |
@@ -135,6 +138,7 @@ appearance:
       PAR DÉFAUT : Versions stables
 
 connection:
+  label: Connexion
   proxy_settings: Proxy
   use_custom_tls_certificates: Utiliser des certificats TLS personnalisés
   use_custom_tls_certificates_tooltip: |
@@ -180,6 +184,7 @@ connection:
     Envisagez d'installer le support du trousseau de clés pour votre système.
 
 blender_builds:
+  label: Builds Blender
   visibility_and_downloading: Visibilité et téléchargement
   checking_for_builds: Vérification des builds
   minimum_stable_blender_version_tooltip: |

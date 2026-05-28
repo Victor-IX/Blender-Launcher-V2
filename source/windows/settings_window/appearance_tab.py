@@ -85,7 +85,7 @@ class AppearanceTabWidget(SettingsFormWidget):
         # Tabs
         with self.group("settings.appearance.tabs.label") as grp:
             self.DefaultTabComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_tab")
-            self.DefaultTabComboBox.addItems(list(tabs.keys()))
+            self.DefaultTabComboBox.addItems([t(f"act.tabs.{name.lower()}") for name in tabs])
             self.DefaultTabComboBox.setToolTip(t("settings.appearance.tabs.default_tab_tooltip"))
             self.DefaultTabComboBox.setCurrentIndex(get_default_tab())
             self.DefaultTabComboBox.activated.connect(set_default_tab)
@@ -97,16 +97,28 @@ class AppearanceTabWidget(SettingsFormWidget):
                 setter=self.toggle_sync_library_and_downloads_pages,
             )
 
+            page_label_keys = {
+                "stable": "act.tabs.stable",
+                "daily": "act.tabs.daily",
+                "experimental": "act.tabs.experimental",
+                "upbge-weekly": "act.tabs.upbge_weekly",
+                "custom": "act.tabs.custom",
+            }
+
             # Default Library Page
             self.DefaultLibraryPageComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_library_page")
-            self.DefaultLibraryPageComboBox.addItems(list(library_pages))
+            self.DefaultLibraryPageComboBox.addItems(
+                [t(page_label_keys[v]) if v in page_label_keys else name for name, v in library_pages.items()]
+            )
             self.DefaultLibraryPageComboBox.setToolTip(t("settings.appearance.tabs.default_library_page_tooltip"))
             self.DefaultLibraryPageComboBox.setCurrentIndex(get_default_library_page())
             self.DefaultLibraryPageComboBox.activated.connect(self.change_default_library_page)
 
             # Default Downloads Page
             self.DefaultDownloadsPageComboBox = grp.add(QComboBox(), "settings.appearance.tabs.default_downloads_page")
-            self.DefaultDownloadsPageComboBox.addItems(list(downloads_pages))
+            self.DefaultDownloadsPageComboBox.addItems(
+                [t(page_label_keys[v]) if v in page_label_keys else name for name, v in downloads_pages.items()]
+            )
             self.DefaultDownloadsPageComboBox.setToolTip(t("settings.appearance.tabs.default_downloads_page_tooltip"))
             self.DefaultDownloadsPageComboBox.setCurrentIndex(get_default_downloads_page())
             self.DefaultDownloadsPageComboBox.activated.connect(self.change_default_downloads_page)
