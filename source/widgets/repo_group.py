@@ -25,21 +25,21 @@ class RepoGroup(QFrame):
         self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
 
         self.stable_repo = RepoUserView(
-            "Stable",
+            t("act.tabs.stable"),
             t("repo.stable_tooltip"),
             library=get_show_stable_builds(),
             download=get_scrape_stable_builds(),
             parent=self,
         )
         self.daily_repo = RepoUserView(
-            "Daily",
+            t("act.tabs.daily"),
             t("repo.daily_tooltip"),
             library=get_show_daily_builds(),
             download=get_scrape_daily_builds(),
             parent=self,
         )
         self.experimental_repo = RepoUserView(
-            "Experimental and Patch",
+            t("act.tabs.experimental_and_patch"),
             t("repo.experimental_tooltip"),
             library=get_show_experimental_and_patch_builds(),
             download=get_scrape_experimental_builds(),
@@ -47,7 +47,7 @@ class RepoGroup(QFrame):
         )
         self.bforartists_repo = RepoUserView(
             "Bforartists",
-            "A popular fork of Blender with the goal of improving the UI.",
+            t("repo.bforartists_tooltip"),
             library=get_show_bfa_builds(),
             download=get_scrape_bfa_builds(),
             parent=self,
@@ -60,7 +60,7 @@ class RepoGroup(QFrame):
             parent=self,
         )
         self.upbge_weekly_repo = RepoUserView(
-            "UPBGE Weekly",
+            t("act.tabs.upbge_weekly"),
             t("repo.upbge_weekly_tooltip"),
             library=get_show_upbge_weekly_builds(),
             download=get_scrape_upbge_weekly_builds(),

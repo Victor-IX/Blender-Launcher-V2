@@ -1,3 +1,15 @@
+# onglets
+tabs:
+  library: Bibliothèque
+  downloads: Téléchargements
+  favorites: Favoris
+  stable: Stable
+  daily: Quotidien
+  experimental: Expérimental
+  experimental_and_patch: Expérimental et Patch
+  custom: Personnalisé
+  upbge_weekly: UPBGE hebdomadaire
+
 # popups
 ok: Ok
 accept: Accepter

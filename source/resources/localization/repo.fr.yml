@@ -1,6 +1,7 @@
 stable_tooltip: Builds prêts pour la production.
 daily_tooltip: Builds créés chaque jour. Ils contiennent les dernières fonctionnalités et corrections de bugs, mais peuvent être instables.
 experimental_tooltip: Ceux-ci contiennent de nouvelles fonctionnalités qui pourraient être intégrées dans les versions officielles de Blender. Ils peuvent être très instables.
+bforartists_tooltip: Un fork populaire de Blender visant à améliorer l'interface utilisateur.
 upbge_tooltip: Builds stables UPBGE - fork de Blender pour le développement de jeux.
 upbge_weekly_tooltip: Builds hebdomadaires UPBGE avec les dernières fonctionnalités.
 

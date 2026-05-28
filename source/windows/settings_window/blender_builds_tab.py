@@ -272,7 +272,19 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 setter=self.toggle_mark_as_favorite,
             ) as fav:
                 self.MarkAsFavorite = fav.add(QComboBox())
-                self.MarkAsFavorite.addItems([fav for fav in favorite_pages if fav != "Disable"])
+                fav_label_keys = {
+                    "stable": "act.tabs.stable",
+                    "daily": "act.tabs.daily",
+                    "experimental": "act.tabs.experimental",
+                    "upbge-weekly": "act.tabs.upbge_weekly",
+                }
+                self.MarkAsFavorite.addItems(
+                    [
+                        t(fav_label_keys[v]) if v in fav_label_keys else name
+                        for name, v in favorite_pages.items()
+                        if name != "Disable"
+                    ]
+                )
                 self.MarkAsFavorite.setToolTip(t("settings.blender_builds.select_favorite_tab_tooltip"))
                 self.MarkAsFavorite.setCurrentIndex(max(get_mark_as_favorite() - 1, 0))
                 self.MarkAsFavorite.activated.connect(lambda x: set_mark_as_favorite(x + 1))

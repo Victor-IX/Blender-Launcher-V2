@@ -74,7 +74,7 @@ class SettingsWindow(BaseWindow):
         self.CentralLayout.addWidget(self.TabWidget)
 
         # General Tab
-        self.GeneralTab = TabWidget(self.TabWidget, "General")
+        self.GeneralTab = TabWidget(self.TabWidget, t("settings.general.label"))
         self.GeneralScrollArea = QScrollArea()
         self.GeneralScrollArea.setWidgetResizable(True)
         self.GeneralScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -87,7 +87,7 @@ class SettingsWindow(BaseWindow):
             general_layout.addWidget(self.GeneralScrollArea)
 
         # Appearance Tab
-        self.AppearanceTab = TabWidget(self.TabWidget, "Appearance")
+        self.AppearanceTab = TabWidget(self.TabWidget, t("settings.appearance.label"))
         self.AppearanceScrollArea = QScrollArea()
         self.AppearanceScrollArea.setWidgetResizable(True)
         self.AppearanceScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -100,7 +100,7 @@ class SettingsWindow(BaseWindow):
             appearance_layout.addWidget(self.AppearanceScrollArea)
 
         # Connection Tab
-        self.ConnectionTab = TabWidget(self.TabWidget, "Connection")
+        self.ConnectionTab = TabWidget(self.TabWidget, t("settings.connection.label"))
         self.ConnectionScrollArea = QScrollArea()
         self.ConnectionScrollArea.setWidgetResizable(True)
         self.ConnectionScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -113,7 +113,7 @@ class SettingsWindow(BaseWindow):
             connection_layout.addWidget(self.ConnectionScrollArea)
 
         # Blender Builds Tab
-        self.BlenderBuildsTab = TabWidget(self.TabWidget, "Blender Builds")
+        self.BlenderBuildsTab = TabWidget(self.TabWidget, t("settings.blender_builds.label"))
         self.BlenderBuildsScrollArea = QScrollArea()
         self.BlenderBuildsScrollArea.setWidgetResizable(True)
         self.BlenderBuildsScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)

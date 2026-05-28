@@ -1,5 +1,17 @@
 # yaml-language-server: $schema=https://www.schemastore.org/any.json
 # es necesario porque de lo contrario se detecta como un flujo de trabajo fulib
+# pestañas
+tabs:
+  library: Biblioteca
+  downloads: Descargas
+  favorites: Favoritos
+  stable: Estable
+  daily: Diario
+  experimental: Experimental
+  experimental_and_patch: Experimental y Patch
+  custom: Personalizado
+  upbge_weekly: UPBGE Semanal
+
 # popups
 ok: Ok
 accept: Aceptar

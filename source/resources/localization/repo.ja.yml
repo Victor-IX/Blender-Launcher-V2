@@ -1,6 +1,7 @@
 stable_tooltip: 製品版ビルド。安定した本番環境向けです。
 daily_tooltip: 毎日作成されるビルド。最新の機能とバグ修正が含まれますが、不安定な場合があります。
 experimental_tooltip: 将来の公式Blenderリリースに含まれる可能性のある新機能が搭載されています。非常に不安定な場合があります。
+bforartists_tooltip: UIの改善を目的とした人気のBlenderフォーク。
 upbge_tooltip: UPBGE安定版ビルド - ゲーム開発向けのBlenderフォーク。
 upbge_weekly_tooltip: 最新機能を含むUPBGE週次ビルド。
 

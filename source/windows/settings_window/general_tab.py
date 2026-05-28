@@ -66,7 +66,8 @@ class GeneralTabWidget(SettingsFormWidget):
             # Language
             self.language_combo = grp.add(QComboBox(), "settings.general.app.language")
             for lang in Language:
-                self.language_combo.addItem(lang.display_name, lang.value)
+                name = t("settings.general.app.language_auto") if lang is Language.AUTO else lang.display_name
+                self.language_combo.addItem(name, lang.value)
             current_lang = get_language()
             idx = self.language_combo.findData(current_lang)
             if idx >= 0:
@@ -185,7 +186,9 @@ class GeneralTabWidget(SettingsFormWidget):
         with self.group("settings.general.advanced.label") as grp:
             # Default Deletion Action
             self.default_delete_action = grp.add(QComboBox(), "settings.general.advanced.default_delete_action")
-            self.default_delete_action.addItems(list(delete_action.keys()))
+            self.default_delete_action.addItems(
+                [t(f"settings.general.advanced.delete_actions.{i}") for i in delete_action.values()]
+            )
             self.default_delete_action.setToolTip(t("settings.general.advanced.default_delete_action_tooltip"))
             self.default_delete_action.setCurrentIndex(get_default_delete_action())
             self.default_delete_action.activated.connect(set_default_delete_action)

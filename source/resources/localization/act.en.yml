@@ -1,3 +1,15 @@
+# tabs
+tabs:
+  library: Library
+  downloads: Downloads
+  favorites: Favorites
+  stable: Stable
+  daily: Daily
+  experimental: Experimental
+  experimental_and_patch: Experimental and Patch
+  custom: Custom
+  upbge_weekly: UPBGE Weekly
+
 # popups
 ok: Ok
 accept: Accept

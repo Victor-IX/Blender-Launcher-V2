@@ -32,7 +32,7 @@ class TrayHandler(QObject):
         hide_action.triggered.connect(self.close)
         show_action = QAction(t("act.show"), self)
         show_action.triggered.connect(self.trigger)
-        show_favorites_action = QAction(self.launcher.icons.favorite, "Favorites", self)
+        show_favorites_action = QAction(self.launcher.icons.favorite, t("act.tabs.favorites"), self)
         show_favorites_action.triggered.connect(self.favs)
         quick_launch_action = QAction(self.launcher.icons.quick_launch, "Blender", self)
         quick_launch_action.triggered.connect(self.quick_launch)

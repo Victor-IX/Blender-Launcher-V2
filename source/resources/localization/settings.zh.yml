@@ -1,9 +1,11 @@
 general:
+  label: 常规
   app:
     label: 应用程序
     library_folder: "库文件夹:"
 
     language: 语言
+    language_auto: 自动
     language_tooltip: |
       选择Blender Launcher的显示语言。
       "自动"会自动检测您的系统语言。
@@ -95,6 +97,7 @@ general:
 
 
 appearance:
+  label: 外观
   window_related: 窗口相关
   use_system_titlebar: 使用系统标题栏
   use_system_titlebar_tooltip: |
@@ -140,6 +143,7 @@ appearance:
       DEFAULT: Stable Releases
 
 connection:
+  label: 连接
   proxy_settings: 代理
   use_custom_tls_certificates: 使用自定义TLS证书
   use_custom_tls_certificates_tooltip: |
@@ -185,6 +189,7 @@ connection:
     请考虑为您的系统安装密钥环支持。
 
 blender_builds:
+  label: Blender 构建版本
   visibility_and_downloading: 可见性与下载
   checking_for_builds: 检查构建版本
   minimum_stable_blender_version_tooltip: |

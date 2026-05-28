@@ -1,3 +1,15 @@
+# タブ
+tabs:
+  library: ライブラリ
+  downloads: ダウンロード
+  favorites: お気に入り
+  stable: 安定版
+  daily: デイリー
+  experimental: 実験的
+  experimental_and_patch: 実験的とパッチ
+  custom: カスタム
+  upbge_weekly: UPBGE Weekly
+
 # ポップアップ
 ok: OK
 accept: 承認

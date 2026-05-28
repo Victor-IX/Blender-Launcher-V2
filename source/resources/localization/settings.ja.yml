@@ -2,11 +2,13 @@
 
 
 general:
+  label: 全般
   app:
     label: アプリケーション
     library_folder: "ライブラリフォルダ:"
 
     language: 言語
+    language_auto: 自動
     language_tooltip: |
       Blender Launcherの表示言語を選択します。
       「自動」はシステム言語を自動検出します。
@@ -98,6 +100,7 @@ general:
 
 
 appearance:
+  label: 外観
   window_related: ウィンドウ関連
   use_system_titlebar: システムタイトルバーを使用
   use_system_titlebar_tooltip: |
@@ -143,6 +146,7 @@ appearance:
       デフォルト: Stable Releases
 
 connection:
+  label: 接続
   proxy_settings: プロキシ
   use_custom_tls_certificates: カスタムTLS証明書を使用
   use_custom_tls_certificates_tooltip: |
@@ -188,6 +192,7 @@ connection:
     システムにキーリングサポートのインストールを検討してください。
 
 blender_builds:
+  label: Blenderビルド
   visibility_and_downloading: 表示とダウンロード
   checking_for_builds: ビルドの確認
   minimum_stable_blender_version_tooltip: |

@@ -1,3 +1,15 @@
+# 标签页
+tabs:
+  library: 库
+  downloads: 下载
+  favorites: 收藏
+  stable: 稳定版
+  daily: 每日构建
+  experimental: 实验性
+  experimental_and_patch: 实验性与补丁
+  custom: 自定义
+  upbge_weekly: UPBGE 周构建
+
 # 弹窗
 ok: 确定
 accept: 接受
