@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import logging
 import ssl
-import sys
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from modules.platform_utils import get_cwd, get_platform_full, is_frozen
+import certifi
+from modules.platform_utils import get_platform_full
 from modules.settings import (
     get_github_token,
     get_proxy_host,
@@ -56,11 +55,11 @@ class ConnectionManager(QObject):
         agent = f"Blender-Launcher-v2/v.{self.version!s}/{get_platform_full()}/UserID-{get_user_id()}"
         self._headers = {"user-agent": agent, "Accept-Encoding": "gzip, deflate"}
         logger.info(f"Connection Manager Header: {agent}")
-        # Get custom certificates file path
-        if is_frozen() is True:
-            self.cacert = (Path(getattr(sys, "_MEIPASS", "")) / "files" / "custom.pem").as_posix()
-        else:
-            self.cacert = (get_cwd() / "source/resources/certificates/custom.pem").as_posix()
+        # Use certifi's up-to-date CA bundle for TLS verification. The previously
+        # bundled custom.pem was a stale Mozilla snapshot that lacked ISRG Root X2,
+        # which broke verification of download.blender.org after its chain moved to
+        # the X2 hierarchy and the cross-signed X2 expired (2025-09-15). See #414.
+        self.cacert = certifi.where()
 
         self.request_counter = 0
 

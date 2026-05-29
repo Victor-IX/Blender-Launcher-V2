@@ -12,7 +12,6 @@ PYTHONOPTIMIZE=2 pyinstaller \
     --hidden-import "pynput.mouse._darwin" \
     --name="Blender Launcher" \
     --add-data="source/resources/localization/*.yml:localization" \
-    --add-binary="source/resources/certificates/custom.pem:files" \
     --add-data="source/resources/api/blender_launcher_api.json:files" \
     --distpath="./dist/release" \
     source/main.py
