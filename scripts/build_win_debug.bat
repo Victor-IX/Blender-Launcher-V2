@@ -20,7 +20,6 @@ python -OO -m PyInstaller ^
 --version-file="version.txt" ^
 --add-binary="source\resources\icons\winblender.ico;files" ^
 --add-binary="source\resources\icons\bl\bl_file.ico;files" ^
---add-binary="source\resources\certificates\custom.pem;files" ^
 --add-data="source\resources\api\blender_launcher_api.json;files" ^
 --add-data="source\resources\api\stable_builds_api_windows.json;files" ^
 --add-data="source\resources\localization\*.yml:localization" ^
