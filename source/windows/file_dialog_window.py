@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+from modules.container_detect import IS_CONTAINED
 from PySide6.QtWidgets import QFileDialog, QWidget
 
 Option = QFileDialog.Option
+
+
+DIALOG_OPTIONS = Option.HideNameFilterDetails
+if not IS_CONTAINED:
+    DIALOG_OPTIONS |= Option.DontUseNativeDialog | Option.DontUseCustomDirectoryIcons
 
 
 class FileDialogWindow(QFileDialog):
@@ -10,12 +16,7 @@ class FileDialogWindow(QFileDialog):
         super().__init__()
 
     def get_directory(self, parent, title, directory):
-        options = (
-            Option.DontUseNativeDialog
-            | Option.ShowDirsOnly
-            | Option.HideNameFilterDetails
-            | Option.DontUseCustomDirectoryIcons
-        )
+        options = DIALOG_OPTIONS | Option.ShowDirsOnly
         return QFileDialog.getExistingDirectory(parent, title, directory, options)
 
     def get_open_filename(
@@ -28,7 +29,7 @@ class FileDialogWindow(QFileDialog):
             parent=parent,
             caption=title or "",
             dir=directory or "",
-            options=(Option.DontUseNativeDialog | Option.HideNameFilterDetails | Option.DontUseCustomDirectoryIcons),
+            options=DIALOG_OPTIONS,
         )
 
     def get_save_filename(
@@ -41,5 +42,5 @@ class FileDialogWindow(QFileDialog):
             parent=parent,
             caption=title or "",
             dir=directory or "",
-            options=(Option.DontUseNativeDialog | Option.HideNameFilterDetails | Option.DontUseCustomDirectoryIcons),
+            options=DIALOG_OPTIONS,
         )
