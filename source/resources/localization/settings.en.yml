@@ -349,4 +349,7 @@ blender_builds:
     DEFAULT: None
     Example: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
   bash_arguments: "Bash Arguments:"
+  bash_argument_warnings:
+    env_vars_in_flatpak: |
+        Environment variables detected while in a flatpak. To ensure these get captured, use the `env` command.
   startup_arguments: "Startup Arguments:"
