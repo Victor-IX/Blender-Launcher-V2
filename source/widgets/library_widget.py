@@ -482,7 +482,7 @@ class LibraryWidget(BaseBuildWidget):
             self.item.setSelected(True)
 
         if self.parent_widget is not None:
-            self.parent_widget.launch()
+            self.parent_widget.launch(update_selection=update_selection, exe=exe, launch_mode=launch_mode)
             return
 
         if self.show_new is True:
