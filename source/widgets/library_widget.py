@@ -323,10 +323,13 @@ class LibraryWidget(BaseBuildWidget):
             self.add_to_favorites()
 
     def is_quick_launch(self):
-        if not self.show_new:
-            return False
+        # An explicit quick launch choice is persisted via favorite_path and must
+        # be restored on every startup, including cached builds (show_new=False).
+        # Only the branch-based auto-favorite heuristic below is gated on show_new.
         if get_favorite_path() == self.link.as_posix():
             return True
+        if not self.show_new:
+            return False
 
         return [
             False,
@@ -943,6 +946,10 @@ class LibraryWidget(BaseBuildWidget):
             build_info=self.build_info,
             parent_widget=self,
         )
+        # Mirror the library page wiring so adding to quick launch from a
+        # favourite goes through set_quick_launch_build: without it the
+        # previous quick launch isn't cleared and the choice isn't persisted.
+        widget.add_as_quick_launch.connect(self.launcher.quick_launch_handler.set_quick_launch_build)
         self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
         self.child_widget = widget
 
