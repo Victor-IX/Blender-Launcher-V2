@@ -21,6 +21,8 @@ from modules.platform_utils import (
     local_config,
     user_config,
 )
+from modules.container_detect import IS_CONTAINED
+from modules.platform_utils import get_config_file, get_config_path, get_cwd, local_config, user_config
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings
 from semver import Version
@@ -160,6 +162,11 @@ def get_actual_library_folder() -> Path:
     library_folder = settings.value("library_folder")
     if not library_folder:
         library_folder = get_default_library_folder()
+    if not is_library_folder_valid(library_folder):
+        if IS_CONTAINED:
+            library_folder = Path.home()
+        else:
+            library_folder = get_cwd()
 
     return Path(library_folder)
 
