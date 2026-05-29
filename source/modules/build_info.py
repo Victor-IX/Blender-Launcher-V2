@@ -715,9 +715,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
             b3d_exe = library_folder / info.link / "blender"
 
         if IS_FLATPAK:
-            # TODO add a check for bash_args to be a valid command
-            # ex. If it's just environment variables, instruct the user to use `env` in flatpak
-            args = f'flatpak-spawn --host {bash_args} "{shlex.quote(b3d_exe.as_posix())}" {blender_args}'
+            args = f'flatpak-spawn --host --directory={shlex.quote(info.link)} {bash_args} "{shlex.quote(b3d_exe.as_posix())}" {blender_args}'
         else:
             args = f'{bash_args} "{shlex.quote(b3d_exe.as_posix())}" {blender_args}'
 
