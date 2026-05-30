@@ -192,7 +192,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.addToQuickLaunchAction = QAction(t("act.a.quick_launch"), self)
         self.addToQuickLaunchAction.setIcon(self.launcher.icons.quick_launch)
-        self.addToQuickLaunchAction.triggered.connect(self.add_to_quick_launch)
+        self.addToQuickLaunchAction.triggered.connect(self.toggle_quick_launch)
 
         self.addToFavoritesAction = QAction(t("act.a.fav.add"), self)
         self.addToFavoritesAction.setIcon(self.launcher.icons.favorite)
@@ -898,35 +898,42 @@ class LibraryWidget(BaseBuildWidget):
         self.launcher.draw_to_library(Path(blinfo.link), show_new=True)
 
     @Slot()
+    def toggle_quick_launch(self):
+        if self.launcher.quick_launch_handler.quick_launch_build is self:
+            self.launcher.quick_launch_handler.remove_quick_launch()
+        else:
+            self.add_to_quick_launch()
+
+    @Slot()
     def add_to_quick_launch(self):
         self.add_as_quick_launch.emit(self)
 
         self.launchButton.setIcon(self.launcher.icons.quick_launch)
 
-        self.addToQuickLaunchAction.setEnabled(False)
+        self.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
 
         # TODO Make more optimal and simpler synchronization
         if self.parent_widget is not None:
             self.parent_widget.launchButton.setIcon(self.launcher.icons.quick_launch)
-            self.parent_widget.addToQuickLaunchAction.setEnabled(False)
+            self.parent_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
 
         if self.child_widget is not None:
             self.child_widget.launchButton.setIcon(self.launcher.icons.quick_launch)
-            self.child_widget.addToQuickLaunchAction.setEnabled(False)
+            self.child_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
 
     @Slot()
     def remove_from_quick_launch(self):
         self.launchButton.setIcon(self.launcher.icons.fake)
-        self.addToQuickLaunchAction.setEnabled(True)
+        self.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
 
         # TODO Make more optimal and simpler synchronization
         if self.parent_widget is not None:
             self.parent_widget.launchButton.setIcon(self.launcher.icons.fake)
-            self.parent_widget.addToQuickLaunchAction.setEnabled(True)
+            self.parent_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
 
         if self.child_widget is not None:
             self.child_widget.launchButton.setIcon(self.launcher.icons.fake)
-            self.child_widget.addToQuickLaunchAction.setEnabled(True)
+            self.child_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
 
     @Slot()
     def add_to_favorites(self):

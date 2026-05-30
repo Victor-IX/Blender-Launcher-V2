@@ -75,6 +75,7 @@ a:
     (在执行参数后追加 `--open-last`)
     快捷键: Shift + 启动 或双击
   quick_launch: 添加到快速启动
+  quick_launch_rem: 从快速启动中移除
   fav:
     add: 添加到收藏夹
     rem: 从收藏夹移除

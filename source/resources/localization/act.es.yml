@@ -46,6 +46,7 @@ a:
     (Añade `--open-last` a los argumentos de ejecución)
     ATAJO: Shift + Lanzar o Doble clic
   quick_launch: Añadir a Inicio Rápido
+  quick_launch_rem: Quitar de Inicio Rápido
   fav:
     add: Añadir a Favoritos
     rem: Quitar de Favoritos

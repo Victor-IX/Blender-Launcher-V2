@@ -78,6 +78,7 @@ a:
     (Appends `--open-last` to the execution arguments)
     SHORTCUT: Shift + Launch or Doubleclick
   quick_launch: Add to Quick Launch
+  quick_launch_rem: Remove from Quick Launch
   fav:
     add: Add to Favorites
     rem: Remove from Favorites

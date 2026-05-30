@@ -78,6 +78,7 @@ a:
     (実行引数に `--open-last` を追加します)
     ショートカット: Shift + 起動 またはダブルクリック
   quick_launch: クイック起動に追加
+  quick_launch_rem: クイック起動から削除
   fav:
     add: お気に入りに追加
     rem: お気に入りから削除

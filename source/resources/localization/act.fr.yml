@@ -75,6 +75,7 @@ a:
     (Ajoute `--open-last` aux arguments d'exécution)
     RACCOURCI : Maj + Lancer ou Double-clic
   quick_launch: Ajouter au lancement rapide
+  quick_launch_rem: Retirer du lancement rapide
   fav:
     add: Ajouter aux favoris
     rem: Retirer des favoris
