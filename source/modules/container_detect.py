@@ -6,4 +6,4 @@ IS_FLATPAK = (
     or Path("/.flatpak-info").exists()
 )
 
-IS_CONTAINED = IS_FLATPAK # expand if necessary
+IS_CONTAINED = IS_FLATPAK  # expand if necessary
