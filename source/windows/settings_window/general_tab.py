@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_cache_path, get_platform
 from modules.settings import (
     delete_action,
@@ -122,23 +123,24 @@ class GeneralTabWidget(SettingsFormWidget):
 
                 spin.valueChanged.connect(warn_cpu_count)
 
-            # Pre-release builds
-            grp.add_checkbox(
-                "settings.general.app.prerelease",
-                default=get_use_pre_release_builds(),
-                setter=set_use_pre_release_builds,
-            )
+            if not IS_CONTAINED:
+                # Pre-release builds
+                grp.add_checkbox(
+                    "settings.general.app.prerelease",
+                    default=get_use_pre_release_builds(),
+                    setter=set_use_pre_release_builds,
+                )
 
-            # Create Shortcut
-            grp.add_button(
-                "settings.general.app.create_shortcut",
-                clicked=self.create_shortcut,
-                label_kwargs={
-                    "shortcut_type": t(
-                        f"settings.general.app.shortcut_type.{get_platform().lower()}",
-                    )
-                },
-            )
+                # Create Shortcut
+                grp.add_button(
+                    "settings.general.app.create_shortcut",
+                    clicked=self.create_shortcut,
+                    label_kwargs={
+                        "shortcut_type": t(
+                            f"settings.general.app.shortcut_type.{get_platform().lower()}",
+                        )
+                    },
+                )
 
         if get_config_file() != user_config():
             self.migrate_button = QPushButton(t("settings.general.migratel2u"), self)

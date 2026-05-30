@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.bl_api_manager import dropdown_blender_version
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_platform
 from modules.settings import (
     favorite_pages,
@@ -312,22 +313,22 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             )
 
         # Launching builds settings
-        with self.group("settings.blender_builds.launching_builds").contents.checked_hgroup(
-            "settings.blender_builds.quick_launch_global_shortcut",
-            default=get_enable_quick_launch_key_seq(),
-            setter=set_enable_quick_launch_key_seq,
-        ) as q:
-            # Quick Launch Key Sequence
-            self.QuickLaunchKeySeq = q.add(QLineEdit())
-            self.QuickLaunchKeySeq.keyPressEvent = self._keyPressEvent
-            self.QuickLaunchKeySeq.setText(str(get_quick_launch_key_seq()))
-            self.QuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_key_seq_tooltip"))
-            self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-            self.QuickLaunchKeySeq.setCursorPosition(0)
-            self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
-
-        # self.launching_settings = SettingsGroup(t("settings.blender_builds.launching_builds"), parent=self)
         with self.group("settings.blender_builds.launching_builds") as grp:
+            if not IS_CONTAINED:
+                with grp.checked_hgroup(
+                    "settings.blender_builds.quick_launch_global_shortcut",
+                    default=get_enable_quick_launch_key_seq(),
+                    setter=set_enable_quick_launch_key_seq,
+                ) as q:
+                    # Quick Launch Key Sequence
+                    self.QuickLaunchKeySeq = q.add(QLineEdit())
+                    self.QuickLaunchKeySeq.keyPressEvent = self._keyPressEvent
+                    self.QuickLaunchKeySeq.setText(str(get_quick_launch_key_seq()))
+                    self.QuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_key_seq_tooltip"))
+                    self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+                    self.QuickLaunchKeySeq.setCursorPosition(0)
+                    self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
+
             # On Blender Launch action
             self.OnBlenderLaunchAction = grp.add(
                 QComboBox(),
