@@ -5,9 +5,9 @@
 
 
 # The path to the lockfile used to resolve pip hashes and wheels.
-
 LOCKFILE_PATH = "uv.lock"
-OUTPUT_PATH = "python3-modules.yaml"
+# Output.
+OUTPUT_PATH = "flatpak-files/python3-modules.yaml"
 
 # The name of the target package.
 ROOT_PACKAGE = "blender-launcher-v2"
@@ -15,26 +15,19 @@ ROOT_PACKAGE = "blender-launcher-v2"
 IGNORE_DEPS = {
     "pyinstaller",  # irrelevant
     "pyside6-essentials",  # handled by io.qt.PySide.BaseApp
-    "pynput", # handled by external tools.
+    "pynput",  # handled by external tools.
 }
-RUNTIME = "io.qt.PySide.BaseApp"
+# Used to check system attributes against.
+RUNTIME = "io.qt.PySide.BaseApp//6.10"
 
 import shlex
 import subprocess
 import tomllib
 from collections import deque
-from pathlib import Path
 
-try:
-    import yaml
-    from packaging.tags import Tag, create_compatible_tags_selector
-    from packaging.utils import parse_wheel_filename
-except ImportError:
-    print(
-        "Failed to import necessary modules. please install `PyYAML` and `packaging`."
-    )
-    print("`uv pip install PyYAML packaging`")
-
+import yaml
+from packaging.tags import Tag, create_compatible_tags_selector
+from packaging.utils import parse_wheel_filename
 
 with open(LOCKFILE_PATH, "rb") as f:
     t = tomllib.load(f)
@@ -42,26 +35,14 @@ with open(LOCKFILE_PATH, "rb") as f:
     assert t["revision"] == 3
 
 # TODO sanitize output - serialize and deserialize?
-tags_path = Path("/tmp/flatpak-pyside-base-tags")
-if tags_path.exists():
-    valid_tags = {
-        Tag(*t.split("-"))
-        for t in eval(Path("/tmp/flatpak-pyside-base-tags").read_text())
-    }
-else:
-    with tags_path.open("wb") as f:
-        s = subprocess.check_output(
-            f'flatpak --arch=x86_64 --devel --command=python3 run {RUNTIME} -c "from packaging import tags; print(list(map(str,tags.sys_tags())))"',
-            shell=True,
-        )
-        print(s)
-        f.write(s)
-        valid_tags = {Tag(*t.split("-")) for t in eval(s.strip())}
-
-
-packages = sorted(
-    t["package"], key=lambda x: len(x["dependencies"]) if "dependencies" in x else 0
+s = subprocess.check_output(
+    f'flatpak --arch=x86_64 --command=python3 run {RUNTIME} -c "from packaging import tags; print(list(map(str,tags.sys_tags())))"',
+    shell=True,
 )
+valid_tags = {Tag(*t.split("-")) for t in eval(s.strip())}
+print(f"{len(valid_tags)} valid tags for {RUNTIME}.")
+
+packages = sorted(t["package"], key=lambda x: len(x["dependencies"]) if "dependencies" in x else 0)
 
 tag_selector = create_compatible_tags_selector(valid_tags)
 
@@ -75,11 +56,7 @@ for p in packages:
 
         found = False
 
-        wheels = list(
-            tag_selector(
-                (w, parse_wheel_filename(w["url"].split("/")[-1])[-1]) for w in wheels
-            )
-        )
+        wheels = list(tag_selector((w, parse_wheel_filename(w["url"].split("/")[-1])[-1]) for w in wheels))
 
         p.pop("wheels")
         if wheels:
@@ -91,9 +68,7 @@ for p in packages:
 
 root = next(p for p in packages if p["name"] == ROOT_PACKAGE)
 
-root["dependencies"] = [
-    dep for dep in root["dependencies"] if dep["name"] not in IGNORE_DEPS
-]
+root["dependencies"] = [dep for dep in root["dependencies"] if dep["name"] not in IGNORE_DEPS]
 
 markers = sorted(
     {
@@ -101,8 +76,7 @@ markers = sorted(
         for pac in packages
         for marker in [
             x["marker"]
-            for x in pac.get("dependencies", [])
-            + list(pac.get("optional-dependencies", {}).values())
+            for x in pac.get("dependencies", []) + list(pac.get("optional-dependencies", {}).values())
             if "marker" in x
         ]
     }
@@ -122,8 +96,8 @@ s = subprocess.check_output(
 )
 x = eval(s)
 
-markers = {marker for marker, valid in zip(markers, x, strict=True) if valid}
-
+markers = {marker for marker, valid in zip(markers, x, strict=True) if print(marker, valid) or valid}
+print()
 name_to_package = {p["name"]: p for p in packages}
 
 required_package_names = set()
@@ -131,25 +105,23 @@ visited_nodes = set()
 
 
 def resolve_dependencies(pkgname, extra=None):
-    # Track nodes as "pkg" or "pkg[extra]"
+    # Track as "pkg" or "pkg[extra]"
     node_id = f"{pkgname}[{extra}]" if extra else pkgname
 
     if node_id in visited_nodes:
         return
+
     visited_nodes.add(node_id)
     required_package_names.add(pkgname)
 
     pkg = name_to_package[pkgname]
 
-    # Look at base dependencies if no extra is specified,
-    # otherwise look in the specific optional-dependencies block.
     if extra is None:
         deps = pkg.get("dependencies", [])
     else:
         deps = pkg.get("optional-dependencies", {}).get(extra, [])
 
     for dep in deps:
-        # Check marker validity
         if "marker" in dep and dep["marker"] not in markers:
             continue
 
@@ -168,7 +140,7 @@ def resolve_dependencies(pkgname, extra=None):
 # Note: to build docs/tests, trigger resolve_dependencies(ROOT_PACKAGE, "docs")
 resolve_dependencies(ROOT_PACKAGE)
 
-# filter the master packages list
+# remove unnecessary packages
 packages = [p for p in packages if p["name"] in required_package_names]
 name_to_package = {p["name"]: p for p in packages}  # Update lookup
 
@@ -178,18 +150,15 @@ for pkg in packages:
     base_edges = [
         dep["name"]
         for dep in pkg.get("dependencies", [])
-        if ("marker" not in dep or dep["marker"] in markers)
-        and dep["name"] in required_package_names
+        if ("marker" not in dep or dep["marker"] in markers) and dep["name"] in required_package_names
     ]
-    # We must also include dependencies from extras if those extras were resolved for this package.
-    # We can check our `visited_nodes` to see if `pkg[extra]` was triggered.
+    # We must also include dependencies from extras if those extras were resolved for this package
     extra_edges = [
         dep["name"]
         for extra, extra_deps in pkg.get("optional-dependencies", {}).items()
         if f"{pkg['name']}[{extra}]" in visited_nodes
         for dep in extra_deps
-        if ("marker" not in dep or dep["marker"] in markers)
-        and dep["name"] in required_package_names
+        if ("marker" not in dep or dep["marker"] in markers) and dep["name"] in required_package_names
     ]
 
     all_deps[pkg["name"]] = base_edges + extra_edges
@@ -224,6 +193,8 @@ for pkg, deps in sorted_deps.items():
 
 
 def source_from_package(d: dict) -> dict:
+    # Once we have packages that use other forms of hashes
+    # (if possible???), then we must change this
     if "wheel" in d:
         return {
             "type": "file",
@@ -238,28 +209,24 @@ def source_from_package(d: dict) -> dict:
         }
 
 
-idx = 0
-source_list = []
-sources: dict[str, list[int]] = {}
-for pname, dependencies in sorted_deps.items():
+# I originally assumed the outputted modules needed source references from other modules, but
+# it turns out apparently modules are compiled sequentially and built against what already
+# exists so that's not necessary :
+
+source_ds: dict[str, dict] = {}
+for pname in sorted_deps:
     actual_package = name_to_package[pname]
 
     if pname != "blender-launcher-v2":
-        assert "sdist" in actual_package or "wheel" in actual_package
+        assert "wheel" in actual_package or "sdist" in actual_package, (
+            f'package {pname} has no "sdist" or "wheel" source (How did we get here?)'
+        )
 
-    sourc = [len(source_list)]
-    source_list.append(source_from_package(actual_package))
-    for dep in dependencies:
-        assert dep in sources
-        sourc.extend(sources[dep])
+    source_ds[pname] = source_from_package(actual_package)
 
-    sources[pname] = sourc
-
-
-import yaml
 
 modules = []
-for module, idxs in sources.items():
+for module, source in source_ds.items():
     name = f"{module}=={name_to_package[module]['version']}"
     d = {
         "name": f"python3-{module}",
@@ -279,7 +246,7 @@ for module, idxs in sources.items():
                 ]
             )
         ],
-        "sources": [source_list[idx] for idx in idxs],
+        "sources": [source],
     }
     modules.append(d)
 
@@ -290,10 +257,21 @@ d = {
     "modules": modules,
 }
 
+
+class IndentDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
+IndentDumper.add_representer(dict, lambda d, dat: d.represent_dict(dat.items()))
+
+
 with open(OUTPUT_PATH, "w") as output:
+    output.write("# Autogenerated with Blender-Launcher-V2/flatpak-files/generate_flatpak_modules.py\n")
     yaml.dump(
         d,
         output,
+        Dumper=IndentDumper,
         sort_keys=False,
     )
 
