@@ -7,6 +7,7 @@ from time import localtime, mktime
 from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_architecture, get_platform
 from modules.settings import (
     get_last_time_checked_utc,
@@ -78,9 +79,10 @@ class Scraper(QThread):
 
         self.get_download_links()
 
-        rel = self.launcher_data_updater.check_for_new_releases(self.current_version)
-        if rel is not None:
-            self.new_bl_version.emit(*rel)
+        if not IS_CONTAINED:
+            rel = self.launcher_data_updater.check_for_new_releases(self.current_version)
+            if rel is not None:
+                self.new_bl_version.emit(*rel)
 
     def scrapers(self):
         scrapers: list[BuildScraper] = []
