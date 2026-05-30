@@ -122,6 +122,13 @@ source/resources/styles/global.qss
 # Mac
 .DS_Store
 
+# Flatpak ...
+flatpak-files/python3-modules.yaml
+# flatpak build directories have builtin `.gitignore`s.
+# ...except for this one
+flatpak-files/repo/
+
+
 # Application related settings
 Blender Launcher.ini
 log_file.txt

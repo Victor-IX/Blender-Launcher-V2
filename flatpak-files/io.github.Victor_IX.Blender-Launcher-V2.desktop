@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Blender Launcher V2
+GenericName=Launcher
+Exec=/app/bin/BlenderLauncherV2 %U
+MimeType=application/x-blender;
+Icon=io.github.Victor_IX.Blender-Launcher-V2
+Terminal=false
+Type=Application
+Categories=Graphics;3DGraphics;
