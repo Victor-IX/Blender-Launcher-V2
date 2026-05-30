@@ -131,26 +131,50 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> dict | Non
         return None
 
 
-def get_latest_patch_note(connection_manager: ConnectionManager, latest_tag) -> str | None:
-    if latest_tag is None:
-        logger.error("Failed to get the latest release tag.")
-        return None
+def get_patch_notes_since_version(
+    connection_manager: ConnectionManager,
+    current_version: Version,
+    latest_tag: str,
+    include_pre_releases: bool = False,
+) -> list[tuple[str, str]] | None:
+    """Fetch patch notes for all releases between current_version (exclusive) and latest_tag (inclusive).
 
-    url = f"https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases/tags/{latest_tag}"
+    Returns a list of (tag_name, body) tuples sorted newest-first, or None if no relevant releases.
+    """
+    url = "https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases?per_page=100"
     r = connection_manager.request("GET", url)
 
     if r is None:
-        logger.error(f"Failed to fetch release notes for tag: {latest_tag}")
+        logger.error("Failed to fetch releases list.")
         return None
 
     try:
-        release_data = json.loads(r.data)
-        patch_note = release_data.get("body", "No patch notes available.")
-        logger.info("Latest patch note found")
-        return patch_note
+        releases_data = json.loads(r.data)
     except json.JSONDecodeError as e:
-        logger.exception(f"Failed to parse release notes JSON data: {e}")
+        logger.exception(f"Failed to parse releases JSON data: {e}")
         return None
+
+    latest_version = Version.parse(latest_tag.lstrip("v"))
+
+    relevant_releases: list[tuple[Version, str, str]] = []
+    for release in releases_data:
+        tag = release.get("tag_name", "").lstrip("v")
+        if not Version.is_valid(tag):
+            continue
+        ver = Version.parse(tag)
+        if release.get("prerelease", False) and not include_pre_releases:
+            continue
+        if current_version < ver <= latest_version:
+            body = release.get("body") or ""
+            relevant_releases.append((ver, release.get("tag_name", f"v{tag}"), body))
+
+    if not relevant_releases:
+        return None
+
+    # Sort newest first so the most recent changes appear at the top
+    relevant_releases.sort(key=lambda x: x[0], reverse=True)
+
+    return [(tag, body) for _ver, tag, body in relevant_releases]
 
 
 class LauncherDataUpdater:
@@ -180,15 +204,21 @@ class LauncherDataUpdater:
             self._latest_tag_cache = get_release_tag(self.manager)
         return self._latest_tag_cache
 
-    def check_for_new_releases(self) -> tuple[str, str | None] | None:
+    def check_for_new_releases(self, current_version: Version) -> tuple[str, list[tuple[str, str]] | None] | None:
         assert self.manager.manager is not None
         latest_tag = self.latest_tag_cache
 
         if latest_tag is not None:
-            patch_note = get_latest_patch_note(self.manager, latest_tag)
+            patch_notes = get_patch_notes_since_version(
+                self.manager,
+                current_version,
+                latest_tag,
+                include_pre_releases=get_use_pre_release_builds(),
+            )
+            logger.info(f"Patch notes collected for versions since {current_version} up to {latest_tag}")
 
             self.manager.manager.clear()
 
-            return latest_tag, patch_note
+            return latest_tag, patch_notes
         self.manager.manager.clear()
         return None

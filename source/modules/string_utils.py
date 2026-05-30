@@ -28,6 +28,8 @@ def add_bullet_point(text: str) -> str:
 
 
 def patch_note_cleaner(patch_note_text: str) -> str:
+    if not patch_note_text.strip():
+        return ""
     text = add_bullet_point(patch_note_text)
     text = markdown_to_text(text)
     text = re.sub(r":\n\n", ":\n", text)  # Remove double newlines after colons

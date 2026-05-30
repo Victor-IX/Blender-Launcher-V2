@@ -73,7 +73,6 @@ from modules.settings import (
     set_window_geometry,
     set_window_maximized,
 )
-from modules.string_utils import patch_note_cleaner
 from modules.tasks import TaskQueue, TaskWorker
 from PySide6.QtCore import QMetaMethod, QSize, Qt, QTimer, Signal, Slot
 from PySide6.QtGui import QDesktopServices
@@ -878,7 +877,7 @@ class BlenderLauncher(BaseWindow):
         lst.setFocus(Qt.FocusReason.ShortcutFocusReason)
         widget.setFocus(Qt.FocusReason.ShortcutFocusReason)
 
-    def set_version(self, latest_tag, patch_notes):
+    def set_version(self, latest_tag, version_notes):
         if self.version.build is not None and "dev" in self.version.build:
             return
         latest = Version.parse(latest_tag[1:])
@@ -894,18 +893,10 @@ class BlenderLauncher(BaseWindow):
         if latest > current:
             self.status_bar.new_version(latest_tag)
             self.latest_tag = latest_tag
-            if patch_notes is not None:
-                patch_note_text = patch_note_cleaner(patch_notes)
-            else:
-                patch_note_text = t("msg.updates.no_release_notes")
 
-            popup = Popup.info(
-                message=t(
-                    "msg.updates.new_version_available",
-                    version=latest_tag.replace("v", ""),
-                    patch_notes=patch_note_text,
-                ),
-                buttons=[Popup.Button.UPDATE, Popup.Button.LATER],
+            popup = Popup.UpdateNotification(
+                latest_tag=latest_tag,
+                version_notes=version_notes,
                 parent=self,
             )
             popup.accepted.connect(self.show_update_window)

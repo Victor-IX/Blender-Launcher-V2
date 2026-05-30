@@ -5,9 +5,19 @@ from enum import Enum, StrEnum
 from typing import Required, TypedDict, Unpack
 
 from i18n import t
+from modules.string_utils import patch_note_cleaner
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QPixmap
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QApplication,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 from windows.base_window import BaseWindow
 
 
@@ -201,11 +211,127 @@ class __GenericPWARGS(TypedDict, total=False):
     app: QApplication
 
 
+class UpdateNotificationWindow(BaseWindow):
+    accepted = Signal()
+    cancelled = Signal()
+
+    def __init__(
+        self,
+        latest_tag: str,
+        version_notes: list[tuple[str, str]] | None,
+        parent=None,
+    ):
+        super().__init__(parent=parent)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setWindowTitle(t("msg.info"))
+        self.setMinimumWidth(380)
+
+        self.PopupWidget = QWidget(self)
+        self.PopupLayout = QVBoxLayout(self.PopupWidget)
+        self.PopupLayout.setContentsMargins(10, 10, 10, 10)
+        self.PopupLayout.setSpacing(8)
+        self.setCentralWidget(self.PopupWidget)
+
+        # Header row: icon + "New version X available!"
+        icon_label = QLabel()
+        icon_label.setScaledContents(True)
+        icon_label.setFixedSize(24, 24)
+        icon_label.setPixmap(QPixmap(":resources/icons/info.svg"))
+
+        header_label = QLabel(t("msg.updates.new_version_available", version=latest_tag.lstrip("v")))
+
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(4, 4, 6, 0)
+        header_layout.addWidget(icon_label)
+        header_layout.addSpacing(5)
+        header_layout.addWidget(header_label)
+        header_layout.addStretch()
+        self.PopupLayout.addLayout(header_layout)
+
+        # Scrollable per-version patch notes area
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+        scroll_area.setMaximumHeight(300)
+
+        scroll_widget = QWidget()
+        scroll_layout = QVBoxLayout(scroll_widget)
+        scroll_layout.setContentsMargins(4, 4, 4, 4)
+        scroll_layout.setSpacing(6)
+
+        if version_notes:
+            for i, (tag, body) in enumerate(version_notes):
+                if i > 0:
+                    separator = QFrame()
+                    separator.setFrameShape(QFrame.Shape.HLine)
+                    separator.setFrameShadow(QFrame.Shadow.Sunken)
+                    scroll_layout.addWidget(separator)
+
+                section_widget = QWidget()
+                section_layout = QVBoxLayout(section_widget)
+                section_layout.setContentsMargins(2, 2, 2, 2)
+                section_layout.setSpacing(4)
+
+                version_label = QLabel(tag)
+                version_label.setStyleSheet("font-weight: bold;")
+                section_layout.addWidget(version_label)
+
+                cleaned = patch_note_cleaner(body)
+                notes_text = cleaned if cleaned else t("msg.updates.no_release_notes")
+                notes_label = QLabel(notes_text)
+                notes_label.setWordWrap(True)
+                section_layout.addWidget(notes_label)
+
+                scroll_layout.addWidget(section_widget)
+        else:
+            no_notes_label = QLabel(t("msg.updates.no_release_notes"))
+            scroll_layout.addWidget(no_notes_label)
+
+        scroll_layout.addStretch()
+        scroll_area.setWidget(scroll_widget)
+        self.PopupLayout.addWidget(scroll_area)
+
+        # Buttons
+        button_layout = QHBoxLayout()
+        update_btn = QPushButton(t(PopupButton.UPDATE.value))
+        update_btn.setProperty("Popup", True)
+        update_btn.clicked.connect(self._accept)
+        later_btn = QPushButton(t(PopupButton.LATER.value))
+        later_btn.setProperty("Popup", True)
+        later_btn.clicked.connect(self._cancel)
+        button_layout.addWidget(update_btn)
+        button_layout.addWidget(later_btn)
+        self.PopupLayout.addLayout(button_layout)
+
+        self.setWindowFlags(
+            self.windowFlags() & ~Qt.WindowType.WindowMinimizeButtonHint & ~Qt.WindowType.WindowMaximizeButtonHint
+        )
+        self.show()
+        self.setFixedWidth(self.width())
+
+    def _accept(self):
+        self.accepted.emit()
+        self.close()
+
+    def _cancel(self):
+        self.cancelled.emit()
+        self.close()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Escape:
+            self._cancel()
+        if event.key() in {Qt.Key.Key_Return, Qt.Key.Key_Enter}:
+            self._accept()
+
+
 class Popup:
     Type = PopupType
     Icon = PopupIcon
     Button = PopupButton
     Window = PopupWindow
+    UpdateNotification = UpdateNotificationWindow
 
     @staticmethod
     def success(**kwargs: Unpack[__GenericPWARGS]) -> PopupWindow:

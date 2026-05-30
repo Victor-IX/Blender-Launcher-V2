@@ -40,10 +40,7 @@ updates:
     Pour mettre à jour Blender Launcher,
     terminez tous les téléchargements actifs !
 
-  new_version_available: |
-    Nouvelle version %{version} disponible !
-
-    %{patch_notes}
+  new_version_available: "Nouvelle version %{version} disponible !"
 
   no_release_notes: Aucune note de version disponible.
 

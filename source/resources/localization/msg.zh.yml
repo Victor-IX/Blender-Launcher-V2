@@ -40,10 +40,7 @@ updates:
     要更新Blender Launcher，
     请先完成所有正在进行的下载！
 
-  new_version_available: |
-    新版本 %{version} 可用！
-
-    %{patch_notes}
+  new_version_available: "新版本 %{version} 可用！"
 
   no_release_notes: 无可用发行说明。
 

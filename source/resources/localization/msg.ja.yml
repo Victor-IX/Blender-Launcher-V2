@@ -40,10 +40,7 @@ updates:
     Blender Launcherを更新するには、
     すべてのダウンロードを完了してください！
 
-  new_version_available: |
-    新しいバージョン %{version} が利用可能です！
-
-    %{patch_notes}
+  new_version_available: "新しいバージョン %{version} が利用可能です！"
 
   no_release_notes: リリースノートはありません。
 

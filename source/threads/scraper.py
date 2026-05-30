@@ -37,7 +37,7 @@ logger = logging.getLogger()
 
 class Scraper(QThread):
     links = Signal(BuildInfo)
-    new_bl_version = Signal(str, str)
+    new_bl_version = Signal(str, object)
     error = Signal()
     stable_error = Signal(str)
 
@@ -46,6 +46,7 @@ class Scraper(QThread):
         self.parent = parent
         self.manager = man
         self.build_cache = build_cache
+        self.current_version = parent.version
 
         self.last_time_checked = get_last_time_checked_utc()
         self.finished.connect(self.update_last_time_checked)
@@ -77,7 +78,7 @@ class Scraper(QThread):
 
         self.get_download_links()
 
-        rel = self.launcher_data_updater.check_for_new_releases()
+        rel = self.launcher_data_updater.check_for_new_releases(self.current_version)
         if rel is not None:
             self.new_bl_version.emit(*rel)
 
