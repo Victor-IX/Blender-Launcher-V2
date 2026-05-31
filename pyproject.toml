@@ -31,7 +31,7 @@ license = "GPL-3.0"
 
 [project.optional-dependencies]
 docs = ["mkdocs", "mkdocs-material>=9.5.10"]
-ruff = ["ruff>=0.3.5"]
+ruff = ["ruff>=0.15.15"]
 test = ["pytest>=9.0.3"]
 
 
