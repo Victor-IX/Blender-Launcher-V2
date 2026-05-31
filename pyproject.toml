@@ -27,7 +27,7 @@ dependencies = [
 ]
 requires-python = "<3.15,>=3.11"
 readme = "README.md"
-license = { text = "GPL3" }
+license = "GPL-3.0"
 
 [project.optional-dependencies]
 docs = ["mkdocs", "mkdocs-material>=9.5.10"]
@@ -40,13 +40,13 @@ line-length = 120
 target-version = "py311" # our minimum supported version
 
 [tool.ruff.lint]
-extend-ignore = [
+ignore = [
   "E501",   # line-too-long -- Unavoidable in some cases, but it should still be followed everywhere else
   "SIM114", # if-with-same-arms -- This can make the code harder to read and understand in some places
   "SIM108", # if-else-block-instead-of-if-exp -- Same as above, but this is more common
   "RET505", # superfluous-else-return -- makes related stuff harder to read
 ]
-extend-select = [
+select = [
   "A",     # flake8-builtins
   "ASYNC", # flake8-async
   "UP",    # pyupgrade
