@@ -113,7 +113,7 @@ Build context menu can be accessed via right click on build item.
 
 :   Multiple option to investigate and debug the program
 
-#### Register Extension [Windows only]
+#### Register Extension \[Windows only\]
 
 :   Silently register blend-file extension (show thumbnails in file explorer and use selected build as default to open `*.blend` files).
 
@@ -133,7 +133,7 @@ Build context menu can be accessed via right click on build item.
 
 :   Install template for selected build (check [template](library_folder.md#template) for more details).
 
-#### Show Release Notes [Stable and LTS builds only]
+#### Show Release Notes \[Stable and LTS builds only\]
 
 :   Reveal page with release notes for the selected build in a web browser.
 
@@ -179,7 +179,7 @@ Downloads tab is a place where all available official builds are shown based on 
 
 Build context menu can be accessed via right click on build item.
 
-#### Show Release Notes [Stable and LTS builds only]
+#### Show Release Notes \[Stable and LTS builds only\]
 
 :   Reveal page with release notes for selected build in web browser.
 

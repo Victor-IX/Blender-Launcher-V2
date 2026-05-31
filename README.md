@@ -2,7 +2,7 @@
 
 
 <p align="center">
-<img src="docs/mkdocs/imgs/bl_logo.png">
+<img src="docs/docs/imgs/bl_logo.png">
 </p>
 
 # Blender Launcher V2
@@ -21,16 +21,16 @@
 <summary>Screenshots</summary>
 <p></p>
 <p align="center">
-<img src="docs/mkdocs/imgs/library_stable.png">
+<img src="docs/docs/imgs/library_stable.png">
 </p>
 <p align="center">
-<img src="docs/mkdocs/imgs/downloads_daily.png">
+<img src="docs/docs/imgs/downloads_daily.png">
 </p>
 <p align="center">
-<img src="docs/mkdocs/imgs/user_favorites.png">
+<img src="docs/docs/imgs/user_favorites.png">
 </p>
 <p align="center">
-<img src="docs/mkdocs/imgs/tray.png">
+<img src="docs/docs/imgs/tray.png">
 </p>
 </details>
 

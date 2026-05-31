@@ -1,0 +1,70 @@
+[project]
+site_name = "Blender Launcher"
+site_url = "https://victor-ix.github.io/Blender-Launcher-V2"
+site_description = "Standalone client for managing official builds of Blender 3D"
+copyright = "Copyright &copy; 2026 Victor Chedeville │ Blender Launcher GPL-3.0 License │ Version 2.7.2"
+repo_url = "https://github.com/Victor-IX/Blender-Launcher-V2"
+
+use_directory_urls = true
+docs_dir = "docs"
+site_dir = "site"
+
+extra_css = ["stylesheets/extra.css"]
+
+nav = [
+  { "Home" = "index.md" },
+  { "Installation" = "installation.md" },
+  { "User Interface" = "user_interface.md" },
+  { "Library Folder" = "library_folder.md" },
+  { "Settings" = "settings.md" },
+  { "Blender Forks" = "blender_forks.md" },
+  { "Manual Blender Installation" = "manual_build_installation.md" },
+  { "Build Initialization" = "build_initialization.md" },
+  { "File Association" = "file_association.md" },
+  { "GitHub Token" = "github_token.md" },
+  { "Troubleshooting" = "troubleshooting.md" },
+  { "Known Issues" = "known_issues.md" },
+  { "Feature Request" = "feature_request.md" },
+  { "Development" = [
+    { "Overview" = "development.md" },
+    { "Implementing New Fork" = "implementing_new_fork.md" },
+    { "Localization" = "localization.md" }
+  ] },
+  { "FAQ" = "FAQ.md" },
+]
+
+[project.theme]
+variant = "modern"
+logo = "icons/favicon.ico"
+favicon = "icons/favicon.ico"
+
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+
+  "navigation.tracking",
+  "toc.follow",
+  "navigation.top",
+
+  "search.highlight"
+]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "#b6c4ff"
+accent = "amber"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "#b6c4ff"
+accent = "amber"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
