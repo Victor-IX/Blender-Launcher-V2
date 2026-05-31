@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.file_utils import retry_on_permission_error
 from modules.platform_utils import find_app_bundle, get_default_library_folder, get_platform, is_frozen
 from modules.settings import (
@@ -116,7 +117,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.layout_.addWidget(self.warning_label)
         self.layout_.addWidget(QLabel(t("wizard.library.location"), self))
         self.layout_.addWidget(self.lf)
-        if home not in executable_path.parents:
+        if home not in executable_path.parents and not IS_CONTAINED:
             self.path_warning_label = QLabel(self)
             self.path_warning_label.setText(t("wizard.library.path_warning", home=str(home)))
             self.path_warning_label.setWordWrap(True)
@@ -132,6 +133,9 @@ class ChooseLibraryPage(BasicOnboardingPage):
         pth = Path(self.lf.line_edit.text())
 
         set_library_folder(str(pth))
+
+        if IS_CONTAINED:
+            return
 
         if is_frozen() and self.move_exe.isChecked():  # move the executable to the library location
             platform = get_platform()

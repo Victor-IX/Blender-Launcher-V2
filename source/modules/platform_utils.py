@@ -232,7 +232,7 @@ def get_default_library_folder():
     elif platform == "macOS":
         return Path.home() / "Applications" / "Blender Launcher"
 
-    return get_cwd()
+    return Path("~/Documents/BlenderBuilds").expanduser()
 
 
 @cache

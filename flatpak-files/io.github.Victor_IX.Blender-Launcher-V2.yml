@@ -24,7 +24,11 @@ finish-args:
 
   # flatpak-spawn -- for launching blender
   - --talk-name=org.freedesktop.Flatpak
-  - --filesystem=host
+
+  # Common folders used for libraries
+  - --filesystem=/mnt
+  - --filesystem=/run/media
+  - --filesystem=home
 
 modules:
   - python3-modules.yaml
