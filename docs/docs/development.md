@@ -171,9 +171,9 @@ or use the provided `scripts/serve_docs.*` scripts.
 
 Then open the given link (likely [http://127.0.0.1:8000/](http://127.0.0.1:8000/)) in a web browser.
 
-### Edit Documentation Files[^update-gh-pages]
+### Edit Documentation Files
 
-Make the desired modifications in the .md files under the `docs/docs` directory.
+Make the desired modifications in the .md files under the `docs/docs` directory. The changes should be reflected in the main preview mentioned above.
 
 ## Common Development Tasks
 
@@ -205,6 +205,3 @@ ruff format .
 [^build-notes]:
     !!! warning "Cross-platform compilation"
         Executables made in PyInstaller must be built inside the target platform. **You cannot build for a different platform other than your own.**
-
-[^update-gh-pages]:  
-    **You should never edit the documentation in the gh-pages branch;** this branch is used to publish the documentation and is overwritten every time the `docs.yml` Github Action is run.

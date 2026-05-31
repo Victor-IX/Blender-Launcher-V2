@@ -42,12 +42,13 @@ features = [
   "navigation.instant",
   "navigation.instant.prefetch",
   "navigation.instant.progress",
-
   "navigation.tracking",
   "toc.follow",
   "navigation.top",
 
-  "search.highlight"
+  "search.highlight",
+
+  "content.footnote.tooltips"
 ]
 
 [project.theme.icon]
