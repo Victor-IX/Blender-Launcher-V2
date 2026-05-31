@@ -30,7 +30,7 @@ readme = "README.md"
 license = "GPL-3.0"
 
 [project.optional-dependencies]
-docs = ["mkdocs", "mkdocs-material>=9.5.10"]
+docs = ["zensical>=0.0.43"]
 ruff = ["ruff>=0.15.15"]
 test = ["pytest>=9.0.3"]
 
