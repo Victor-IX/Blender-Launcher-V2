@@ -165,27 +165,15 @@ These scripts will create a standalone executable using PyInstaller. Once finish
 
 ```bash
 cd docs
-# prefix with `uv run` if not in the virtual env
-uv run mkdocs serve --livereload
+uv run zensical serve
 ```
-or use the provided `scripts/mkdocs_serve` scripts.
+or use the provided `scripts/serve_docs.*` scripts.
 
 Then open the given link (likely [http://127.0.0.1:8000/](http://127.0.0.1:8000/)) in a web browser.
 
 ### Edit Documentation Files[^update-gh-pages]
 
-Make the desired modifications in the .md files under the `docs/mkdocs` directory.
-
-### Publish the Documentation [Collaborator Only][^collab-only]
-
-```bat
-cd docs
-uv run mkdocs gh-deploy
-```
-
-or use the provided `scripts/mkdocs_publish` scripts.
-
-This builds and publishes the documentation to the gh-pages branch.
+Make the desired modifications in the .md files under the `docs/docs` directory.
 
 ## Common Development Tasks
 
@@ -219,7 +207,4 @@ ruff format .
         Executables made in PyInstaller must be built inside the target platform. **You cannot build for a different platform other than your own.**
 
 [^update-gh-pages]:  
-    **You should never edit the documentation in the gh-pages branch;** this branch is used to publish the documentation and is overwritten every time `mkdocs gh-deploy` is run.
-
-[^collab-only]:
-    These scripts will only work if you have write access to the Blender-Launcher-V2 repo.
+    **You should never edit the documentation in the gh-pages branch;** this branch is used to publish the documentation and is overwritten every time the `docs.yml` Github Action is run.

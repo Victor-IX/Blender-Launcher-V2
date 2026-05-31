@@ -74,21 +74,25 @@ Special values:
 Saving the current search will save the created query to your settings, whenever a build with the parsed version is found, this search query will automatically fill the search options.
 
 ## Launching via the Commandline
+```
 
-    usage: main.py launch [-h] [-f FILE | -ol] [-v VERSION] [-c]
+usage: main.py launch [-h] [-f FILE | -ol] [-v VERSION] [-c]
 
-    options:
-    -h, --help            show this help message and exit
-    -f FILE, --file FILE  Path to a specific Blender file to launch.
-    -ol, --open-last      Open the last file in the specified blender build
-    -v VERSION, --version VERSION
-                            Version to launch.
-    -c, --cli             Launch Blender from CLI. does not open any QT frontend. WARNING: LIKELY
-                            DOES NOT WORK IN WINDOWS BUNDLED EXECUTABLE
+options:
+-h, --help            show this help message and exit
+-f FILE, --file FILE  Path to a specific Blender file to launch.
+-ol, --open-last      Open the last file in the specified blender build
+-v VERSION, --version VERSION
+                        Version to launch.
+-c, --cli             Launch Blender from CLI. does not open any QT frontend. WARNING: LIKELY
+                        DOES NOT WORK IN WINDOWS BUNDLED EXECUTABLE
+```
 
 The version queries in the commandline are parsed a little differently than in the launching window, using this syntax:
 
-    <major_num>.<minor>.<patch>[-<branch>][+<build_hash>][@<commit time>]
+```
+<major_num>.<minor>.<patch>[-<branch>][+<build_hash>][@<commit time>]
+```
 
 All the parts of the version are optional, except for the initial three digits/wildcards.
 The branch is specified with a `-` symbol, the build_hash is specified with a `+` handle, and the commit_time is specified with an `@` symbol.

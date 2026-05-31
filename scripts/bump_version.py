@@ -88,7 +88,7 @@ def old_version():
 
 # Path
 main_py_path = "./source/main.py"
-doc_path = "./docs/mkdocs/index.md"
+doc_path = "./docs/docs/index.md"
 pyproject_toml_path = "./pyproject.toml"
 version_txt_path = "./version.txt"
 

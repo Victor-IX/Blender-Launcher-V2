@@ -5,5 +5,5 @@ if [ "$(basename "$PWD")" = "scripts" ]; then
     cd ..
 fi
 
-cd docs
-mkdocs serve --livereload
+cd docs || exit
+zensical serve
