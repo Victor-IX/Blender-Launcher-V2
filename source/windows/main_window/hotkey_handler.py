@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.settings import (
     get_quick_launch_key_seq,
 )
@@ -14,6 +15,8 @@ if TYPE_CHECKING:
     from .window import BlenderLauncher
 
 try:
+    if IS_CONTAINED:
+        raise AssertionError("Global hotkeys not supported in a containerized environment")
     from pynput import keyboard
 
     HOTKEYS_AVAILABLE = True

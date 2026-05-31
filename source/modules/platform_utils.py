@@ -225,7 +225,7 @@ def get_default_library_folder():
         if app_bundle is not None:
             return app_bundle.parent
 
-    return get_cwd()
+    return Path("~/Documents/BlenderBuilds").expanduser()
 
 
 @cache
