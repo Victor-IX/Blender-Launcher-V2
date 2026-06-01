@@ -96,6 +96,18 @@ general:
     purge_temp_now_tooltip: |
         Immediately clear all files in the temporary download folder
 
+  logging:
+    label: Logging
+    log_level: Log Level
+    log_level_tooltip: |
+      Verbosity of messages written to blender-launcher.log.
+      Lower levels include more detail (DEBUG is the most verbose).
+      Requires a restart to take effect.
+      DEFAULT: INFO
+    open_log_folder: Open Log Folder
+    open_log_folder_tooltip: |
+      Open the folder containing blender-launcher.log in the system file manager.
+
 
 
 appearance:

@@ -97,6 +97,18 @@ general:
     purge_temp_now_tooltip: |
         一時ダウンロードフォルダを即座に空にします
 
+  logging:
+    label: ログ
+    log_level: ログレベル
+    log_level_tooltip: |
+      blender-launcher.log に書き出すメッセージの詳細度を設定します。
+      レベルが低いほど詳細な情報が記録されます（DEBUGが最も詳細）。
+      反映するには再起動が必要です。
+      デフォルト: INFO
+    open_log_folder: ログフォルダを開く
+    open_log_folder_tooltip: |
+      blender-launcher.log のあるフォルダをファイルマネージャで開きます。
+
 
 
 appearance:

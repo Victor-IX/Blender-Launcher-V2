@@ -19,7 +19,7 @@ from modules.cli_launching import cli_launch
 from modules.file_utils import retry_on_permission_error
 from modules.fonts import Fonts
 from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
-from modules.settings import get_auto_register_winget
+from modules.settings import get_auto_register_winget, get_log_level
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
@@ -43,7 +43,7 @@ _ = gettext.gettext
 # Setup logging
 setup_logging(
     log_path=get_cache_path().absolute() / "blender-launcher.log",
-    level="DEBUG" if "--debug" in sys.argv else "INFO",
+    level="DEBUG" if "--debug" in sys.argv else get_log_level(),
     max_bytes=1 * 1024 * 1024,  # 1 MB
     backup_count=2,
     format_string="[%(asctime)s:%(levelname)s] %(message)s",

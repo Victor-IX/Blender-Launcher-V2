@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
-from modules.platform_utils import get_platform
+from modules.platform_utils import get_cache_path, get_platform
 from modules.settings import (
     delete_action,
     get_actual_library_folder,
@@ -17,10 +17,12 @@ from modules.settings import (
     get_launch_timer_duration,
     get_launch_when_system_starts,
     get_library_folder,
+    get_log_level,
     get_purge_temp_on_startup,
     get_show_tray_icon,
     get_use_pre_release_builds,
     get_worker_thread_count,
+    log_levels,
     migrate_config,
     set_auto_register_winget,
     set_default_delete_action,
@@ -29,6 +31,7 @@ from modules.settings import (
     set_launch_timer_duration,
     set_launch_when_system_starts,
     set_library_folder,
+    set_log_level,
     set_purge_temp_on_startup,
     set_show_tray_icon,
     set_use_pre_release_builds,
@@ -37,6 +40,8 @@ from modules.settings import (
 )
 from modules.shortcut import generate_program_shortcut, get_default_program_shortcut_destination
 from modules.winget_integration import register_with_winget, unregister_from_winget
+from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QComboBox, QPushButton
 from threads.remover import purge_temp_folder
 from utils.i18n_init import Language
@@ -202,6 +207,18 @@ class GeneralTabWidget(SettingsFormWidget):
             # Purge Temp Now
             grp.add_button("settings.general.advanced.purge_temp_now", clicked=self.purge_temp_now)
 
+        # Logging
+        with self.group("settings.general.logging.label") as grp:
+            self.log_level_combo = grp.add(QComboBox(), "settings.general.logging.log_level")
+            for level in log_levels:
+                self.log_level_combo.addItem(level, level)
+            idx = self.log_level_combo.findData(get_log_level())
+            if idx >= 0:
+                self.log_level_combo.setCurrentIndex(idx)
+            self.log_level_combo.activated.connect(self.change_log_level)
+
+            grp.add_button("settings.general.logging.open_log_folder", clicked=self.open_log_folder)
+
     def prompt_library_folder(self):
         library_folder = str(get_library_folder())
         new_library_folder = FileDialogWindow().get_directory(self, t("msg.popup.select_library"), library_folder)
@@ -215,6 +232,13 @@ class GeneralTabWidget(SettingsFormWidget):
     def change_language(self, index: int):
         lang = self.language_combo.itemData(index)
         set_language(lang)
+
+    def change_log_level(self, index: int):
+        level = self.log_level_combo.itemData(index)
+        set_log_level(level)
+
+    def open_log_folder(self):
+        QDesktopServices.openUrl(QUrl.fromLocalFile(str(get_cache_path())))
 
     def library_folder_validity_changed(self, v: bool):
         if not v:
