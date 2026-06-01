@@ -876,6 +876,20 @@ def set_use_pre_release_builds(b: bool):
     get_settings().setValue("use_pre_release_builds", b)
 
 
+log_levels = ("DEBUG", "INFO", "WARNING", "ERROR")
+
+
+def get_log_level() -> str:
+    v: str = get_settings().value("log_level", defaultValue="INFO", type=str)  # type: ignore
+    if v not in log_levels:
+        return "INFO"
+    return v
+
+
+def set_log_level(level: str):
+    get_settings().setValue("log_level", level)
+
+
 def get_use_system_titlebar() -> bool:
     return get_settings().value("use_system_title_bar", defaultValue=False, type=bool)  # type: ignore
 
