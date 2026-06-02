@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.platform_utils import get_platform
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, QTimer, Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QSystemTrayIcon
 from widgets.base_menu_widget import BaseMenuWidget
@@ -69,7 +69,11 @@ class TrayHandler(QObject):
             # INFO: Middle click dose not work anymore on new Windows versions with PyQt5
             # Middle click currently returns the Trigger reason
         elif reason == QSystemTrayIcon.ActivationReason.Context:
-            self.tray_menu.trigger()
+            if get_platform() == "macOS":
+                # Defer the macOS tray popup so Quit can exit properly.
+                QTimer.singleShot(0, self.tray_menu.trigger)
+            else:
+                self.tray_menu.trigger()
 
     def set_visible(self, b: bool):
         if b:
