@@ -769,7 +769,9 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 def launch_build(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None):
     args = get_args(info, exe, launch_mode)
     logger.debug(f"Running build with args {args!s}")
-    return _popen(args, no_console=get_launch_blender_no_console())
+    # .cmd/.bat debug scripts use pause to wait for user input, so they always need a visible console.
+    is_interactive_script = exe is not None and Path(exe).suffix.lower() in (".cmd", ".bat")
+    return _popen(args, no_console=False if is_interactive_script else get_launch_blender_no_console())
 
 
 def bfa_version_matcher(bfa_blender_version: Version) -> Version | None:
