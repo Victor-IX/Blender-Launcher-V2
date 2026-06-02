@@ -39,20 +39,9 @@ version = Version(
 
 
 _ = gettext.gettext
-
-# Setup logging
-setup_logging(
-    log_path=get_cache_path().absolute() / "blender-launcher.log",
-    level="DEBUG" if "--debug" in sys.argv else get_log_level(),
-    max_bytes=1 * 1024 * 1024,  # 1 MB
-    backup_count=2,
-    format_string="[%(asctime)s:%(levelname)s] %(message)s",
-)
-
 logger = logging.getLogger(__name__)
 
 
-# Setup exception handling
 def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
@@ -62,9 +51,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         f"{get_platform()} - Blender Launcher {version}",
         exc_info=(exc_type, exc_value, exc_traceback),
     )
-
-
-sys.excepthook = handle_exception
 
 
 def add_help(parser: ArgumentParser):
@@ -182,10 +168,14 @@ def main():
         ap.show_help(parser, update_parser, launch_parser, args)
         sys.exit(0)
 
-    if args.debug:
-        logging.root.setLevel(logging.DEBUG)
-    else:
-        logging.root.setLevel(logging.INFO)
+    setup_logging(
+        log_path=get_cache_path().absolute() / "blender-launcher.log",
+        level="DEBUG" if args.debug else get_log_level(),
+        max_bytes=1 * 1024 * 1024,  # 1 MB
+        backup_count=2,
+        format_string="[%(asctime)s:%(levelname)s] %(message)s",
+    )
+    sys.excepthook = handle_exception
 
     # Log Blender Launcher version
     logger.info(f"Blender Launcher Version: {version}")
