@@ -59,7 +59,7 @@ def generate_blender_shortcut(folder, name, destination: Path):
                 "PrefersNonDefaultGPU=true",
                 "Categories=Graphics;3DGraphics;",
                 "MimeType=application/x-blender;",
-                f"Exec={quote(_exec)} %f",
+                f"Exec={quote(_exec.as_posix())} %f",
             ]
         )
         with open(destination, "w", encoding="utf-8") as file:
