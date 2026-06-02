@@ -967,6 +967,11 @@ class BlenderLauncher(BaseWindow):
 
     def restart_app(self, cwd: Path | None = None):
         """Launch 'Blender Launcher.exe' and exit"""
+        if not is_frozen():
+            logger.warning("restart_app called in a non-frozen environment; skipping relaunch")
+            self._force_quit()
+            return
+
         cwd = cwd or get_cwd()
 
         if self.platform == "Windows":
