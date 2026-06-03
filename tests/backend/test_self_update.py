@@ -1,9 +1,3 @@
-"""Tests for the launcher self-update asset resolution and naming.
-
-These guard against the macOS regression where the download URL was built as
-``..._macOS_x64.zip`` while the release workflow publishes ``..._macos_arm64.zip``.
-"""
-
 import sys
 
 import pytest
