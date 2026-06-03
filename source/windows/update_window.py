@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import os
+import shutil
 from typing import TypedDict
 
 import distro
-from modules.platform_utils import _popen, get_cwd, get_platform
+from modules.platform_utils import _check_call, _popen, get_cwd, get_platform, get_running_app_bundle
 from modules.tasks import TaskQueue
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
@@ -16,10 +18,22 @@ from threads.scraping.launcher_updates import get_release_tag
 from widgets.base_progress_bar_widget import BaseProgressBarWidget
 from windows.base_window import BaseWindow
 
-release_link = "https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/{0}/Blender_Launcher_{0}_{1}_x64.zip"
+release_link = "https://github.com/Victor-IX/Blender-Launcher-V2/releases/download/{0}/Blender_Launcher_{0}_{1}.zip"
 api_link = "https://api.github.com/repos/Victor-IX/Blender-Launcher-V2/releases/tags/{}"
 
 logger = logging.getLogger()
+
+
+def release_asset_url(tag: str, platform: str) -> str:
+    """Build the GitHub release download URL for the launcher archive.
+
+    The release assets are named per the build workflows:
+      - Windows: ``Blender_Launcher_<tag>_Windows_x64.zip``
+      - macOS:   ``Blender_Launcher_<tag>_macos_arm64.zip`` (lowercase, arm64 only)
+    Linux is resolved separately via the GitHub API (distro-specific assets).
+    """
+    suffix = "macos_arm64" if platform == "macOS" else f"{platform}_x64"
+    return release_link.format(tag, suffix)
 
 
 # this only shows relevant sections of the response
@@ -61,6 +75,15 @@ class BlenderLauncherUpdater(BaseWindow):
         self.platform = get_platform()
         self.cwd = get_cwd()
 
+        # On macOS the updater runs from inside its own .app bundle, so get_cwd()
+        # (which is .../Updater.app/Contents/MacOS) is the wrong extraction target.
+        # The new .app must land next to the installed app instead.
+        self.install_dir = self.cwd
+        if self.platform == "macOS":
+            updater_bundle = get_running_app_bundle()
+            if updater_bundle is not None:
+                self.install_dir = updater_bundle.parent
+
         self.queue = TaskQueue(parent=self, worker_count=1)
         self.queue.start()
 
@@ -95,7 +118,7 @@ class BlenderLauncherUpdater(BaseWindow):
 
         release = asset_table.get("Ubuntu", asset_table.get("Linux"))
         if release is None:
-            return release_link.format(self.release_tag, self.platform)
+            return release_asset_url(self.release_tag, self.platform)
 
         for key in (
             distro.id().title(),
@@ -112,7 +135,7 @@ class BlenderLauncherUpdater(BaseWindow):
     def download(self):
         # TODO
         # This function should not use proxy for downloading new builds!
-        link = self.get_link() if self.platform == "Linux" else release_link.format(self.release_tag, self.platform)
+        link = self.get_link() if self.platform == "Linux" else release_asset_url(self.release_tag, self.platform)
 
         assert self.manager is not None
         self.ProgressBar.set_state(self.ProgressBar.State.DOWNLOADING)
@@ -124,7 +147,15 @@ class BlenderLauncherUpdater(BaseWindow):
     def extract(self, source):
         self.ProgressBar.set_state(self.ProgressBar.State.EXTRACTING)
         self.source_zip = source
-        a = ExtractTask(source, self.cwd)
+
+        # On macOS, remove the previous .app so ditto writes a clean bundle
+        # instead of merging into stale files. The original app has already quit.
+        if self.platform == "macOS":
+            target = self.install_dir / "Blender Launcher.app"
+            if target.exists():
+                shutil.rmtree(target, ignore_errors=True)
+
+        a = ExtractTask(source, self.install_dir)
         a.progress.connect(self.ProgressBar.set_progress)
         a.finished.connect(self.finish)
         self.queue.append(a)
@@ -137,13 +168,25 @@ class BlenderLauncherUpdater(BaseWindow):
             except Exception as e:
                 logger.warning(f"Failed to remove temporary file {self.source_zip}: {e}")
 
-        # Launch 'Blender Launcher.exe' and exit
+        # Launch the freshly installed launcher and exit
         launcher = str(dist)
         if self.platform == "Windows":
             _popen([launcher])
         elif self.platform == "Linux":
             os.chmod(dist, 0o744)
             _popen('nohup "' + launcher + '"')
+        elif self.platform == "macOS":
+            # Self-downloaded files are not quarantined, but strip the attribute
+            # defensively so Gatekeeper never blocks the relaunch.
+            with contextlib.suppress(Exception):
+                _check_call(["xattr", "-dr", "com.apple.quarantine", launcher])
+            # -n forces a new instance: the updater shares the new app's bundle
+            # id, so without -n `open` would just re-activate this updater.
+            _popen(f'open -n "{launcher}"')
+            # Best-effort detached cleanup of this updater bundle copy.
+            updater_bundle = get_running_app_bundle()
+            if updater_bundle is not None:
+                _popen(f'sleep 3 && rm -rf "{updater_bundle.as_posix()}"')
 
         self.app.quit()
 

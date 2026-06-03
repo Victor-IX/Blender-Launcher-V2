@@ -10,7 +10,7 @@ from pathlib import Path
 import py7zr
 from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
-from modules.platform_utils import _check_call, _check_output
+from modules.platform_utils import _check_call, _check_output, get_platform
 from modules.task import Task
 from PySide6.QtCore import Signal
 from send2trash import send2trash
@@ -27,6 +27,19 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             error_msg = f"File is not a valid zip file: {source}"
             logger.error(error_msg)
             raise zipfile.BadZipFile(error_msg)
+
+        if get_platform() == "macOS":
+            # macOS .app bundles must be extracted with ditto: Python's zipfile
+            # drops executable bits, symlinks, and resource forks, which leaves
+            # the extracted .app unable to launch. ditto preserves them.
+            with zipfile.ZipFile(source) as zf:
+                names = [m.filename for m in zf.infolist()]
+            folder = _get_build_folder(names) or names[0].split("/")[0]
+            destination.mkdir(parents=True, exist_ok=True)
+            progress_callback(0, 0)
+            _check_call(["ditto", "-x", "-k", source.as_posix(), destination.as_posix()])
+            progress_callback(1, 1)
+            return destination / folder
 
         try:
             with zipfile.ZipFile(source) as zf:
