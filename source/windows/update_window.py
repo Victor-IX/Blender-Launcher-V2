@@ -25,13 +25,7 @@ logger = logging.getLogger()
 
 
 def release_asset_url(tag: str, platform: str) -> str:
-    """Build the GitHub release download URL for the launcher archive.
-
-    The release assets are named per the build workflows:
-      - Windows: ``Blender_Launcher_<tag>_Windows_x64.zip``
-      - macOS:   ``Blender_Launcher_<tag>_macos_arm64.zip`` (lowercase, arm64 only)
-    Linux is resolved separately via the GitHub API (distro-specific assets).
-    """
+    # macOS releases are published as "macos_arm64", everything else as "<Platform>_x64"
     suffix = "macos_arm64" if platform == "macOS" else f"{platform}_x64"
     return release_link.format(tag, suffix)
 
@@ -75,9 +69,8 @@ class BlenderLauncherUpdater(BaseWindow):
         self.platform = get_platform()
         self.cwd = get_cwd()
 
-        # On macOS the updater runs from inside its own .app bundle, so get_cwd()
-        # (which is .../Updater.app/Contents/MacOS) is the wrong extraction target.
-        # The new .app must land next to the installed app instead.
+        # On macOS get_cwd() is inside the updater's own .app bundle, so the new
+        # app must be installed next to it instead.
         self.install_dir = self.cwd
         if self.platform == "macOS":
             updater_bundle = get_running_app_bundle()
@@ -148,14 +141,17 @@ class BlenderLauncherUpdater(BaseWindow):
         self.ProgressBar.set_state(self.ProgressBar.State.EXTRACTING)
         self.source_zip = source
 
-        # On macOS, remove the previous .app so ditto writes a clean bundle
-        # instead of merging into stale files. The original app has already quit.
+        dest = self.install_dir
         if self.platform == "macOS":
-            target = self.install_dir / "Blender Launcher.app"
-            if target.exists():
-                shutil.rmtree(target, ignore_errors=True)
+            # Extract into a staging folder so the installed app is only replaced
+            # once extraction succeeds (a failed update never deletes it).
+            self.staging_dir = self.install_dir / ".bl_update"
+            if self.staging_dir.exists():
+                shutil.rmtree(self.staging_dir, ignore_errors=True)
+            self.staging_dir.mkdir(parents=True, exist_ok=True)
+            dest = self.staging_dir
 
-        a = ExtractTask(source, self.install_dir)
+        a = ExtractTask(source, dest)
         a.progress.connect(self.ProgressBar.set_progress)
         a.finished.connect(self.finish)
         self.queue.append(a)
@@ -176,19 +172,34 @@ class BlenderLauncherUpdater(BaseWindow):
             os.chmod(dist, 0o744)
             _popen('nohup "' + launcher + '"')
         elif self.platform == "macOS":
-            # Self-downloaded files are not quarantined, but strip the attribute
-            # defensively so Gatekeeper never blocks the relaunch.
+            launcher = str(self._install_macos_app(dist))
             with contextlib.suppress(Exception):
                 _check_call(["xattr", "-dr", "com.apple.quarantine", launcher])
-            # -n forces a new instance: the updater shares the new app's bundle
-            # id, so without -n `open` would just re-activate this updater.
+            # -n forces a new instance; the updater shares the new app's bundle id
             _popen(f'open -n "{launcher}"')
-            # Best-effort detached cleanup of this updater bundle copy.
             updater_bundle = get_running_app_bundle()
             if updater_bundle is not None:
                 _popen(f'sleep 3 && rm -rf "{updater_bundle.as_posix()}"')
 
         self.app.quit()
+
+    def _install_macos_app(self, new_app):
+        # Swap the staged app in for the installed one only after a successful
+        # extraction, restoring the previous version if the swap itself fails.
+        target = self.install_dir / new_app.name
+        old = self.install_dir / f"{new_app.name}.old"
+        shutil.rmtree(old, ignore_errors=True)
+        if target.exists():
+            target.rename(old)
+        try:
+            new_app.rename(target)
+        except OSError:
+            logger.exception("Failed to install update; restoring previous version")
+            if not target.exists() and old.exists():
+                old.rename(target)
+        shutil.rmtree(old, ignore_errors=True)
+        shutil.rmtree(self.staging_dir, ignore_errors=True)
+        return target
 
     def closeEvent(self, event):
         self.queue.fullstop()

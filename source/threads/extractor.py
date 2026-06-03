@@ -29,9 +29,8 @@ def extract(source: Path, destination: Path, progress_callback: Callable[[int, i
             raise zipfile.BadZipFile(error_msg)
 
         if get_platform() == "macOS":
-            # macOS .app bundles must be extracted with ditto: Python's zipfile
-            # drops executable bits, symlinks, and resource forks, which leaves
-            # the extracted .app unable to launch. ditto preserves them.
+            # ditto preserves the .app's executable bits, symlinks and resource
+            # forks, which Python's zipfile drops (leaving the app unable to launch).
             with zipfile.ZipFile(source) as zf:
                 names = [m.filename for m in zf.infolist()]
             folder = _get_build_folder(names) or names[0].split("/")[0]

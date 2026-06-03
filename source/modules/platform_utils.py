@@ -38,8 +38,6 @@ def get_launcher_name() -> tuple[str, str]:
         return ("Blender Launcher.exe", "Blender Launcher Updater.exe")
 
     if sys.platform == "darwin":
-        # On macOS the launcher ships as a .app bundle, so the updater is a
-        # sibling bundle rather than a single file.
         return ("Blender Launcher.app", "Blender Launcher Updater.app")
 
     return ("Blender Launcher", "Blender Launcher Updater")
@@ -201,11 +199,7 @@ def find_app_bundle(executable_path: Path) -> Path | None:
 
 
 def get_running_app_bundle() -> Path | None:
-    """Return the .app bundle of the running process on macOS, else None.
-
-    Returns None when not on macOS or when the process is not running from a
-    .app bundle (e.g. running from source).
-    """
+    """Return the .app bundle of the running process on macOS, else None."""
     if get_platform() != "macOS":
         return None
     return find_app_bundle(Path(sys.executable))

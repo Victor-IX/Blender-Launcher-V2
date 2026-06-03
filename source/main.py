@@ -282,8 +282,8 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
         bl_name, blu_name = get_launcher_name()
 
         if get_platform() == "macOS":
-            # The launcher is a .app bundle: copy the whole bundle next to the
-            # installed app with ditto, then relaunch it as the instanced updater.
+            # The launcher is a .app bundle: ditto copies the whole bundle, then
+            # relaunch it as the instanced updater.
             app_bundle = get_running_app_bundle()
             if app_bundle is None:
                 logger.error("Could not locate the running .app bundle; cannot self-update.")

@@ -494,14 +494,13 @@ class BlenderLauncher(BaseWindow):
 
             return
 
-        # Create copy of the launcher to act as an updater program, so the
-        # original can be overwritten while the updater runs.
+        # Create a copy of the launcher to act as an updater program, so the
+        # original can be replaced while the updater runs.
         bl_name, blu_name = get_launcher_name()
 
         if self.platform == "macOS":
-            # The launcher is a .app bundle: copy the whole bundle (ditto
-            # preserves perms/symlinks; shutil.copy cannot copy directories)
-            # next to the installed app, then launch it with `open`.
+            # The launcher is a .app bundle: ditto copies the whole bundle
+            # (shutil.copy cannot copy directories), then launch it with `open`.
             app_bundle = get_running_app_bundle()
             if app_bundle is None:
                 logger.error("Could not locate the running .app bundle; cannot self-update.")
