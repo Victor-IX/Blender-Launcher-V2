@@ -21,11 +21,13 @@ from modules.connection_manager import ConnectionManager
 from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
 from modules.platform_utils import (
+    _check_call,
     _popen,
     get_cwd,
     get_default_library_folder,
     get_launcher_name,
     get_platform,
+    get_running_app_bundle,
     is_frozen,
 )
 from modules.settings import (
@@ -492,13 +494,29 @@ class BlenderLauncher(BaseWindow):
 
             return
 
-        # Create copy of 'Blender Launcher.exe' file
-        # to act as an updater program
-        bl_exe, blu_exe = get_launcher_name()
+        # Create copy of the launcher to act as an updater program, so the
+        # original can be overwritten while the updater runs.
+        bl_name, blu_name = get_launcher_name()
+
+        if self.platform == "macOS":
+            # The launcher is a .app bundle: copy the whole bundle (ditto
+            # preserves perms/symlinks; shutil.copy cannot copy directories)
+            # next to the installed app, then launch it with `open`.
+            app_bundle = get_running_app_bundle()
+            if app_bundle is None:
+                logger.error("Could not locate the running .app bundle; cannot self-update.")
+                return
+            updater_bundle = app_bundle.parent / blu_name
+            if updater_bundle.exists():
+                shutil.rmtree(updater_bundle, ignore_errors=True)
+            _check_call(["ditto", app_bundle.as_posix(), updater_bundle.as_posix()])
+            _popen(f'open -n "{updater_bundle.as_posix()}" --args --instanced update {self.latest_tag}')
+            self.quit_()
+            return
 
         cwd = get_cwd()
-        source = cwd / bl_exe
-        dist = cwd / blu_exe
+        source = cwd / bl_name
+        dist = cwd / blu_name
 
         retry_on_permission_error(shutil.copy, source, dist)
 

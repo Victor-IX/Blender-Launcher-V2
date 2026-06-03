@@ -18,7 +18,16 @@ from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
 from modules.file_utils import retry_on_permission_error
 from modules.fonts import Fonts
-from modules.platform_utils import _popen, get_cache_path, get_cwd, get_launcher_name, get_platform, is_frozen
+from modules.platform_utils import (
+    _check_call,
+    _popen,
+    get_cache_path,
+    get_cwd,
+    get_launcher_name,
+    get_platform,
+    get_running_app_bundle,
+    is_frozen,
+)
 from modules.settings import get_auto_register_winget, get_log_level
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
@@ -270,18 +279,33 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
         sys.exit(app.exec())
     else:
         # Copy the launcher to the updater position
-        bl_exe, blu_exe = get_launcher_name()
+        bl_name, blu_name = get_launcher_name()
+
+        if get_platform() == "macOS":
+            # The launcher is a .app bundle: copy the whole bundle next to the
+            # installed app with ditto, then relaunch it as the instanced updater.
+            app_bundle = get_running_app_bundle()
+            if app_bundle is None:
+                logger.error("Could not locate the running .app bundle; cannot self-update.")
+                sys.exit(1)
+            updater_bundle = app_bundle.parent / blu_name
+            if updater_bundle.exists():
+                shutil.rmtree(updater_bundle, ignore_errors=True)
+            _check_call(["ditto", app_bundle.as_posix(), updater_bundle.as_posix()])
+            _popen(f'open -n "{updater_bundle.as_posix()}" --args --instanced update')
+            sys.exit(0)
+
         cwd = get_cwd()
-        source = cwd / bl_exe
-        dist = cwd / blu_exe
+        source = cwd / bl_name
+        dist = cwd / blu_name
         retry_on_permission_error(shutil.copy, source, dist)
 
         # Run the updater with the instanced flag
         if get_platform() == "Windows":
-            _popen([blu_exe, "--instanced", "update"])
+            _popen([blu_name, "--instanced", "update"])
         elif get_platform() == "Linux":
-            os.chmod(blu_exe, 0o744)
-            _popen(f'nohup "{blu_exe}" --instanced update')
+            os.chmod(blu_name, 0o744)
+            _popen(f'nohup "{blu_name}" --instanced update')
         sys.exit(0)
 
 
