@@ -372,9 +372,14 @@ class DownloadWidget(BaseBuildWidget):
 
     def successful_read_callback(self, widget: LibraryWidget):
         self.setInstalled(widget)
-        if self.updating_widget is not None and not self._is_removed:
+        if self.updating_widget is not None:
             updating_widget = self.updating_widget
-            if updating_widget.move_portable_settings:
+            if self._is_removed:
+                # The new build reused the old one's folder name, so there is no
+                # separate old build to remove.
+                updating_widget.update_finished()
+                self.updating_widget = None
+            elif updating_widget.move_portable_settings:
                 logger.debug("Transferring portable settings...")
                 QTimer.singleShot(500, lambda: self.handle_portable_settings(updating_widget, widget))
             else:
