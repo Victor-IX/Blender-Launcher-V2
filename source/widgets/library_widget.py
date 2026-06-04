@@ -21,6 +21,7 @@ from modules.build_info import (
     get_fork_config_paths,
     launch_build,
 )
+from modules.container_detect import IS_CONTAINED
 from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
 from modules.fonts import Fonts
@@ -1038,6 +1039,8 @@ class LibraryWidget(BaseBuildWidget):
 
         if QDesktopServices.openUrl(QUrl.fromLocalFile(folder_path.as_posix())):
             return
+        elif IS_CONTAINED:
+            logger.error("QDesktopServices.openURL failed in a container! freezing is likely.")
 
         platform = get_platform()
 

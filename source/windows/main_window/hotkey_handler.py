@@ -15,13 +15,16 @@ if TYPE_CHECKING:
     from .window import BlenderLauncher
 
 try:
-    if IS_CONTAINED:
-        raise AssertionError("Global hotkeys not supported in a containerized environment")
     from pynput import keyboard
 
     HOTKEYS_AVAILABLE = True
 except Exception as e:
-    logging.exception(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
+    if IS_CONTAINED:
+        logging.warning("Global hotkeys disabled: Unsupported in a containerized environment")
+    else:
+        logging.exception("Global hotkeys disabled: Error importing pynput")
+        # Exception automatically printed
+
     HOTKEYS_AVAILABLE = False
 
 

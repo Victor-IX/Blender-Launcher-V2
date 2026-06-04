@@ -41,7 +41,9 @@ def show_help(
     else:
         if args.command == "update":
             if update_parser is None:
-                print("Update command called while in a contained environment. Please use your package manager's update functions.")
+                print(
+                    "Update command called while in a contained environment. Please use your package manager's update functions."
+                )
                 sys.exit(1)
             update_parser.print_help()
         elif args.command == "launch":

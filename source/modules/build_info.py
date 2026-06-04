@@ -700,6 +700,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
     elif platform == "Linux":
         from modules.container_detect import IS_FLATPAK
+
         bash_args = get_bash_arguments()
         bash_args_ = shlex.split(bash_args)
 
