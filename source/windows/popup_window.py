@@ -93,14 +93,13 @@ class PopupWindow(BaseWindow):
         """
         Popup class.
 
-        :param title:   The title of the popup (only visible when system title bar is enabled).
-        :param message: The message to display in the popup.
-        :param buttons: Optional. A list of tuples with the button label and the button role.
-                        If not provided, the popup will have an OK and a Cancel button.
-        :param info_popup: Optional. If True, the popup will be an information popup with only an OK button.
-        :param icon: Optional. The icon to display in the popup. Can be `PopupIcon.INFO` for an info icon
-                     or `PopupIcon.WARNING` for a warning icon. Defaults to `PopupIcon.INFO`.
-        :param parent: The parent widget. Optional.
+        Args:
+            popup_type: Popup message type key used for the window title localization.
+            icon: Icon variant to show in the popup.
+            message: Message text to display.
+            buttons: Button choice(s) shown in the popup. Defaults to ``PopupButton.default()``.
+            parent: Optional parent widget.
+            app: Optional application object passed to ``BaseWindow``.
         """
         super().__init__(parent=parent, app=app)
 

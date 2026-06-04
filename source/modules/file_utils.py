@@ -18,16 +18,19 @@ def retry_on_permission_error(
     retry_delay: float = _DEFAULT_RETRY_DELAY,
     **kwargs,
 ) -> _T:
-    """Call *func* with *args*/*kwargs*, retrying on :exc:`PermissionError`.
+    """Call *func* with *args*/*kwargs*, retrying on ``PermissionError``.
 
     This is intended for file-system operations (copy, rename, …) that may
     fail on Windows when antivirus software or another process holds a lock
     on the target file.
 
-    :param func: The callable to invoke.
-    :param max_retries: Maximum number of attempts before re-raising.
-    :param retry_delay: Seconds to wait between attempts.
-    :raises PermissionError: After *max_retries* unsuccessful attempts.
+    Args:
+        func: The callable to invoke.
+        max_retries: Maximum number of attempts before re-raising.
+        retry_delay: Seconds to wait between attempts.
+
+    Raises:
+        PermissionError: After ``max_retries`` unsuccessful attempts.
     """
     last_error: PermissionError | None = None
     for attempt in range(max_retries):

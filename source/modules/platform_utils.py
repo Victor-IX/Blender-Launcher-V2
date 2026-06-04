@@ -306,7 +306,13 @@ def get_blender_config_folder(
 ) -> Path | None:
     """
     Retrieves the Blender configuration folder.
-    :param custom_folder: Optional; a custom folder name use to locate fork blender configuration folder.
+
+    Args:
+        config_folder_name: Configuration root folder name used on platforms that keep vendor-specific paths.
+        config_subfolder_name: Blender configuration subfolder name.
+
+    Returns:
+        The detected Blender configuration folder path for the current platform, or ``None`` if unsupported.
     """
     platform = get_platform()
 
