@@ -88,7 +88,7 @@ markers = sorted(
 # TODO properly sanitize
 s = "\n".join(markers)
 s = subprocess.check_output(
-    f"""flatpak --arch=x86_64 --devel --command=python3 run io.qt.PySide.BaseApp \
+    f"""flatpak --arch=x86_64 --devel --command=python3 run {RUNTIME} \
     -c "from packaging.requirements import Marker; \
     print([Marker(x).evaluate() for x in \\"\\"\\"{s}\\"\\"\\".splitlines()])"
     """,
@@ -96,7 +96,7 @@ s = subprocess.check_output(
 )
 x = eval(s)
 
-markers = {marker for marker, valid in zip(markers, x, strict=True) if print(marker, valid) or valid}
+markers = {marker for marker, valid in zip(markers, x, strict=True) if valid}
 print()
 name_to_package = {p["name"]: p for p in packages}
 
@@ -177,15 +177,15 @@ while S:
     for edge in [e for e in edges if e[0] == n]:
         edges.remove(edge)
         if not any(e for e in edges if e[1] == edge[1]):
-            # S.appendleft(edge[1]) # most eager ordering
-            S.append(edge[1])  # least eager ordering
+            S.appendleft(edge[1])  # most eager ordering
+            # S.append(edge[1])  # least eager ordering
 
 
 sorted_deps = {p: all_deps[p] for p in L}
 sorted_deps.pop(ROOT_PACKAGE)
 
 leaves = [pkg for pkg, deps in sorted_deps.items() if not deps]
-print("Leaves: ", ", ".join(leaves))
+print("Leaves:", ", ".join(leaves))
 print("Dependencies:")
 for pkg, deps in sorted_deps.items():
     if deps:
@@ -208,10 +208,6 @@ def source_from_package(d: dict) -> dict:
             "sha256": d["sdist"]["hash"][d["sdist"]["hash"].index(":") + 1 :],
         }
 
-
-# I originally assumed the outputted modules needed source references from other modules, but
-# it turns out apparently modules are compiled sequentially and built against what already
-# exists so that's not necessary :
 
 source_ds: dict[str, dict] = {}
 for pname in sorted_deps:
