@@ -167,7 +167,7 @@ class BlenderLauncherUpdater(BaseWindow):
         # Launch the freshly installed launcher and exit
         launcher = str(dist)
         if self.platform == "Windows":
-            _popen([launcher])
+            _popen([launcher], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist, 0o744)
             _popen('nohup "' + launcher + '"')

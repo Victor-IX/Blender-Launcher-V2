@@ -302,7 +302,7 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
 
         # Run the updater with the instanced flag
         if get_platform() == "Windows":
-            _popen([blu_name, "--instanced", "update"])
+            _popen([blu_name, "--instanced", "update"], no_console=False)
         elif get_platform() == "Linux":
             os.chmod(blu_name, 0o744)
             _popen(f'nohup "{blu_name}" --instanced update')

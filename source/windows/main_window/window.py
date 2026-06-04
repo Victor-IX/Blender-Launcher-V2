@@ -521,7 +521,7 @@ class BlenderLauncher(BaseWindow):
 
         # Run 'Blender Launcher Updater.exe' with '-update' flag
         if self.platform == "Windows":
-            _popen([dist.as_posix(), "--instanced", "update", self.latest_tag])
+            _popen([dist.as_posix(), "--instanced", "update", self.latest_tag], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist.as_posix(), 0o744)
             _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
@@ -993,7 +993,7 @@ class BlenderLauncher(BaseWindow):
 
         if self.platform == "Windows":
             exe = (cwd / "Blender Launcher.exe").as_posix()
-            _popen([exe, "-instanced"])
+            _popen([exe, "-instanced"], no_console=False)
         elif self.platform == "Linux":
             exe = (cwd / "Blender Launcher").as_posix()
             os.chmod(exe, 0o744)
