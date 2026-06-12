@@ -16,6 +16,7 @@ import modules._resources_rc  # noqa: F401
 import utils.i18n_init  # noqa: F401
 from modules import argument_parsing as ap
 from modules.cli_launching import cli_launch
+from modules.container_detect import IS_CONTAINED
 from modules.file_utils import retry_on_permission_error
 from modules.fonts import Fonts
 from modules.platform_utils import (
@@ -77,14 +78,16 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command")
 
-    update_parser = subparsers.add_parser(
-        "update",
-        help="Update the application to a new version. Run 'update --help' to see available options.",
-        add_help=False,
-    )
-    add_help(update_parser)
-    update_parser.add_argument("version", help="Version to update to.", nargs="?")
-
+    if not IS_CONTAINED:
+        update_parser = subparsers.add_parser(
+            "update",
+            help="Update the application to a new version. Run 'update --help' to see available options.",
+            add_help=False,
+        )
+        add_help(update_parser)
+        update_parser.add_argument("version", help="Version to update to.", nargs="?")
+    else:
+        update_parser = None
     parser.add_argument("-d", "-debug", "--debug", help="Enable debug logging.", action="store_true")
     parser.add_argument("-set-library-folder", help="Set library folder", type=Path)
     parser.add_argument("-force-first-time", help="Force the first time setup", action="store_true")

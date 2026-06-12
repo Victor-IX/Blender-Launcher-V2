@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.settings import (
     get_quick_launch_key_seq,
 )
@@ -18,7 +19,12 @@ try:
 
     HOTKEYS_AVAILABLE = True
 except Exception as e:
-    logging.exception(f"Error importing pynput: {e}\nGlobal hotkeys not supported.")
+    if IS_CONTAINED:
+        logging.warning("Global hotkeys disabled: Unsupported in a containerized environment")
+    else:
+        logging.exception("Global hotkeys disabled: Error importing pynput")
+        # Exception automatically printed
+
     HOTKEYS_AVAILABLE = False
 
 

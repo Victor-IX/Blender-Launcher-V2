@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import re
+import shlex
 from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.bl_api_manager import dropdown_blender_version
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_platform
 from modules.settings import (
     favorite_pages,
@@ -310,22 +313,22 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
             )
 
         # Launching builds settings
-        with self.group("settings.blender_builds.launching_builds").contents.checked_hgroup(
-            "settings.blender_builds.quick_launch_global_shortcut",
-            default=get_enable_quick_launch_key_seq(),
-            setter=set_enable_quick_launch_key_seq,
-        ) as q:
-            # Quick Launch Key Sequence
-            self.QuickLaunchKeySeq = q.add(QLineEdit())
-            self.QuickLaunchKeySeq.keyPressEvent = self._keyPressEvent
-            self.QuickLaunchKeySeq.setText(str(get_quick_launch_key_seq()))
-            self.QuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_key_seq_tooltip"))
-            self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-            self.QuickLaunchKeySeq.setCursorPosition(0)
-            self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
-
-        # self.launching_settings = SettingsGroup(t("settings.blender_builds.launching_builds"), parent=self)
         with self.group("settings.blender_builds.launching_builds") as grp:
+            if not IS_CONTAINED:
+                with grp.checked_hgroup(
+                    "settings.blender_builds.quick_launch_global_shortcut",
+                    default=get_enable_quick_launch_key_seq(),
+                    setter=set_enable_quick_launch_key_seq,
+                ) as q:
+                    # Quick Launch Key Sequence
+                    self.QuickLaunchKeySeq = q.add(QLineEdit())
+                    self.QuickLaunchKeySeq.keyPressEvent = self._keyPressEvent
+                    self.QuickLaunchKeySeq.setText(str(get_quick_launch_key_seq()))
+                    self.QuickLaunchKeySeq.setToolTip(t("settings.blender_builds.quick_launch_key_seq_tooltip"))
+                    self.QuickLaunchKeySeq.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+                    self.QuickLaunchKeySeq.setCursorPosition(0)
+                    self.QuickLaunchKeySeq.editingFinished.connect(self.update_quick_launch_key_seq)
+
             # On Blender Launch action
             self.OnBlenderLaunchAction = grp.add(
                 QComboBox(),
@@ -346,7 +349,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 )
             else:
                 # Blender Startup Arguments
-                grp.add_label("settings.blender_builds.bash_arguments")
+                grp.add_label("settings.blender_builds.startup_arguments")
                 self.BlenderStartupArguments = grp.add(QLineEdit())
                 self.BlenderStartupArguments.setText(str(get_blender_startup_arguments()))
                 self.BlenderStartupArguments.setToolTip(t("settings.blender_builds.blender_startup_arguments_tooltip"))
@@ -355,13 +358,15 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BlenderStartupArguments.editingFinished.connect(self.update_blender_startup_arguments)
 
                 # Command Line Arguments
-                grp.add_label("settings.blender_builds.startup_arguments")
+                grp.add_label("settings.blender_builds.bash_arguments")
                 self.BashArguments = grp.add(QLineEdit())
                 self.BashArguments.setText(str(get_bash_arguments()))
                 self.BashArguments.setToolTip(t("settings.blender_builds.bash_arguments_tooltip"))
                 self.BashArguments.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
                 self.BashArguments.setCursorPosition(0)
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
+                self.BashArgWarnings = grp.add_label("")
+                self.BashArguments.editingFinished.connect(self.validate_bash_args)
 
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)
@@ -374,6 +379,19 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def update_bash_arguments(self):
         args = self.BashArguments.text()
         set_bash_arguments(args)
+
+    def validate_bash_args(self):
+        args = self.BashArguments.text()
+        issues = []
+        from modules.container_detect import IS_FLATPAK
+
+        if IS_FLATPAK:
+            lex = shlex.shlex(args)
+            splitted_args = list(lex)
+            if re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_]*", splitted_args[0]) and splitted_args[1] == "=":
+                issues.append(t("settings.blender_builds.bash_argument_warnings.env_vars_in_flatpak"))
+
+        self.BashArgWarnings.setText("\n".join(issues).strip())
 
     def show_update_button(self, is_checked):
         self.UpdateBehavior.setEnabled(is_checked)

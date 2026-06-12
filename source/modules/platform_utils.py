@@ -210,6 +210,12 @@ def get_cwd():
     if is_frozen():
         return Path(os.path.dirname(sys.executable))
 
+    # TODO Opinionated -- discuss proper default working directory
+    from modules.container_detect import IS_CONTAINED
+
+    if IS_CONTAINED:
+        return Path.home()
+
     return Path.cwd()
 
 
@@ -218,14 +224,14 @@ def get_default_library_folder():
     """
     Get the default folder for library storage.
     On macOS with app bundles, returns the parent folder of the .app bundle.
-    Otherwise, returns get_cwd().
+    Otherwise, returns a place in ~/Documents.
     """
     if is_frozen() and get_platform() == "macOS":
         app_bundle = find_app_bundle(Path(sys.executable))
         if app_bundle is not None:
             return app_bundle.parent
 
-    return get_cwd()
+    return Path("~/Documents/BlenderBuilds").expanduser()
 
 
 @cache

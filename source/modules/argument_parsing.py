@@ -26,12 +26,13 @@ def error(parser: ArgumentParser, msg: str):
 
 def show_help(
     parser: ArgumentParser,
-    update_parser: ArgumentParser,
+    update_parser: ArgumentParser | None,
     launch_parser: ArgumentParser,
     args: Namespace,
 ):
     if is_frozen() and sys.platform == "win32":
         if args.command == "update":
+            assert update_parser is not None
             show_windows_help(update_parser)
         elif args.command == "launch":
             show_windows_help(launch_parser)
@@ -39,6 +40,11 @@ def show_help(
             show_windows_help(parser)
     else:
         if args.command == "update":
+            if update_parser is None:
+                print(
+                    "Update command called while in a contained environment. Please use your package manager's update functions."
+                )
+                sys.exit(1)
             update_parser.print_help()
         elif args.command == "launch":
             launch_parser.print_help()

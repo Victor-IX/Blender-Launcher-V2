@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_platform
 from modules.settings import set_first_time_setup_seen
 from PySide6.QtCore import QThread, Signal
@@ -110,6 +111,10 @@ class OnboardingWindow(BaseWindow):
             AppearancePage(self.prop_settings, parent),
             BackgroundRunningPage(self.prop_settings, parent),
         ]
+
+        if IS_CONTAINED:
+            shortcuts_page = self.pages.pop(3)
+            del shortcuts_page
 
         for page in self.pages:
             self.wizard.addPage(page)
