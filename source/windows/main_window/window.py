@@ -422,7 +422,7 @@ class BlenderLauncher(BaseWindow):
             time_label=t("repo.commit_time"),
             info_text=t("repo.nothing"),
         )
-        self.UserToolBox.add_tab("Favorites")
+        self.UserToolBox.add_tab(t("act.tabs.favorites"))
         self.UserTabLayout.addWidget(self.FavoritesPage)
         # self.UserToolBox.folder_changed.connect(self.FavoritesPage.list_widget.update_folder_filter)
         # self.FavoritesPage.list_widget.update_folder_filter(self.UserToolBox.current_branch())
