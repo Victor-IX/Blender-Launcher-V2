@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.file_utils import retry_on_permission_error
-from modules.platform_utils import find_app_bundle, get_platform, is_frozen
+from modules.platform_utils import find_app_bundle, get_default_library_folder, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
@@ -87,7 +88,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.launcher = parent
         self.lf = FolderSelector(
             parent,
-            default_folder=get_actual_library_folder_no_fallback() or Path("~/Documents/BlenderBuilds").expanduser(),
+            default_folder=get_actual_library_folder_no_fallback() or get_default_library_folder(),
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )
@@ -116,7 +117,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.layout_.addWidget(self.warning_label)
         self.layout_.addWidget(QLabel(t("wizard.library.location"), self))
         self.layout_.addWidget(self.lf)
-        if home not in executable_path.parents:
+        if home not in executable_path.parents and not IS_CONTAINED:
             self.path_warning_label = QLabel(self)
             self.path_warning_label.setText(t("wizard.library.path_warning", home=str(home)))
             self.path_warning_label.setWordWrap(True)
@@ -133,49 +134,53 @@ class ChooseLibraryPage(BasicOnboardingPage):
 
         set_library_folder(str(pth))
 
-        if is_frozen() and self.move_exe.isChecked():  # move the executable to the library location
-            platform = get_platform()
+        if IS_CONTAINED or not is_frozen() or not self.move_exe.isChecked():
+            return
 
-            if platform == "macOS":
-                # On macOS, we need to move the entire .app bundle
-                app_bundle = find_app_bundle(Path(sys.executable))
+        # move the executable to the library location
 
-                if app_bundle is not None:
-                    # Move the entire .app bundle
-                    dest_app = pth / app_bundle.name
+        platform = get_platform()
 
-                    if dest_app.exists():
-                        return
+        if platform == "macOS":
+            # On macOS, we need to move the entire .app bundle
+            app_bundle = find_app_bundle(Path(sys.executable))
 
-                    self.prop_settings.exe_changed = True
-                    dest_app.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copytree(app_bundle, dest_app)
+            if app_bundle is not None:
+                # Move the entire .app bundle
+                dest_app = pth / app_bundle.name
 
-                    # Update exe_location to point to the executable inside the moved .app
-                    # Maintain the same relative path from .app to executable
-                    relative_exe = Path(sys.executable).relative_to(app_bundle)
-                    self.prop_settings.exe_location = dest_app / relative_exe
-
-                    # Delete the original .app bundle immediately
-                    shutil.rmtree(app_bundle)
+                if dest_app.exists():
                     return
-                # If no .app bundle found, fall through to move just the executable
 
-            # Windows and Linux, or macOS without .app bundle
-            exe = pth / self.prop_settings.exe_location.name
-            self.prop_settings.exe_location = exe
+                self.prop_settings.exe_changed = True
+                dest_app.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(app_bundle, dest_app)
 
-            if exe.exists():
+                # Update exe_location to point to the executable inside the moved .app
+                # Maintain the same relative path from .app to executable
+                relative_exe = Path(sys.executable).relative_to(app_bundle)
+                self.prop_settings.exe_location = dest_app / relative_exe
+
+                # Delete the original .app bundle immediately
+                shutil.rmtree(app_bundle)
                 return
+            # If no .app bundle found, fall through to move just the executable
 
-            self.prop_settings.exe_changed = True
-            exe.parent.mkdir(parents=True, exist_ok=True)
-            retry_on_permission_error(shutil.copy, sys.executable, exe)
-            if platform == "Windows":  # delete the exe when closed
-                # self.launcher.delete_exe_on_reboot = True
-                ...
-            else:  # delete the executable directly
-                retry_on_permission_error(Path(sys.executable).unlink)
+        # Windows and Linux, or macOS without .app bundle
+        exe = pth / self.prop_settings.exe_location.name
+        self.prop_settings.exe_location = exe
+
+        if exe.exists():
+            return
+
+        self.prop_settings.exe_changed = True
+        exe.parent.mkdir(parents=True, exist_ok=True)
+        retry_on_permission_error(shutil.copy, sys.executable, exe)
+        if platform == "Windows":  # delete the exe when closed
+            # self.launcher.delete_exe_on_reboot = True
+            ...
+        else:  # delete the executable directly
+            retry_on_permission_error(Path(sys.executable).unlink)
 
 
 class RepoSelectPage(BasicOnboardingPage):
