@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
+from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
 from modules.task import Task
 from PySide6.QtCore import Signal
@@ -33,8 +34,9 @@ class RenameTask(Task):
 
             self.finished.emit(dst, is_removed)
         except OSError:
+            logger.exception(f"Failed to rename {self.src} to {self.dst_name}")
+            self.message.emit(f"Failed to rename {self.src.name} to {self.dst_name}", MessageType.ERROR)
             self.failure.emit()
-            raise
 
     def __str__(self):
         return f"Rename {self.src} to {self.dst_name}"

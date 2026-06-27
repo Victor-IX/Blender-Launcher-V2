@@ -86,9 +86,12 @@ class ScraperBfa(BuildScraper):
                 yield from folder.assets
 
         if cache_modified:
-            with self.cache_path.open("w", encoding="utf-8") as f:
-                json.dump(self.cache.to_dict(), f)
-                logging.debug(f"Saved cache to {self.cache_path}")
+            try:
+                with self.cache_path.open("w", encoding="utf-8") as f:
+                    json.dump(self.cache.to_dict(), f)
+                    logging.debug(f"Saved cache to {self.cache_path}")
+            except OSError:
+                logger.exception(f"Failed to write cache to {self.cache_path}")
 
     def scrape_bfa_release(self, client: Client, folder: str, semver: Version):
         for entry in client.ls(folder, detail=True, allow_listing_resource=True):

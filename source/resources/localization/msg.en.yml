@@ -24,6 +24,8 @@ err:
     See the logs for more details.
 
   cant_write: The requested location has no write permissions!
+  download:
+    permission: "Download failed: no write permission for '%{path}'. Change the library folder in Settings."
   damaged: Build %{build} is damaged!
   port:
     no_build_dir: The new build directory can't be found.

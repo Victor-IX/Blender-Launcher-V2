@@ -1,11 +1,15 @@
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from re import match
 from shutil import copytree
 
+from modules.enums import MessageType
 from modules.settings import get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal
+
+logger = logging.getLogger()
 
 
 def install_template(dist: Path):
@@ -31,7 +35,12 @@ class TemplateTask(Task):
     finished = Signal()
 
     def run(self):
-        install_template(self.destination)
+        try:
+            install_template(self.destination)
+        except (PermissionError, OSError):
+            logger.exception(f"Failed to install template to {self.destination}")
+            self.message.emit(f"Template installation failed: no write permission for {self.destination}", MessageType.ERROR)
+            return
         self.finished.emit()
 
     def __str__(self):

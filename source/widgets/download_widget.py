@@ -193,6 +193,7 @@ class DownloadWidget(BaseBuildWidget):
         )
         self.dl_task.progress.connect(self.progressBar.set_progress)
         self.dl_task.finished.connect(self.init_extractor)
+        self.dl_task.permission_error.connect(self.on_permission_error)
         self.launcher.task_queue.append(self.dl_task)
 
     def set_state(self, state: DownloadState) -> None:
@@ -292,6 +293,18 @@ class DownloadWidget(BaseBuildWidget):
                 self.updating_widget.show_update_button()
                 self.updating_widget.updateButton.clicked.connect(self.updating_widget.trigger_update_download)
             self.updating_widget = None
+
+    def on_permission_error(self) -> None:
+        self.set_state(DownloadState.IDLE)
+        self.downloadButton.show()
+        if self.updating_widget is not None:
+            self.updating_widget.launchButton.set_text(t("act.launch"))
+            self.updating_widget.launchButton.setEnabled(True)
+            if hasattr(self.updating_widget, "_update_download_widget"):
+                self.updating_widget.show_update_button()
+                self.updating_widget.updateButton.clicked.connect(self.updating_widget.trigger_update_download)
+            self.updating_widget = None
+        self.launcher.show_settings_window()
 
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)
