@@ -24,6 +24,8 @@ err:
     Consultez les journaux pour plus de détails.
 
   cant_write: L'emplacement demandé ne dispose pas des permissions d'écriture !
+  download:
+    permission: "Échec du téléchargement : aucune permission d'écriture pour '%{path}'. Changez le dossier de la bibliothèque dans les Paramètres."
   damaged: Le build %{build} est endommagé !
   port:
     no_build_dir: Le nouveau répertoire de build est introuvable.

@@ -176,9 +176,12 @@ class ScraperStable(BuildScraper):
             cache_data = self.cache.to_dict()
             cache_data = {"api_file_version": new_file_ver, **cache_data}
 
-            with cache_path.open("w", encoding="utf-8") as f:
-                json.dump(cache_data, f, indent=1)
-                logging.info(f"Saved updated cache to {cache_path}")
+            try:
+                with cache_path.open("w", encoding="utf-8") as f:
+                    json.dump(cache_data, f, indent=1)
+                    logging.info(f"Saved updated cache to {cache_path}")
+            except OSError:
+                logger.exception(f"Failed to write cache to {cache_path}")
 
         r.release_conn()
         r.close()

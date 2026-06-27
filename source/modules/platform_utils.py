@@ -217,13 +217,22 @@ def get_cwd():
 def get_default_library_folder():
     """
     Get the default folder for library storage.
-    On macOS with app bundles, returns the parent folder of the .app bundle.
-    Otherwise, returns get_cwd().
+    Windows: %LOCALAPPDATA%\\Blender Launcher
+    Linux: $XDG_DATA_HOME/Blender Launcher (fallback: ~/.local/share/Blender Launcher)
+    macOS: ~/Applications
     """
-    if is_frozen() and get_platform() == "macOS":
-        app_bundle = find_app_bundle(Path(sys.executable))
-        if app_bundle is not None:
-            return app_bundle.parent
+    platform = get_platform()
+    if platform == "Windows":
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if local_app_data:
+            return Path(local_app_data) / "Blender Launcher"
+    elif platform == "Linux":
+        xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
+        if not xdg_data_home.strip():
+            xdg_data_home = os.path.expanduser("~/.local/share")
+        return Path(xdg_data_home) / "Blender Launcher"
+    elif platform == "macOS":
+        return Path.home() / "Applications" / "Blender Launcher"
 
     return get_cwd()
 

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from shutil import rmtree
 
+from modules.enums import MessageType
 from modules.settings import get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal
@@ -49,8 +50,9 @@ class RemovalTask(Task):
 
             self.finished.emit(0)
         except OSError:
+            logger.exception(f"Failed to remove {self.path}")
+            self.message.emit(f"Failed to remove {self.path}", MessageType.ERROR)
             self.finished.emit(1)
-            raise
 
     def __str__(self):
         return f"Remove {self.path}"
