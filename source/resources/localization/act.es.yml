@@ -62,6 +62,8 @@ a:
 
   register: Registrar extensión
   register_tooltip: Usar esta versión para archivos .blend y para mostrar miniaturas
+  register_macos: Agregar Blender al PATH
+  register_tooltip_macos: "Agregar esta versión al PATH mediante /etc/paths.d/ (requiere contraseña de administrador)"
   shortcut: Crear acceso directo
   symlink: Crear enlace simbólico
   template: Instalar plantilla

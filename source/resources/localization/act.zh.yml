@@ -91,6 +91,8 @@ a:
 
   register: 注册扩展
   register_tooltip: 将此构建版本用于.blend文件并显示缩略图
+  register_macos: 将Blender添加到PATH
+  register_tooltip_macos: "通过 /etc/paths.d/ 将此版本添加到PATH（需要管理员密码）"
   shortcut: 创建快捷方式
   symlink: 创建符号链接
   template: 安装模板

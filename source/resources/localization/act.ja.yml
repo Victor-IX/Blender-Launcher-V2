@@ -94,6 +94,8 @@ a:
 
   register: 拡張機能を登録
   register_tooltip: このビルドを.blendファイルとサムネイル表示に使用する
+  register_macos: BlenderをPATHに追加
+  register_tooltip_macos: "/etc/paths.d/ 経由でこのビルドをPATHに追加します（管理者パスワードが必要）"
   shortcut: ショートカットを作成
   symlink: シンボリックリンクを作成
   template: テンプレートをインストール
