@@ -216,8 +216,12 @@ class LibraryWidget(BaseBuildWidget):
         self.fetchPrNameAction = QAction(t("act.a.fetch_pr_name"))
         self.fetchPrNameAction.triggered.connect(self.fetch_pr_name)
 
-        self.registerExtentionAction = QAction(t("act.a.register"))
-        self.registerExtentionAction.setToolTip(t("act.a.register_tooltip"))
+        if get_platform() == "macOS":
+            self.registerExtentionAction = QAction(t("act.a.register_macos"))
+            self.registerExtentionAction.setToolTip(t("act.a.register_tooltip_macos"))
+        else:
+            self.registerExtentionAction = QAction(t("act.a.register"))
+            self.registerExtentionAction.setToolTip(t("act.a.register_tooltip"))
         self.registerExtentionAction.triggered.connect(self.register_extension)
 
         self.createShortcutAction = QAction(t("act.a.shortcut"))
@@ -281,7 +285,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.menu.addSeparator()
 
-        if get_platform() == "Windows":
+        if get_platform() in {"Windows", "macOS"}:
             self.menu.addAction(self.registerExtentionAction)
 
         self.menu.addAction(self.createShortcutAction)

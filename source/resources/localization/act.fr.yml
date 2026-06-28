@@ -91,6 +91,8 @@ a:
 
   register: Enregistrer l'extension
   register_tooltip: Utiliser ce build pour les fichiers .blend et afficher les miniatures
+  register_macos: Ajouter Blender au PATH
+  register_tooltip_macos: "Ajouter ce build au PATH via /etc/paths.d/ (mot de passe administrateur requis)"
   shortcut: Créer un raccourci
   symlink: Créer un lien symbolique
   template: Installer un modèle

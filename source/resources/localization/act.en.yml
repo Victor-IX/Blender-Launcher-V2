@@ -94,6 +94,8 @@ a:
 
   register: Register Extension
   register_tooltip: Use this build for .blend files and to display thumbnails
+  register_macos: Add Blender to PATH
+  register_tooltip_macos: "Add this build to PATH via /etc/paths.d/ (requires admin password)"
   shortcut: Create Shortcut
   symlink: Create Symlink
   template: Install Template
