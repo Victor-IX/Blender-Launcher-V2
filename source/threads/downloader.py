@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from i18n import t
 from modules._copyfileobj import copyfileobj
 from modules.connection_manager import REQUEST_MANAGER
 from modules.enums import MessageType
@@ -72,6 +73,7 @@ class DownloadTask(Task):
     link: str
     progress = Signal(int, int)
     finished = Signal(Path)
+    permission_error = Signal()
 
     def _validate_response(self, response, context: str = "") -> bool:
         """Validate HTTP response status and content type. Returns True if valid."""
@@ -98,13 +100,15 @@ class DownloadTask(Task):
     def _cleanup_file(self, file_path: Path):
         """Clean up a file if it exists."""
         if file_path.exists():
-            file_path.unlink()
-            logger.debug(f"Cleaned up file: {file_path}")
+            try:
+                file_path.unlink()
+                logger.debug(f"Cleaned up file: {file_path}")
+            except OSError:
+                logger.exception(f"Failed to clean up file: {file_path}")
 
     def run(self):
         self.progress.emit(0, 0)
         temp_folder = Path(get_library_folder()) / ".temp"
-        temp_folder.mkdir(exist_ok=True)
         filename = extract_filename_from_url(self.link)
         dist = temp_folder / filename
         headers = {}
@@ -127,6 +131,7 @@ class DownloadTask(Task):
 
         # Download the file
         try:
+            temp_folder.mkdir(exist_ok=True)
             with self.manager.request("GET", download_url, preload_content=False, timeout=10, headers=headers) as r:
                 logger.debug(f"Response headers: {dict(r.headers)}")
 
@@ -134,6 +139,11 @@ class DownloadTask(Task):
                     return
 
                 self._download(r, dist)
+        except PermissionError:
+            logger.exception(f"Permission denied writing to {dist}")
+            self.message.emit(t("msg.err.download.permission", path=str(temp_folder)), MessageType.ERROR)
+            self.permission_error.emit()
+            return
         except MaxRetryError as e:
             logger.exception(f"Requesting is taking longer than usual! {e}")
             self.message.emit("Requesting is taking longer than usual! see debug logs for more.", MessageType.ERROR)
@@ -144,6 +154,11 @@ class DownloadTask(Task):
                         self._cleanup_file(dist)
                         return
                     self._download(r, dist)
+            except PermissionError:
+                logger.exception(f"Permission denied writing to {dist}")
+                self.message.emit(t("msg.err.download.permission", path=str(temp_folder)), MessageType.ERROR)
+                self.permission_error.emit()
+                return
             except Exception as retry_error:
                 logger.exception(f"Retry failed: {retry_error}")
                 self.message.emit(f"Download failed: {retry_error}", MessageType.ERROR)
