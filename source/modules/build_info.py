@@ -110,8 +110,9 @@ def parse_blender_ver(s: str, search=False) -> Version:
     Versions ending with 'a' and 'b' will have a patch of 1 and 2.
 
 
-    Arguments:
-        s -- a blender version.
+    Args:
+        s: A Blender version string.
+        search: Whether to search for the version pattern within the string.
 
     Returns:
         Version
