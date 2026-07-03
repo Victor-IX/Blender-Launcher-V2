@@ -13,7 +13,14 @@ from typing import TypeVar
 import keyring
 from keyring.errors import KeyringError, PasswordDeleteError
 from modules.bl_api_manager import dropdown_blender_version
-from modules.platform_utils import get_config_file, get_config_path, get_cwd, get_default_library_folder, local_config, user_config
+from modules.platform_utils import (
+    get_config_file,
+    get_config_path,
+    get_cwd,
+    get_default_library_folder,
+    local_config,
+    user_config,
+)
 from modules.version_matcher import VersionSearchQuery
 from PySide6.QtCore import QSettings
 from semver import Version
@@ -151,7 +158,7 @@ def get_actual_library_folder_no_fallback() -> Path | None:
 def get_actual_library_folder() -> Path:
     settings = get_settings()
     library_folder = settings.value("library_folder")
-    if not is_library_folder_valid(library_folder):
+    if not library_folder:
         library_folder = get_default_library_folder()
 
     return Path(library_folder)

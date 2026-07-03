@@ -223,9 +223,7 @@ def get_default_library_folder():
     """
     platform = get_platform()
     if platform == "Windows":
-        local_app_data = os.environ.get("LOCALAPPDATA")
-        if local_app_data:
-            return Path(local_app_data) / "Blender Launcher"
+        return Path(os.environ["LOCALAPPDATA"]) / "Blender Launcher"
     elif platform == "Linux":
         xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
         if not xdg_data_home.strip():

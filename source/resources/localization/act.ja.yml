@@ -27,6 +27,7 @@ finish: 完了
 retry: 再試行
 update: 更新
 later: 後で
+open_settings: 設定を開く
 
 update_library: Blenderを最新バージョンに更新
 restart_now: 今すぐ再起動

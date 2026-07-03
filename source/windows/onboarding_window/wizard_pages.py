@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.file_utils import retry_on_permission_error
-from modules.platform_utils import find_app_bundle, get_platform, is_frozen
+from modules.platform_utils import find_app_bundle, get_default_library_folder, get_platform, is_frozen
 from modules.settings import (
     get_actual_library_folder,
     get_actual_library_folder_no_fallback,
@@ -87,7 +87,7 @@ class ChooseLibraryPage(BasicOnboardingPage):
         self.launcher = parent
         self.lf = FolderSelector(
             parent,
-            default_folder=get_actual_library_folder_no_fallback() or Path("~/Documents/BlenderBuilds").expanduser(),
+            default_folder=get_actual_library_folder_no_fallback() or get_default_library_folder(),
             default_choose_dir_folder=get_actual_library_folder(),
             parent=self,
         )

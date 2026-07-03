@@ -294,7 +294,7 @@ class DownloadWidget(BaseBuildWidget):
                 self.updating_widget.updateButton.clicked.connect(self.updating_widget.trigger_update_download)
             self.updating_widget = None
 
-    def on_permission_error(self) -> None:
+    def on_permission_error(self, temp_folder: str) -> None:
         self.set_state(DownloadState.IDLE)
         self.downloadButton.show()
         if self.updating_widget is not None:
@@ -304,7 +304,12 @@ class DownloadWidget(BaseBuildWidget):
                 self.updating_widget.show_update_button()
                 self.updating_widget.updateButton.clicked.connect(self.updating_widget.trigger_update_download)
             self.updating_widget = None
-        self.launcher.show_settings_window()
+        dlg = Popup.error(
+            message=t("msg.err.download.permission", path=temp_folder),
+            buttons=[Popup.Button.OPEN_SETTINGS, Popup.Button.CANCEL],
+            parent=self.launcher,
+        )
+        dlg.accepted.connect(self.launcher.show_settings_window)
 
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)

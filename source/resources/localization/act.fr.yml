@@ -27,6 +27,7 @@ finish: Terminer
 retry: Réessayer
 update: Mettre à jour
 later: Plus tard
+open_settings: Ouvrir les paramètres
 
 update_library: Mettre à jour Blender vers la dernière version
 restart_now: Redémarrer maintenant

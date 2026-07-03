@@ -25,7 +25,7 @@ err:
 
   cant_write: 请求的位置没有写入权限！
   download:
-    permission: "下载失败：'%{path}' 没有写入权限。请在"设置"中更改库文件夹。"
+    permission: "下载失败：'%{path}' 没有写入权限。请在“设置”中更改库文件夹。"
   damaged: 构建版本 %{build} 已损坏！
   port:
     no_build_dir: 找不到新构建版本目录。

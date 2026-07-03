@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from i18n import t
 from modules._copyfileobj import copyfileobj
 from modules.connection_manager import REQUEST_MANAGER
 from modules.enums import MessageType
@@ -73,7 +72,7 @@ class DownloadTask(Task):
     link: str
     progress = Signal(int, int)
     finished = Signal(Path)
-    permission_error = Signal()
+    permission_error = Signal(str)
 
     def _validate_response(self, response, context: str = "") -> bool:
         """Validate HTTP response status and content type. Returns True if valid."""
@@ -141,8 +140,7 @@ class DownloadTask(Task):
                 self._download(r, dist)
         except PermissionError:
             logger.exception(f"Permission denied writing to {dist}")
-            self.message.emit(t("msg.err.download.permission", path=str(temp_folder)), MessageType.ERROR)
-            self.permission_error.emit()
+            self.permission_error.emit(str(temp_folder))
             return
         except MaxRetryError as e:
             logger.exception(f"Requesting is taking longer than usual! {e}")
@@ -156,8 +154,7 @@ class DownloadTask(Task):
                     self._download(r, dist)
             except PermissionError:
                 logger.exception(f"Permission denied writing to {dist}")
-                self.message.emit(t("msg.err.download.permission", path=str(temp_folder)), MessageType.ERROR)
-                self.permission_error.emit()
+                self.permission_error.emit(str(temp_folder))
                 return
             except Exception as retry_error:
                 logger.exception(f"Retry failed: {retry_error}")
