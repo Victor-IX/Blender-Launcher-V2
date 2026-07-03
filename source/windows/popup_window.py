@@ -50,6 +50,7 @@ class PopupButton(StrEnum):
     UPDATE = "act.update"
     LATER = "act.later"
 
+    OPEN_SETTINGS = "act.open_settings"
     RESTART_NOW = "act.restart_now"
     TRASH = "act.trash"
     REMOVE = "act.remove"

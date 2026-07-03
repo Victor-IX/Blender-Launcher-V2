@@ -24,6 +24,7 @@ cont: Continuar
 finish: Finalizar
 "yes": "Sí"
 "no": "No"
+open_settings: Abrir configuración
 
 # left icon
 launch: Lanzar

@@ -27,6 +27,7 @@ finish: 完成
 retry: 重试
 update: 更新
 later: 稍后
+open_settings: 打开设置
 
 update_library: 将Blender更新到最新版本
 restart_now: 立即重启
