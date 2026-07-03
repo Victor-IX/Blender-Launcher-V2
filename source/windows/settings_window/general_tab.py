@@ -244,7 +244,7 @@ class GeneralTabWidget(SettingsFormWidget):
         if not v:
             self.dlg = Popup.warning(
                 message=t("msg.err.library_no_write"),
-                buttons=Popup.Button.QUIT,
+                buttons=Popup.Button.OK,
                 parent=self.launcher,
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
