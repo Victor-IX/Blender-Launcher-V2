@@ -48,10 +48,18 @@ def get_tag(
         return None
 
     if pre_release:
+        if r.status != 200:
+            logger.error(f"Failed to fetch releases from {url}: HTTP {r.status} - {r.data.decode('utf-8', 'replace')}")
+            return None
+
         try:
             parsed_data = json.loads(r.data)
         except json.JSONDecodeError as e:
             logger.exception(f"Failed to parse pre-release tag JSON data: {e}")
+            return None
+
+        if not isinstance(parsed_data, list):
+            logger.error(f"Unexpected releases API format: expected a list, got {type(parsed_data).__name__}.")
             return None
 
         platform = get_platform()
@@ -108,10 +116,18 @@ def get_api_data(connection_manager: ConnectionManager, file: str) -> dict | Non
         logger.error(f"Failed to fetch data from: {url}.")
         return None
 
+    if r.status != 200:
+        logger.error(f"Failed to fetch data from {url}: HTTP {r.status} - {r.data.decode('utf-8', 'replace')}")
+        return None
+
     try:
         data = json.loads(r.data)
     except json.JSONDecodeError as e:
         logger.exception(f"Failed to parse {file} API JSON data: {e}")
+        return None
+
+    if not isinstance(data, dict):
+        logger.error(f"Unexpected API data format for {file}: expected an object, got {type(data).__name__}.")
         return None
 
     file_content = data.get("content")
@@ -148,10 +164,18 @@ def get_patch_notes_since_version(
         logger.error("Failed to fetch releases list.")
         return None
 
+    if r.status != 200:
+        logger.error(f"Failed to fetch releases list: HTTP {r.status} - {r.data.decode('utf-8', 'replace')}")
+        return None
+
     try:
         releases_data = json.loads(r.data)
     except json.JSONDecodeError as e:
         logger.exception(f"Failed to parse releases JSON data: {e}")
+        return None
+
+    if not isinstance(releases_data, list):
+        logger.error(f"Unexpected releases API format: expected a list, got {type(releases_data).__name__}.")
         return None
 
     latest_version = Version.parse(latest_tag.lstrip("v"))
