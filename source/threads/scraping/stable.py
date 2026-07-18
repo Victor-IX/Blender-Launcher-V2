@@ -66,6 +66,35 @@ class ScraperStable(BuildScraper):
             yield from self.scrape_stable_releases(platform)
 
     def scrape_stable_releases(self, platform=None):
+        self._prepare_force_build_cache(platform)
+
+        link_filter = regex_filter(platform)
+        url = "https://download.blender.org/release/"
+
+        content, was_challenged = self._fetch_release_index(url)
+        if content is None:
+            return
+
+        soup = BeautifulSoup(content, "lxml")
+
+        releases = soup.find_all(href=BLENDER_X_X)
+        if not any(releases):
+            self._report_no_releases(content, was_challenged)
+            return
+
+        minimum_smver_version = self._get_minimum_smver_version()
+
+        cache_modified = False
+        for release in releases:
+            release_cache_modified = yield from self._process_release(
+                release, url, link_filter, minimum_smver_version, platform
+            )
+            cache_modified = cache_modified or release_cache_modified
+
+        if cache_modified:
+            self._save_cache()
+
+    def _prepare_force_build_cache(self, platform):
         # Use for cache building only
         if self.force_build_cache and platform is not None:
             self.platform = platform
@@ -73,16 +102,13 @@ class ScraperStable(BuildScraper):
             self.cache = ScraperCache.from_file_or_default(self.cache_path)
             logging.debug(f"Scraping stable releases for {platform}")
 
-        link_filter = regex_filter(platform)
-
-        url = "https://download.blender.org/release/"
-
+    def _fetch_release_index(self, url):
         content = b""
         was_challenged = False
         for attempt in range(1, _CLOUDFLARE_CHALLENGE_RETRIES + 1):
             r = self.manager.request("GET", url)
             if r is None:
-                return
+                return None, was_challenged
 
             content = r.data
             r.release_conn()
@@ -99,18 +125,17 @@ class ScraperStable(BuildScraper):
             if attempt < _CLOUDFLARE_CHALLENGE_RETRIES:
                 time.sleep(_CLOUDFLARE_CHALLENGE_RETRY_DELAY)
 
-        soup = BeautifulSoup(content, "lxml")
+        return content, was_challenged
 
-        releases = soup.find_all(href=BLENDER_X_X)
-        if not any(releases):
-            logger.info(f"Failed to gather stable releases for {self.platform}")
-            logger.info(content)
-            if was_challenged:
-                self.stable_error.emit(t("msg.err.stable.cloudflare_blocked"))
-            else:
-                self.stable_error.emit(t("msg.err.stable.no_releases"))
-            return
+    def _report_no_releases(self, content, was_challenged):
+        logger.info(f"Failed to gather stable releases for {self.platform}")
+        logger.info(content)
+        if was_challenged:
+            self.stable_error.emit(t("msg.err.stable.cloudflare_blocked"))
+        else:
+            self.stable_error.emit(t("msg.err.stable.no_releases"))
 
+    def _get_minimum_smver_version(self):
         minimum_version_str = get_minimum_blender_stable_version()
         if minimum_version_str == "None":
             minimum_smver_version = Version(2, 48, 0)
@@ -121,95 +146,101 @@ class ScraperStable(BuildScraper):
         if self.force_build_cache:
             minimum_smver_version = Version(2, 48, 0)
 
-        cache_modified = False
-        for release in releases:
-            href = release["href"]
-            if not isinstance(href, str):
-                logger.warning(f"Unexpected type for href: {href}")
-                continue
-            match = re.search(pattern=BLENDER_X_X, string=href)
-            if match is None:
-                continue
+        return minimum_smver_version
 
-            ver = parse_blender_ver(match.group(1))
-            if ver >= minimum_smver_version:
-                # Check modified dates of folders, if available
-                date_sibling = release.find_next_sibling(string=True)
-                if date_sibling:
-                    date_str = " ".join(date_sibling.strip().split()[:2])
-                    with contextlib.suppress(ValueError):
-                        modified_date = dateparser.parse(date_str)
-                        if modified_date is None:
-                            continue
-                        if ver not in self.cache:
-                            logger.debug(f"Creating new folder for version {ver}")
-                            folder = self.cache.new_build(ver)
-                        else:
-                            folder = self.cache[ver]
+    def _process_release(self, release, url, link_filter, minimum_smver_version, platform):
+        """Yield builds discovered for a single release entry; returns whether the cache was modified."""
+        href = release["href"]
+        if not isinstance(href, str):
+            logger.warning(f"Unexpected type for href: {href}")
+            return False
+        match = re.search(pattern=BLENDER_X_X, string=href)
+        if match is None:
+            return False
 
-                        if folder.modified_date != modified_date:
-                            folder.assets.clear()
-                            for build in self.scrap_download_links(urljoin(url, href), link_filter):
-                                folder.assets.append(build)
-                                yield build
+        ver = parse_blender_ver(match.group(1))
+        if ver < minimum_smver_version:
+            return False
 
-                            logger.debug(
-                                f"Caching {href}: {modified_date} (previous was {folder.modified_date}) for platform {platform}"
-                            )
-                            folder.modified_date = modified_date
-                            cache_modified = True
-                        else:
-                            logger.debug(f"Skipping {href}: {modified_date} for platform {platform}")
+        # Check modified dates of folders, if available
+        date_sibling = release.find_next_sibling(string=True)
+        if date_sibling:
+            date_str = " ".join(date_sibling.strip().split()[:2])
+            with contextlib.suppress(ValueError):
+                modified_date = dateparser.parse(date_str)
+                if modified_date is None:
+                    return False
+                if ver not in self.cache:
+                    logger.debug(f"Creating new folder for version {ver}")
+                    folder = self.cache.new_build(ver)
+                else:
+                    folder = self.cache[ver]
 
-                        builds = self.cache[ver].assets
+                cache_modified = False
+                if folder.modified_date != modified_date:
+                    folder.assets.clear()
+                    for build in self.scrap_download_links(urljoin(url, href), link_filter):
+                        folder.assets.append(build)
+                        yield build
 
-                        if not self.force_build_cache:
-                            yield from builds
-                        continue
+                    logger.debug(
+                        f"Caching {href}: {modified_date} (previous was {folder.modified_date}) for platform {platform}"
+                    )
+                    folder.modified_date = modified_date
+                    cache_modified = True
+                else:
+                    logger.debug(f"Skipping {href}: {modified_date} for platform {platform}")
 
-                yield from self.scrap_download_links(urljoin(url, href), link_filter)
+                builds = self.cache[ver].assets
 
-        if cache_modified:
-            cache_path = self.cache_path
-            new_file_ver = "0.1"
-            # Get Local API file instead of the generated one
-            # TODO: Make a function to get app file path if not already done
-            if self.force_build_cache:
-                cache_path = (
-                    Path(getattr(sys, "_MEIPASS", "")) / f"files/stable_builds_api_{get_platform().lower()}.json"
-                    if getattr(sys, "frozen", False)
-                    else Path(f"source/resources/api/stable_builds_api_{get_platform().lower()}.json").resolve()
-                )
-                new_file_ver = "1.0"
+                if not self.force_build_cache:
+                    yield from builds
+                return cache_modified
 
-            try:
-                with open(cache_path) as f:
-                    current_data = json.load(f)
-                    file_ver = current_data.get("api_file_version", "0.0")
-                    major, minor = map(int, file_ver.split("."))
-                    if self.force_build_cache:
-                        major += 1
-                    else:
-                        minor += 1
-                    new_file_ver = f"{major}.{minor}"
-                    logger.debug(f"Updating cache file version to {new_file_ver}")
-            except json.JSONDecodeError:
-                logger.exception("Failed to read api_file_version file. Using default 0.1")
-            except ValueError:
-                logger.exception("Invalid api_file_version version format. Using default 0.1")
-            except Exception as e:
-                logger.exception(f"Failed to read api_file_version version, using default 0.1: {e}")
+        yield from self.scrap_download_links(urljoin(url, href), link_filter)
+        return False
 
-            cache_path = self.cache_path
-            cache_data = self.cache.to_dict()
-            cache_data = {"api_file_version": new_file_ver, **cache_data}
+    def _save_cache(self):
+        cache_path = self.cache_path
+        new_file_ver = "0.1"
+        # Get Local API file instead of the generated one
+        # TODO: Make a function to get app file path if not already done
+        if self.force_build_cache:
+            cache_path = (
+                Path(getattr(sys, "_MEIPASS", "")) / f"files/stable_builds_api_{get_platform().lower()}.json"
+                if getattr(sys, "frozen", False)
+                else Path(f"source/resources/api/stable_builds_api_{get_platform().lower()}.json").resolve()
+            )
+            new_file_ver = "1.0"
 
-            try:
-                with cache_path.open("w", encoding="utf-8") as f:
-                    json.dump(cache_data, f, indent=1)
-                    logging.info(f"Saved updated cache to {cache_path}")
-            except OSError:
-                logger.exception(f"Failed to write cache to {cache_path}")
+        try:
+            with open(cache_path) as f:
+                current_data = json.load(f)
+                file_ver = current_data.get("api_file_version", "0.0")
+                major, minor = map(int, file_ver.split("."))
+                if self.force_build_cache:
+                    major += 1
+                else:
+                    minor += 1
+                new_file_ver = f"{major}.{minor}"
+                logger.debug(f"Updating cache file version to {new_file_ver}")
+        except json.JSONDecodeError:
+            logger.exception("Failed to read api_file_version file. Using default 0.1")
+        except ValueError:
+            logger.exception("Invalid api_file_version version format. Using default 0.1")
+        except Exception as e:
+            logger.exception(f"Failed to read api_file_version version, using default 0.1: {e}")
+
+        cache_path = self.cache_path
+        cache_data = self.cache.to_dict()
+        cache_data = {"api_file_version": new_file_ver, **cache_data}
+
+        try:
+            with cache_path.open("w", encoding="utf-8") as f:
+                json.dump(cache_data, f, indent=1)
+                logging.info(f"Saved updated cache to {cache_path}")
+        except OSError:
+            logger.exception(f"Failed to write cache to {cache_path}")
 
     def scrap_download_links(self, url, link_filter: re.Pattern, _limit=None):
         r = self.manager.request("GET", url)
