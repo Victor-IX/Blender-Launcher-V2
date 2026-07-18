@@ -202,5 +202,6 @@ class BlenderLauncherUpdater(BaseWindow):
         return target
 
     def closeEvent(self, event):
+        self.queue.set_making_threads(False)
         self.queue.fullstop()
         event.accept()

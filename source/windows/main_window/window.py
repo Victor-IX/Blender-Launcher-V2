@@ -1003,4 +1003,6 @@ class BlenderLauncher(BaseWindow):
             app = Path(sys.executable).parent.parent.parent
             _popen(f"open -n {shlex.quote(str(app))}")
 
+        self.task_queue.set_making_threads(False)
+        self.task_queue.fullstop()
         self.deleteLater()

@@ -491,5 +491,6 @@ class LaunchingWindow(BaseWindow):
         self.close()
 
     def closeEvent(self, e):
+        self.task_queue.set_making_threads(False)
         self.task_queue.fullstop()
         e.accept()
