@@ -346,7 +346,7 @@ def start_launch(
         )
         sys.exit(1)
     else:
-        LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
+        LaunchingWindow(app, version=version, version_query=query, blendfile=file, open_last=open_last).show()
         sys.exit(app.exec())
 
 
