@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 if getattr(sys, "frozen", False):
     LOCALIZATION_PATH = Path(getattr(sys, "_MEIPASS", "")) / "localization/"
 else:
-    # 修复: 使用相对于当前文件的路径, 而不是硬编码
     # Fix: use a path relative to the current file instead of hardcoding it
     LOCALIZATION_PATH = Path(__file__).parent.parent / "resources" / "localization"
 
@@ -92,7 +91,6 @@ def _get_saved_language() -> str | None:
 # Determine locale: saved preference takes priority over OS detection
 loc = _get_saved_language() or _detect_os_locale()
 
-# 添加中文语言代码映射支持
 if loc.lower() in ("chinese",):
     loc = "zh"
 
