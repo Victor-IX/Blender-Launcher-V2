@@ -4,6 +4,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from modules.enums import MessageType
+from modules.file_utils import retry_on_permission_error
 from modules.settings import get_library_folder
 from modules.task import Task
 from PySide6.QtCore import Signal
@@ -19,9 +20,9 @@ def purge_temp_folder():
         try:
             for item in temp_folder.iterdir():
                 if item.is_file():
-                    item.unlink()
+                    retry_on_permission_error(item.unlink)
                 elif item.is_dir():
-                    rmtree(item)
+                    retry_on_permission_error(rmtree, item)
             return True
         except Exception:
             return False
@@ -41,12 +42,12 @@ class RemovalTask(Task):
                 logger.info(f"Path {self.path} does not exist, nothing to remove.")
                 return
             if self.trash:
-                send2trash(self.path)
+                retry_on_permission_error(send2trash, self.path)
             else:
                 if self.path.is_dir():
-                    rmtree(self.path)
+                    retry_on_permission_error(rmtree, self.path)
                 else:
-                    self.path.unlink()
+                    retry_on_permission_error(self.path.unlink)
 
             self.finished.emit(0)
         except OSError:
