@@ -5,6 +5,7 @@ import json
 import logging
 import re
 import sys
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib.parse import urljoin
@@ -12,6 +13,7 @@ from urllib.parse import urljoin
 import dateparser
 from bs4 import BeautifulSoup
 from bs4.filter import SoupStrainer
+from i18n import t
 from modules.build_info import BuildInfo, parse_blender_ver
 from modules.platform_utils import get_architecture, get_platform, stable_cache_path
 from modules.scraper_cache import ScraperCache
@@ -30,6 +32,14 @@ logger = logging.getLogger()
 
 HASH_RE = re.compile(r"\w{12}")
 BLENDER_X_X = re.compile(r"Blender(\d+\.\d+)")
+
+_CLOUDFLARE_CHALLENGE_MARKERS = (b"Just a moment", b"cf_chl_opt", b"challenge-platform")
+_CLOUDFLARE_CHALLENGE_RETRIES = 3
+_CLOUDFLARE_CHALLENGE_RETRY_DELAY = 2.0
+
+
+def _is_cloudflare_challenge(content: bytes) -> bool:
+    return any(marker in content for marker in _CLOUDFLARE_CHALLENGE_MARKERS)
 
 
 class ScraperStable(BuildScraper):
@@ -66,21 +76,39 @@ class ScraperStable(BuildScraper):
         link_filter = regex_filter(platform)
 
         url = "https://download.blender.org/release/"
-        r = self.manager.request("GET", url)
 
-        if r is None:
-            return
+        content = b""
+        was_challenged = False
+        for attempt in range(1, _CLOUDFLARE_CHALLENGE_RETRIES + 1):
+            r = self.manager.request("GET", url)
+            if r is None:
+                return
 
-        content = r.data
+            content = r.data
+            r.release_conn()
+            r.close()
+
+            if not _is_cloudflare_challenge(content):
+                break
+
+            was_challenged = True
+            logger.warning(
+                f"download.blender.org returned a Cloudflare challenge page "
+                f"(attempt {attempt}/{_CLOUDFLARE_CHALLENGE_RETRIES}) for {self.platform}"
+            )
+            if attempt < _CLOUDFLARE_CHALLENGE_RETRIES:
+                time.sleep(_CLOUDFLARE_CHALLENGE_RETRY_DELAY)
+
         soup = BeautifulSoup(content, "lxml")
 
         releases = soup.find_all(href=BLENDER_X_X)
         if not any(releases):
-            logger.info(f"Failed to gather stable releases for {platform}")
+            logger.info(f"Failed to gather stable releases for {self.platform}")
             logger.info(content)
-            self.stable_error.emit(
-                f"No releases were scraped from the site for {platform}!<br>check -debug logs for more details."
-            )
+            if was_challenged:
+                self.stable_error.emit(t("msg.err.stable.cloudflare_blocked"))
+            else:
+                self.stable_error.emit(t("msg.err.stable.no_releases"))
             return
 
         minimum_version_str = get_minimum_blender_stable_version()
@@ -182,9 +210,6 @@ class ScraperStable(BuildScraper):
                     logging.info(f"Saved updated cache to {cache_path}")
             except OSError:
                 logger.exception(f"Failed to write cache to {cache_path}")
-
-        r.release_conn()
-        r.close()
 
     def scrap_download_links(self, url, link_filter: re.Pattern, _limit=None):
         r = self.manager.request("GET", url)

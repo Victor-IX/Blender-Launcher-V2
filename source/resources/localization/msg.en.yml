@@ -31,6 +31,10 @@ err:
     no_build_dir: The new build directory can't be found.
     no_settings: No portable settings found to transfer.
 
+  stable:
+    no_releases: "No releases were scraped from the Blender Foundation server. Check the log for more details."
+    cloudflare_blocked: "blender.org is temporarily blocking automated requests (Cloudflare challenge).<br>This is not caused by the launcher; please try checking again in a few minutes."
+
   no_resources: |
     Resources failed to load! The launcher will still work,
     but the style will be broken.

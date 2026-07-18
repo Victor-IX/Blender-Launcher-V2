@@ -21,7 +21,7 @@ err:
 
   generic: |
     Une erreur s'est produite : %{err}
-    Consultez les journaux pour plus de détails.
+    Consultez les logs pour plus de détails.
 
   cant_write: L'emplacement demandé ne dispose pas des permissions d'écriture !
   download:
@@ -30,6 +30,10 @@ err:
   port:
     no_build_dir: Le nouveau répertoire de build est introuvable.
     no_settings: Aucun paramètre portable trouvé à transférer.
+
+  stable:
+    no_releases: "Aucune version n'a été récupérée depuis le serveur de la Blender Foundation. Consultez les logs pour plus de détails."
+    cloudflare_blocked: "blender.org bloque temporairement les requêtes automatisées (challenge Cloudflare).<br>Ce n'est pas un problème du lanceur ; veuillez réessayer de vérifier dans quelques minutes."
 
   no_resources: |
     Le chargement des ressources a échoué ! Le lanceur fonctionnera toujours,
@@ -153,7 +157,7 @@ popup:
   winget:
     register:
       success: Enregistrement avec WinGet réussi !<br>Vous pouvez maintenant mettre à jour via 'winget update VictorIX.BlenderLauncher
-      error: Échec de l'enregistrement avec WinGet. Consultez les journaux pour plus de détails.
+      error: Échec de l'enregistrement avec WinGet. Consultez les logs pour plus de détails.
     unregister:
       success: Désenregistrement de WinGet réussi.
-      error: Échec du désenregistrement de WinGet. Consultez les journaux pour plus de détails.
+      error: Échec du désenregistrement de WinGet. Consultez les logs pour plus de détails.

@@ -31,6 +31,10 @@ err:
     no_build_dir: 新しいビルドディレクトリが見つかりません。
     no_settings: 転送するポータブル設定が見つかりません。
 
+  stable:
+    no_releases: "Blender Foundation のサーバーからリリースを取得できませんでした。詳細はログを確認してください。"
+    cloudflare_blocked: "blender.org が自動リクエストを一時的にブロックしています（Cloudflareチャレンジ）。<br>これはランチャー側の問題ではありません。数分後に再度確認してください。"
+
   no_resources: |
     リソースの読み込みに失敗しました！ランチャーは動作しますが、
     スタイルが崩れます。

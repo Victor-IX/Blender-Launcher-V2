@@ -31,6 +31,10 @@ err:
     no_build_dir: 找不到新构建版本目录。
     no_settings: 没有找到可转移的便携设置。
 
+  stable:
+    no_releases: "未能从 Blender Foundation 服务器抓取到任何版本。请查看日志以获取更多详细信息。"
+    cloudflare_blocked: "blender.org 暂时阻止了自动化请求（Cloudflare 验证）。<br>这不是启动器导致的问题；请稍后再试一次检查。"
+
   no_resources: |
     资源加载失败！启动器仍可运行，
     但样式将损坏。
