@@ -11,8 +11,8 @@ from items.enablable_list_widget_item import EnablableListWidgetItem
 from modules.blendfile_reader import BlendfileHeader, read_blendfile_header
 from modules.build_info import BuildInfo, LaunchOpenLast, LaunchWithBlendFile, launch_build
 from modules.settings import (
-    get_favorite_path,
     get_launch_timer_duration,
+    get_primary_quick_launch_path,
     get_version_specific_queries,
     set_version_specific_queries,
 )
@@ -335,7 +335,7 @@ class LaunchingWindow(BaseWindow):
         self.repad_list()
 
         # Use quick launch if it exists
-        if self.version_query is None and self.blendfile is None and (path := get_favorite_path()):
+        if self.version_query is None and self.blendfile is None and (path := get_primary_quick_launch_path()):
             for build in self.builds.values():
                 if build.link == path:
                     self.list_items[BBI.from_buildinfo(build)].setSelected(True)

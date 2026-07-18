@@ -634,7 +634,7 @@ class BlenderLauncher(BaseWindow):
             self.DownloadsPage.list_widget.clear_()
             self.started = True
 
-        self.quick_launch_handler.remove_quick_launch()
+        self.quick_launch_handler.reset()
 
         self.LibraryPage.list_widget.clear_()
 
@@ -809,7 +809,7 @@ class BlenderLauncher(BaseWindow):
 
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
-        widget.add_as_quick_launch.connect(self.quick_launch_handler.set_quick_launch_build)
+        widget.add_as_quick_launch.connect(self.quick_launch_handler.add_quick_launch_build)
         if widget.is_quick_launch():
             widget.add_to_quick_launch()
 

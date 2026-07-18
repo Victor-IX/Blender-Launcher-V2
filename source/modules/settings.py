@@ -217,12 +217,47 @@ def create_library_folders(library_folder):
         (path / subfolder).mkdir(parents=True, exist_ok=True)
 
 
-def get_favorite_path() -> str | None:
-    return get_settings().value("Internal/favorite_path")
+def get_quick_launch_paths() -> list[str]:
+    settings = get_settings()
+    value: str = settings.value("Internal/quick_launch_paths", defaultValue="", type=str)  # type: ignore
+    if value:
+        with contextlib.suppress(json.JSONDecodeError):
+            paths = json.loads(value)
+            if isinstance(paths, list):
+                return paths
+
+    # Migrate the legacy single quick launch path setting.
+    legacy = settings.value("Internal/favorite_path")
+    if not legacy:
+        return []
+
+    settings.remove("Internal/favorite_path")
+    paths = [legacy]
+    set_quick_launch_paths(paths)
+    return paths
 
 
-def set_favorite_path(path):
-    get_settings().setValue("Internal/favorite_path", path)
+def set_quick_launch_paths(paths: list[str]):
+    get_settings().setValue("Internal/quick_launch_paths", json.dumps(paths))
+
+
+def get_primary_quick_launch_path() -> str | None:
+    paths = get_quick_launch_paths()
+    return paths[0] if paths else None
+
+
+def add_quick_launch_path(path: str):
+    paths = get_quick_launch_paths()
+    if path not in paths:
+        paths.append(path)
+        set_quick_launch_paths(paths)
+
+
+def remove_quick_launch_path(path: str):
+    paths = get_quick_launch_paths()
+    if path in paths:
+        paths.remove(path)
+        set_quick_launch_paths(paths)
 
 
 def get_dont_show_resource_warning() -> bool:

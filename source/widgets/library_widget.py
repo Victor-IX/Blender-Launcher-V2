@@ -27,11 +27,11 @@ from modules.fonts import Fonts
 from modules.platform_utils import _call, get_blender_config_folder, get_environment, get_platform, is_frozen
 from modules.settings import (
     get_default_delete_action,
-    get_favorite_path,
     get_library_folder,
     get_mark_as_favorite,
     get_on_blender_launch_action,
     get_prepend_prnum_on_prlabel,
+    get_quick_launch_paths,
     get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
@@ -327,10 +327,7 @@ class LibraryWidget(BaseBuildWidget):
             self.add_to_favorites()
 
     def is_quick_launch(self):
-        # An explicit quick launch choice is persisted via favorite_path and must
-        # be restored on every startup, including cached builds (show_new=False).
-        # Only the branch-based auto-favorite heuristic below is gated on show_new.
-        if get_favorite_path() == self.link.as_posix():
+        if self.link.as_posix() in get_quick_launch_paths():
             return True
         if not self.show_new:
             return False
@@ -903,8 +900,8 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def toggle_quick_launch(self):
-        if self.launcher.quick_launch_handler.quick_launch_build is self:
-            self.launcher.quick_launch_handler.remove_quick_launch()
+        if self.launcher.quick_launch_handler.is_quick_launch_path(self.link.as_posix()):
+            self.launcher.quick_launch_handler.remove_quick_launch_build(self)
         else:
             self.add_to_quick_launch()
 
@@ -941,9 +938,6 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def add_to_favorites(self):
-        # Replace any stale favourites entry: __init__ caches display state from
-        # build_info, so reusing the widget would show stale labels after edits.
-        # Path-keyed because BuildInfo.__eq__ ignores path.
         stale = self.launcher.FavoritesPage.list_widget.widget_with_link(self.link)
         if stale is not None:
             self.launcher.FavoritesPage.list_widget.remove_item(stale.item)
@@ -958,11 +952,13 @@ class LibraryWidget(BaseBuildWidget):
             parent_widget=self,
         )
         # Mirror the library page wiring so adding to quick launch from a
-        # favourite goes through set_quick_launch_build: without it the
-        # previous quick launch isn't cleared and the choice isn't persisted.
-        widget.add_as_quick_launch.connect(self.launcher.quick_launch_handler.set_quick_launch_build)
+        # favourite goes through add_quick_launch_build and gets persisted.
+        widget.add_as_quick_launch.connect(self.launcher.quick_launch_handler.add_quick_launch_build)
         self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
         self.child_widget = widget
+
+        if widget.is_quick_launch():
+            widget.add_to_quick_launch()
 
         self.removeFromFavoritesAction.setVisible(True)
         self.addToFavoritesAction.setVisible(False)
@@ -1165,8 +1161,7 @@ class LibraryWidget(BaseBuildWidget):
             self.parent_widget.child_widget = None
             self.parent_widget = None
 
-        if self.launcher.quick_launch_handler.quick_launch_build == self:
-            self.launcher.quick_launch_handler.remove_quick_launch()
+        self.launcher.quick_launch_handler.forget_quick_launch_build(self)
 
     @Slot(int, int, int)
     def _update_column_widths(self, version_width: int, _branch_width: int, commit_time_width: int):
