@@ -8,7 +8,7 @@ from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 from modules.build_info import BuildInfo
-from modules.platform_utils import bfa_cache_path, get_platform
+from modules.platform_utils import bfa_cache_path, get_architecture, get_platform
 from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
@@ -40,6 +40,11 @@ else:
     bfa_regex_filter = r"Bforartists-.+tar.xz$"
 
 bfa_package_file_name_regex = re.compile(bfa_regex_filter, re.IGNORECASE)
+
+# Since Bforartists 4.5.0, macOS releases can ship separate per-architecture
+# DMGs (e.g. "...-Mac-Intel.dmg" / "...-Mac-Silicon.dmg") instead of one file.
+_BFA_MACOS_ARM_KEYWORDS = ("silicon", "arm64")
+_BFA_MACOS_INTEL_KEYWORDS = ("intel", "x86_64", "x64")
 
 
 class ScraperBfa(BuildScraper):
@@ -94,6 +99,7 @@ class ScraperBfa(BuildScraper):
                 logger.exception(f"Failed to write cache to {self.cache_path}")
 
     def scrape_bfa_release(self, client: Client, folder: str, semver: Version):
+        candidates: list[tuple[PurePosixPath, datetime]] = []
         for entry in client.ls(folder, detail=True, allow_listing_resource=True):
             if isinstance(entry, str):
                 continue
@@ -104,11 +110,16 @@ class ScraperBfa(BuildScraper):
             commit_time = entry["modified"]
             if not isinstance(commit_time, datetime):
                 continue
+            candidates.append((ppath, commit_time))
 
+        platform = get_platform()
+        if platform == "macOS":
+            candidates = self.filter_macos_candidates(candidates)
+
+        for ppath, commit_time in candidates:
             # Set custom_executable for Windows/Linux since Bforartists uses a different
             # executable name than Blender. On macOS, let it be auto-detected during
             # installation to handle DMG-extracted .app bundles correctly.
-            platform = get_platform()
             if platform == "macOS":
                 exe_name = None
             else:
@@ -125,3 +136,24 @@ class ScraperBfa(BuildScraper):
                 "bforartists",
                 custom_executable=exe_name,
             )
+
+    @staticmethod
+    def filter_macos_candidates(
+        candidates: list[tuple[PurePosixPath, datetime]],
+    ) -> list[tuple[PurePosixPath, datetime]]:
+        """Pick the single macOS DMG matching the running architecture.
+
+        Prevents an Intel DMG and a Silicon DMG from being treated as duplicate
+        builds downstream (same version/branch/hash), which would otherwise let
+        whichever one is listed first by the WebDAV server silently win.
+        """
+        is_arm = get_architecture() == "arm64"
+        own_keywords = _BFA_MACOS_ARM_KEYWORDS if is_arm else _BFA_MACOS_INTEL_KEYWORDS
+        other_keywords = _BFA_MACOS_INTEL_KEYWORDS if is_arm else _BFA_MACOS_ARM_KEYWORDS
+
+        filtered = [c for c in candidates if not any(kw in c[0].name.lower() for kw in other_keywords)]
+        if not filtered:
+            filtered = candidates
+
+        own_match = [c for c in filtered if any(kw in c[0].name.lower() for kw in own_keywords)]
+        return own_match[:1] if own_match else filtered[:1]
