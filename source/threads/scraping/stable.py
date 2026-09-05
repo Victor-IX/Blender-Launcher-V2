@@ -224,6 +224,8 @@ class ScraperStable(BuildScraper):
                     minor += 1
                 new_file_ver = f"{major}.{minor}"
                 logger.debug(f"Updating cache file version to {new_file_ver}")
+        except FileNotFoundError:
+            logger.warning("api_file_version file does not exist. Using default 0.1")
         except json.JSONDecodeError:
             logger.exception("Failed to read api_file_version file. Using default 0.1")
         except ValueError:
