@@ -49,6 +49,8 @@ class RepoUserView(QWidget):
         if download is None:
             self.download_enable_button.setEnabled(False)
 
+        self.title_label.setEnabled(self.library_enable_button.isChecked())
+
         self.layout_ = QGridLayout(self)
         self.layout_.setContentsMargins(5, 5, 0, 5)
         self.layout_.setSpacing(5)
