@@ -43,11 +43,11 @@ KEYRING_TOKEN_USERNAME = "github_token"
 tabs = {
     "Library": 0,
     "Downloads": 1,
-    "Favorites": 2,
 }
 
 library_pages = {
     # "All": "all",
+    "Favorites": "favorites",
     "Stable Releases": "stable",
     "Daily Builds": "daily",
     "Experimental Branches": "experimental",
@@ -139,8 +139,10 @@ def dropdown_setting(
         if v is None:
             return default
         if isinstance(v, int) or v.isdigit():
+            if int(v) > len(gindex):
+                v %= len(gindex) # If values are removed
             return int(v)  # backcompat
-        return gindex[v]
+        return gindex.get(v, 0)
 
     def set_(x: int) -> None:
         get_settings().setValue(name, sindex[x])
