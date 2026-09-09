@@ -71,7 +71,6 @@ class LibraryWidget(BaseBuildWidget):
         list_widget: BaseListWidget,
         build_info: BuildInfo,
         show_new=False,
-        parent_widget=None,
     ):
         super().__init__(
             parent=parent,
@@ -90,8 +89,6 @@ class LibraryWidget(BaseBuildWidget):
         self.list_widget = list_widget
         self.show_new = show_new
         self.observer = None
-        self.child_widget = None
-        self.parent_widget = parent_widget
         self.move_portable_settings = False
 
         self.destroyed.connect(lambda: self._destroyed())
@@ -145,14 +142,13 @@ class LibraryWidget(BaseBuildWidget):
             widths = page_widget.get_column_widths()
             self._update_column_widths(widths[0], widths[1], widths[2])
 
-        if self.parent_widget is not None:
-            self.lineEdit = BaseLineEdit(self)
-            self.lineEdit.setMaxLength(256)
-            self.lineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-            self.lineEdit.escapePressed.connect(self.rename_branch_rejected)
-            self.lineEdit.returnPressed.connect(self.rename_branch_accepted)
-            self.layout.addWidget(self.lineEdit, stretch=1)
-            self.lineEdit.hide()
+        self.lineEdit = BaseLineEdit(self)
+        self.lineEdit.setMaxLength(256)
+        self.lineEdit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.lineEdit.escapePressed.connect(self.rename_branch_rejected)
+        self.lineEdit.returnPressed.connect(self.rename_branch_accepted)
+        self.layout.addWidget(self.lineEdit, stretch=1)
+        self.lineEdit.hide()
 
         self.layout.addWidget(self.commitTimeLabel)
         self.layout.addWidget(self.build_state_widget)
@@ -202,10 +198,8 @@ class LibraryWidget(BaseBuildWidget):
         self.removeFromFavoritesAction.setIcon(self.launcher.icons.favorite)
         self.removeFromFavoritesAction.triggered.connect(self.remove_from_favorites)
 
-        if self.parent_widget is not None:
-            self.addToFavoritesAction.setVisible(False)
-        else:
-            self.removeFromFavoritesAction.setVisible(False)
+        self.addToFavoritesAction.setVisible(not self.build_info.is_favorite)
+        self.removeFromFavoritesAction.setVisible(self.build_info.is_favorite)
 
         self.updateBlenderBuildAction = QAction(t("act.a.update"))
         self.updateBlenderBuildAction.setIcon(self.launcher.icons.update)
@@ -278,10 +272,9 @@ class LibraryWidget(BaseBuildWidget):
         self.menu.addAction(self.updateBlenderBuildAction)
         self.menu.addMenu(self.debugMenu)
 
-        if self.parent_widget is not None:
-            self.renameBranchAction = QAction(t("act.a.rename"))
-            self.renameBranchAction.triggered.connect(self.rename_branch)
-            self.menu.addAction(self.renameBranchAction)
+        self.renameBranchAction = QAction(t("act.a.rename"))
+        self.renameBranchAction.triggered.connect(self.rename_branch)
+        self.menu.addAction(self.renameBranchAction)
 
         self.menu.addSeparator()
 
@@ -322,9 +315,6 @@ class LibraryWidget(BaseBuildWidget):
 
         self.setEnabled(True)
         self.list_widget.sortItems()
-
-        if self.build_info.is_favorite and self.parent_widget is None:
-            self.add_to_favorites()
 
     def is_quick_launch(self):
         if self.link.as_posix() in get_quick_launch_paths():
@@ -485,10 +475,6 @@ class LibraryWidget(BaseBuildWidget):
             self.list_widget.clearSelection()
             self.item.setSelected(True)
 
-        if self.parent_widget is not None:
-            self.parent_widget.launch(update_selection=update_selection, exe=exe, launch_mode=launch_mode)
-            return
-
         if self.show_new is True:
             self.build_state_widget.setNewBuild(False)
             self.show_new = False
@@ -646,8 +632,6 @@ class LibraryWidget(BaseBuildWidget):
     def proc_count_changed(self, count):
         self.build_state_widget.setCount(count)
 
-        if self.child_widget is not None:
-            self.child_widget.proc_count_changed(count)
 
     def observer_started(self):
         self.deleteAction.setEnabled(False)
@@ -659,17 +643,11 @@ class LibraryWidget(BaseBuildWidget):
         elif action == 2:
             self.launcher.close()
 
-        if self.child_widget is not None:
-            self.child_widget.observer_started()
-
     def observer_finished(self):
         self.observer = None
         self.build_state_widget.setCount(0)
         self.deleteAction.setEnabled(True)
         self.installTemplateAction.setEnabled(True)
-
-        if self.child_widget is not None:
-            self.child_widget.observer_finished()
 
     @Slot()
     def make_portable(self):
@@ -829,9 +807,6 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def remove_from_drive(self, trash=False):
-        if self.parent_widget is not None:
-            self.parent_widget.remove_from_drive()
-            return
 
         path = get_library_folder() / self.link
         a = RemovalTask(path, trash=trash)
@@ -871,13 +846,8 @@ class LibraryWidget(BaseBuildWidget):
         self.setEnabled(False)
         self.item.setFlags(self.item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
 
-        if self.child_widget is not None:
-            self.child_widget.remover_started()
 
     def remover_completed(self, code):
-        if self.child_widget is not None:
-            self.child_widget.remover_completed(code)
-
         if code == 0:
             self.list_widget.remove_item(self.item)
 
@@ -908,85 +878,33 @@ class LibraryWidget(BaseBuildWidget):
     @Slot()
     def add_to_quick_launch(self):
         self.add_as_quick_launch.emit(self)
-
         self.launchButton.setIcon(self.launcher.icons.quick_launch)
-
         self.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
-
-        # TODO Make more optimal and simpler synchronization
-        if self.parent_widget is not None:
-            self.parent_widget.launchButton.setIcon(self.launcher.icons.quick_launch)
-            self.parent_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
-
-        if self.child_widget is not None:
-            self.child_widget.launchButton.setIcon(self.launcher.icons.quick_launch)
-            self.child_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch_rem"))
 
     @Slot()
     def remove_from_quick_launch(self):
         self.launchButton.setIcon(self.launcher.icons.fake)
         self.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
 
-        # TODO Make more optimal and simpler synchronization
-        if self.parent_widget is not None:
-            self.parent_widget.launchButton.setIcon(self.launcher.icons.fake)
-            self.parent_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
-
-        if self.child_widget is not None:
-            self.child_widget.launchButton.setIcon(self.launcher.icons.fake)
-            self.child_widget.addToQuickLaunchAction.setText(t("act.a.quick_launch"))
-
     @Slot()
     def add_to_favorites(self):
-        stale = self.launcher.FavoritesPage.list_widget.widget_with_link(self.link)
-        if stale is not None:
-            self.launcher.FavoritesPage.list_widget.remove_item(stale.item)
-
-        item = BaseListWidgetItem()
-        widget = LibraryWidget(
-            self.launcher,
-            item,
-            self.link,
-            self.launcher.FavoritesPage.list_widget,
-            build_info=self.build_info,
-            parent_widget=self,
-        )
-        # Mirror the library page wiring so adding to quick launch from a
-        # favourite goes through add_quick_launch_build and gets persisted.
-        widget.add_as_quick_launch.connect(self.launcher.quick_launch_handler.add_quick_launch_build)
-        self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
-        self.child_widget = widget
-
-        if widget.is_quick_launch():
-            widget.add_to_quick_launch()
-
         self.removeFromFavoritesAction.setVisible(True)
         self.addToFavoritesAction.setVisible(False)
-        if self.build_info.is_favorite is False:
-            self.build_info.is_favorite = True
-            self.write_build_info()
+
+        self.build_info.is_favorite = True
+        self.write_build_info()
+        self.list_widget.update_binfo(self)
+        self.list_widget.update_all_visibility()
 
     @Slot()
     def remove_from_favorites(self):
-        # Either side may be None if a reload destroyed its counterpart.
-        if self.list_widget is self.launcher.FavoritesPage.list_widget:
-            fav_widget = self
-            lib_widget = self.parent_widget
-        else:
-            lib_widget = self
-            fav_widget = self.child_widget
-
-        if fav_widget is not None:
-            self.launcher.FavoritesPage.list_widget.remove_item(fav_widget.item)
-
-        if lib_widget is not None:
-            lib_widget.child_widget = None
-            lib_widget.removeFromFavoritesAction.setVisible(False)
-            lib_widget.addToFavoritesAction.setVisible(True)
+        self.removeFromFavoritesAction.setVisible(False)
+        self.addToFavoritesAction.setVisible(True)
 
         self.build_info.is_favorite = False
-        self.build_info_writer = WriteBuildTask(self.link, self.build_info)
-        self.launcher.task_queue.append(self.build_info_writer)
+        self.write_build_info()
+        self.list_widget.update_binfo(self)
+        self.list_widget.update_all_visibility()
 
     @Slot()
     def register_extension(self):
@@ -1153,14 +1071,6 @@ class LibraryWidget(BaseBuildWidget):
         self.show_folder(path)
 
     def _destroyed(self):
-        # Sever cross-links so the surviving counterpart doesn't dereference a dead C++ object.
-        if self.child_widget is not None:
-            self.child_widget.parent_widget = None
-            self.child_widget = None
-        if self.parent_widget is not None:
-            self.parent_widget.child_widget = None
-            self.parent_widget = None
-
         self.launcher.quick_launch_handler.forget_quick_launch_build(self)
 
     @Slot(int, int, int)
