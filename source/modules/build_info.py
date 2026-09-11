@@ -666,6 +666,14 @@ class LaunchWithBlendFile(LaunchMode):
 class LaunchOpenLast(LaunchMode): ...
 
 
+def path_arg(pth: Path) -> str:
+    # Windows keeps native separators here: as_posix() would turn a UNC path like
+    # \\NAS\project\file.blend into //NAS/..., which Blender reads as relative to the blend file.
+    if get_platform() == "Windows":
+        return str(pth)
+    return pth.as_posix()
+
+
 def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, linux_nohup=True) -> list[str] | str:
     platform = get_platform()
     library_folder = get_library_folder()
@@ -676,7 +684,7 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
     if platform == "Windows":
         if exe is not None:
             b3d_exe = library_folder / info.link / exe
-            args = ["cmd", "/C", b3d_exe.as_posix()]
+            args = ["cmd", "/C", path_arg(b3d_exe)]
         else:
             cexe = info.custom_executable
             if cexe:
@@ -690,14 +698,14 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
             # Check if the executable is a batch file and needs cmd /C
             if b3d_exe.suffix.lower() in (".bat", ".cmd"):
                 if blender_args == "":
-                    args = ["cmd", "/C", b3d_exe.as_posix()]
+                    args = ["cmd", "/C", path_arg(b3d_exe)]
                 else:
-                    args = ["cmd", "/C", b3d_exe.as_posix(), *blender_args.split(" ")]
+                    args = ["cmd", "/C", path_arg(b3d_exe), *blender_args.split(" ")]
             else:
                 if blender_args == "":
-                    args = [b3d_exe.as_posix()]
+                    args = [path_arg(b3d_exe)]
                 else:
-                    args = [b3d_exe.as_posix(), *blender_args.split(" ")]
+                    args = [path_arg(b3d_exe), *blender_args.split(" ")]
 
     elif platform == "Linux":
         bash_args = get_bash_arguments()
@@ -754,10 +762,11 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
     if launch_mode is not None:
         if isinstance(launch_mode, LaunchWithBlendFile):
+            blendfile = path_arg(launch_mode.blendfile)
             if isinstance(args, list):
-                args.append(launch_mode.blendfile.as_posix())
+                args.append(blendfile)
             else:
-                args += f' "{launch_mode.blendfile.as_posix()}"'
+                args += f' "{blendfile}"'
         elif isinstance(launch_mode, LaunchOpenLast):
             if isinstance(args, list):
                 args.append("--open-last")
