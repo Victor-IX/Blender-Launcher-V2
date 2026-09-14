@@ -410,12 +410,12 @@ def set_bash_arguments(args):
     get_settings().setValue("bash_arguments", args.strip())
     
 
-def get_nohup_arguments() -> bool:
-    return get_settings().value("linux_nohup_arguments", defaultValue="False", type=bool)
+def get_use_nohup_button() -> bool:
+    return get_settings().value("get_use_nohup", defaultValue=False, type=bool)
     
 
-def set_nohup_arguments(is_checked):
-    get_settings().setValue("linux_nohup_arguments", is_checked)  # type: ignore
+def set_use_nohup_button(is_checked):
+    get_settings().setValue("use_nohup_button", is_checked)  # type: ignore
     
 
 def get_show_update_button() -> bool:
