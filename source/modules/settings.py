@@ -411,7 +411,7 @@ def set_bash_arguments(args):
     
 
 def get_use_nohup_button() -> bool:
-    return get_settings().value("get_use_nohup", defaultValue=False, type=bool)
+    return get_settings().value("get_use_nohup_button", defaultValue=False, type=bool)
     
 
 def set_use_nohup_button(is_checked):
