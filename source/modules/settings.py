@@ -408,7 +408,15 @@ def get_bash_arguments() -> str:
 
 def set_bash_arguments(args):
     get_settings().setValue("bash_arguments", args.strip())
+    
 
+def get_nohup_arguments() -> bool:
+    return get_settings().value("linux_nohup_arguments", defaultValue="False", type=bool)
+    
+
+def set_nohup_arguments(is_checked):
+    get_settings().setValue("linux_nohup_arguments", is_checked)  # type: ignore
+    
 
 def get_show_update_button() -> bool:
     return get_settings().value("show_update_button", defaultValue=True, type=bool)  # type: ignore
