@@ -10,6 +10,7 @@ from typing import TypedDict
 import distro
 from modules.platform_utils import _check_call, _popen, get_cwd, get_platform, get_running_app_bundle
 from modules.tasks import TaskQueue
+from modules.settings import get_use_nohup_button
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from threads.downloader import DownloadTask
@@ -170,7 +171,10 @@ class BlenderLauncherUpdater(BaseWindow):
             _popen([launcher], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist, 0o744)
-            _popen('nohup "' + launcher + '"')
+            if get_use_nohup_button():
+                _popen('nohup "' + launcher + '"')
+            else:
+                _popen(launcher + '"')
         elif self.platform == "macOS":
             launcher = str(self._install_macos_app(dist))
             with contextlib.suppress(Exception):
