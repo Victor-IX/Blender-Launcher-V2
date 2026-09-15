@@ -10,6 +10,7 @@ from modules.settings import (
     get_bash_arguments,
     get_bfa_update_behavior,
     get_blender_startup_arguments,
+    get_use_nohup,
     get_check_for_new_builds_automatically,
     get_check_for_new_builds_on_startup,
     get_daily_update_behavior,
@@ -41,6 +42,7 @@ from modules.settings import (
     get_use_advanced_update_button,
     set_bash_arguments,
     set_bfa_update_behavior,
+    set_use_nohup,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
     set_check_for_new_builds_on_startup,
@@ -363,6 +365,15 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BashArguments.setCursorPosition(0)
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
+                # Command Line Uses Nohup Arguments
+                grp.add_label("settings.blender_builds.use_nohup")
+                self.UseNohup = grp.add_checkbox(
+                    "settings.blender_builds.use_nohup",
+                    default=get_use_nohup(),
+                    setter=set_use_nohup,
+                )
+                self.UseNohup.setToolTip(t("settings.blender_builds.blender_use_nohup_tooltip"))
+
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)
         set_minimum_blender_stable_version(minimum)
@@ -374,6 +385,10 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
     def update_bash_arguments(self):
         args = self.BashArguments.text()
         set_bash_arguments(args)
+
+    def update_use_nohup(self, is_checked):
+        self.UseNohup.setEnabled(is_checked)
+        set_use_nohup(is_checked)
 
     def show_update_button(self, is_checked):
         self.UpdateBehavior.setEnabled(is_checked)

@@ -401,6 +401,14 @@ def set_blender_startup_arguments(args):
     get_settings().setValue("blender_startup_arguments", args.strip())
 
 
+def get_use_nohup() -> bool:
+    return get_settings().value("use_nohup", defaultValue=False, type=bool)
+    
+
+def set_use_nohup(is_checked):
+    get_settings().setValue("use_nohup", is_checked)  # type: ignore
+
+
 def get_bash_arguments() -> str:
     args: str = get_settings().value("bash_arguments", defaultValue="", type=str)  # type: ignore
     return args.strip()

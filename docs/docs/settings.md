@@ -254,7 +254,18 @@ Actions that will be performed on newly added builds to Library tab right after 
     ```
     env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup %path to blender executable% %startup arguments%
     ```
+#### Record Bash Output Using Nohup 
 
+!!! info
+    This only works on Linux.
+
+:   Determines whether or not to place '"nohup" in front of everything placed in front of the blender executable.
+
+:   If turned off, the example above will instead produce this command:
+    
+    ```
+    env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia %path to blender executable% %startup arguments%
+    ```
 ### Command Line Arguments
 
 Blender Launcher can be launched from the command line with the following options.
