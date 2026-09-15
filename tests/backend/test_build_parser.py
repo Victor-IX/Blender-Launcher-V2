@@ -13,7 +13,7 @@ from source.modules.build_info import (
     parse_blender_ver,
 )
 from source.modules.platform_utils import get_platform
-from source.modules.settings import get_bash_arguments, set_bash_arguments, get_use_nohup_button, set_use_nohup_button
+from source.modules.settings import get_bash_arguments, set_bash_arguments, get_use_nohup, set_use_nohup
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 
@@ -64,12 +64,12 @@ def test_get_args():
 
     if idx == 1:
         bargs = get_bash_arguments()
-        nohupArgs = get_use_nohup_button()
+        nohupArgs = get_use_nohup()
         bstr = 'nohup "/blender/blender" '
         if not nohupArgs:
             bstr='"/blender/blender"'
         set_bash_arguments("")
-        set_use_nohup_button(False)
+        set_use_nohup(False)
     x = [
         (
             get_args(info=info),
