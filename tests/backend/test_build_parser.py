@@ -98,7 +98,7 @@ def test_get_args():
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
             [win_root + "/blender/blender.exe", "--open-last"],
-            bstr.join(' "/blender/blender --open-last'),
+            bstr + "/blender/blender" + ' --open-last'',
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
