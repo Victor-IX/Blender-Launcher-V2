@@ -65,9 +65,9 @@ def test_get_args():
     if idx == 1:
         bargs = get_bash_arguments()
         nohupArgs = get_use_nohup()
-        bstr = "'"
+        bstr = "' "
         if nohupArgs:
-            bstr = "'nohup"
+            bstr = "'nohup "
         set_bash_arguments("")
         #set_use_nohup(False)
     x = [
