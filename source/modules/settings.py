@@ -402,7 +402,7 @@ def set_blender_startup_arguments(args):
 
 
 def get_use_nohup() -> bool:
-    return get_settings().value("get_use_nohup", defaultValue=False, type=bool)
+    return get_settings().value("use_nohup", defaultValue=False, type=bool)
     
 
 def set_use_nohup(is_checked):
