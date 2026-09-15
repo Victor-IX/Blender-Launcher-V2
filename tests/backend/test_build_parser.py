@@ -67,7 +67,7 @@ def test_get_args():
         nohupArgs = get_use_nohup()
         bstr = ''
         if nohupArgs:
-            bstr='nohup '
+            bstr = 'nohup'
         set_bash_arguments("")
         #set_use_nohup(False)
     x = [
@@ -98,7 +98,7 @@ def test_get_args():
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
             [win_root + "/blender/blender.exe", "--open-last"],
-            bstr + "/blender/blender" + ' --open-last',
+            bstr + ' "/blender/blender" +  --open-last',
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
