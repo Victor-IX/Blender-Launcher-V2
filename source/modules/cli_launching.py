@@ -47,7 +47,7 @@ def cli_launch(
                 if open_last:
                     launch_mode = LaunchOpenLast()
 
-                args = get_args(build, launch_mode=launch_mode, linux_nohup=False)
+                args = get_args(build, launch_mode=launch_mode, linux_nohup=get_use_nohup())
                 logger.info(f"Launching build with args: {args}")
                 proc = subprocess.Popen(args, shell=True)
                 sys.exit(proc.wait())
@@ -111,10 +111,7 @@ def cli_launch(
         build = matches[0]
         build_info = basics[build]
 
-    if get_use_nohup() == True:
-        args = get_args(build_info, launch_mode=launch_mode, linux_nohup=True)
-    else:
-        args = get_args(build_info, launch_mode=launch_mode, linux_nohup=False)
+    args = get_args(build_info, launch_mode=launch_mode, linux_nohup=get_use_nohup())
     
     if isinstance(args, list):
         args.extend(blender_args)
