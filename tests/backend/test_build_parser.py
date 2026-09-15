@@ -104,11 +104,12 @@ def test_get_args():
             'open -W -n /blender/Blender/Blender.app --args --open-last "/file.blend"',
         ),
     ]
+
+    if idx == 1:
+        set_bash_arguments(bargs)
+
     from pprint import pprint
 
     for i in x:
         pprint(i)
         assert i[0] == i[idx + 1]
-
-    if idx == 1:
-        set_bash_arguments(bargs)
