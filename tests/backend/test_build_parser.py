@@ -74,7 +74,7 @@ def test_get_args():
         (
             get_args(info=info),
             [win_root + "/blender/blender.exe"],
-            '{}  "/blender/blender" '.format(bstr),
+            '{} "/blender/blender" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
