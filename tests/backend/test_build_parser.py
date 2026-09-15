@@ -65,16 +65,16 @@ def test_get_args():
     if idx == 1:
         bargs = get_bash_arguments()
         nohupArgs = get_use_nohup()
-        bstr = ''
+        bstr = "'"
         if nohupArgs:
-            bstr = 'nohup'
+            bstr = "'nohup"
         set_bash_arguments("")
         #set_use_nohup(False)
     x = [
         (
             get_args(info=info),
             [win_root + "/blender/blender.exe"],
-            bstr + ' "/blender/blender" ',
+            bstr + "/blender/blender" +  " '",
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
@@ -86,25 +86,25 @@ def test_get_args():
         (
             get_args(info=info, exe="bforartists.exe"),
             ["cmd", "/C", win_root + "/blender/bforartists.exe"],
-            bstr + ' "/blender/blender" ',
+            bstr + "/blender/blender" + " '",
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info_c),
             [win_root + "/blender/bforartists"],
-            bstr + ' "/blender/bforartists" ',
+            bstr + "/blender/bforartists" + " '",
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
             [win_root + "/blender/blender.exe", "--open-last"],
-            bstr + ' "/blender/blender" --open-last',
+            bstr +  "/blender/blender" + " --open-last" + " '",
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
             get_args(info=info, launch_mode=LaunchWithBlendFile(Path(root) / "file.blend")),
             [win_root + "/blender/blender.exe", win_root + "/file.blend"],
-            bstr + ' "/blender/blender" "/file.blend"',
+            bstr + "/blender/blender" + "/file.blend" + "'",
             'open -W -n /blender/Blender/Blender.app --args --open-last "/file.blend"',
         ),
     ]
