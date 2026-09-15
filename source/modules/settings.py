@@ -407,7 +407,8 @@ def get_use_nohup() -> bool:
 
 def set_use_nohup(is_checked):
     get_settings().setValue("use_nohup", is_checked)  # type: ignore
-    
+
+
 def get_bash_arguments() -> str:
     args: str = get_settings().value("bash_arguments", defaultValue="", type=str)  # type: ignore
     return args.strip()
@@ -415,9 +416,7 @@ def get_bash_arguments() -> str:
 
 def set_bash_arguments(args):
     get_settings().setValue("bash_arguments", args.strip())
-    
 
-    
 
 def get_show_update_button() -> bool:
     return get_settings().value("show_update_button", defaultValue=True, type=bool)  # type: ignore
