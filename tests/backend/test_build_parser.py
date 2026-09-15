@@ -67,7 +67,7 @@ def test_get_args():
         nohupArgs = get_use_nohup()
         bstr = 'nohup "/blender/blender" '
         if not nohupArgs:
-            bstr='"/blender/blender"'
+            bstr=' "/blender/blender" '
         set_bash_arguments("")
         set_use_nohup(False)
     x = [
