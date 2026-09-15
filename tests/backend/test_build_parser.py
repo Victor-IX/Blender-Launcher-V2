@@ -65,11 +65,11 @@ def test_get_args():
     if idx == 1:
         bargs = get_bash_arguments()
         nohupArgs = get_use_nohup()
-        bstr = 'nohup "/blender/blender" '
-        if not nohupArgs:
-            bstr=' "/blender/blender" '
+        bstr = ''
+        if nohupArgs:
+            bstr='nohup '
         set_bash_arguments("")
-        set_use_nohup(False)
+        #set_use_nohup(False)
     x = [
         (
             get_args(info=info),
