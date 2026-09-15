@@ -28,7 +28,7 @@ from modules.platform_utils import (
     get_running_app_bundle,
     is_frozen,
 )
-from modules.settings import get_auto_register_winget, get_log_level, get_use_nohup_button
+from modules.settings import get_auto_register_winget, get_log_level, get_use_nohup
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX
@@ -305,7 +305,7 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
             _popen([blu_name, "--instanced", "update"], no_console=False)
         elif get_platform() == "Linux":
             os.chmod(blu_name, 0o744)
-            if get_use_nohup_button():
+            if get_use_nohup():
                 _popen(f'nohup "{blu_name}" --instanced update')
             else:
                 _popen(f'"{blu_name}" --instanced update')
