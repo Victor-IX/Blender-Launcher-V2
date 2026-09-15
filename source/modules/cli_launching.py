@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 from modules.blendfile_reader import read_blendfile_header
 from modules.build_info import BuildInfo, LaunchMode, LaunchOpenLast, LaunchWithBlendFile, get_args
-from modules.settings import build_library_folders, get_primary_quick_launch_path, get_version_specific_queries, get_use_nohup
+from modules.settings import build_library_folders, get_primary_quick_launch_path, get_version_specific_queries
 from modules.version_matcher import BasicBuildInfo, VersionSearchQuery
 from threads.library_drawer import get_blender_builds
 
@@ -47,7 +47,7 @@ def cli_launch(
                 if open_last:
                     launch_mode = LaunchOpenLast()
 
-                args = get_args(build, launch_mode=launch_mode, linux_nohup=get_use_nohup())
+                args = get_args(build, launch_mode=launch_mode, linux_nohup=False)
                 logger.info(f"Launching build with args: {args}")
                 proc = subprocess.Popen(args, shell=True)
                 sys.exit(proc.wait())
