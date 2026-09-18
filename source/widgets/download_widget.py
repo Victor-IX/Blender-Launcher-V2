@@ -307,7 +307,6 @@ class DownloadWidget(BaseBuildWidget):
         dlg = Popup.error(
             message=t("msg.err.download.permission", path=temp_folder),
             buttons=[Popup.Button.OPEN_SETTINGS, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
         dlg.accepted.connect(self.launcher.show_settings_window)
 
@@ -446,7 +445,6 @@ class DownloadWidget(BaseBuildWidget):
         popup = Popup.warning(
             message=t("msg.popup.portable_failure", error=error),
             buttons=[Popup.Button.CONT, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
 
         popup.accepted.connect(lambda: self._handle_portable_failure_choice(old_widget, True))

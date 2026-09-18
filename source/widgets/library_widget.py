@@ -575,7 +575,6 @@ class LibraryWidget(BaseBuildWidget):
             icon=Popup.Icon.WARNING,
             message=t("msg.popup.update_portable_settings"),
             buttons=[Popup.Button.MOVE_TO_NEW, Popup.Button.REMOVE, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
 
         self._portable_popup.custom_signal.connect(self._handle_portable_choice)
@@ -602,7 +601,6 @@ class LibraryWidget(BaseBuildWidget):
             version = self._update_download_widget.build_info.subversion
             Popup.info(
                 message=t("msg.popup.update_already_in_progress", version=version),
-                parent=self.launcher,
             )
             return
 
@@ -632,7 +630,6 @@ class LibraryWidget(BaseBuildWidget):
             self._confirmation_popup = Popup.warning(
                 message=t("msg.popup.major_version_update", current=current_version, update=update_version),
                 buttons=[Popup.Button.REMOVE, Popup.Button.KEEP_BOTH_VERSIONS],
-                parent=self.launcher,
             )
 
             self._confirmation_popup.accepted.connect(lambda: self._handle_removal_confirmation(callback, True))
@@ -812,7 +809,6 @@ class LibraryWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_remove_from_drive", count=count),
             buttons=Popup.Button.yn(),
-            parent=self.launcher,
         )
 
         if count > 1:
@@ -846,7 +842,6 @@ class LibraryWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_send_to_trash", count=count),
             buttons=Popup.Button.yn(),
-            parent=self.launcher,
         )
 
         if len(self.list_widget.selectedItems()) > 1:
@@ -1132,7 +1127,6 @@ class LibraryWidget(BaseBuildWidget):
             Popup.error(
                 message=t("msg.err.no_base_config"),
                 buttons=Popup.Button.info(),
-                parent=self.launcher,
             )
             return
 
@@ -1144,7 +1138,6 @@ class LibraryWidget(BaseBuildWidget):
             popup = Popup.warning(
                 message=t("msg.err.no_config_version"),
                 buttons=[Popup.Button.GENERAL_FOLDER, Popup.Button.CANCEL],
-                parent=self.launcher,
             )
             popup.accepted.connect(lambda: self.show_folder(general_path))
             popup.show()
