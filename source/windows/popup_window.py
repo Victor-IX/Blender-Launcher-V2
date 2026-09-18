@@ -102,7 +102,7 @@ class PopupWindow(BaseWindow):
             parent: Optional parent widget.
             app: Optional application object passed to ``BaseWindow``.
         """
-        super().__init__(parent=parent, app=app)
+        super().__init__()
 
         self.ptype = popup_type
         self.message = message
@@ -221,7 +221,7 @@ class UpdateNotificationWindow(BaseWindow):
         version_notes: list[tuple[str, str]] | None,
         parent=None,
     ):
-        super().__init__(parent=parent)
+        super().__init__()
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(t("msg.info"))
         self.setMinimumWidth(380)

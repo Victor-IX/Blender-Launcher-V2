@@ -8,6 +8,7 @@ import shutil
 from typing import TypedDict
 
 import distro
+from modules.connection_manager import ConnectionManager
 from modules.platform_utils import _check_call, _popen, get_cwd, get_platform, get_running_app_bundle
 from modules.tasks import TaskQueue
 from PySide6.QtCore import Qt
@@ -43,7 +44,12 @@ class GitHubRelease(TypedDict):
 
 class BlenderLauncherUpdater(BaseWindow):
     def __init__(self, app: QApplication, version, release_tag: str | None = None):
-        super().__init__(app=app, version=version)
+        super().__init__()
+
+        self.app = app
+        self.cm = ConnectionManager(version=version)
+        self.cm.setup()
+        self.manager = self.cm.manager
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.resize(256, 77)

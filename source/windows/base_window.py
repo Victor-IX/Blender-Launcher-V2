@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from modules.connection_manager import ConnectionManager
 from modules.fonts import Fonts
 from modules.icons import Icons
 from modules.settings import get_use_system_titlebar
@@ -14,33 +13,29 @@ if TYPE_CHECKING:
     from windows.main_window import BlenderLauncher
 
 
+WINDOW_COLLECTION: list[BaseWindow] = []
+# Window collections used to translate all windows at the same time.
+
+
 class BaseWindow(QMainWindow):
     def __init__(
-        self, parent: BlenderLauncher | None = None, app: QApplication | None = None, version: Version | None = None
+        self,
+        window_collection: list[BaseWindow] = WINDOW_COLLECTION,
     ):
         super().__init__()
-        if parent is not None:
-            self.launcher: BlenderLauncher = parent
 
         # Setup icons & fonts
         self.icons = Icons.get()
         self.fonts = Fonts.get()
 
-        if parent is None and app is not None and version is not None:
-            self.app = app
-            self.version = version
-
-            # Setup pool manager
-            self.cm = ConnectionManager(version=version)
-            self.cm.setup()
-            self.manager = self.cm.manager
-
         self.using_system_bar = get_use_system_titlebar()
         self.set_system_titlebar(self.using_system_bar)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        self.pressing = False
+        self.window_collection = window_collection
+        window_collection.append(self)
 
+        self.pressing = False
         self.destroyed.connect(lambda: self._destroyed())
 
     def set_system_titlebar(self, use_system_bar: bool):
@@ -91,34 +86,36 @@ class BaseWindow(QMainWindow):
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def showEvent(self, event):
-        if hasattr(self, "launcher") and self.launcher is not None:
-            launcher = self.launcher
-            if self not in launcher.windows:
-                launcher.windows.append(self)
-                launcher.show_signal.connect(self.show)
-                launcher.close_signal.connect(self.hide)
+        if not self.window_collection:
+            super().showEvent(event)
+            return
 
-            if launcher.isVisible():
-                x = launcher.x() + (launcher.width() - self.width()) * 0.5
-                y = launcher.y() + (launcher.height() - self.height()) * 0.5
-                screen = launcher.screen() or launcher.app.primaryScreen()
-            else:
-                screen = launcher.app.primaryScreen()
-                geo = screen.availableGeometry()
-                x = geo.left() + (geo.width() - self.width()) * 0.5
-                y = geo.top() + (geo.height() - self.height()) * 0.5
+        # Primary window, typically the Launcher window, is in the first index
+        authority = self.window_collection[0]
+        if self not in self.window_collection:
+            self.window_collection.append(self)
 
-            # Clamp to the screen's available area so the header stays reachable when the
-            # window is taller than the screen (e.g. macOS with a high DPI scale factor).
-            avail = screen.availableGeometry()
-            max_x = avail.left() + max(0, avail.width() - self.width())
-            max_y = avail.top() + max(0, avail.height() - self.height())
-            x = max(avail.left(), min(int(x), max_x))
-            y = max(avail.top(), min(int(y), max_y))
+        if authority.isVisible():
+            x = authority.x() + (authority.width() - self.width()) * 0.5
+            y = authority.y() + (authority.height() - self.height()) * 0.5
+            screen = authority.screen() or QApplication.primaryScreen()
+        else:
+            screen = QApplication.primaryScreen()
+            geo = screen.availableGeometry()
+            x = geo.left() + (geo.width() - self.width()) * 0.5
+            y = geo.top() + (geo.height() - self.height()) * 0.5
 
-            self.move(x, y)
-            event.accept()
+        # Clamp to the screen's available area so the header stays reachable when the
+        # window is taller than the screen (e.g. macOS with a high DPI scale factor).
+        avail = screen.availableGeometry()
+        max_x = avail.left() + max(0, avail.width() - self.width())
+        max_y = avail.top() + max(0, avail.height() - self.height())
+        x = max(avail.left(), min(int(x), max_x))
+        y = max(avail.top(), min(int(y), max_y))
+
+        self.move(x, y)
+        event.accept()
+        return
 
     def _destroyed(self):
-        if hasattr(self, "launcher") and self.launcher is not None and self in self.launcher.windows:
-            self.launcher.windows.remove(self)
+        self.window_collection.remove(self)

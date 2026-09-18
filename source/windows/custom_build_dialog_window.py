@@ -47,7 +47,8 @@ class CustomBuildDialogWindow(BaseWindow):
         path: Path,
         old_build_info: BuildInfo | None = None,
     ):
-        super().__init__(parent=parent)
+        super().__init__()
+        self.launcher = parent
         self.path = path
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
