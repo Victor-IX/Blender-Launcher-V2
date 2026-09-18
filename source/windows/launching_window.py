@@ -41,9 +41,11 @@ class LaunchingWindow(BaseWindow):
         blendfile: Path | None = None,
         open_last: bool = False,
     ):
-        super().__init__(app=app, version=version)
+        super().__init__()
         self.resize(480, 480)
         self.setFocus(Qt.FocusReason.PopupFocusReason)
+
+        self.app = app
 
         # task queue
         self.task_queue = TaskQueue(
