@@ -18,6 +18,7 @@ from modules._resources_rc import RESOURCES_AVAILABLE
 from modules.bl_instance_handler import BLInstanceHandler
 from modules.build_info import ReadBuildTask
 from modules.connection_manager import ConnectionManager
+from modules.container_detect import IS_CONTAINED
 from modules.enums import MessageType
 from modules.file_utils import retry_on_permission_error
 from modules.platform_utils import (
@@ -257,7 +258,7 @@ class BlenderLauncher(BaseWindow):
         if relative is bool, it will / will not set the library folder as relative.
         """
 
-        if folder.is_relative_to(get_cwd()):
+        if folder.is_relative_to(get_cwd()) and not IS_CONTAINED:
             if relative is None:
                 self.dlg = Popup.setup(
                     message=t("msg.popup.relative_path_found"),
