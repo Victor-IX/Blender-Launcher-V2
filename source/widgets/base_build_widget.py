@@ -15,11 +15,10 @@ from widgets.base_menu_widget import BaseMenuWidget
 if TYPE_CHECKING:
     from items.base_list_widget_item import BaseListWidgetItem
     from modules.build_info import BuildInfo
-    from windows.main_window import BlenderLauncher
 
 
 class BaseBuildWidget(QWidget):
-    def __init__(self, parent: BlenderLauncher, item: BaseListWidgetItem, build_info: BuildInfo) -> None:
+    def __init__(self, parent, item: BaseListWidgetItem, build_info: BuildInfo) -> None:
         super().__init__(parent)
         self.item: BaseListWidgetItem = item
         self.build_info: BuildInfo = build_info

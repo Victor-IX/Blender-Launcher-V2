@@ -11,7 +11,9 @@ from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.enums import MessageType
 from modules.fonts import Fonts
+from modules.platform_utils import get_platform
 from modules.settings import get_install_template, get_library_folder
+from modules.task import Task
 from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from semver import Version
@@ -43,6 +45,8 @@ class DownloadState(Enum):
 
 class DownloadWidget(BaseBuildWidget):
     focus_installed_widget = Signal(BaseBuildWidget)
+    task = Signal(Task)
+    cancel_task = Signal(Task)
 
     def __init__(self, parent: BlenderLauncher, list_widget, item, build_info, installed, show_new=False):
         super().__init__(
@@ -194,7 +198,7 @@ class DownloadWidget(BaseBuildWidget):
         self.dl_task.progress.connect(self.progressBar.set_progress)
         self.dl_task.finished.connect(self.init_extractor)
         self.dl_task.permission_error.connect(self.on_permission_error)
-        self.launcher.task_queue.append(self.dl_task)
+        self.task.emit(self.dl_task)
 
     def set_state(self, state: DownloadState) -> None:
         self.state = state
@@ -240,7 +244,7 @@ class DownloadWidget(BaseBuildWidget):
         t = ExtractTask(file=source, destination=dist, is_upbge=self.build_info.branch.startswith("upbge"))
         t.progress.connect(self.progressBar.set_progress)
         t.finished.connect(self.init_template_installer)
-        self.launcher.task_queue.append(t)
+        self.task.emit(t)
 
     def init_template_installer(self, dist: Path, is_removed: bool) -> None:
         self._is_removed = is_removed
@@ -254,7 +258,7 @@ class DownloadWidget(BaseBuildWidget):
             self.progressBar.set_state(self.progressBar.State.COPYING)
             task = TemplateTask(destination=self.build_dir)
             task.finished.connect(self.download_get_info)
-            self.launcher.task_queue.append(task)
+            self.task.emit(task)
         else:
             self.download_get_info()
 
@@ -282,7 +286,7 @@ class DownloadWidget(BaseBuildWidget):
         self.set_state(DownloadState.IDLE)
         self.cancelButton.hide()
         self.downloadButton.show()
-        self.launcher.task_queue.remove_task(self.dl_task)
+        self.cancel_task.emit(self.dl_task)
         self.build_state_widget.setDownload(False)
 
         # Reset the widget's button states if this was an update download
@@ -312,7 +316,7 @@ class DownloadWidget(BaseBuildWidget):
 
     def download_get_info(self) -> None:
         self.set_state(DownloadState.READING)
-        if self.launcher.platform == "Linux":
+        if get_platform() == "Linux":
             archive_name = Path(self.build_info.link).with_suffix("").stem
         else:
             archive_name = Path(self.build_info.link).stem
@@ -347,7 +351,7 @@ class DownloadWidget(BaseBuildWidget):
         )
         t.finished.connect(self.download_rename)
         t.failure.connect(lambda e: logger.error(f"ReadBuildTask failed for {self.build_dir}: {e}"))
-        self.launcher.task_queue.append(t)
+        self.task.emit(t)
 
     def download_rename(self, build_info: BuildInfo) -> None:
         self.set_state(DownloadState.RENAMING)
@@ -359,7 +363,7 @@ class DownloadWidget(BaseBuildWidget):
         )
         t.finished.connect(self.download_finished)
         t.failure.connect(lambda: print("Renaming failed"))
-        self.launcher.task_queue.append(t)
+        self.task.emit(t)
 
     def download_finished(self, path: Path | None, is_removed: bool) -> None:
         if self._is_removed is False:
