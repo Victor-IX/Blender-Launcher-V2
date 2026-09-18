@@ -60,7 +60,7 @@ class TaskQueue(deque[Task]):
         if start:
             w.start()
 
-    def thread_with_task(self, task: Task):
+    def thread_with_task(self, task: Task) -> TaskWorker | None:
         for listener, a in self.workers.items():
             if a == task:
                 return listener
@@ -98,10 +98,12 @@ class TaskQueue(deque[Task]):
         # check working threads
         if (thread := self.thread_with_task(task)) is not None:
             thread.fullstop()
+            logging.debug(f"Stopped worker {thread} with task {task}")
             return True
 
         if task in self:
             self.remove(task)
+            logging.debug(f"Removed task {task} from queue")
             return True
 
         return False
