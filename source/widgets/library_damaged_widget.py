@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 from i18n import t
 from modules.build_info import BuildInfo
 from modules.settings import get_library_folder
-from PySide6.QtCore import Qt, Slot
+from modules.task import Task
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from threads.remover import RemovalTask
 from widgets.base_build_widget import BaseBuildWidget
@@ -16,15 +17,16 @@ from windows.popup_window import Popup
 
 if TYPE_CHECKING:
     from items.base_list_widget_item import BaseListWidgetItem
-    from windows.main_window import BlenderLauncher
 
 logger = logging.getLogger()
 
 
 class LibraryDamagedWidget(BaseBuildWidget):
+    task = Signal(Task)
+
     def __init__(
         self,
-        parent: BlenderLauncher,
+        parent,
         item: BaseListWidgetItem,
         link,
         list_widget,
@@ -36,7 +38,6 @@ class LibraryDamagedWidget(BaseBuildWidget):
         )
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
 
-        self.launcher: BlenderLauncher = parent
         self.link = Path(link)
         self.list_widget = list_widget
 
@@ -69,7 +70,6 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_delete_or_trash"),
             buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
 
         self.dlg.custom_signal.connect(self.removal_response)
@@ -84,7 +84,7 @@ class LibraryDamagedWidget(BaseBuildWidget):
         path = get_library_folder() / self.link
         a = RemovalTask(path, trash=trash)
         a.finished.connect(self.remover_completed)
-        self.launcher.task_queue.append(a)
+        self.task.emit(a)
 
         self.launchButton.set_text(t("act.deleting"))
         self.setEnabled(False)

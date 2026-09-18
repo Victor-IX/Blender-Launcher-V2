@@ -9,7 +9,6 @@ from modules.string_utils import patch_note_cleaner
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QPixmap
 from PySide6.QtWidgets import (
-    QApplication,
     QFrame,
     QHBoxLayout,
     QLabel,
@@ -88,8 +87,6 @@ class PopupWindow(BaseWindow):
         icon: PopupIcon,
         message: str,
         buttons: PopupButton | list[PopupButton] | None = None,
-        parent=None,
-        app=None,
     ):
         """
         Popup class.
@@ -102,7 +99,7 @@ class PopupWindow(BaseWindow):
             parent: Optional parent widget.
             app: Optional application object passed to ``BaseWindow``.
         """
-        super().__init__(parent=parent, app=app)
+        super().__init__()
 
         self.ptype = popup_type
         self.message = message
@@ -207,8 +204,6 @@ class PopupWindow(BaseWindow):
 class __GenericPWARGS(TypedDict, total=False):
     message: Required[str]
     buttons: PopupButton | list[PopupButton]
-    parent: BaseWindow
-    app: QApplication
 
 
 class UpdateNotificationWindow(BaseWindow):
@@ -219,9 +214,8 @@ class UpdateNotificationWindow(BaseWindow):
         self,
         latest_tag: str,
         version_notes: list[tuple[str, str]] | None,
-        parent=None,
     ):
-        super().__init__(parent=parent)
+        super().__init__()
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowTitle(t("msg.info"))
         self.setMinimumWidth(380)

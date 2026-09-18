@@ -136,9 +136,22 @@ class BlenderLauncher(BaseWindow):
         build_cache: bool = False,
         force_first_time: bool = False,
     ):
-        super().__init__(app=app, version=version)
+        super().__init__()
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
+
+        # Global scope
+        self.app = app
+        self.version: Version = version
+        self.offline = offline
+        self.build_cache = build_cache
+        self.app_state = AppState.IDLE
+        self.timer = None
+        self.started = True
+        self.latest_tag = ""
+        self.new_downloads = False
+        self.platform = get_platform()
+        self.settings_window = None
 
         # Restore saved window geometry
         geometry = get_window_geometry()
@@ -151,6 +164,7 @@ class BlenderLauncher(BaseWindow):
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
         self.setCentralWidget(widget)
         self.setAcceptDrops(True)
+
 
         # Server
         self.instance_handler = BLInstanceHandler(self.version, self)
@@ -171,19 +185,6 @@ class BlenderLauncher(BaseWindow):
         )
         self.task_queue.start()
 
-        # Global scope
-        self.app = app
-        self.version: Version = version
-        self.offline = offline
-        self.build_cache = build_cache
-        self.app_state = AppState.IDLE
-        self.windows: list[BaseWindow] = [self]
-        self.timer = None
-        self.started = True
-        self.latest_tag = ""
-        self.new_downloads = False
-        self.platform = get_platform()
-        self.settings_window = None
 
         if self.platform == "macOS":
             self.app.aboutToQuit.connect(self.quit_)
@@ -191,6 +192,11 @@ class BlenderLauncher(BaseWindow):
         # Setup window
         self.setWindowTitle("Blender Launcher")
         self.app.setWindowIcon(self.icons.taskbar)
+
+        # Pool Manager
+        self.cm = ConnectionManager(version=version)
+        self.cm.setup()
+        self.manager = self.cm.manager
 
         # Setup scraper
         self.scraper = Scraper(self, self.cm, self.build_cache)
@@ -207,7 +213,6 @@ class BlenderLauncher(BaseWindow):
             dlg = Popup.error(
                 message=t("msg.err.no_resources"),
                 buttons=[Popup.Button.OK, Popup.Button.DONT_SHOW_AGAIN],
-                parent=self,
             )
             dlg.cancelled.connect(set_dont_show_resource_warning)
 
@@ -228,7 +233,6 @@ class BlenderLauncher(BaseWindow):
                 icon=Popup.Icon.INFO,
                 message=t("msg.popup.first_time_select_library"),
                 buttons=Popup.Button.CONT,
-                parent=self,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
             return
@@ -262,7 +266,6 @@ class BlenderLauncher(BaseWindow):
                 self.dlg = Popup.setup(
                     message=t("msg.popup.relative_path_found"),
                     buttons=Popup.Button.yn(),
-                    parent=self,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -275,14 +278,13 @@ class BlenderLauncher(BaseWindow):
             self.draw(True)
         else:
             self.dlg = Popup.warning(
-                parent=self,
                 message=t("msg.err.folder_invalid"),
                 buttons=Popup.Button.RETRY,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
     def update_system_titlebar(self, b: bool):
-        for window in self.windows:
+        for window in self.window_collection:
             window.set_system_titlebar(b)
             if window is not self:
                 window.update_system_titlebar(b)
@@ -488,7 +490,6 @@ class BlenderLauncher(BaseWindow):
         if not self.is_downloading_idle():
             self.dlg = Popup.warning(
                 message=t("msg.updates.download_before_update"),
-                parent=self,
                 buttons=Popup.Button.info(),
             )
 
@@ -772,6 +773,8 @@ class BlenderLauncher(BaseWindow):
                 show_new=is_new,
             )
             widget.focus_installed_widget.connect(self.focus_widget)
+            widget.task.connect(self.task_queue.append)
+            widget.cancel_task.connect(self.task_queue.remove_task)
             self.DownloadsPage.list_widget.add_item(item, widget)
             if is_new:
                 self.new_downloads = True
@@ -810,6 +813,7 @@ class BlenderLauncher(BaseWindow):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
         widget.add_as_quick_launch.connect(self.quick_launch_handler.add_quick_launch_build)
+        widget.task.connect(self.task_queue.append)
         if widget.is_quick_launch():
             widget.add_to_quick_launch()
 
@@ -828,6 +832,7 @@ class BlenderLauncher(BaseWindow):
 
         item = BaseListWidgetItem()
         widget = LibraryDamagedWidget(self, item, path, self.LibraryPage.list_widget)
+        widget.task.connect(self.task_queue.append)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         return widget
@@ -852,6 +857,8 @@ class BlenderLauncher(BaseWindow):
 
         item = BaseListWidgetItem()
         widget = UnrecoBuildWidget(self, path, self.LibraryPage.list_widget, item)
+        widget.announce_build.connect(lambda p: self.draw_to_library(p, True))
+        widget.task.connect(self.task_queue.append)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
 
@@ -914,7 +921,6 @@ class BlenderLauncher(BaseWindow):
             popup = Popup.UpdateNotification(
                 latest_tag=latest_tag,
                 version_notes=version_notes,
-                parent=self,
             )
             popup.accepted.connect(self.show_update_window)
 
@@ -936,7 +942,6 @@ class BlenderLauncher(BaseWindow):
             self.dlg = Popup.warning(
                 message=t("msg.popup.tasks_in_progress", tasks="\n".join([f" - {item}<br>" for item in busy.values()])),
                 buttons=Popup.Button.yn(),
-                parent=self,
             )
 
             self.dlg.accepted.connect(self._force_quit)
