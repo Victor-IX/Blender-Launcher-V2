@@ -773,6 +773,8 @@ class BlenderLauncher(BaseWindow):
                 show_new=is_new,
             )
             widget.focus_installed_widget.connect(self.focus_widget)
+            widget.task.connect(self.task_queue.append)
+            widget.cancel_task.connect(self.task_queue.remove_task)
             self.DownloadsPage.list_widget.add_item(item, widget)
             if is_new:
                 self.new_downloads = True
@@ -853,6 +855,7 @@ class BlenderLauncher(BaseWindow):
 
         item = BaseListWidgetItem()
         widget = UnrecoBuildWidget(self, path, self.LibraryPage.list_widget, item)
+        widget.announce_build.connect(lambda p: self.draw_to_library(p, True))
 
         self.LibraryPage.list_widget.insert_item(item, widget)
 
