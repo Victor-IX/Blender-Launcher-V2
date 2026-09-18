@@ -4,7 +4,6 @@ import contextlib
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from i18n import t
 from items.enablable_list_widget_item import EnablableListWidgetItem
@@ -26,9 +25,6 @@ from threads.library_drawer import DrawLibraryTask
 from widgets.lintable_line_edit import LintableLineEdit
 from windows.base_window import BaseWindow
 
-if TYPE_CHECKING:
-    from semver import Version
-
 logger = logging.getLogger()
 
 
@@ -36,7 +32,6 @@ class LaunchingWindow(BaseWindow):
     def __init__(
         self,
         app: QApplication,
-        version: Version,
         version_query: VersionSearchQuery | None = None,
         blendfile: Path | None = None,
         open_last: bool = False,

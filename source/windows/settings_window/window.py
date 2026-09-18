@@ -241,7 +241,6 @@ class SettingsWindow(BaseWindow):
         pending_to_restart = "".join(f"\n- {s}" for s in pending)
 
         self.dlg = Popup.warning(
-            parent=self.launcher,
             message=t("msg.popup.apply_the_following", pending=pending_to_restart),
             buttons=[Popup.Button.RESTART_NOW, Popup.Button.LATER],
         )

@@ -164,7 +164,6 @@ class ConnectionTabWidget(SettingsFormWidget):
             Popup.warning(
                 message=t("settings.connection.keyring_unavailable_message"),
                 buttons=Popup.Button.info(),
-                parent=self.launcher,
             )
 
     def open_github_token_docs(self):

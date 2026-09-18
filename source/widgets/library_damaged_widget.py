@@ -69,7 +69,6 @@ class LibraryDamagedWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_delete_or_trash"),
             buttons=[Popup.Button.DELETE, Popup.Button.TRASH, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
 
         self.dlg.custom_signal.connect(self.removal_response)

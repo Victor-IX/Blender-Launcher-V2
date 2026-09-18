@@ -143,7 +143,6 @@ class BlenderLauncher(BaseWindow):
         self.offline = offline
         self.build_cache = build_cache
         self.app_state = AppState.IDLE
-        self.windows: list[BaseWindow] = [self]
         self.timer = None
         self.just_started = True
         self.latest_tag = ""
@@ -211,7 +210,6 @@ class BlenderLauncher(BaseWindow):
             dlg = Popup.error(
                 message=t("msg.err.no_resources"),
                 buttons=[Popup.Button.OK, Popup.Button.DONT_SHOW_AGAIN],
-                parent=self,
             )
             dlg.cancelled.connect(set_dont_show_resource_warning)
 
@@ -232,7 +230,6 @@ class BlenderLauncher(BaseWindow):
                 icon=Popup.Icon.INFO,
                 message=t("msg.popup.first_time_select_library"),
                 buttons=Popup.Button.CONT,
-                parent=self,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
             return
@@ -266,7 +263,6 @@ class BlenderLauncher(BaseWindow):
                 self.dlg = Popup.setup(
                     message=t("msg.popup.relative_path_found"),
                     buttons=Popup.Button.yn(),
-                    parent=self,
                 )
                 self.dlg.accepted.connect(lambda: self.set_library_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_library_folder(folder, False))
@@ -279,14 +275,13 @@ class BlenderLauncher(BaseWindow):
             self.draw(True)
         else:
             self.dlg = Popup.warning(
-                parent=self,
                 message=t("msg.err.folder_invalid"),
                 buttons=Popup.Button.RETRY,
             )
             self.dlg.accepted.connect(self.prompt_library_folder)
 
     def update_system_titlebar(self, b: bool):
-        for window in self.windows:
+        for window in self.window_collection:
             window.set_system_titlebar(b)
             if window is not self:
                 window.update_system_titlebar(b)
@@ -492,7 +487,6 @@ class BlenderLauncher(BaseWindow):
         if not self.is_downloading_idle():
             self.dlg = Popup.warning(
                 message=t("msg.updates.download_before_update"),
-                parent=self,
                 buttons=Popup.Button.info(),
             )
 
@@ -894,7 +888,6 @@ class BlenderLauncher(BaseWindow):
             popup = Popup.UpdateNotification(
                 latest_tag=latest_tag,
                 version_notes=version_notes,
-                parent=self,
             )
             popup.accepted.connect(self.show_update_window)
 
@@ -916,7 +909,6 @@ class BlenderLauncher(BaseWindow):
             self.dlg = Popup.warning(
                 message=t("msg.popup.tasks_in_progress", tasks="\n".join([f" - {item}<br>" for item in busy.values()])),
                 buttons=Popup.Button.yn(),
-                parent=self,
             )
 
             self.dlg.accepted.connect(self._force_quit)
