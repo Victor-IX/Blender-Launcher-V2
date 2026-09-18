@@ -786,6 +786,7 @@ class BlenderLauncher(BaseWindow):
         item = BaseListWidgetItem()
         widget = LibraryWidget(self, item, path, self.LibraryPage.list_widget, binfo, show_new)
         widget.add_as_quick_launch.connect(self.quick_launch_handler.add_quick_launch_build)
+        widget.task.connect(self.task_queue.append)
         if widget.is_quick_launch():
             widget.add_to_quick_launch()
 
@@ -804,6 +805,7 @@ class BlenderLauncher(BaseWindow):
 
         item = BaseListWidgetItem()
         widget = LibraryDamagedWidget(self, item, path, self.LibraryPage.list_widget)
+        widget.task.connect(self.task_queue.append)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
         return widget
@@ -829,6 +831,7 @@ class BlenderLauncher(BaseWindow):
         item = BaseListWidgetItem()
         widget = UnrecoBuildWidget(self, path, self.LibraryPage.list_widget, item)
         widget.announce_build.connect(lambda p: self.draw_to_library(p, True))
+        widget.task.connect(self.task_queue.append)
 
         self.LibraryPage.list_widget.insert_item(item, widget)
 

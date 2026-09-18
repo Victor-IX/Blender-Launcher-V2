@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 from i18n import t
 from modules.build_info import BuildInfo, ReadBuildTask, parse_blender_ver
 from modules.platform_utils import get_platform
+from modules.task import Task
 from PySide6.QtCore import QDateTime, Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -29,8 +30,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from pathlib import Path
 
-    from windows.main_window import BlenderLauncher
-
 
 class PopupIcon(Enum):
     WARNING = 1
@@ -38,17 +37,16 @@ class PopupIcon(Enum):
 
 
 class CustomBuildDialogWindow(BaseWindow):
+    task = Signal(Task)
     accepted = Signal(BuildInfo)
     cancelled = Signal()
 
     def __init__(
         self,
-        parent: BlenderLauncher,
         path: Path,
         old_build_info: BuildInfo | None = None,
     ):
         super().__init__()
-        self.launcher = parent
         self.path = path
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
@@ -276,7 +274,7 @@ class CustomBuildDialogWindow(BaseWindow):
         )
         a.finished.connect(self.load_from_build_info)
         a.failure.connect(self.auto_detect_failed)
-        self.launcher.task_queue.append(a)
+        self.task.emit(a)
         self.auto_detect_button.setEnabled(False)
 
     def load_from_build_info(self, binfo: BuildInfo):
