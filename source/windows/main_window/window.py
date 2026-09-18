@@ -136,9 +136,23 @@ class BlenderLauncher(BaseWindow):
         build_cache: bool = False,
         force_first_time: bool = False,
     ):
-        super().__init__(app=app, version=version)
+        super().__init__()
         self.resize(800, 700)
         self.setMinimumSize(QSize(640, 480))
+
+        # Global scope
+        self.app = app
+        self.version: Version = version
+        self.offline = offline
+        self.build_cache = build_cache
+        self.app_state = AppState.IDLE
+        self.windows: list[BaseWindow] = [self]
+        self.timer = None
+        self.started = True
+        self.latest_tag = ""
+        self.new_downloads = False
+        self.platform = get_platform()
+        self.settings_window = None
 
         # Restore saved window geometry
         geometry = get_window_geometry()
@@ -151,6 +165,7 @@ class BlenderLauncher(BaseWindow):
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
         self.setCentralWidget(widget)
         self.setAcceptDrops(True)
+
 
         # Server
         self.instance_handler = BLInstanceHandler(self.version, self)
@@ -171,19 +186,6 @@ class BlenderLauncher(BaseWindow):
         )
         self.task_queue.start()
 
-        # Global scope
-        self.app = app
-        self.version: Version = version
-        self.offline = offline
-        self.build_cache = build_cache
-        self.app_state = AppState.IDLE
-        self.windows: list[BaseWindow] = [self]
-        self.timer = None
-        self.started = True
-        self.latest_tag = ""
-        self.new_downloads = False
-        self.platform = get_platform()
-        self.settings_window = None
 
         if self.platform == "macOS":
             self.app.aboutToQuit.connect(self.quit_)
@@ -191,6 +193,11 @@ class BlenderLauncher(BaseWindow):
         # Setup window
         self.setWindowTitle("Blender Launcher")
         self.app.setWindowIcon(self.icons.taskbar)
+
+        # Pool Manager
+        self.cm = ConnectionManager(version=version)
+        self.cm.setup()
+        self.manager = self.cm.manager
 
         # Setup scraper
         self.scraper = Scraper(self, self.cm, self.build_cache)

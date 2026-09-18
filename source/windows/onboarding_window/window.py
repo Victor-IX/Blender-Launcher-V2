@@ -70,7 +70,10 @@ class OnboardingWindow(BaseWindow):
     cancelled = Signal()
 
     def __init__(self, version: Version, parent: BlenderLauncher):
-        super().__init__(parent=parent, version=version)
+        super().__init__()
+
+        self.launcher = parent
+
         self.setWindowTitle(t("wizard.title"))
         self.setMinimumWidth(768)
         self.setMinimumHeight(512)
@@ -186,9 +189,7 @@ class OnboardingWindow(BaseWindow):
 
     def delete_with_timeout(self, pth: Path):
         """Creates a batch script that deletes the path"""
-        assert sys.platform == "win32", (
-            "There is no reason to call OnboardingWindow.delete_with_timeout on Linux/Mac"
-        )
+        assert sys.platform == "win32", "There is no reason to call OnboardingWindow.delete_with_timeout on Linux/Mac"
         # create the batch script
         temploc = os.environ["TEMP"]
         batpth = os.path.join(temploc, "blv2-cleanup.bat")
