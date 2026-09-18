@@ -79,7 +79,6 @@ class QuickLaunchHandler(QObject):
 
     def quick_launch_fail(self):
         self.dlg = Popup.setup(
-            parent=self.launcher,
             message=t("msg.popup.quick_launch_tray"),
             buttons=Popup.Button.info(),
         )

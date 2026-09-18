@@ -245,7 +245,6 @@ class GeneralTabWidget(SettingsFormWidget):
             self.dlg = Popup.warning(
                 message=t("msg.err.library_no_write"),
                 buttons=Popup.Button.OK,
-                parent=self.launcher,
             )
             self.dlg.accepted.connect(self.LibraryFolder.button.clicked.emit)
 
@@ -271,13 +270,11 @@ class GeneralTabWidget(SettingsFormWidget):
             dlg = Popup.warning(
                 message=t("msg.popup.mv_overwrite_confirm", start=get_config_file(), end=user_config()),
                 buttons=[Popup.Button.OVERWRITE, Popup.Button.CANCEL],
-                parent=self.launcher,
             )
         else:
             dlg = Popup.info(
                 message=t("msg.popup.mv_confirm", start=get_config_file(), end=user_config()),
                 buttons=[Popup.Button.MIGRATE, Popup.Button.CANCEL],
-                parent=self.launcher,
             )
 
         dlg.accepted.connect(self.migrate)
@@ -311,45 +308,27 @@ class GeneralTabWidget(SettingsFormWidget):
     def purge_temp_now(self):
         success = purge_temp_folder()
         if success:
-            Popup.success(
-                message=t("msg.popup.purge.success"),
-                parent=self.launcher,
-            )
+            Popup.success(message=t("msg.popup.purge.success"))
         else:
-            Popup.error(
-                message=t("msg.popup.purge.error"),
-                parent=self.launcher,
-            )
+            Popup.error(message=t("msg.popup.purge.error"))
 
     def register_with_winget(self):
         success = register_with_winget(sys.executable, str(self.launcher.version))
         if success:
             set_auto_register_winget(True)
             self.refresh_winget_buttons()
-            Popup.success(
-                message=t("msg.popup.winget.register.success"),
-                parent=self.launcher,
-            )
+            Popup.success(message=t("msg.popup.winget.register.success"))
         else:
-            Popup.error(
-                message=t("msg.popup.winget.register.error"),
-                parent=self.launcher,
-            )
+            Popup.error(message=t("msg.popup.winget.register.error"))
 
     def unregister_from_winget(self):
         success = unregister_from_winget(sys.executable, str(self.launcher.version))
         if success:
             set_auto_register_winget(False)
             self.refresh_winget_buttons()
-            Popup.success(
-                message=t("msg.popup.winget.unregister.success"),
-                parent=self.launcher,
-            )
+            Popup.success(message=t("msg.popup.winget.unregister.success"))
         else:
-            Popup.error(
-                message=t("msg.popup.winget.unregister.error"),
-                parent=self.launcher,
-            )
+            Popup.error(message=t("msg.popup.winget.unregister.error"))
 
     def refresh_winget_buttons(self):
         if get_platform() != "Windows":

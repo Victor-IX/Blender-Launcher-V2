@@ -1,17 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from modules.fonts import Fonts
 from modules.icons import Icons
 from modules.settings import get_use_system_titlebar
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow
-
-if TYPE_CHECKING:
-    from semver import Version
-    from windows.main_window import BlenderLauncher
-
 
 WINDOW_COLLECTION: list[BaseWindow] = []
 # Window collections used to translate all windows at the same time.
@@ -73,11 +66,11 @@ class BaseWindow(QMainWindow):
             b -- bool
         """
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, _event):
         self.pressing = True
         self.setCursor(Qt.CursorShape.ClosedHandCursor)
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, _event):
         if self.pressing:
             self.windowHandle().startSystemMove()
 

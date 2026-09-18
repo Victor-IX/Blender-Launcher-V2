@@ -53,7 +53,6 @@ class HotkeyHandler(QObject):
                 self.dlg = Popup.warning(
                     message=t("msg.popup.global_hotkeys_invalid"),
                     buttons=Popup.Button.info(),
-                    parent=self.launcher,
                 )
                 return
 

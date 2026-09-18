@@ -17,7 +17,6 @@ def error(parser: ArgumentParser, msg: str):
         Popup.error(
             message=t("msg.err.argparse", args=parser.format_usage(), err=msg),
             buttons=Popup.Button.QUIT,
-            app=app,
         ).show()
         sys.exit(app.exec())
     else:

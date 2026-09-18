@@ -264,7 +264,6 @@ def start_set_library_folder(app: QApplication, lib_folder: str):
         Popup.warning(
             message=t("msg.err.folder_invalid"),
             buttons=Popup.Button.QUIT,
-            app=app,
         ).show()
         sys.exit(app.exec())
 
@@ -346,7 +345,7 @@ def start_launch(
         )
         sys.exit(1)
     else:
-        LaunchingWindow(app, version=version, version_query=query, blendfile=file, open_last=open_last).show()
+        LaunchingWindow(app, version_query=query, blendfile=file, open_last=open_last).show()
         sys.exit(app.exec())
 
 

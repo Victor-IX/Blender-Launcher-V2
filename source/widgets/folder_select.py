@@ -71,7 +71,6 @@ class FolderSelector(QWidget):
                 self.dlg = Popup.setup(
                     message=t("msg.popup.relative_path_found"),
                     buttons=Popup.Button.yn(),
-                    parent=self.launcher,
                 )
                 self.dlg.accepted.connect(lambda: self.set_folder(folder, True))
                 self.dlg.cancelled.connect(lambda: self.set_folder(folder, False))
