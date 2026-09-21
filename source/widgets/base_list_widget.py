@@ -119,6 +119,13 @@ class BaseListWidget(Generic[_WT], QListWidget):
         self._binfos_cache = {None: set()}
         self.visible_count_changed.emit(0)
 
+
+    def update_binfo(self, widget: _WT):
+        for st in self._binfos_cache.values():
+            if widget in st:
+                st.remove(widget)
+        self._binfos_cache.setdefault(self.basic_from_widget(widget), set()).add(widget)
+
     @staticmethod
     def basic_from_widget(widget: _WT) -> BasicBuildInfo | None:
         build_info = widget.build_info

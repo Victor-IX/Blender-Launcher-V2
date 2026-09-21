@@ -360,22 +360,13 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsTab.setLayout(self.DownloadsTabLayout)
         self.TabWidget.addTab(self.DownloadsTab, t("act.tabs.downloads"))
 
-        self.UserTab = QWidget()
-        self.UserTabLayout = QHBoxLayout()
-        self.UserTabLayout.setContentsMargins(0, 0, 0, 0)
-        self.UserTabLayout.setSpacing(0)
-        self.UserTab.setLayout(self.UserTabLayout)
-        self.TabWidget.addTab(self.UserTab, t("act.tabs.favorites"))
-
         self.LibraryToolBox = BaseToolBoxWidget(self)
         self.DownloadsToolBox = BaseToolBoxWidget(self)
-        self.UserToolBox = BaseToolBoxWidget(self)
 
         self.toggle_sync_library_and_downloads_pages(get_sync_library_and_downloads_pages())
 
         self.LibraryTabLayout.addWidget(self.LibraryToolBox)
         self.DownloadsTabLayout.addWidget(self.DownloadsToolBox)
-        self.UserTabLayout.addWidget(self.UserToolBox)
 
         self.LibraryPage: BasePageWidget[LibraryWidget] = BasePageWidget(
             parent=self,
@@ -386,6 +377,7 @@ class BlenderLauncher(BaseWindow):
             show_reload=True,
         )
         # self.LibraryToolBox.add_tab("All")
+        self.LibraryToolBox.add_tab(t("act.tabs.favorites"), is_favorite=True)
         self.LibraryToolBox.add_tab(t("act.tabs.stable"), branch=("stable", "lts"))
         self.LibraryToolBox.add_tab(t("act.tabs.daily"), branch=("daily",))
         self.LibraryToolBox.add_tab(t("act.tabs.experimental"), folder="experimental")
@@ -416,22 +408,10 @@ class BlenderLauncher(BaseWindow):
         self.DownloadsToolBox.query_changed.connect(self.DownloadsPage.list_widget.update_tab_filter)
         self.DownloadsPage.list_widget.update_tab_filter(self.DownloadsToolBox.current_query())
 
-        self.FavoritesPage: BasePageWidget[LibraryWidget] = BasePageWidget(
-            parent=self,
-            page_name="FavoritesPage",
-            time_label=t("repo.commit_time"),
-            info_text=t("repo.nothing"),
-        )
-        self.UserToolBox.add_tab(t("act.tabs.favorites"))
-        self.UserTabLayout.addWidget(self.FavoritesPage)
-        # self.UserToolBox.folder_changed.connect(self.FavoritesPage.list_widget.update_folder_filter)
-        # self.FavoritesPage.list_widget.update_folder_filter(self.UserToolBox.current_branch())
-
         # Collect all page widgets for column width synchronization
         self._all_page_widgets = [
             self.LibraryPage,
             self.DownloadsPage,
-            self.FavoritesPage,
         ]
         self._syncing_column_widths = False  # Guard against recursion
         # Connect all page widgets to sync column widths
@@ -585,7 +565,8 @@ class BlenderLauncher(BaseWindow):
         w.message.connect(partial(self.message_from_worker, w))
 
     def show_favorites(self):
-        self.TabWidget.setCurrentWidget(self.UserTab)
+        self.TabWidget.setCurrentWidget(self.LibraryPage)
+        self.LibraryToolBox.setCurrentIndex(0)
         self._show()
 
     def stop_auto_scrape_timer(self):
@@ -870,19 +851,19 @@ class BlenderLauncher(BaseWindow):
         scrape_upbge = (scrape_all_visible and show_upbge) or get_scrape_upbge_builds()
         scrape_upbge_weekly = (scrape_all_visible and show_upbge_weekly) or get_scrape_upbge_weekly_builds()
 
-        self.LibraryToolBox.update_visibility(0, show_stable)
-        self.LibraryToolBox.update_visibility(1, show_daily)
-        self.LibraryToolBox.update_visibility(2, show_expatch)
-        self.LibraryToolBox.update_visibility(3, show_bfa)
-        self.LibraryToolBox.update_visibility(4, show_upbge)
-        self.LibraryToolBox.update_visibility(5, show_upbge_weekly)
+        self.LibraryToolBox.update_visibility(1, show_stable)
+        self.LibraryToolBox.update_visibility(2, show_daily)
+        self.LibraryToolBox.update_visibility(3, show_expatch)
+        self.LibraryToolBox.update_visibility(4, show_bfa)
+        self.LibraryToolBox.update_visibility(5, show_upbge)
+        self.LibraryToolBox.update_visibility(6, show_upbge_weekly)
 
-        self.DownloadsToolBox.update_visibility(0, scrape_stable)
-        self.DownloadsToolBox.update_visibility(1, scrape_daily)
-        self.DownloadsToolBox.update_visibility(2, scrape_expatch)
-        self.DownloadsToolBox.update_visibility(3, scrape_bfa)
-        self.DownloadsToolBox.update_visibility(4, scrape_upbge)
-        self.DownloadsToolBox.update_visibility(5, scrape_upbge_weekly)
+        self.DownloadsToolBox.update_visibility(1, scrape_stable)
+        self.DownloadsToolBox.update_visibility(2, scrape_daily)
+        self.DownloadsToolBox.update_visibility(3, scrape_expatch)
+        self.DownloadsToolBox.update_visibility(4, scrape_bfa)
+        self.DownloadsToolBox.update_visibility(5, scrape_upbge)
+        self.DownloadsToolBox.update_visibility(6, scrape_upbge_weekly)
 
     def focus_widget(self, widget: LibraryWidget):
         tab = self.LibraryTab
