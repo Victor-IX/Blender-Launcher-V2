@@ -16,6 +16,7 @@ _MACOS_PATHS_D_FILE = "/etc/paths.d/blender-launcher"
 class Register(QThread):
     def __init__(self, path):
         QThread.__init__(self)
+        self.setObjectName(f"Register({path}")
         self.path = path
 
     def run(self):

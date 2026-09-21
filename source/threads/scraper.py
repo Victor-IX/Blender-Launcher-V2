@@ -43,6 +43,7 @@ class Scraper(QThread):
 
     def __init__(self, parent, man: ConnectionManager, build_cache=False):
         QThread.__init__(self)
+        self.setObjectName("Scraper Thread")
         self.parent = parent
         self.manager = man
         self.build_cache = build_cache
