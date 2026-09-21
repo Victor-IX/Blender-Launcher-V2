@@ -1,36 +1,44 @@
 from subprocess import Popen
 
-from PySide6.QtCore import QThread, Signal
+from PySide6.QtCore import QObject, QTimer, Signal, Slot
+
+OBSERVER_INTERVAL = 1_000  # msec
 
 
-class Observer(QThread):
+class Observer(QObject):
     count_changed = Signal(int)
-    append_proc = Signal(Popen)
+    started = Signal()
+    finished = Signal()
 
     def __init__(self, parent):
-        QThread.__init__(self)
+        super().__init__(parent)
         self.parent = parent
-        self.processes = []
-        self.append_proc.connect(self.handle_append_proc)
+        self.processes: list[Popen] = []
 
-    def run(self):
-        while self.parent:
-            finished = [proc for proc in self.processes if proc.poll() is not None]
-            for proc in finished:
-                proc.kill()
-                self.processes.remove(proc)
+        self.timer = QTimer(self)
+        self.timer.setInterval(OBSERVER_INTERVAL)
+        self.timer.setSingleShot(False)
+        self.timer.timeout.connect(self.tick)
 
-            if finished:
-                proc_count = len(self.processes)
-                if proc_count > 0:
-                    self.count_changed.emit(proc_count)
-                else:
-                    return
+    def tick(self):
+        finished = [(i, proc) for i, proc in enumerate(self.processes) if proc.poll() is not None]
+        for idx, proc in finished[::-1]:
+            proc.kill()
+            self.processes.pop(idx)
 
-            QThread.sleep(1)
+        if finished:
+            proc_count = len(self.processes)
+            if proc_count == 0:
+                self.timer.stop()
+                self.finished.emit()
 
-        return
+            self.count_changed.emit(proc_count)
 
-    def handle_append_proc(self, proc):
+    @Slot(Popen)
+    def watch(self, proc: Popen):
+        if not self.processes:
+            self.timer.start()
+            self.started.emit()
+
         self.processes.append(proc)
         self.count_changed.emit(len(self.processes))

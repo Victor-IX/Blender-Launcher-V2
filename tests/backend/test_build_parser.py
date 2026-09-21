@@ -49,7 +49,7 @@ def test_parser():
 )
 def test_get_args():
     root = os.path.abspath(os.sep)
-    win_root = root.replace("\\", "")
+    win_root = root.rstrip("\\")
     info = BuildInfo(os.path.join(root, "blender"), "4.0.0", "ffffffff", datetime.datetime(2024, 12, 12), "daily")  # noqa: DTZ001
     info_c = BuildInfo(
         os.path.join(root, "blender"),
@@ -73,46 +73,47 @@ def test_get_args():
     x = [
         (
             get_args(info=info),
-            [win_root + "/blender/blender.exe"],
+            [win_root + "\\blender\\blender.exe"],
             '{} "/blender/blender" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, linux_nohup=False),
-            [win_root + "/blender/blender.exe"],
+            [win_root + "\\blender\\blender.exe"],
             ' "/blender/blender" ',
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, exe="bforartists.exe"),
-            ["cmd", "/C", win_root + "/blender/bforartists.exe"],
+            ["cmd", "/C", win_root + "\\blender\\bforartists.exe"],
              '{} "/blender/blender" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info_c),
-            [win_root + "/blender/bforartists"],
+            [win_root + "\\blender\\bforartists"],
             '{} "/blender/bforartists" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
-            [win_root + "/blender/blender.exe", "--open-last"],
+            [win_root + "\\blender\\blender.exe", "--open-last"],
             '{} "/blender/blender"  --open-last'.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
             get_args(info=info, launch_mode=LaunchWithBlendFile(Path(root) / "file.blend")),
-            [win_root + "/blender/blender.exe", win_root + "/file.blend"],
+            [win_root + "\\blender\\blender.exe", win_root + "\\file.blend"],
             '{} "/blender/blender"  "/file.blend"'.format(bstr),
             'open -W -n /blender/Blender/Blender.app --args --open-last "/file.blend"',
         ),
     ]
+
+    if idx == 1:
+        set_bash_arguments(bargs)
+
     from pprint import pprint
 
     for i in x:
         pprint(i)
         assert i[0] == i[idx + 1]
-
-    if idx == 1:
-        set_bash_arguments(bargs)
