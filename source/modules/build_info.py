@@ -703,7 +703,8 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
     elif platform == "Linux":
         bash_args = get_bash_arguments()
 
-        linux_nohup = get_use_nohup()
+        if linux_nohup is None:
+            linux_nohup = get_use_nohup()
 
         if bash_args != "":
             bash_args += " "
