@@ -111,7 +111,7 @@ def cli_launch(
         build = matches[0]
         build_info = basics[build]
 
-    args = get_args(build_info, launch_mode=launch_mode, linux_nohup=get_use_nohup())
+    args = get_args(build_info, launch_mode=launch_mode, linux_nohup=False)
     
     if isinstance(args, list):
         args.extend(blender_args)
