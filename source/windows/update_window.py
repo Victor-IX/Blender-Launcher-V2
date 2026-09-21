@@ -171,7 +171,7 @@ class BlenderLauncherUpdater(BaseWindow):
             _popen([launcher], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist, 0o744)
-            if get_use_nohup()==True:
+            if get_use_nohup():
                 _popen('nohup "' + launcher + '"')
             else:
                 _popen('"' + launcher + '"')
