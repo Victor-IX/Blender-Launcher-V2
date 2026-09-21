@@ -305,10 +305,7 @@ def start_update(app: QApplication, is_instanced: bool, tag: str | None):
             _popen([blu_name, "--instanced", "update"], no_console=False)
         elif get_platform() == "Linux":
             os.chmod(blu_name, 0o744)
-            if get_use_nohup() == True:
-                _popen(f'nohup "{blu_name}" --instanced update')
-            else:
-                _popen(f' "{blu_name}" --instanced update')
+            _popen(f' "{blu_name}" --instanced update')
         sys.exit(0)
 
 
