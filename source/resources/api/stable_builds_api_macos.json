@@ -1,5 +1,5 @@
 {
-    "api_file_version": "27.0",
+    "api_file_version": "28.0",
     "folders": {
         "2.48.0": {
             "assets": [],
@@ -5067,6 +5067,42 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-arm64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.14-macos-arm64",
+                                "build_hash": null,
+                                "commit_time": "2026-09-15T09:13:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.14-macos-x64",
+                                "build_hash": null,
+                                "commit_time": "2026-09-15T09:20:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.5/blender-4.5.2-macos-arm64.dmg",
                     {
                         "file_version": "1.5",
@@ -5355,7 +5391,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-08-25T09:08:00"
+            "modified_date": "2026-09-15T09:21:00"
         },
         "5.0.0": {
             "assets": [
@@ -5494,9 +5530,27 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender5.2/blender-5.2.2-macos-arm64.dmg",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "5.2.2-macos-arm64",
+                                "build_hash": null,
+                                "commit_time": "2026-09-15T09:17:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2026-08-25T09:09:00"
+            "modified_date": "2026-09-15T09:21:00"
         }
     }
 }
