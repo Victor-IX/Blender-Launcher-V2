@@ -171,10 +171,7 @@ class BlenderLauncherUpdater(BaseWindow):
             _popen([launcher], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist, 0o744)
-            if get_use_nohup():
-                _popen('nohup "' + launcher + '"')
-            else:
-                _popen('"' + launcher + '"')
+            _popen('"' + launcher + '"')
         elif self.platform == "macOS":
             launcher = str(self._install_macos_app(dist))
             with contextlib.suppress(Exception):
