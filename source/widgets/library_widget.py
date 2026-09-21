@@ -501,9 +501,8 @@ class LibraryWidget(BaseBuildWidget):
             self.observer.count_changed.connect(self.proc_count_changed)
             self.observer.started.connect(self.observer_started)
             self.observer.finished.connect(self.observer_finished)
-            self.observer.start()
 
-        self.observer.append_proc.emit(proc)
+        self.observer.watch(proc)
 
     def update_finished(self):
         """Reset the widget state after update completion."""
