@@ -402,11 +402,11 @@ def set_blender_startup_arguments(args):
 
 
 def get_use_nohup() -> bool:
-    return get_settings().value("use_nohup", defaultValue=False, type=bool)
-    
+    return get_settings().value("use_nohup", defaultValue=False, type=bool) # type: ignore
+
 
 def set_use_nohup(is_checked):
-    get_settings().setValue("use_nohup", is_checked)  # type: ignore
+    get_settings().setValue("use_nohup", is_checked)
 
 
 def get_bash_arguments() -> str:

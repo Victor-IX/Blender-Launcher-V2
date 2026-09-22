@@ -28,7 +28,7 @@ from modules.platform_utils import (
     get_running_app_bundle,
     is_frozen,
 )
-from modules.settings import get_auto_register_winget, get_log_level, get_use_nohup
+from modules.settings import get_auto_register_winget, get_log_level
 from modules.shortcut import register_windows_filetypes, unregister_windows_filetypes
 from modules.uninstall import perform_uninstall
 from modules.version_matcher import VALID_FULL_QUERIES, VERSION_SEARCH_SYNTAX

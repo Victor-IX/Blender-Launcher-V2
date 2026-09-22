@@ -13,7 +13,7 @@ from source.modules.build_info import (
     parse_blender_ver,
 )
 from source.modules.platform_utils import get_platform
-from source.modules.settings import get_bash_arguments, set_bash_arguments, get_use_nohup, set_use_nohup
+from source.modules.settings import get_bash_arguments, get_use_nohup, set_bash_arguments
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 
@@ -74,7 +74,7 @@ def test_get_args():
         (
             get_args(info=info),
             [win_root + "\\blender\\blender.exe"],
-            '{} "/blender/blender" '.format(bstr),
+            f'{bstr} "/blender/blender" ',
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
@@ -86,25 +86,25 @@ def test_get_args():
         (
             get_args(info=info, exe="bforartists.exe"),
             ["cmd", "/C", win_root + "\\blender\\bforartists.exe"],
-             '{} "/blender/blender" '.format(bstr),
+             f'{bstr} "/blender/blender" ',
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info_c),
             [win_root + "\\blender\\bforartists"],
-            '{} "/blender/bforartists" '.format(bstr),
+            f'{bstr} "/blender/bforartists" ',
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
             [win_root + "\\blender\\blender.exe", "--open-last"],
-            '{} "/blender/blender"  --open-last'.format(bstr),
+            f'{bstr} "/blender/blender"  --open-last',
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
             get_args(info=info, launch_mode=LaunchWithBlendFile(Path(root) / "file.blend")),
             [win_root + "\\blender\\blender.exe", win_root + "\\file.blend"],
-            '{} "/blender/blender"  "/file.blend"'.format(bstr),
+            f'{bstr} "/blender/blender"  "/file.blend"',
             'open -W -n /blender/Blender/Blender.app --args --open-last "/file.blend"',
         ),
     ]

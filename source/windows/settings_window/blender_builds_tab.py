@@ -10,7 +10,6 @@ from modules.settings import (
     get_bash_arguments,
     get_bfa_update_behavior,
     get_blender_startup_arguments,
-    get_use_nohup,
     get_check_for_new_builds_automatically,
     get_check_for_new_builds_on_startup,
     get_daily_update_behavior,
@@ -40,9 +39,9 @@ from modules.settings import (
     get_upbge_weekly_update_behavior,
     get_update_behavior,
     get_use_advanced_update_button,
+    get_use_nohup,
     set_bash_arguments,
     set_bfa_update_behavior,
-    set_use_nohup,
     set_blender_startup_arguments,
     set_check_for_new_builds_automatically,
     set_check_for_new_builds_on_startup,
@@ -85,6 +84,7 @@ from modules.settings import (
     set_upbge_weekly_update_behavior,
     set_update_behavior,
     set_use_advanced_update_button,
+    set_use_nohup,
     update_behavior,
 )
 from PySide6 import QtGui

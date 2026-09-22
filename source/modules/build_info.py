@@ -16,10 +16,10 @@ from modules.bl_api_manager import lts_blender_version, read_blender_version_lis
 from modules.platform_utils import _check_output, _popen, get_platform
 from modules.settings import (
     get_bash_arguments,
-    get_use_nohup,
     get_blender_startup_arguments,
     get_launch_blender_no_console,
     get_library_folder,
+    get_use_nohup,
 )
 from modules.task import Task
 from PySide6.QtCore import Signal
@@ -675,7 +675,7 @@ def path_arg(pth: Path) -> str:
     return pth.as_posix()
 
 
-def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, linux_nohup=True) -> list[str] | str:
+def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, linux_nohup=None) -> list[str] | str:
     platform = get_platform()
     library_folder = get_library_folder()
     blender_args = get_blender_startup_arguments()
