@@ -615,6 +615,8 @@ class BlenderLauncher(BaseWindow):
         self.library_drawer.unrecognized.connect(self.draw_unrecognized)
         if not self.offline:
             self.library_drawer.finished.connect(self.draw_downloads)
+        else:
+            self.library_drawer.finished.connect(self.library_drawing_finished)
 
         self.task_queue.append(self.library_drawer)
 
@@ -624,6 +626,9 @@ class BlenderLauncher(BaseWindow):
         self.library_drawer.found.connect(self.draw_to_library)
         self.library_drawer.unrecognized.connect(self.draw_unrecognized)
         self.task_queue.append(self.library_drawer)
+
+    def library_drawing_finished(self):
+        self.status_bar.set_status("", force_check_on=False)
 
     def draw_downloads(self):
         if get_check_for_new_builds_on_startup():
