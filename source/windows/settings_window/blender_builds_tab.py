@@ -365,14 +365,14 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                 self.BashArguments.setCursorPosition(0)
                 self.BashArguments.editingFinished.connect(self.update_bash_arguments)
 
-                # Command Line Uses Nohup Arguments
-                grp.add_label("settings.blender_builds.use_nohup")
-                self.UseNohup = grp.add_checkbox(
-                    "settings.blender_builds.use_nohup",
-                    default=get_use_nohup(),
-                    setter=set_use_nohup,
-                )
-                self.UseNohup.setToolTip(t("settings.blender_builds.blender_use_nohup_tooltip"))
+                # Optionally use Nohup in Linux
+                if get_platform() == "Linux":
+                    self.UseNohup = grp.add_checkbox(
+                        "settings.blender_builds.use_nohup",
+                        default=get_use_nohup(),
+                        setter=set_use_nohup,
+                    )
+                    self.UseNohup.setToolTip(t("settings.blender_builds.blender_use_nohup_tooltip"))
 
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)
