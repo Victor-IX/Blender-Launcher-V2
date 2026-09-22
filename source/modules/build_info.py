@@ -16,6 +16,7 @@ from modules.bl_api_manager import lts_blender_version, read_blender_version_lis
 from modules.platform_utils import _check_output, _popen, get_platform
 from modules.settings import (
     get_bash_arguments,
+    get_use_nohup,
     get_blender_startup_arguments,
     get_launch_blender_no_console,
     get_library_folder,
@@ -709,6 +710,9 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
 
     elif platform == "Linux":
         bash_args = get_bash_arguments()
+
+        if linux_nohup is None:
+            linux_nohup = get_use_nohup()
 
         if bash_args != "":
             bash_args += " "

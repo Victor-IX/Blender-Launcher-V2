@@ -65,6 +65,7 @@ from modules.settings import (
     get_window_geometry,
     get_window_maximized,
     get_worker_thread_count,
+    get_use_nohup,
     is_library_folder_valid,
     set_dont_show_resource_warning,
     set_library_folder,
@@ -521,7 +522,10 @@ class BlenderLauncher(BaseWindow):
             _popen([dist.as_posix(), "--instanced", "update", self.latest_tag], no_console=False)
         elif self.platform == "Linux":
             os.chmod(dist.as_posix(), 0o744)
-            _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
+            if get_use_nohup():
+                _popen(f'nohup "{dist.as_posix()}" --instanced update {self.latest_tag}')
+            else:
+                _popen(f'"{dist.as_posix()}" --instanced update {self.latest_tag}')
 
         # Destroy currently running Blender Launcher instance
         self.quit_()
@@ -970,7 +974,7 @@ class BlenderLauncher(BaseWindow):
         elif self.platform == "Linux":
             exe = (cwd / "Blender Launcher").as_posix()
             os.chmod(exe, 0o744)
-            _popen('nohup "' + exe + '" -instanced')
+            _popen(exe + '" - instanced')
         elif self.platform == "macOS":
             # sys.executable should be something like /.../Blender Launcher.app/Contents/MacOS/Blender Launcher
             app = Path(sys.executable).parent.parent.parent

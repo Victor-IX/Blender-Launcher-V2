@@ -13,7 +13,7 @@ from source.modules.build_info import (
     parse_blender_ver,
 )
 from source.modules.platform_utils import get_platform
-from source.modules.settings import get_bash_arguments, set_bash_arguments
+from source.modules.settings import get_bash_arguments, set_bash_arguments, get_use_nohup, set_use_nohup
 from tests.config import SKIP_TESTS_THAT_MODIFY_CONFIG
 
 
@@ -64,13 +64,17 @@ def test_get_args():
 
     if idx == 1:
         bargs = get_bash_arguments()
+        nohupArgs = get_use_nohup()
+        bstr = ""
+        if nohupArgs:
+            bstr = "nohup"
         set_bash_arguments("")
-
+        #set_use_nohup(False)
     x = [
         (
             get_args(info=info),
             [win_root + "\\blender\\blender.exe"],
-            'nohup "/blender/blender" ',
+            '{} "/blender/blender" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
@@ -82,25 +86,25 @@ def test_get_args():
         (
             get_args(info=info, exe="bforartists.exe"),
             ["cmd", "/C", win_root + "\\blender\\bforartists.exe"],
-            'nohup "/blender/blender" ',
+             '{} "/blender/blender" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info_c),
             [win_root + "\\blender\\bforartists"],
-            'nohup "/blender/bforartists" ',
+            '{} "/blender/bforartists" '.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
             get_args(info=info, launch_mode=LaunchOpenLast()),
             [win_root + "\\blender\\blender.exe", "--open-last"],
-            'nohup "/blender/blender"  --open-last',
+            '{} "/blender/blender"  --open-last'.format(bstr),
             "open -W -n /blender/Blender/Blender.app --args --open-last",
         ),
         (
             get_args(info=info, launch_mode=LaunchWithBlendFile(Path(root) / "file.blend")),
             [win_root + "\\blender\\blender.exe", win_root + "\\file.blend"],
-            'nohup "/blender/blender"  "/file.blend"',
+            '{} "/blender/blender"  "/file.blend"'.format(bstr),
             'open -W -n /blender/Blender/Blender.app --args --open-last "/file.blend"',
         ),
     ]
