@@ -47,7 +47,7 @@ class Scraper(QThread):
         QThread.__init__(self)
         self.setObjectName("Scraper Thread")
         self.parent = parent
-        self.manager = man
+        self._manager = man
         self.build_cache = build_cache
         self.current_version = parent.version
 
@@ -80,6 +80,19 @@ class Scraper(QThread):
         # self.timer.setInterval(20_000)  # 20s to ms
         self.timer.setSingleShot(True)
 
+    @property
+    def manager(self):
+        return self._manager
+
+    @manager.setter
+    def manager(self, man: ConnectionManager):
+        self._manager = man
+        self.scraper_stable.manager = man
+        self.scraper_upbge_stable.manager = man
+        self.scraper_upbge_weekly.manager = man
+        self.scraper_patch.manager = man
+        self.scraper_patch.label_fetcher.manager = man
+
     def run(self):
         self.launcher_data_updater.get_api_data_updates()
         self.scraper_stable.refresh_cache()
@@ -89,7 +102,6 @@ class Scraper(QThread):
         rel = self.launcher_data_updater.check_for_new_releases(self.current_version)
         if rel is not None:
             self.new_bl_version.emit(*rel)
-
 
     def scrapers(self):
         scrapers: list[BuildScraper] = []
