@@ -43,7 +43,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/Victor-IX/Blender-Launcher-V2.git
-        commit: cea9e770
+        commit: 6fd6cc23
       - type: script
         dest-filename: run.sh
         commands:
