@@ -709,14 +709,16 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
                     args = [path_arg(b3d_exe), *blender_args.split(" ")]
 
     elif platform == "Linux":
+        from modules.container_detect import IS_FLATPAK
+
         bash_args = get_bash_arguments()
 
         if linux_nohup is None:
             linux_nohup = get_use_nohup()
 
-        if bash_args != "":
-            bash_args += " "
         if linux_nohup:
+            if bash_args != "":
+                bash_args += " "
             bash_args += "nohup"
 
         cexe = info.custom_executable
@@ -727,7 +729,10 @@ def get_args(info: BuildInfo, exe=None, launch_mode: LaunchMode | None = None, l
         else:
             b3d_exe = library_folder / info.link / "blender"
 
-        args = f'{bash_args} "{b3d_exe.as_posix()}" {blender_args}'
+        if IS_FLATPAK:
+            args = f'flatpak-spawn --host --directory={shlex.quote(info.link)} {bash_args} "{shlex.quote(b3d_exe.as_posix())}" {blender_args}'
+        else:
+            args = f'{bash_args} "{shlex.quote(b3d_exe.as_posix())}" {blender_args}'
 
     elif platform == "macOS":
         # Check custom_executable first (for UPBGE, etc.)
