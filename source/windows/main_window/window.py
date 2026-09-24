@@ -974,7 +974,7 @@ class BlenderLauncher(BaseWindow):
         elif self.platform == "Linux":
             exe = (cwd / "Blender Launcher").as_posix()
             os.chmod(exe, 0o744)
-            _popen(exe + '" - instanced')
+            _popen('"' + exe + '" -instanced')
         elif self.platform == "macOS":
             # sys.executable should be something like /.../Blender Launcher.app/Contents/MacOS/Blender Launcher
             app = Path(sys.executable).parent.parent.parent
