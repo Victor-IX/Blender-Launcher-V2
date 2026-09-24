@@ -84,6 +84,12 @@ def test_get_args():
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
+            get_args(info=info, linux_nohup=True),
+            [win_root + "\\blender\\blender.exe"],
+            'nohup "/blender/blender" ',
+            "open -W -n /blender/Blender/Blender.app --args",
+        ),
+        (
             get_args(info=info, exe="bforartists.exe"),
             ["cmd", "/C", win_root + "\\blender\\bforartists.exe"],
              f'{bstr} "/blender/blender" ',
