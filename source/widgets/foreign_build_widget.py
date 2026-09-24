@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 
 from i18n import t
 from modules.build_info import BuildInfo
-from PySide6.QtCore import Qt, Slot
+from modules.task import Task
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 from widgets.base_build_widget import BaseBuildWidget
 from widgets.elided_text_label import ElidedTextLabel
@@ -16,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class UnrecoBuildWidget(BaseBuildWidget):
+    task = Signal(Task)
+    announce_build = Signal(Path)
     def __init__(self, parent: "BlenderLauncher", path: Path, list_widget: BaseListWidget, item):
         super().__init__(
             parent=parent,
@@ -48,13 +51,14 @@ class UnrecoBuildWidget(BaseBuildWidget):
         self.setLayout(self.main_hl)
 
     def init_unrecognized(self):
-        dlg = CustomBuildDialogWindow(self.launcher, self.path)
+        dlg = CustomBuildDialogWindow(self.path)
+        dlg.task.connect(self.task)
         dlg.accepted.connect(self.new_build)
 
     @Slot(BuildInfo)
     def new_build(self, binfo: BuildInfo):
         binfo.write_to(self.path)
-        self.launcher.draw_to_library(self.path, True)
+        self.announce_build.emit(self.path)
         self.destroy()
 
     def context_menu(self):

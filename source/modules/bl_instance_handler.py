@@ -49,5 +49,4 @@ class BLInstanceHandler(QObject):
                     given=given,
                 ),
                 buttons=Popup.Button.info(),
-                parent=self.window,
             )

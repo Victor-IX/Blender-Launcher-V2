@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from i18n import t
 from modules.settings import (
     get_check_for_new_builds_automatically,
@@ -24,12 +26,16 @@ from widgets.tab_widget import TabWidget
 from windows.base_window import BaseWindow
 from windows.popup_window import Popup
 
+if TYPE_CHECKING:
+    from windows.main_window import BlenderLauncher
+
 from . import appearance_tab, blender_builds_tab, connection_tab, general_tab
 
 
 class SettingsWindow(BaseWindow):
     def __init__(self, parent):
-        super().__init__(parent=parent)
+        super().__init__()
+        self.launcher: BlenderLauncher = parent
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
@@ -235,7 +241,6 @@ class SettingsWindow(BaseWindow):
         pending_to_restart = "".join(f"\n- {s}" for s in pending)
 
         self.dlg = Popup.warning(
-            parent=self.launcher,
             message=t("msg.popup.apply_the_following", pending=pending_to_restart),
             buttons=[Popup.Button.RESTART_NOW, Popup.Button.LATER],
         )

@@ -35,6 +35,7 @@ from modules.settings import (
     get_show_update_button,
 )
 from modules.shortcut import generate_blender_shortcut, get_default_shortcut_destination
+from modules.task import Task
 from PySide6.QtCore import Qt, QUrl, Signal, Slot
 from PySide6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragLeaveEvent, QDropEvent, QHoverEvent
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
@@ -62,6 +63,7 @@ logger = logging.getLogger()
 
 class LibraryWidget(BaseBuildWidget):
     add_as_quick_launch = Signal(QWidget)
+    task = Signal(Task)
 
     def __init__(
         self,
@@ -472,7 +474,7 @@ class LibraryWidget(BaseBuildWidget):
         self.installTemplateAction.setEnabled(False)
         a = TemplateTask(self.link)
         a.finished.connect(self.install_template_finished)
-        self.launcher.task_queue.append(a)
+        self.task.emit(a)
 
     def install_template_finished(self):
         self.launchButton.set_text(t("act.launch"))
@@ -574,7 +576,6 @@ class LibraryWidget(BaseBuildWidget):
             icon=Popup.Icon.WARNING,
             message=t("msg.popup.update_portable_settings"),
             buttons=[Popup.Button.MOVE_TO_NEW, Popup.Button.REMOVE, Popup.Button.CANCEL],
-            parent=self.launcher,
         )
 
         self._portable_popup.custom_signal.connect(self._handle_portable_choice)
@@ -601,7 +602,6 @@ class LibraryWidget(BaseBuildWidget):
             version = self._update_download_widget.build_info.subversion
             Popup.info(
                 message=t("msg.popup.update_already_in_progress", version=version),
-                parent=self.launcher,
             )
             return
 
@@ -631,7 +631,6 @@ class LibraryWidget(BaseBuildWidget):
             self._confirmation_popup = Popup.warning(
                 message=t("msg.popup.major_version_update", current=current_version, update=update_version),
                 buttons=[Popup.Button.REMOVE, Popup.Button.KEEP_BOTH_VERSIONS],
-                parent=self.launcher,
             )
 
             self._confirmation_popup.accepted.connect(lambda: self._handle_removal_confirmation(callback, True))
@@ -775,7 +774,7 @@ class LibraryWidget(BaseBuildWidget):
         else:
             fetcher.finished.connect(self.rename)
 
-        self.launcher.task_queue.append(fetcher)
+        self.task.emit(fetcher)
 
     def rename(self, custom_name: str):
         self.build_info.custom_name = custom_name
@@ -789,7 +788,7 @@ class LibraryWidget(BaseBuildWidget):
             self.build_info,
         )
         self.build_info_writer.written.connect(self.build_info_writer_finished)
-        self.launcher.task_queue.append(self.build_info_writer)
+        self.task.emit(self.build_info_writer)
 
     def build_info_writer_finished(self):
         self.build_info_writer = None
@@ -811,7 +810,6 @@ class LibraryWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_remove_from_drive", count=count),
             buttons=Popup.Button.yn(),
-            parent=self.launcher,
         )
 
         if count > 1:
@@ -835,7 +833,7 @@ class LibraryWidget(BaseBuildWidget):
         path = get_library_folder() / self.link
         a = RemovalTask(path, trash=trash)
         a.finished.connect(self.remover_completed)
-        self.launcher.task_queue.append(a)
+        self.task.emit(a)
         self.remover_started()
 
     @Slot()
@@ -845,7 +843,6 @@ class LibraryWidget(BaseBuildWidget):
         self.dlg = Popup.warning(
             message=t("msg.popup.ask_send_to_trash", count=count),
             buttons=Popup.Button.yn(),
-            parent=self.launcher,
         )
 
         if len(self.list_widget.selectedItems()) > 1:
@@ -888,7 +885,8 @@ class LibraryWidget(BaseBuildWidget):
 
     @Slot()
     def edit_build(self):
-        dlg = CustomBuildDialogWindow(self.launcher, Path(self.build_info.link), self.build_info)
+        dlg = CustomBuildDialogWindow(Path(self.build_info.link), self.build_info)
+        dlg.task.connect(self.task)
         dlg.accepted.connect(self.build_info_edited)
 
     @Slot(BuildInfo)
@@ -953,6 +951,7 @@ class LibraryWidget(BaseBuildWidget):
         # Mirror the library page wiring so adding to quick launch from a
         # favourite goes through add_quick_launch_build and gets persisted.
         widget.add_as_quick_launch.connect(self.launcher.quick_launch_handler.add_quick_launch_build)
+        widget.task.connect(self.task)
         self.launcher.FavoritesPage.list_widget.insert_item(item, widget)
         self.child_widget = widget
 
@@ -985,7 +984,7 @@ class LibraryWidget(BaseBuildWidget):
 
         self.build_info.is_favorite = False
         self.build_info_writer = WriteBuildTask(self.link, self.build_info)
-        self.launcher.task_queue.append(self.build_info_writer)
+        self.task.emit(self.build_info_writer)
 
     @Slot()
     def register_extension(self):
@@ -1131,7 +1130,6 @@ class LibraryWidget(BaseBuildWidget):
             Popup.error(
                 message=t("msg.err.no_base_config"),
                 buttons=Popup.Button.info(),
-                parent=self.launcher,
             )
             return
 
@@ -1143,7 +1141,6 @@ class LibraryWidget(BaseBuildWidget):
             popup = Popup.warning(
                 message=t("msg.err.no_config_version"),
                 buttons=[Popup.Button.GENERAL_FOLDER, Popup.Button.CANCEL],
-                parent=self.launcher,
             )
             popup.accepted.connect(lambda: self.show_folder(general_path))
             popup.show()
