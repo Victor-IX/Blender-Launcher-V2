@@ -55,13 +55,26 @@ class ConnectionManager(QObject):
         agent = f"Blender-Launcher-v2/v.{self.version!s}/{get_platform_full()}/UserID-{get_user_id()}"
         self._headers = {"user-agent": agent, "Accept-Encoding": "gzip, deflate"}
         logger.info(f"Connection Manager Header: {agent}")
-        # Use certifi's up-to-date CA bundle for TLS verification. The previously
-        # bundled custom.pem was a stale Mozilla snapshot that lacked ISRG Root X2,
-        # which broke verification of download.blender.org after its chain moved to
-        # the X2 hierarchy and the cross-signed X2 expired (2025-09-15). See #414.
-        self.cacert = certifi.where()
+        # Verify TLS with the OS trust store via truststore, so distrust and
+        # revocation pushed by the OS (e.g. Windows' disallowed list) applies
+        # without shipping a new release. Fall back to certifi's CA bundle if
+        # the OS verifier is unavailable. certifi replaced the stale bundled
+        # custom.pem that lacked ISRG Root X2. See #414.
+        self.ssl_context = self._create_ssl_context()
 
         self.request_counter = 0
+
+    @staticmethod
+    def _create_ssl_context() -> ssl.SSLContext:
+        try:
+            import truststore
+
+            ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            logger.info("TLS verification: OS trust store (truststore)")
+            return ctx  # type: ignore[return-value]
+        except Exception:
+            logger.exception("Failed to use OS trust store; falling back to certifi")
+            return ssl.create_default_context(cafile=certifi.where())
 
     def setup(self):
         if self.proxy_type == 0:  # Use generic requests
@@ -71,8 +84,7 @@ class ConnectionManager(QObject):
                     num_pools=50,
                     maxsize=10,
                     headers=self._headers,
-                    cert_reqs=ssl.CERT_REQUIRED,
-                    ca_certs=self.cacert,
+                    ssl_context=self.ssl_context,
                 )
             else:
                 # Generic requests w/o CERT_REQUIRED
@@ -92,8 +104,7 @@ class ConnectionManager(QObject):
                         headers=self._headers,
                         username=get_proxy_user(),
                         password=get_proxy_password(),
-                        cert_reqs=ssl.CERT_REQUIRED,
-                        ca_certs=self.cacert,
+                        ssl_context=self.ssl_context,
                     )
                 else:
                     # SOCKS Proxy w/o CERT_REQUIRED
@@ -117,8 +128,7 @@ class ConnectionManager(QObject):
                         maxsize=10,
                         headers=self._headers,
                         proxy_headers=auth_headers,
-                        cert_reqs=ssl.CERT_REQUIRED,
-                        ca_certs=self.cacert,
+                        ssl_context=self.ssl_context,
                     )
                 else:
                     # HTTP Proxy w/o CERT_REQUIRED
