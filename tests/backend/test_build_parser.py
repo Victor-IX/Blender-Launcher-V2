@@ -62,10 +62,10 @@ def test_get_args():
 
     idx = ["Windows", "Linux", "macOS"].index(get_platform())
 
+    bstr = ""
     if idx == 1:
         bargs = get_bash_arguments()
         nohupArgs = get_use_nohup()
-        bstr = ""
         if nohupArgs:
             bstr = "nohup"
         set_bash_arguments("")
@@ -92,7 +92,7 @@ def test_get_args():
         (
             get_args(info=info, exe="bforartists.exe"),
             ["cmd", "/C", win_root + "\\blender\\bforartists.exe"],
-             f'{bstr} "/blender/blender" ',
+            f'{bstr} "/blender/blender" ',
             "open -W -n /blender/Blender/Blender.app --args",
         ),
         (
