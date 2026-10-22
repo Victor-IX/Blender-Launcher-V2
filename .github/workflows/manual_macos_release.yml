@@ -10,9 +10,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Python
+        id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Setup uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
 
       - name: Get Latest Tag
         env:
@@ -22,16 +25,12 @@ jobs:
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Setup + Build + Zip
+        env:
+          UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         run: |
-          # replace the pyqt requirements in pyproject.toml
-          sed -i '' 's/pyqt5-qt5==/pyqt5-qt5>=/' pyproject.toml
-
-          echo "Venv setup"
-          python -m venv .venv
+          echo "Installing dependencies from uv.lock"
+          uv sync --locked
           source ./.venv/bin/activate
-
-          echo "Installing dependencies"
-          pip install -e ./
 
           echo "Building style"
           python build_style.py

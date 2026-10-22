@@ -12,19 +12,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Python
+        id: setup-python
         uses: actions/setup-python@v5.0.0
         with:
           python-version: "3.12"
+      - name: Setup uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       - name: GitHub Tag
         run: |
           echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       - name: Build
+        env:
+          UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         run: |
-          echo "Venv setup"
-          python -m venv .venv
+          echo "Installing dependencies from uv.lock"
+          uv sync --locked
           .venv\Scripts\activate
-          echo "Installing dependencies"
-          pip install -e ./
           echo "Building style"
           python build_style.py
           echo "Building"
