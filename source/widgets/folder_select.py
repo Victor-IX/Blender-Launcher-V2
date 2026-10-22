@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from i18n import t
+from modules.container_detect import IS_CONTAINED
 from modules.platform_utils import get_cwd
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
@@ -66,7 +67,7 @@ class FolderSelector(QWidget):
                 self.folder_changed.emit(new_library_folder)
 
     def set_folder(self, folder: Path, relative: bool | None = None):
-        if folder.is_relative_to(get_cwd()):
+        if folder.is_relative_to(get_cwd()) and not IS_CONTAINED:
             if relative is None:
                 self.dlg = Popup.setup(
                     message=t("msg.popup.relative_path_found"),

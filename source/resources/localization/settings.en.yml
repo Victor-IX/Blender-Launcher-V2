@@ -354,5 +354,8 @@ blender_builds:
     Prepends the command "nohup" in front of your Bash arguments
     DEFAULT: Off
     Example: If your Bash Arguments string is "konsole --hold --separate -e" with this enabled, the command will be launched as "nohup konsole --hold --separate -e" Note that that nohup saves all outputs to nohup.out, usually stored in the ${HOME} top directory (~/nohup.out). Every time nohup is run, the file doesn't get over-written, but gets appended with the bash's output for every instance of nohup, so be watchful of the file size.
+
   startup_arguments: "Startup Arguments:"
-  
+  bash_argument_warnings:
+    env_vars_in_flatpak: |
+        Environment variables detected while in a flatpak. To ensure these get captured, use the `env` command.

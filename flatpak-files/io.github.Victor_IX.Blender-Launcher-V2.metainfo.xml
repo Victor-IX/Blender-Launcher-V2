@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<component type="desktop-application">
+  <id>io.github.Victor_IX.Blender-Launcher-V2</id>
+
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+
+  <name>Blender Launcher V2</name>
+  <summary>
+    Manage Blender builds and its forks
+  </summary>
+  <developer id="io.github.victor_ix">
+    <name>Victor Chedeville</name>
+  </developer>
+
+  <description>
+    <p>Blender Launcher is a standalone software client that provides management for stable, daily and experimental builds of Blender and the popular forks Bforartists, and UPBGE.</p>
+    <p>The goal of Blender Launcher is to make it easier to stay up to date with the latest features and improvements of Blender.</p>
+
+    <p>It features:</p>
+    <ul>
+        <li>Installation of Blender stable, daily, branch, patch builds</li>
+        <li>Installation of BForartists stable builds</li>
+        <li>Installation of UPBGE stable and weekly builds</li>
+        <li>Build updating</li>
+        <li>A Tray context menu with fast-access for favorite builds</li>
+        <li>Template installation</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">
+    io.github.Victor_IX.Blender-Launcher-V2.desktop
+  </launchable>
+
+  <categories>
+    <category>Graphics</category>
+    <category>3DGraphics</category>
+  </categories>
+
+  <!-- Keywords? https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines#categories-and-keywords -->
+
+  <!-- https://docs.flathub.org/banner-preview -->
+  <branding>
+    <color type="primary" scheme_preference="light">#b6c4ff</color>
+    <color type="primary" scheme_preference="dark">#503e6d</color>
+  </branding>
+
+  <content_rating type="oars-1.0" />
+
+  <url type="homepage">https://Victor-IX.github.io/Blender-Launcher-V2/</url>
+
+  <!-- TODO screenshots https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines#screenshots -->
+  <!-- TODO releases https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines#release -->
+  <!-- TODO Translations https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines#translations   -->
+  <!-- Simply put, this wants us to be using `gettext` or `qt` formatting. this will be tricky to port... -->
+  <!-- TODO metainfo translations https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines#metainfo-translations -->
+
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <!-- The minimum size of our window -->
+    <display_length compare="ge">640</display_length>
+  </supports>
+</component>
