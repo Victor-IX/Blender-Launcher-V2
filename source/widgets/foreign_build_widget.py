@@ -25,7 +25,6 @@ class UnrecoBuildWidget(BaseBuildWidget):
             item=item,
             build_info=BuildInfo.from_blender_path(path),
         )
-        self.launcher: BlenderLauncher = parent
         self.path = path
         self.list_widget = list_widget
 

@@ -96,8 +96,6 @@ class PopupWindow(BaseWindow):
             icon: Icon variant to show in the popup.
             message: Message text to display.
             buttons: Button choice(s) shown in the popup. Defaults to ``PopupButton.default()``.
-            parent: Optional parent widget.
-            app: Optional application object passed to ``BaseWindow``.
         """
         super().__init__()
 

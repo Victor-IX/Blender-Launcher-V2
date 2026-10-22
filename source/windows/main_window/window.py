@@ -144,7 +144,6 @@ class BlenderLauncher(BaseWindow):
         self.offline = offline
         self.build_cache = build_cache
         self.app_state = AppState.IDLE
-        self.timer = None
         self.just_started = True
         self.latest_tag = ""
         self.new_downloads = False
