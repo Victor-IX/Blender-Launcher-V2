@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import logging
+import os
+import re
 import ssl
 from typing import TYPE_CHECKING
 
 import certifi
-from modules.platform_utils import get_platform_full
+import truststore
+from modules.platform_utils import get_platform, get_platform_full
 from modules.settings import (
     get_github_token,
     get_proxy_host,
@@ -34,6 +37,31 @@ proxy_types_chemes = {
 
 REQUEST_MANAGER = PoolManager | ProxyManager | SOCKSProxyManager
 
+# On Linux, truststore verifies with OpenSSL and looks for system CAs only at
+# handshake time; it does not fail if none exist. Mirror its lookup so we can
+# fall back to certifi up front. Keep in sync with truststore._openssl.
+_SYSTEM_CA_FILE_CANDIDATES = (
+    "/etc/ssl/cert.pem",
+    "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
+    "/etc/pki/tls/cert.pem",
+    "/etc/ssl/certs/ca-certificates.crt",
+    "/etc/ssl/ca-bundle.pem",
+)
+_HASHED_CERT_FILENAME_RE = re.compile(r"^[0-9a-fA-F]{8}\.[0-9]$")
+
+
+def _has_system_ca_certs() -> bool:
+    defaults = ssl.get_default_verify_paths()
+    if defaults.cafile:
+        return True
+    if (
+        defaults.capath
+        and os.path.isdir(defaults.capath)
+        and any(_HASHED_CERT_FILENAME_RE.match(name) for name in os.listdir(defaults.capath))
+    ):
+        return True
+    return any(os.path.isfile(path) for path in _SYSTEM_CA_FILE_CANDIDATES)
+
 
 # TODO
 # It is impossible to kill existing instance of PoolManager
@@ -57,24 +85,21 @@ class ConnectionManager(QObject):
         logger.info(f"Connection Manager Header: {agent}")
         # Verify TLS with the OS trust store via truststore, so distrust and
         # revocation pushed by the OS (e.g. Windows' disallowed list) applies
-        # without shipping a new release. Fall back to certifi's CA bundle if
-        # the OS verifier is unavailable. certifi replaced the stale bundled
-        # custom.pem that lacked ISRG Root X2. See #414.
+        # without shipping a new release. Fall back to certifi's CA bundle on
+        # Linux systems without CA certificates. certifi replaced the stale
+        # bundled custom.pem that lacked ISRG Root X2. See #414.
         self.ssl_context = self._create_ssl_context()
 
         self.request_counter = 0
 
     @staticmethod
     def _create_ssl_context() -> ssl.SSLContext:
-        try:
-            import truststore
-
-            ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            logger.info("TLS verification: OS trust store (truststore)")
-            return ctx  # type: ignore[return-value]
-        except Exception:
-            logger.exception("Failed to use OS trust store; falling back to certifi")
+        if get_platform() == "Linux" and not _has_system_ca_certs():
+            logger.warning("No system CA certificates found; falling back to certifi")
             return ssl.create_default_context(cafile=certifi.where())
+
+        logger.info("TLS verification: OS trust store (truststore)")
+        return truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)  # type: ignore[return-value]
 
     def setup(self):
         if self.proxy_type == 0:  # Use generic requests
@@ -129,6 +154,7 @@ class ConnectionManager(QObject):
                         headers=self._headers,
                         proxy_headers=auth_headers,
                         ssl_context=self.ssl_context,
+                        proxy_ssl_context=self.ssl_context,
                     )
                 else:
                     # HTTP Proxy w/o CERT_REQUIRED
