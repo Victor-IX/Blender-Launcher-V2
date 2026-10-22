@@ -25,6 +25,7 @@ class BasicBuildInfo:
     commit_time: datetime.datetime
     folder: str | None = None
     custom_name: str | None = None
+    is_favorite: bool = False
 
     @property
     def major(self):
@@ -53,6 +54,7 @@ class BasicBuildInfo:
             commit_time=buildinfo.commit_time.astimezone(utc),
             folder=folder,
             custom_name=buildinfo.custom_name,
+            is_favorite=buildinfo.is_favorite,
         )
 
     @property
@@ -93,7 +95,7 @@ VERSION_SEARCH_REGEX = re.compile(
 # ([\^\-\*]|\d+)                     x3 -- major, minor, and patch (required)
 # (?:\-([^\@\s\+]+))?                   -- branch (optional)
 # (?:\+([\d\w]+))?                      -- build hash (optional)
-# (?:\@([\dT\+\:Z\ \^\*\-]+))?            -- commit time (saved as ^|*|- or an isoformat) (optional)
+# (?:\@([\dT\+\:Z\ \^\*\-]+))?          -- commit time (saved as ^|*|- or an isoformat) (optional)
 # $                                     -- end of string
 
 
@@ -164,6 +166,7 @@ class VSQKwargs(TypedDict, total=False):  # used for kwargs typing
     commit_time: datetime.datetime | str | None
     after: datetime.datetime | None
     before: datetime.datetime | None
+    is_favorite: bool | None
 
 
 class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/patch
@@ -173,6 +176,7 @@ class VSQExtraKwargs(TypedDict, total=False):  # VSQKwargs without major/minor/p
     commit_time: datetime.datetime | str | None
     after: datetime.datetime | None
     before: datetime.datetime | None
+    is_favorite: bool | None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -206,6 +210,9 @@ class VersionSearchQuery:
 
     before: datetime.datetime | None = None
     "Filter builds before this date"
+
+    is_favorite: bool | None = None
+    "Filter to builds marked as favorite"
 
     def __post_init__(self):
         for pos in (self.major, self.minor, self.patch, self.commit_time):
