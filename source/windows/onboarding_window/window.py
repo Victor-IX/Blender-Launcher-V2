@@ -39,8 +39,9 @@ class Committer(QThread):
     pages: list[BasicOnboardingPage]
 
     def __post_init__(self):
-        self.setObjectName("OnboardingCommitter")
         super().__init__()
+        self.setObjectName("OnboardingCommitter")
+
 
     completed = Signal()
     err = Signal(tuple)
