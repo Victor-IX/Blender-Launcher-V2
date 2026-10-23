@@ -8,6 +8,8 @@ from functools import cache, lru_cache
 from operator import attrgetter
 from typing import TYPE_CHECKING, Self, TypedDict, Unpack
 
+from i18n import t
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -118,7 +120,7 @@ def _parse(s: str) -> dict:
     """Parse a query from a string. does not support branch and commit_time"""
     match = VERSION_SEARCH_REGEX.match(s)
     if not match:
-        raise ValueError(f"Invalid version search query: {s}")
+        raise ValueError(t("launching.errors.invalid_query", query=s))
 
     major = match.group(1)
     minor = match.group(2)
@@ -210,11 +212,11 @@ class VersionSearchQuery:
     def __post_init__(self):
         for pos in (self.major, self.minor, self.patch, self.commit_time):
             if isinstance(pos, str) and pos not in ["^", "*", "-"]:
-                raise ValueError(f'{pos} must be in ["^", "*", "-"]')
+                raise ValueError(t("launching.errors.invalid_position", value=pos))
         if self.build_hash and self.build_hash in ["^", "-"]:
-            raise ValueError("build_hash cannot be temporally matched")
+            raise ValueError(t("launching.errors.hash_temporal"))
         if self.branch and self.branch in ["^", "-"]:
-            raise ValueError("branch cannot be temporally matched")
+            raise ValueError(t("launching.errors.branch_temporal"))
 
     @classmethod
     def parse(cls, s: str) -> Self:

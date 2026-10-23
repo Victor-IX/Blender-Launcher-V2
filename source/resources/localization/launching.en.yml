@@ -23,3 +23,8 @@ date: "Date selection: "
 save_current: Save current search for .blend files made in %{short_v}
 
 timer: Launching in %{time}s
+errors:
+  invalid_query: "Invalid version search query: %{query}"
+  invalid_position: '%{value} must be in ["^", "*", "-"]'
+  hash_temporal: build_hash cannot be temporally matched
+  branch_temporal: branch cannot be temporally matched
