@@ -41,8 +41,8 @@ from utils.logger import setup_logging
 
 version = Version(
     2,
-    7,
-    6,
+    8,
+    0,
     # prerelease="rc.1",
 )
 
