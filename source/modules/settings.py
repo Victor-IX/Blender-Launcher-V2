@@ -38,6 +38,11 @@ KEYRING_PROXY_USER = "proxy/user"
 KEYRING_PROXY_PASSWORD = "proxy/password"
 KEYRING_TOKEN_USERNAME = "github_token"
 
+# Bounds for the new builds check frequency, in hours.
+# The max keeps the interval in ms within QTimer's signed 32-bit limit.
+MIN_NEW_BUILDS_CHECK_FREQUENCY = 6
+MAX_NEW_BUILDS_CHECK_FREQUENCY = (2**31 - 1) // 3_600_000  # 596h
+
 # TODO: Simplify this
 
 tabs = {
@@ -704,18 +709,17 @@ def get_new_builds_check_frequency() -> int:
     if settings.contains("new_builds_check_frequency"):
         frequency: int = settings.value("new_builds_check_frequency", defaultValue=12, type=int)  # type: ignore
 
-        # Clamp value to minimum to prevent user bypass
-        if frequency < 6:
-            frequency = 6
-            set_new_builds_check_frequency(6)
+        # Clamp value to bounds to prevent user bypass and QTimer overflow
+        clamped = min(max(frequency, MIN_NEW_BUILDS_CHECK_FREQUENCY), MAX_NEW_BUILDS_CHECK_FREQUENCY)
+        if clamped != frequency:
+            set_new_builds_check_frequency(clamped)
 
-        return frequency
+        return clamped
     return 12
 
 
 def set_new_builds_check_frequency(frequency):
-    if frequency < 6:
-        frequency = 6
+    frequency = min(max(frequency, MIN_NEW_BUILDS_CHECK_FREQUENCY), MAX_NEW_BUILDS_CHECK_FREQUENCY)
     get_settings().setValue("new_builds_check_frequency", frequency)
 
 

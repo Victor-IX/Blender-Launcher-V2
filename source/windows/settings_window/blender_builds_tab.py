@@ -6,6 +6,8 @@ from i18n import t
 from modules.bl_api_manager import dropdown_blender_version
 from modules.platform_utils import get_platform
 from modules.settings import (
+    MAX_NEW_BUILDS_CHECK_FREQUENCY,
+    MIN_NEW_BUILDS_CHECK_FREQUENCY,
     favorite_pages,
     get_bash_arguments,
     get_bfa_update_behavior,
@@ -143,8 +145,8 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                     None,
                     default=get_new_builds_check_frequency(),
                     setter=set_new_builds_check_frequency,
-                    min_=6,  # 6h
-                    max_=24 * 7 * 4,  # 4 weeks??
+                    min_=MIN_NEW_BUILDS_CHECK_FREQUENCY,
+                    max_=MAX_NEW_BUILDS_CHECK_FREQUENCY,
                 )
                 NewBuildsCheckFrequency.setToolTip(t("settings.blender_builds.new_builds_check_frequency_tooltip"))
                 NewBuildsCheckFrequency.setPrefix(t("settings.blender_builds.interval_prefix"))
