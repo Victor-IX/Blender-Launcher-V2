@@ -350,3 +350,11 @@ blender_builds:
     例: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
   bash_arguments: "Bash引数:"
   startup_arguments: "起動引数:"
+  use_nohup: Nohupを使用してBashの出力を記録
+  use_nohup_tooltip: |
+    Bash引数の前に「nohup」コマンドを追加します
+    デフォルト: 無効
+    例: Bash引数が「konsole --hold --separate -e」の場合、この設定を有効にすると「nohup konsole --hold --separate -e」として起動します。
+    出力は通常、ホームディレクトリのnohup.out（~/nohup.out）に保存されます。実行のたびに上書きされず追記されるため、ファイルサイズに注意してください。
+
+title: 設定

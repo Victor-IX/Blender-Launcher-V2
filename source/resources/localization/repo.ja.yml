@@ -23,3 +23,7 @@ commit_time: コミット日時
 
 no_new_builds: 利用可能な新しいビルドはありません
 nothing: まだ表示するものはありません
+version: バージョン
+branch: ブランチ
+show_build_hash_tooltip: クリックしてビルドハッシュを表示
+show_datetime_tooltip: クリックして日時を表示
