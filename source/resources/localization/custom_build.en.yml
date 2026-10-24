@@ -12,3 +12,4 @@ ctime: "Commit time: "
 branch: "Branch name: "
 custom: "Custom name: "
 fav: "Favorite: "
+exe_placeholder: blender, bforartists, etc.

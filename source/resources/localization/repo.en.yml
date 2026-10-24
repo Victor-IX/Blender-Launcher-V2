@@ -23,3 +23,7 @@ commit_time: Commit Time
 
 no_new_builds: No new builds available
 nothing: Nothing to show yet
+version: Version
+branch: Branch
+show_build_hash_tooltip: Press to show build hash number
+show_datetime_tooltip: Press to show date and time

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from i18n import t
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
@@ -52,7 +53,7 @@ class DateTimeWidget(QPushButton):
             self.layout.addWidget(self.RightArrowLabel)
 
             self.setCursor(Qt.CursorShape.PointingHandCursor)
-            self.setToolTip("Press to show build hash number")
+            self.setToolTip(t("repo.show_build_hash_tooltip"))
             self.clicked.connect(self.toggle_visibility)
         else:
             self.datetimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -63,9 +64,9 @@ class DateTimeWidget(QPushButton):
         self.BuildHashLabel.setVisible(not self.BuildHashLabel.isVisible())
 
         if self.BuildHashLabel.isVisible():
-            self.setToolTip("Press to show date and time")
+            self.setToolTip(t("repo.show_datetime_tooltip"))
         else:
-            self.setToolTip("Press to show build hash number")
+            self.setToolTip(t("repo.show_build_hash_tooltip"))
 
     def enterEvent(self, event: QEnterEvent) -> None:
         if self.build_hash is not None:

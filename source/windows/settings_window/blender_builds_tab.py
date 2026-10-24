@@ -374,7 +374,7 @@ class BlenderBuildsTabWidget(SettingsFormWidget):
                         default=get_use_nohup(),
                         setter=set_use_nohup,
                     )
-                    self.UseNohup.setToolTip(t("settings.blender_builds.blender_use_nohup_tooltip"))
+                    self.UseNohup.setToolTip(t("settings.blender_builds.use_nohup_tooltip"))
 
     def change_minimum_blender_stable_version(self, index: int):
         minimum = self.MinStableBlenderVer.itemText(index)

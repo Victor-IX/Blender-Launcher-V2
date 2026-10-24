@@ -107,7 +107,7 @@ class LaunchingWindow(BaseWindow):
         self.build_hash_edit = LintableLineEdit(self)
         self.build_hash_edit.editingFinished.connect(self.update_query_from_edits)
         self.build_hash_edit.textChanged.connect(self.cancel_timer)
-        self.build_hash_edit.setPlaceholderText("Any (*)")
+        self.build_hash_edit.setPlaceholderText(t("launching.chrono.any"))
         self.date_range_combo = QComboBox(self)
         self.date_range_combo.addItems([t(f"launching.chrono.{x}") for x in ["latest", "any", "oldest"]])
         self.date_range_combo.setCurrentIndex(0)
@@ -441,7 +441,7 @@ class LaunchingWindow(BaseWindow):
 
     def prepare_launch(self, build: BuildInfo):
         """Prepares the given build for launching, starts the timer."""
-        self.timer_label.setText(f"Launching in {self.remaining_time}s")
+        self.timer_label.setText(t("launching.timer", time=self.remaining_time))
         self.launch_timer.start()
         self.target_build = build
 

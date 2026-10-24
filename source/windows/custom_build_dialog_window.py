@@ -122,7 +122,7 @@ class CustomBuildDialogWindow(BaseWindow):
 
         self.executable_choice.setCompleter(completer)
         self.executable_choice.textChanged.connect(self.check_executable_choice)
-        self.executable_choice.setPlaceholderText("blender, bforartists, etc.")
+        self.executable_choice.setPlaceholderText(t("custom_build.exe_placeholder"))
         self.exe_is_valid = False
 
         executable_layout = QHBoxLayout()
