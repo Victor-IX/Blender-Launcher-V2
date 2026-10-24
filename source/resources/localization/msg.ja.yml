@@ -161,3 +161,4 @@ popup:
     unregister:
       success: WinGetからの登録解除が完了しました。
       error: WinGetからの登録解除に失敗しました。詳細はログを確認してください。
+updating_launcher: Blender Launcherを更新中
