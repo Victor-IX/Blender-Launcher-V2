@@ -161,3 +161,4 @@ popup:
     unregister:
       success: Successfully unregister from WinGet.
       error: Failed to unregister from WinGet. Check logs for details.
+updating_launcher: Updating Blender Launcher
