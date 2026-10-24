@@ -46,7 +46,7 @@ class SettingsWindow(BaseWindow):
         self.CentralLayout = QVBoxLayout(self.CentralWidget)
         self.CentralLayout.setContentsMargins(1, 1, 1, 1)
         self.setCentralWidget(self.CentralWidget)
-        self.setWindowTitle("Settings")
+        self.setWindowTitle(t("settings.title"))
 
         # Global scope for breaking settings
         self.old_enable_quick_launch_key_seq = get_enable_quick_launch_key_seq()
@@ -69,7 +69,7 @@ class SettingsWindow(BaseWindow):
         self.old_log_level = get_log_level()
 
         # Header layout
-        self.header = WindowHeader(self, "Settings", use_minimize=False)
+        self.header = WindowHeader(self, t("settings.title"), use_minimize=False)
         self.header.close_signal.connect(self.attempt_close)
         self.CentralLayout.addWidget(self.header)
         self.update_system_titlebar(self.using_system_bar)

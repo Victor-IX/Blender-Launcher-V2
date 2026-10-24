@@ -120,13 +120,13 @@ class BasePageWidget(QWidget, Generic[_WT]):
         self.headerSplitter.setHandleWidth(3)
         self.headerSplitter.setChildrenCollapsible(False)
 
-        self.subversionLabel = QPushButton("Version")
+        self.subversionLabel = QPushButton(t("repo.version"))
         self.subversionLabel.setMinimumWidth(60)
         self.subversionLabel.setProperty("ListHeader", True)
         self.subversionLabel.setCheckable(True)
         self.subversionLabel.clicked.connect(lambda: self.set_sorting_type(SortingType.VERSION))
 
-        self.branchLabel = QPushButton("Branch")
+        self.branchLabel = QPushButton(t("repo.branch"))
         self.branchLabel.setMinimumWidth(80)
         self.branchLabel.setProperty("ListHeader", True)
         self.branchLabel.setCheckable(True)

@@ -8,6 +8,7 @@ import shutil
 from typing import TypedDict
 
 import distro
+from i18n import t
 from modules.connection_manager import ConnectionManager
 from modules.platform_utils import _check_call, _popen, get_cwd, get_platform, get_running_app_bundle
 from modules.tasks import TaskQueue
@@ -53,14 +54,14 @@ class BlenderLauncherUpdater(BaseWindow):
 
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.resize(256, 77)
-        self.setWindowTitle("Updating Blender Launcher")
+        self.setWindowTitle(t("msg.updating_launcher"))
 
         self.CentralWidget = QWidget(self)
         self.CentralLayout = QVBoxLayout(self.CentralWidget)
         self.CentralLayout.setContentsMargins(3, 0, 3, 3)
         self.setCentralWidget(self.CentralWidget)
 
-        self.HeaderLabel = QLabel("Updating Blender Launcher")
+        self.HeaderLabel = QLabel(t("msg.updating_launcher"))
         self.HeaderLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.ProgressBar = BaseProgressBarWidget(self)
