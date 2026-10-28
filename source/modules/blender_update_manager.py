@@ -88,6 +88,16 @@ def _new_version_available(
     widgets: Any,
 ) -> Any | None:
     """Find available updates based on version or newer builds of same version."""
+    if current_build_info.is_bfa_dev:
+        candidates = [
+            download
+            for download in available_downloads
+            if download.build_info.is_bfa_dev
+            and download.build_info.commit_time > current_build_info.commit_time
+            and not any(download.build_info == widget.build_info for widget in widgets)
+        ]
+        return max(candidates, key=lambda download: download.build_info.commit_time, default=None)
+
     current_version = current_build_info.semversion.replace(prerelease=None)
     current_branch = current_build_info.branch
 
@@ -105,6 +115,8 @@ def _new_version_available(
 
     for download in branch_downloads:
         build_info = download.build_info
+        if build_info.is_bfa_dev:
+            continue
 
         download_version = build_info.semversion.replace(prerelease=None)
         download_hash = build_info.build_hash

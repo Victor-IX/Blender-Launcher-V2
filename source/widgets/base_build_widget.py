@@ -48,6 +48,8 @@ class BaseBuildWidget(QWidget):
             v = re.sub(r"\D", "", str(self.build_info.semversion.finalize_version()))
 
             QDesktopServices.openUrl(f"https://www.blender.org/download/lts/#lts-release-{v}")
+        elif self.build_info.is_bfa_dev:
+            QDesktopServices.openUrl("https://devbuilds.bforartists.com/")
         elif self.build_info.branch == "bforartists":
             ver = self.build_info.semversion
             QDesktopServices.openUrl(

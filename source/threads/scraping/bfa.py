@@ -3,157 +3,154 @@ from __future__ import annotations
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
+from urllib.parse import unquote, urljoin, urlparse
 
+from bs4 import BeautifulSoup
 from modules.build_info import BuildInfo
 from modules.platform_utils import bfa_cache_path, get_architecture, get_platform
 from modules.scraper_cache import ScraperCache
 from semver import Version
 from threads.scraping.base import BuildScraper
-from webdav4.client import Client
 
 if TYPE_CHECKING:
     from collections.abc import Generator
 
+    from modules.connection_manager import ConnectionManager
+
 logger = logging.getLogger()
 
-# NC: NextCloud
-BFA_NC_BASE_URL = "https://cloud.bforartists.de"
-BFA_NC_HTTPS_URL = f"{BFA_NC_BASE_URL}/index.php/s"
-# https://archive.ph/esTuX#accessing-public-shares-over-webdav
-BFA_NC_WEBDAV_URL = f"{BFA_NC_BASE_URL}/public.php/webdav"
-BFA_NC_WEBDAV_SHARE_TOKEN = "JxCjbyt2fFcHjy4"
-
-
-def get_bfa_nc_https_download_url(webdav_file_path: PurePosixPath):
-    return f"{BFA_NC_WEBDAV_URL}/{webdav_file_path}"
-
-
-plat = get_platform()
-if plat == "Windows":
-    bfa_regex_filter = r"Bforartists-.+Windows.+zip"
-elif plat == "macOS":
-    bfa_regex_filter = r"Bforartists-.+dmg$"
-else:
-    bfa_regex_filter = r"Bforartists-.+tar.xz$"
-
-bfa_package_file_name_regex = re.compile(bfa_regex_filter, re.IGNORECASE)
-
-# Since Bforartists 4.5.0, macOS releases can ship separate per-architecture
-# DMGs (e.g. "...-Mac-Intel.dmg" / "...-Mac-Silicon.dmg") instead of one file.
+BFA_DOWNLOADS_URL = "https://downloads.bforartists.com/"
+BFA_DEVBUILDS_URL = "https://devbuilds.bforartists.com/"
 _BFA_MACOS_ARM_KEYWORDS = ("silicon", "arm64")
 _BFA_MACOS_INTEL_KEYWORDS = ("intel", "x86_64", "x64")
 
 
 class ScraperBfa(BuildScraper):
-    def __init__(self):
-        super().__init__()
-
+    def __init__(self, man: ConnectionManager):
+        self.manager = man
         self.cache_path = bfa_cache_path()
         self.cache = ScraperCache.from_file_or_default(self.cache_path)
 
-    def refresh_cache(self):
-        self.cache = ScraperCache.from_file_or_default(self.cache_path)
-
     def scrape(self) -> Generator[BuildInfo, None, None]:
-        client = Client(BFA_NC_WEBDAV_URL, auth=(BFA_NC_WEBDAV_SHARE_TOKEN, ""))
-        cache_modified = False
-        for entry in client.ls("", detail=True, allow_listing_resource=True):
-            if isinstance(entry, str):
-                continue
-            if entry["type"] != "directory":
+        # Only use cached timestamps for URLs still present in the new indexes.
+        # This also discards obsolete Nextcloud links and expired developer builds.
+        previous = {asset.link: asset for folder in self.cache.folders.values() for asset in folder.assets}
+        fresh = ScraperCache()
+        for url, developer in ((BFA_DOWNLOADS_URL, False), (BFA_DEVBUILDS_URL, True)):
+            response = self.manager.request("GET", url)
+            if response is None:
                 continue
             try:
-                semver = Version.parse(entry["name"].split()[-1])
-            except ValueError:
-                continue
+                if response.status != 200:
+                    logger.warning("Failed to fetch Bforartists index %s: HTTP %s", url, response.status)
+                    continue
+                soup = BeautifulSoup(response.data, "lxml")
+            finally:
+                response.release_conn()
+                response.close()
 
-            # check if the cache needs to be updated
-            modified_date: datetime = entry["modified"]
-            if semver not in self.cache:
-                folder = self.cache.new_build(semver)
-            else:
-                folder = self.cache[semver]
+            seen = set()
+            for section in soup.select("details"):
+                summary = section.find("summary")
+                if summary is None:
+                    continue
+                title = summary.get_text(" ", strip=True)
+                try:
+                    if developer:
+                        match = re.search(r"\b\d{4}-\d{2}-\d{2}\b", title)
+                        if match is None:
+                            continue
+                        date = datetime.strptime(match[0], "%Y-%m-%d").replace(tzinfo=UTC)
+                        # The index provides dates, not application version numbers.
+                        version = Version(0, 0, int(date.strftime("%Y%m%d")), prerelease="dev")
+                    else:
+                        match = re.search(r"Bforartists\s+(\d+\.\d+\.\d+)\b", title, re.IGNORECASE)
+                        if match is None:
+                            continue
+                        version = Version.parse(match[1])
+                        date = None
+                except ValueError:
+                    logger.warning("Invalid Bforartists index heading: %s", title)
+                    continue
 
-            if folder.modified_date < modified_date:
-                # Clear existing assets and replace with fresh data
-                folder.assets.clear()
-                for release in self.scrape_bfa_release(client, entry["name"], semver):
-                    folder.assets.append(release)
-                    yield release
+                candidates = []
+                for anchor in section.select("a[href]"):
+                    link = urljoin(url, anchor["href"])
+                    if urlparse(link).netloc != urlparse(url).netloc or urlparse(link).scheme != "https":
+                        continue
+                    filename = unquote(PurePosixPath(urlparse(link).path).name)
+                    if link in seen or not self.matches_platform(filename):
+                        continue
+                    seen.add(link)
+                    candidates.append((PurePosixPath(filename), link))
+                if get_platform() == "macOS":
+                    candidates = self.filter_macos_candidates(candidates)
 
-                folder.modified_date = modified_date
-                cache_modified = True
-            else:
-                logger.debug(f"Skipping {entry['name']}: {modified_date}")
-                yield from folder.assets
+                for _, link in candidates:
+                    timestamp = date
+                    if timestamp is None:
+                        cached = previous.get(link)
+                        timestamp = cached.commit_time if cached else self.release_timestamp(link)
+                    if timestamp is None:
+                        continue
+                    build = BuildInfo(
+                        link,
+                        str(version),
+                        None,
+                        timestamp,
+                        "bforartists",
+                        custom_executable={"Windows": "bforartists.exe", "Linux": "bforartists"}.get(get_platform()),
+                    )
+                    if version not in fresh:
+                        fresh.new_build(version, timestamp)
+                    fresh[version].assets.append(build)
+                    yield build
 
-        if cache_modified:
-            try:
-                with self.cache_path.open("w", encoding="utf-8") as f:
-                    json.dump(self.cache.to_dict(), f)
-                    logging.debug(f"Saved cache to {self.cache_path}")
-            except OSError:
-                logger.exception(f"Failed to write cache to {self.cache_path}")
+        self.cache = fresh
+        try:
+            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.cache_path.open("w", encoding="utf-8") as file:
+                json.dump(self.cache.to_dict(), file)
+        except OSError:
+            logger.exception("Failed to write Bforartists cache")
 
-    def scrape_bfa_release(self, client: Client, folder: str, semver: Version):
-        candidates: list[tuple[PurePosixPath, datetime]] = []
-        for entry in client.ls(folder, detail=True, allow_listing_resource=True):
-            if isinstance(entry, str):
-                continue
-            path = entry["name"]
-            ppath = PurePosixPath(path)
-            if bfa_package_file_name_regex.match(ppath.name) is None:
-                continue
-            commit_time = entry["modified"]
-            if not isinstance(commit_time, datetime):
-                continue
-            candidates.append((ppath, commit_time))
-
-        platform = get_platform()
-        if platform == "macOS":
-            candidates = self.filter_macos_candidates(candidates)
-
-        for ppath, commit_time in candidates:
-            # Set custom_executable for Windows/Linux since Bforartists uses a different
-            # executable name than Blender. On macOS, let it be auto-detected during
-            # installation to handle DMG-extracted .app bundles correctly.
-            if platform == "macOS":
-                exe_name = None
-            else:
-                exe_name = {
-                    "Windows": "bforartists.exe",
-                    "Linux": "bforartists",
-                }.get(platform, "bforartists")
-
-            yield BuildInfo(
-                get_bfa_nc_https_download_url(ppath),
-                str(semver),
-                None,
-                commit_time.astimezone(),
-                "bforartists",
-                custom_executable=exe_name,
-            )
+    def release_timestamp(self, url: str) -> datetime | None:
+        response = self.manager.request("HEAD", url)
+        if response is None:
+            return None
+        try:
+            if response.status != 200:
+                return None
+            timestamp = parsedate_to_datetime(response.headers.get("Last-Modified", ""))
+            return timestamp.replace(tzinfo=UTC) if timestamp.tzinfo is None else timestamp
+        except (TypeError, ValueError):
+            logger.warning("Missing or invalid Last-Modified for %s", url)
+            return None
+        finally:
+            response.release_conn()
+            response.close()
 
     @staticmethod
-    def filter_macos_candidates(
-        candidates: list[tuple[PurePosixPath, datetime]],
-    ) -> list[tuple[PurePosixPath, datetime]]:
-        """Pick the single macOS DMG matching the running architecture.
+    def matches_platform(filename: str) -> bool:
+        name = filename.lower()
+        if get_platform() == "Windows":
+            return name.endswith(".zip") and (
+                "windows" in name or "win64" in name or re.fullmatch(r"bforartists[23]_\d+\.zip", name) is not None
+            )
+        if get_platform() == "macOS":
+            return name.endswith(".dmg")
+        return "linux" in name and name.endswith((".tar.xz", ".tar.gz"))
 
-        Prevents an Intel DMG and a Silicon DMG from being treated as duplicate
-        builds downstream (same version/branch/hash), which would otherwise let
-        whichever one is listed first by the WebDAV server silently win.
-        """
+    @staticmethod
+    def filter_macos_candidates(candidates):
+        """Prefer the native DMG, then a universal or unlabelled package."""
         is_arm = get_architecture() == "arm64"
-        own_keywords = _BFA_MACOS_ARM_KEYWORDS if is_arm else _BFA_MACOS_INTEL_KEYWORDS
-        other_keywords = _BFA_MACOS_INTEL_KEYWORDS if is_arm else _BFA_MACOS_ARM_KEYWORDS
-
-        filtered = [c for c in candidates if not any(kw in c[0].name.lower() for kw in other_keywords)]
-        if not filtered:
-            filtered = candidates
-
-        own_match = [c for c in filtered if any(kw in c[0].name.lower() for kw in own_keywords)]
-        return own_match[:1] if own_match else filtered[:1]
+        own = _BFA_MACOS_ARM_KEYWORDS if is_arm else _BFA_MACOS_INTEL_KEYWORDS
+        other = _BFA_MACOS_INTEL_KEYWORDS if is_arm else _BFA_MACOS_ARM_KEYWORDS
+        filtered = [c for c in candidates if not any(kw in c[0].name.lower() for kw in other)]
+        native = [c for c in filtered if any(kw in c[0].name.lower() for kw in own)]
+        return native[:1] if native else filtered[:1]

@@ -1,8 +1,6 @@
-import base64
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
 
 from modules._copyfileobj import copyfileobj
 from modules.connection_manager import REQUEST_MANAGER
@@ -11,7 +9,6 @@ from modules.settings import get_library_folder
 from modules.string_utils import extract_filename_from_url
 from modules.task import Task
 from PySide6.QtCore import Signal
-from threads.scraping.bfa import BFA_NC_BASE_URL, BFA_NC_WEBDAV_SHARE_TOKEN
 from urllib3.exceptions import MaxRetryError
 
 logger = logging.getLogger()
@@ -28,42 +25,6 @@ VALID_ARCHIVE_TYPES = [
     "application/gzip",
     "application/x-dmg",
 ]
-
-
-def convert_nextcloud_share_to_webdav(url: str) -> str | None:
-    """Convert Nextcloud share download URL to WebDAV URL.
-
-    Converts:
-    https://cloud.bforartists.de/index.php/s/{token}/download?path={path}&files={filename}
-    To:
-    https://cloud.bforartists.de/public.php/webdav{path}/{filename}
-    """
-    try:
-        parsed = urlparse(url)
-
-        # Check if it's a Nextcloud share download URL
-        if "/index.php/s/" not in parsed.path or "/download" not in parsed.path:
-            return None
-
-        # Parse query parameters
-        params = parse_qs(parsed.query)
-        path = params.get("path", [""])[0]
-        files = params.get("files", [""])[0]
-
-        if not files:
-            logger.warning(f"No 'files' parameter found in URL: {url}")
-            return None
-
-        # Construct WebDAV URL
-        # public.php/webdav{path}/{filename}
-        webdav_path = f"{path}/{files}" if path else f"/{files}"
-        webdav_url = f"{BFA_NC_BASE_URL}/public.php/webdav{webdav_path}"
-
-        logger.info(f"Converted share URL to WebDAV: {url} -> {webdav_url}")
-        return webdav_url
-    except Exception as e:
-        logger.exception(f"Failed to convert URL to WebDAV format: {e}")
-        return None
 
 
 @dataclass
@@ -110,28 +71,10 @@ class DownloadTask(Task):
         temp_folder = Path(get_library_folder()) / ".temp"
         filename = extract_filename_from_url(self.link)
         dist = temp_folder / filename
-        headers = {}
-
-        # Convert Nextcloud share URLs to WebDAV format
-        download_url = self.link
-        if "cloud.bforartists.de" in self.link and "/index.php/s/" in self.link:
-            webdav_url = convert_nextcloud_share_to_webdav(self.link)
-            if webdav_url:
-                download_url = webdav_url
-
-        # Apply authentication for Nextcloud WebDAV endpoints
-        is_nextcloud = "cloud.bforartists.de" in download_url and (
-            "public.php/webdav" in download_url or "public.php/dav" in download_url
-        )
-        if is_nextcloud:
-            auth_string = base64.b64encode(f"{BFA_NC_WEBDAV_SHARE_TOKEN}:".encode()).decode("ascii")
-            headers["Authorization"] = f"Basic {auth_string}"
-            logger.info(f"Applying Nextcloud authentication for: {download_url}")
-
         # Download the file
         try:
             temp_folder.mkdir(exist_ok=True)
-            with self.manager.request("GET", download_url, preload_content=False, timeout=10, headers=headers) as r:
+            with self.manager.request("GET", self.link, preload_content=False, timeout=10) as r:
                 logger.debug(f"Response headers: {dict(r.headers)}")
 
                 if not self._validate_response(r):
@@ -147,7 +90,7 @@ class DownloadTask(Task):
             self.message.emit("Requesting is taking longer than usual! see debug logs for more.", MessageType.ERROR)
             # Retry once
             try:
-                with self.manager.request("GET", download_url, preload_content=False, headers=headers) as r:
+                with self.manager.request("GET", self.link, preload_content=False) as r:
                     if not self._validate_response(r, context="Retry "):
                         self._cleanup_file(dist)
                         return
