@@ -323,7 +323,12 @@ class DownloadWidget(BaseBuildWidget):
 
         assert self.build_dir is not None
 
-        if self.build_info.branch == "upbge-weekly":
+        if self.build_info.is_bfa_dev:
+            try:
+                ver = parse_blender_ver(self.build_dir.name, search=True).replace(prerelease="dev")
+            except ValueError:
+                ver = self.build_info.semversion
+        elif self.build_info.branch == "upbge-weekly":
             ver = parse_blender_ver(self.build_info.subversion)
         else:
             # If the returned version from the executable is invalid it might break loading.
