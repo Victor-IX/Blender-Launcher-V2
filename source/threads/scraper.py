@@ -66,7 +66,7 @@ class Scraper(QThread):
 
         # these are saved because they hold caches
         self.scraper_stable = ScraperStable(self.manager, self.stable_error, self.build_cache)
-        self.scraper_bfa = ScraperBfa()
+        self.scraper_bfa = ScraperBfa(self.manager)
         self.scraper_upbge_stable = ScraperUpbgeStable(self.manager)
         self.scraper_upbge_weekly = ScraperUpbgeWeekly(self.manager)
         self.scraper_patch = ScraperPatch(self.manager, "patch")
@@ -88,6 +88,7 @@ class Scraper(QThread):
     def manager(self, man: ConnectionManager):
         self._manager = man
         self.scraper_stable.manager = man
+        self.scraper_bfa.manager = man
         self.scraper_upbge_stable.manager = man
         self.scraper_upbge_weekly.manager = man
         self.scraper_patch.manager = man

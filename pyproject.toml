@@ -16,7 +16,6 @@ dependencies = [
     "semver>=3.0.2",
     "zstandard>=0.23.0",
     "send2trash>=1.8.3",
-    "webdav4==0.11.0",
     "dateparser==1.4.3",
     "pyside6-essentials==6.12.0",
     "markdown>=3.7",

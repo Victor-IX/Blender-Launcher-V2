@@ -199,6 +199,9 @@ class BuildInfo:
         if other is None:
             return False
 
+        if self.is_bfa_dev or other.is_bfa_dev:
+            return self.is_bfa_dev and other.is_bfa_dev and self.commit_time == other.commit_time
+
         if self.build_hash and other.build_hash:
             return self.build_hash == other.build_hash and self.branch == other.branch
 
@@ -220,6 +223,10 @@ class BuildInfo:
             return self.subversion == other.subversion and self.branch == other.branch
 
     @property
+    def is_bfa_dev(self) -> bool:
+        return self.branch == "bforartists" and self.subversion.endswith("-dev")
+
+    @property
     def semversion(self) -> Version:
         return parse_blender_ver(self.subversion)
 
@@ -229,12 +236,16 @@ class BuildInfo:
 
     @property
     def display_version(self):
+        if self.is_bfa_dev and self.semversion.major == 0:
+            return "Dev"
         return self._display_version(self.semversion)
 
     @property
     def display_label(self):
         if self.custom_name:
             return self.custom_name
+        if self.is_bfa_dev:
+            return "Bforartists Dev"
         return self._display_label(self.branch, self.semversion, self.subversion)
 
     @property
