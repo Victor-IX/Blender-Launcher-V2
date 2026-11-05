@@ -13,7 +13,7 @@ general:
       Blender Launcherの表示言語を選択します。
       「自動」はシステム言語を自動検出します。
       反映するには再起動が必要です。
-      デフォルト: Auto
+      デフォルト: 自動
 
     system_start: システム起動時に起動
     system_start_tooltip: |
@@ -143,7 +143,7 @@ appearance:
     default_tab: デフォルトタブ
     default_tab_tooltip: |
       アプリケーション起動時に開くデフォルトのタブ
-      デフォルト: Library
+      デフォルト: ライブラリ
     sync_library_and_downloads_pages: ライブラリとダウンロードページを同期
     sync_library_and_downloads_pages_tooltip: |
       選択中のライブラリタブと対応するダウンロードタブを同期します
@@ -151,11 +151,11 @@ appearance:
     default_library_page: デフォルトライブラリページ
     default_library_page_tooltip: |
       ライブラリタブで開くデフォルトのページ
-      デフォルト: Stable Releases
+      デフォルト: 安定版
     default_downloads_page: デフォルトダウンロードページ
     default_downloads_page_tooltip: |
       ダウンロードタブで開くデフォルトのページ
-      デフォルト: Stable Releases
+      デフォルト: 安定版
 
 connection:
   label: 接続
@@ -166,7 +166,7 @@ connection:
     デフォルト: 無効
   proxy_type_tooltip: |
     接続に使用するプロキシの種類
-    デフォルト: None
+    デフォルト: なし
   proxy_host_tooltip: |
     プロキシサーバーのIPアドレス
     デフォルト: 255.255.255.255
@@ -179,7 +179,7 @@ connection:
   user_id: ユーザーID
   user_id_tooltip: |
     Blenderウェブサイトの認証用ユーザーID
-    デフォルト: Random UUID
+    デフォルト: ランダムなUUID
     形式: 8-64文字 (a-z, A-Z, 0-9, -)
   github_token: GitHubトークン
   github_token_tooltip: |
@@ -241,7 +241,7 @@ blender_builds:
   show_update_button: 更新ボタンを表示
   update_behavior_tooltip: |
     更新の動作を定義します
-    デフォルト: Patch
+    デフォルト: パッチ
   use_advanced_update_button: 詳細更新ボタンを使用
   use_advanced_update_button_tooltip: |
     各Blenderブランチの更新動作をカスタマイズするための詳細更新設定を有効にします
@@ -260,49 +260,49 @@ blender_builds:
     デフォルト: 有効
   update_stable_behavior_tooltip: |
     安定版ビルドの更新動作を定義します
-    デフォルト: Patch
+    デフォルト: パッチ
   show_daily_update_button: デイリー更新ボタンを表示
   show_daily_update_button_tooltip: |
     デイリービルドを素早く更新するための更新ボタンを表示します
     デフォルト: 有効
   update_daily_behavior_tooltip: |
     デイリービルドの更新動作を定義します
-    デフォルト: Patch
+    デフォルト: パッチ
   show_experimental_update_button: 実験的更新ボタンを表示
   show_experimental_update_button_tooltip: |
     実験的ビルドを素早く更新するための更新ボタンを表示します
     デフォルト: 有効
   update_experimental_behavior_tooltip: |
     実験的ビルドの更新動作を定義します
-    デフォルト: Patch
+    デフォルト: パッチ
   show_bfa_update_button: BFA更新ボタンを表示
   show_bfa_update_button_tooltip: |
     BFAビルドを素早く更新するための更新ボタンを表示します
     デフォルト: 有効
   update_bfa_behavior_tooltip: |
     BFAビルドの更新動作を定義します
-    デフォルト: Patch
+    デフォルト: パッチ
   show_upbge_stable_update_button: UPBGE安定版更新ボタンを表示
   show_upbge_stable_update_button_tooltip: |
     UPBGE安定版ビルドを素早く更新するための更新ボタンを表示します
     デフォルト: 有効
   update_upbge_stable_behavior_tooltip: |
     UPBGE安定版ビルドの更新動作を定義します
-    デフォルト: Minor
+    デフォルト: マイナー
   show_upbge_weekly_update_button: UPBGE週次更新ボタンを表示
   show_upbge_weekly_update_button_tooltip: |
     UPBGE週次ビルドを素早く更新するための更新ボタンを表示します
     デフォルト: 有効
   update_upbge_weekly_behavior_tooltip: |
     UPBGE週次ビルドの更新動作を定義します
-    デフォルト: Minor
+    デフォルト: マイナー
   mark_as_favorite: お気に入りに設定
   mark_as_favorite_tooltip: |
     タブをお気に入りに設定して素早くアクセスできるようにします
     デフォルト: 無効
   select_favorite_tab_tooltip: |
     お気に入りに設定するタブを選択します
-    デフォルト: Stable Releases
+    デフォルト: 安定版
   install_template: テンプレートをインストール
   install_template_tooltip: |
     ライブラリタブに新しく追加されたビルドにテンプレートをインストールします
@@ -317,7 +317,7 @@ blender_builds:
     prepend_pr_number: カスタム名にPR番号を付加する
     prepend_pr_number_tooltip: |
       取得されたPRビルドの先頭に、その番号が表示されるようになります。
-      "Label" -> "xxxxx: Label"
+      「名前」→「xxxxx: 名前」
       デフォルト: 有効
 
   launching_builds: ビルドの起動
@@ -342,11 +342,11 @@ blender_builds:
     デフォルト: 有効
   blender_startup_arguments_tooltip: |
     Blender起動時に渡す引数（Blender実行ファイルの後 例: [… <args>]）
-    デフォルト: None
+    デフォルト: なし
     例: --background
   bash_arguments_tooltip: |
     Blender起動時にbashに渡す命令（Blender実行ファイルの前 例: [<args> …]）
-    デフォルト: None
+    デフォルト: なし
     例: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
   bash_arguments: "Bash引数:"
   startup_arguments: "起動引数:"
