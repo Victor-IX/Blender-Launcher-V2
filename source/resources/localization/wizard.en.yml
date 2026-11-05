@@ -45,6 +45,8 @@ file_association:
     To reverse this after installation, there is a labeled panel in the Settings general tab. You will find a button to unregister the launcher there.
 
     Hover over this text to see which registry keys will be changed and for what reason.
+  macOS: |
+    This setup cannot register file associations on macOS.
   win_reg_key: |
     The Following keys will be changed:
     CREATE Software\Classes\blenderlauncherv2.blend\shell\open\command -- To expose the launcher as a software class
