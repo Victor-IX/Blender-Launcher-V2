@@ -45,6 +45,8 @@ file_association:
     インストール後に元に戻すには、設定の「全般」タブにあるパネルから登録を解除できます。
 
     このテキストにマウスをホバーすると、変更されるレジストリキーとその理由を確認できます。
+  macOS: |
+    このセットアップではmacOSのファイル関連付けを登録できません。
   win_reg_key: |
     以下のキーが変更されます:
     作成 Software\Classes\blenderlauncherv2.blend\shell\open\command -- ランチャーをソフトウェアクラスとして公開
