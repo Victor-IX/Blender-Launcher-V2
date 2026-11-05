@@ -101,6 +101,8 @@ def _new_version_available(
     current_version = current_build_info.semversion.replace(prerelease=None)
     current_branch = current_build_info.branch
 
+    # Dev builds carry the version of the next release, which would hide that release from stable updates
+    widgets = [widget for widget in widgets if not widget.build_info.is_bfa_dev]
     installed_hashes = {widget.build_info.build_hash for widget in widgets}
     installed_versions = {widget.build_info.semversion.replace(prerelease=None) for widget in widgets}
 
@@ -211,6 +213,10 @@ def _is_newer_build(download_info: BuildInfo, current_info: BuildInfo) -> bool:
 
 def is_major_version_update(current_build_info: BuildInfo, update_download) -> bool:
     """Check if the update is a major or minor version change."""
+
+    # Downloaded dev builds are versioned by date until installed, so their versions are not comparable
+    if current_build_info.is_bfa_dev or update_download.build_info.is_bfa_dev:
+        return False
 
     current_version = current_build_info.semversion.replace(prerelease=None)
     update_version = update_download.build_info.semversion.replace(prerelease=None)
