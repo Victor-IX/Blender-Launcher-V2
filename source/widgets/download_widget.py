@@ -213,6 +213,7 @@ class DownloadWidget(BaseBuildWidget):
             self.cancelButton.show()
             self.cancelButton.setEnabled(True)
             self.downloadButton.hide()
+            self.installedButton.hide()
             self.build_state_widget.setDownload()
         elif state == DownloadState.EXTRACTING:
             self.progressBar.show()
@@ -285,7 +286,7 @@ class DownloadWidget(BaseBuildWidget):
         self.item.setSelected(True)
         self.set_state(DownloadState.IDLE)
         self.cancelButton.hide()
-        self.downloadButton.show()
+        self._show_idle_button()
         self.cancel_task.emit(self.dl_task)
         self.build_state_widget.setDownload(False)
 
@@ -300,7 +301,7 @@ class DownloadWidget(BaseBuildWidget):
 
     def on_permission_error(self, temp_folder: str) -> None:
         self.set_state(DownloadState.IDLE)
-        self.downloadButton.show()
+        self._show_idle_button()
         if self.updating_widget is not None:
             self.updating_widget.launchButton.set_text(t("act.launch"))
             self.updating_widget.launchButton.setEnabled(True)
@@ -483,9 +484,21 @@ class DownloadWidget(BaseBuildWidget):
     def is_working(self):
         return self.state != DownloadState.IDLE
 
+    def _show_idle_button(self) -> None:
+        if self.installed is not None:
+            self.installedButton.show()
+        else:
+            self.downloadButton.show()
+
     def setInstalled(self, build_widget: LibraryWidget) -> None:
         if self.is_working():
             return
+
+        if self.installed is not None and self.installed is not build_widget:
+            try:
+                self.installed.destroyed.disconnect(self.uninstalled)
+            except (RuntimeError, TypeError):
+                pass
 
         build_widget.destroyed.connect(self.uninstalled)
         self.downloadButton.hide()
