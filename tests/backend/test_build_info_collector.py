@@ -32,6 +32,15 @@ def test_buildinfo_comparisons_and_equality():
     assert BuildInfo("", "1.0.0-daily", None, before, "") == BuildInfo("", "1.0.0", None, before, "")
 
 
+def test_branch_normalization():
+    date = datetime.datetime(2024, 12, 31, tzinfo=datetime.UTC)
+    assert BuildInfo("", "5.3.0", "", date, "Stable").branch == "stable"
+    assert BuildInfo("", "5.3.0", "", date, " DAILY ").branch == "daily"
+    assert BuildInfo("", "5.3.0", "", date, "UPBGE-Weekly").branch == "upbge-weekly"
+    # Unknown branches keep their case
+    assert BuildInfo("", "5.3.0", "", date, "PR12345").branch == "PR12345"
+
+
 def test_display_version_edge_cases():
     assert BuildInfo._display_version(Version(4, 4, 0)) == "4.4.0"
     assert BuildInfo._display_version(Version(4, 4, 0, prerelease="alpha")) == "4.4.0"

@@ -167,6 +167,10 @@ class BuildInfo:
     file_version = "1.5"
     # https://www.blender.org/download/lts/
     lts_versions = tuple(f"{v.major}.{v.minor}" for v in lts_blender_version())
+    # Branches the library tabs filter on; matching is case-sensitive, so these are normalized
+    known_branches = frozenset(
+        ("stable", "lts", "daily", "experimental", "patch", "bforartists", "upbge-stable", "upbge-weekly")
+    )
 
     # Build variables
     link: str
@@ -180,6 +184,9 @@ class BuildInfo:
     is_frozen: bool = False
 
     def __post_init__(self):
+        # Only normalize known branches: experimental branch names (e.g. "PR12345") are case-sensitive
+        if self.branch and (normalized := self.branch.strip().casefold()) in self.known_branches:
+            self.branch = normalized
         if self.branch == "stable" and self.subversion.startswith(self.lts_versions):
             self.branch = "lts"
 
