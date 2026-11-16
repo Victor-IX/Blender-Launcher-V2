@@ -1,5 +1,5 @@
 {
-    "api_file_version": "29.0",
+    "api_file_version": "30.0",
     "folders": {
         "2.48.0": {
             "assets": [
@@ -4142,6 +4142,24 @@
                     }
                 ],
                 [
+                    "https://download.blender.org/release/Blender4.5/blender-4.5.16-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "4.5.16",
+                                "build_hash": null,
+                                "commit_time": "2026-11-10T08:34:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ],
+                [
                     "https://download.blender.org/release/Blender4.5/blender-4.5.2-linux-x64.tar.xz",
                     {
                         "file_version": "1.5",
@@ -4286,7 +4304,7 @@
                     }
                 ]
             ],
-            "modified_date": "2026-10-22T08:09:00"
+            "modified_date": "2026-11-10T08:34:00"
         },
         "5.0.0": {
             "assets": [
@@ -4461,9 +4479,50 @@
                             }
                         ]
                     }
+                ],
+                [
+                    "https://download.blender.org/release/Blender5.2/blender-5.2.4-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "lts",
+                                "subversion": "5.2.4",
+                                "build_hash": null,
+                                "commit_time": "2026-11-10T08:36:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
                 ]
             ],
-            "modified_date": "2026-10-22T08:17:00"
+            "modified_date": "2026-11-10T08:38:00"
+        },
+        "5.3.0": {
+            "assets": [
+                [
+                    "https://download.blender.org/release/Blender5.3/blender-5.3.0-linux-x64.tar.xz",
+                    {
+                        "file_version": "1.5",
+                        "blinfo": [
+                            {
+                                "branch": "stable",
+                                "subversion": "5.3.0",
+                                "build_hash": null,
+                                "commit_time": "2026-11-10T09:00:00+00:00",
+                                "custom_name": "",
+                                "is_favorite": false,
+                                "custom_executable": null,
+                                "is_frozen": false
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "modified_date": "2026-11-10T09:05:00"
         }
     }
 }
