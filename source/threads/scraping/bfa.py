@@ -23,8 +23,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger()
 
-BFA_DOWNLOADS_URL = "https://downloads.bforartists.com/"
-BFA_DEVBUILDS_URL = "https://devbuilds.bforartists.com/"
+BFA_DOWNLOADS_URL = "https://downloads.bforartists.co/"
+BFA_DEVBUILDS_URL = "https://devbuilds.bforartists.co/"
 _BFA_MACOS_ARM_KEYWORDS = ("silicon", "arm64")
 _BFA_MACOS_INTEL_KEYWORDS = ("intel", "x86_64", "x64")
 
