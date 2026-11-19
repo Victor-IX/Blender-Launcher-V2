@@ -1,0 +1,164 @@
+success: Éxito
+info: Información
+setup: Configuración inicial
+warning: Advertencia
+error: Error
+
+err:
+  no_hash: "No se puede copiar el hash de la versión: el hash no está disponible para esta versión."
+
+  rename_branch: "No se puede renombrar la rama: el nombre de la rama no puede estar vacío."
+  no_base_config: No se puede determinar la ruta de la carpeta de configuración.
+  no_config_version: No se encontró ninguna carpeta de configuración para esta versión.
+  folder_invalid: |
+    ¡La carpeta seleccionada no es una carpeta válida
+    o no tiene permisos de escritura!
+  library_no_write: ¡La carpeta seleccionada no tiene permisos de escritura!
+  argparse: |
+    Se produjo un error al analizar los argumentos:
+    %{args}
+    %{err}
+
+  generic: |
+    Se ha producido un error: %{err}
+    Consulta los registros para más detalles.
+
+  cant_write: ¡La ubicación solicitada no tiene permisos de escritura!
+  download:
+    permission: "Error en la descarga: no hay permiso de escritura en '%{path}'. Cambia la carpeta de la biblioteca en la configuración."
+  damaged: ¡La versión %{build} está dañada!
+  port:
+    no_build_dir: No se encuentra el directorio de la nueva versión.
+    no_settings: No se encontró ninguna configuración portable que transferir.
+
+  stable:
+    no_releases: "No se obtuvo ninguna versión del servidor de la Blender Foundation. Consulta el registro para más detalles."
+    cloudflare_blocked: "blender.org está bloqueando temporalmente las solicitudes automáticas (desafío de Cloudflare).<br>No lo provoca el lanzador; vuelve a comprobarlo dentro de unos minutos."
+
+  no_resources: |
+    ¡No se pudieron cargar los recursos! El lanzador seguirá funcionando,
+    pero el estilo no se mostrará correctamente.
+
+  connection_failed: "Error: falló la conexión a las %{time}"
+
+updates:
+  download_before_update: |
+    ¡Para actualizar Blender Launcher,
+    completa todas las descargas activas!
+
+  new_version_available: "¡Nueva versión %{version} disponible!"
+
+  no_release_notes: No hay notas de la versión disponibles.
+
+  update_to_version: Actualizar a la versión %{version}
+
+  new_builds: ¡Hay nuevas versiones de Blender disponibles!
+
+popup:
+  dest: Elegir destino
+  select: Seleccionar carpeta
+  select_library: Seleccionar carpeta de la biblioteca
+  first_time_select_library: |
+    Elige dónde se guardarán
+    las versiones de Blender
+
+  blver_mismatch: |
+    ¡Se ha detectado un intento de lanzar una versión
+    distinta de Blender Launcher!
+    ¡Cierra la versión que se está ejecutando
+    para continuar con esta acción!
+    En ejecución: %{running}
+    Versión indicada: %{given}
+
+  tasks_in_progress: |
+    ¡Todavía hay tareas en curso!
+    %{tasks}
+    ¿Seguro que quieres salir?
+
+  apply_the_following: |
+    Reinicia Blender Launcher para
+    aplicar la siguiente configuración:
+    %{pending}
+
+  relative_path_found: |
+    La ruta seleccionada es relativa a la ruta del ejecutable.
+    ¿Quieres guardarla como relativa?
+    Es útil si la carpeta puede cambiar de sitio.
+
+  global_hotkeys_invalid: |
+    ¡No se ha reconocido la combinación de teclas global!
+    Prueba con otra combinación de teclas
+
+  quick_launch_tray: |
+    Añade una versión a Inicio Rápido desde el
+    menú contextual para lanzarla desde la bandeja
+
+  tray_notify: |
+    Blender Launcher se ha minimizado en la bandeja del sistema.
+    Desactiva "Minimizar a la bandeja" en la configuración para evitarlo.
+
+  ask_delete_or_trash: |
+    ¿Quieres eliminar las versiones seleccionadas
+    o enviarlas a la papelera?
+
+  ask_remove_from_drive:
+    one: |
+      ¿Seguro que quieres
+      eliminar esta versión?
+    many: |
+      ¿Seguro que quieres
+      eliminar %{count} versiones?
+
+  ask_send_to_trash:
+    one: |
+      ¿Seguro que quieres enviar
+      esta versión a la papelera?
+    many: |
+      ¿Seguro que quieres enviar
+      %{count} versiones a la papelera?
+
+  major_version_update: |
+    Al actualizar de %{current} a %{update} se usará un nuevo conjunto de preferencias de Blender
+
+    ¿Quieres quitar la versión anterior (%{current}) de tu biblioteca?
+
+  update_already_in_progress: |
+    Ya hay una versión actualizándose
+    a la versión %{version}.
+
+  update_portable_settings: |
+    Esta versión usa configuración portable.
+
+    ¿Qué quieres hacer con la carpeta de configuración portable?
+
+  portable_failure: |
+    No se pudo transferir la configuración portable:
+    %{error}
+
+    ¿Quieres continuar con la actualización o cancelarla?
+
+  mv_confirm: |
+    ¿Seguro que quieres mover
+    %{start}
+    a
+    %{end}?
+
+  mv_overwrite_confirm: |
+    ¡La configuración de usuario ya existe!
+    ¿Seguro que quieres mover
+    %{start}
+    a
+    %{end}?
+
+  purge:
+    success: ¡La carpeta temporal se ha vaciado correctamente!
+    error: No se pudo vaciar la carpeta temporal. Puede que algunos archivos estén en uso.
+
+  winget:
+    register:
+      success: ¡Registrado correctamente en WinGet!<br>Ya puedes actualizar con 'winget update VictorIX.BlenderLauncher'
+      error: No se pudo registrar en WinGet. Consulta los registros para más detalles.
+    unregister:
+      success: Se ha eliminado correctamente el registro en WinGet.
+      error: No se pudo eliminar el registro en WinGet. Consulta los registros para más detalles.
+updating_launcher: Actualizando Blender Launcher
