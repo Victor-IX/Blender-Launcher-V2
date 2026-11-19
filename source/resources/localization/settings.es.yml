@@ -1,0 +1,359 @@
+
+
+general:
+  label: General
+  app:
+    label: Aplicación
+    library_folder: "Carpeta de la biblioteca:"
+
+    language: Idioma
+    language_auto: Automático
+    language_tooltip: |
+      Selecciona el idioma de la interfaz de Blender Launcher.
+      "Automático" detecta el idioma del sistema.
+      Es necesario reiniciar para aplicar el cambio.
+      PREDETERMINADO: Automático
+
+    system_start: Iniciar con el sistema
+    system_start_tooltip: |
+      Inicia la aplicación al arrancar el sistema.
+      PREDETERMINADO: Desactivado
+    launch_minimized: Iniciar minimizado en la bandeja
+    launch_minimized_tooltip: |
+      Inicia la aplicación minimizada en la bandeja del sistema.
+      PREDETERMINADO: Desactivado
+    minimize: Minimizar a la bandeja
+    minimize_tooltip: |
+      Al cerrar la aplicación, se minimizará en la bandeja del sistema en lugar de cerrarse por completo
+      PREDETERMINADO: Desactivado
+    worker_count: Número de hilos de trabajo
+    worker_count_tooltip: |
+      Determina cuántas operaciones de E/S pueden hacerse a la vez, p. ej., descargar, eliminar o extraer
+      PREDETERMINADO: <núm. de CPU> * (3/4)
+    worker_count_warning: "(Advertencia: ¡valor superior a %{cnt} (núm. de CPU)!)"
+    prerelease: Usar versiones preliminares
+    prerelease_tooltip: |
+      Al buscar una nueva versión de Blender Launcher, incluye también las versiones preliminares.
+      ADVERTENCIA: ¡Es probable que estas versiones tengan errores! Se usan principalmente para probar nuevas funciones.
+      PREDETERMINADO: Desactivado
+
+    create_shortcut: Crear %{shortcut_type} de Blender Launcher
+    shortcut_type:
+      windows: acceso directo
+      linux: archivo .desktop
+      macos: acceso directo
+  migratel2u: Migrar la configuración local a la configuración de usuario
+
+  file_assoc:
+    label: Asociación de archivos
+
+    register: Registrar asociación de archivos
+    register_tooltip: |
+      Añade Blender Launcher a la lista de programas que pueden abrir archivos .blend
+
+    unregister: Anular asociación de archivos
+    unregister_tooltip: |
+      Quita Blender Launcher de la lista de programas que pueden abrir archivos .blend
+
+    launch_timer_duration: Duración del temporizador de lanzamiento (s)
+    launch_timer_duration_tooltip: |
+      Determina cuánto tiempo tienes, al abrir archivos .blend, para cambiar la versión que se va a lanzar
+      PREDETERMINADO: 3 s
+    launch_timer_suffix:
+      "-1": " (Desactivado)"
+      "0": "s (Inmediato)"
+      more: "s"
+
+  winget:
+    label: Integración con WinGet
+
+    info: Registra Blender Launcher en el gestor de paquetes WinGet para activar las actualizaciones automáticas mediante 'winget update'.
+    register: Registrar en WinGet
+    register_tooltip: |
+      Registra esta instalación en WinGet para poder actualizarla mediante 'winget update'
+    unregister: Anular registro en WinGet
+    unregister_tooltip: |
+      Elimina el registro de esta instalación en WinGet
+
+  advanced:
+    label: Avanzado
+
+    delete_actions:
+      "0": Enviar a la papelera
+      "1": Eliminar permanentemente
+    default_delete_action: Acción de eliminación predeterminada
+    default_delete_action_tooltip: |
+      Establece la acción disponible en el menú contextual para eliminar una versión
+      La otra opción está disponible manteniendo pulsada la tecla Shift
+      PREDETERMINADO: Enviar a la papelera
+
+    purge_temp: Vaciar carpeta temporal al iniciar
+    purge_temp_tooltip: |
+      Vacía automáticamente la carpeta temporal de descargas al iniciar Blender Launcher.
+      PREDETERMINADO: Activado
+
+    purge_temp_now: Vaciar carpeta temporal ahora
+    purge_temp_now_tooltip: |
+        Elimina inmediatamente todos los archivos de la carpeta temporal de descargas
+
+  logging:
+    label: Registro
+    log_level: Nivel de registro
+    log_level_tooltip: |
+      Nivel de detalle de los mensajes que se escriben en blender-launcher.log.
+      Los niveles más bajos incluyen más detalle (DEBUG es el más detallado).
+      Es necesario reiniciar para aplicar el cambio.
+      PREDETERMINADO: INFO
+    open_log_folder: Abrir carpeta de registros
+    open_log_folder_tooltip: |
+      Abre la carpeta que contiene blender-launcher.log en el gestor de archivos del sistema.
+
+
+
+appearance:
+  label: Apariencia
+  window_related: Ventana
+  use_system_titlebar: Usar la barra de título del sistema
+  use_system_titlebar_tooltip: |
+    Usa la barra de título del sistema en lugar de la personalizada
+    PREDETERMINADO: Desactivado
+  dpi_scale_factor: Factor de escala DPI
+  dpi_scale_factor_overridden: Factor de escala DPI (¡anulado por la variable de entorno QT_SCALE_FACTOR!)
+  dpi_scale_factor_tooltip: |
+    Cambia el escalado DPI de la aplicación
+    Escala la interfaz de usuario por un factor para que todo sea más legible y cómodo
+    PREDETERMINADO: 1.0
+  notifications:
+    label: Notificaciones
+    new_builds: Nueva versión disponible
+    new_builds_tooltip: |
+      Muestra una notificación cuando hay una nueva versión disponible
+      PREDETERMINADO: Activado
+    finished_downloading: Descarga finalizada
+    finished_downloading_tooltip: |
+      Muestra una notificación cuando finaliza una descarga
+      PREDETERMINADO: Activado
+    errors: Errores
+    errors_tooltip: |
+      Muestra una notificación cuando se produce un error
+      PREDETERMINADO: Activado
+  tabs:
+    label: Pestañas
+    default_tab: Pestaña predeterminada
+    default_tab_tooltip: |
+      La pestaña que se abre al iniciar la aplicación
+      PREDETERMINADO: Biblioteca
+    sync_library_and_downloads_pages: Sincronizar páginas de Biblioteca y Descargas
+    sync_library_and_downloads_pages_tooltip: |
+      Sincroniza la pestaña seleccionada de Biblioteca con la pestaña correspondiente de Descargas
+      PREDETERMINADO: Activado
+    default_library_page: Página predeterminada de Biblioteca
+    default_library_page_tooltip: |
+      La página que se abre por defecto en la pestaña Biblioteca
+      PREDETERMINADO: Estable
+    default_downloads_page: Página predeterminada de Descargas
+    default_downloads_page_tooltip: |
+      La página que se abre por defecto en la pestaña Descargas
+      PREDETERMINADO: Estable
+
+connection:
+  label: Conexión
+  proxy_settings: Proxy
+  use_custom_tls_certificates: Usar certificados TLS personalizados
+  use_custom_tls_certificates_tooltip: |
+    Usa certificados TLS personalizados para la conexión
+    PREDETERMINADO: Desactivado
+  proxy_type_tooltip: |
+    El tipo de proxy que se usará para la conexión
+    PREDETERMINADO: None
+  proxy_host_tooltip: |
+    La dirección IP del servidor proxy
+    PREDETERMINADO: 255.255.255.255
+  proxy_port_tooltip: |
+    El número de puerto del servidor proxy
+    PREDETERMINADO: 9999
+  proxy_user_tooltip: El nombre de usuario para autenticarse en el servidor proxy
+  proxy_password_tooltip: La contraseña para autenticarse en el servidor proxy
+  authentication_settings: Autenticación de la conexión
+  user_id: ID de usuario
+  user_id_tooltip: |
+    El ID de usuario para autenticarse en el sitio web de Blender
+    PREDETERMINADO: UUID aleatorio
+    FORMATO: de 8 a 64 caracteres (a-z, A-Z, 0-9, -)
+  github_token: Token de GitHub
+  github_token_tooltip: |
+    Opcional: token de acceso personal de GitHub para evitar el límite de solicitudes
+    Útil si haces muchas solicitudes a la API de GitHub
+    Déjalo vacío si no lo necesitas
+  github_token_info_button_tooltip: Pulsa para ver la documentación sobre el token de GitHub
+  proxy_type: Tipo
+  proxy_ip: IP
+  proxy_host: Host
+  proxy_port: Puerto
+  proxy_user: Usuario del proxy
+  proxy_password: Contraseña
+
+  keyring_unavailable_title: Llavero no disponible
+  keyring_unavailable_message: |
+    No se pudo guardar el token de GitHub en el llavero seguro del sistema.
+
+    El token se ha guardado en tu archivo de configuración.
+    Esto es menos seguro que guardarlo en el llavero.
+
+    Plantéate instalar la compatibilidad con llaveros en tu sistema.
+
+blender_builds:
+  label: Versiones de Blender
+  visibility_and_downloading: Visibilidad y descarga
+  checking_for_builds: Búsqueda de versiones
+  minimum_stable_blender_version_tooltip: |
+    Versión estable mínima de Blender que se buscará
+    PREDETERMINADO: 3.2
+  check_automatically: Comprobar automáticamente
+  check_automatically_tooltip: |
+    Busca nuevas versiones de Blender automáticamente
+    PREDETERMINADO: Desactivado
+  new_builds_check_frequency_tooltip: |
+    Tiempo en horas entre cada búsqueda de nuevas versiones de Blender
+    PREDETERMINADO: 12 h
+    MÍNIMO: 6 h
+  interval_prefix: "Intervalo: "
+  interval_suffix: h
+  on_startup: Al iniciar
+  on_startup_tooltip: |
+    Busca nuevas versiones de Blender al iniciar Blender Launcher
+    PREDETERMINADO: Activado
+  show_daily_archive_builds: Mostrar versiones diarias archivadas
+  show_daily_archive_builds_tooltip: |
+    Muestra las versiones diarias archivadas
+    PREDETERMINADO: Desactivado
+  show_experimental_archive_builds: Mostrar versiones experimentales archivadas
+  show_experimental_archive_builds_tooltip: |
+    Muestra las versiones experimentales archivadas
+    PREDETERMINADO: Desactivado
+  show_patch_archive_builds: Mostrar versiones de parches archivadas
+  show_patch_archive_builds_tooltip: |
+    Muestra las versiones de parches archivadas
+    PREDETERMINADO: Desactivado
+  minimum_stable_build_to_scrape: Versión estable mínima que se buscará
+  downloading_and_saving_builds: Descarga y almacenamiento de versiones
+  show_update_button: Mostrar botón de actualización
+  update_behavior_tooltip: |
+    Define el comportamiento de actualización
+    PREDETERMINADO: Patch
+  use_advanced_update_button: Usar botón de actualización avanzado
+  use_advanced_update_button_tooltip: |
+    Activa la configuración de actualización avanzada para personalizar el comportamiento de actualización de cada rama de Blender
+    PREDETERMINADO: Desactivado
+  show_update_button_tooltip_normal: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones de Blender
+    PREDETERMINADO: Activado
+  show_update_button_tooltip_disabled: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones de Blender
+    Esta opción está desactivada porque el botón de actualización avanzado está activado
+    Desactiva 'Usar botón de actualización avanzado' para usar esta opción
+    PREDETERMINADO: Activado
+  show_stable_update_button: Mostrar botón de actualización de versiones estables
+  show_stable_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones estables
+    PREDETERMINADO: Activado
+  update_stable_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones estables
+    PREDETERMINADO: Patch
+  show_daily_update_button: Mostrar botón de actualización de versiones diarias
+  show_daily_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones diarias
+    PREDETERMINADO: Activado
+  update_daily_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones diarias
+    PREDETERMINADO: Patch
+  show_experimental_update_button: Mostrar botón de actualización de versiones experimentales
+  show_experimental_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones experimentales
+    PREDETERMINADO: Activado
+  update_experimental_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones experimentales
+    PREDETERMINADO: Patch
+  show_bfa_update_button: Mostrar botón de actualización de BFA
+  show_bfa_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones de BFA
+    PREDETERMINADO: Activado
+  update_bfa_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones de BFA
+    PREDETERMINADO: Patch
+  show_upbge_stable_update_button: Mostrar botón de actualización de UPBGE estable
+  show_upbge_stable_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones estables de UPBGE
+    PREDETERMINADO: Activado
+  update_upbge_stable_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones estables de UPBGE
+    PREDETERMINADO: Minor
+  show_upbge_weekly_update_button: Mostrar botón de actualización de UPBGE semanal
+  show_upbge_weekly_update_button_tooltip: |
+    Muestra el botón de actualización para actualizar rápidamente las versiones semanales de UPBGE
+    PREDETERMINADO: Activado
+  update_upbge_weekly_behavior_tooltip: |
+    Define el comportamiento de actualización de las versiones semanales de UPBGE
+    PREDETERMINADO: Minor
+  mark_as_favorite: Marcar como favorita
+  mark_as_favorite_tooltip: |
+    Marca una pestaña como favorita para acceder a ella rápidamente
+    PREDETERMINADO: Desactivado
+  select_favorite_tab_tooltip: |
+    Selecciona la pestaña que quieres marcar como favorita
+    PREDETERMINADO: Estable
+  install_template: Instalar plantilla
+  install_template_tooltip: |
+    Instala una plantilla en las versiones recién añadidas a la pestaña Biblioteca
+    PREDETERMINADO: Desactivado
+
+  pr_custom_names:
+    title: Nombres personalizados de PR
+    fetch_during_scrape: Obtener los nombres de los PR durante la búsqueda
+    fetch_during_scrape_tooltip: |
+      Los nombres de los PR se obtendrán de projects.blender.org/blender/blender/pulls/.
+      PREDETERMINADO: Desactivado
+    prepend_pr_number: Anteponer el número del PR al nombre personalizado
+    prepend_pr_number_tooltip: |
+      Las versiones de PR obtenidas llevarán su número delante.
+      "Etiqueta" -> "xxxxx: Etiqueta"
+      PREDETERMINADO: Activado
+
+
+  launching_builds: Lanzamiento de versiones
+  on_blender_launch_action: Al lanzar Blender
+  on_blender_launch_action_tooltip: |
+    Acción que se realizará en la ventana de Blender Launcher cuando se inicie una instancia de Blender.
+    PREDETERMINADO: No hacer nada
+  on_blender_launch_actions:
+    "0": No hacer nada
+    "1": Minimizar
+    "2": Cerrar
+  quick_launch_global_shortcut: Atajo global de Inicio Rápido
+  quick_launch_global_shortcut_tooltip: |
+    Activa un atajo global para lanzar Blender rápidamente
+    PREDETERMINADO: Activado
+  quick_launch_key_seq_tooltip: |
+    Atajo global para lanzar Blender rápidamente
+    PREDETERMINADO: ctrl + f11
+  hide_console_on_startup: Ocultar la consola al iniciar
+  hide_console_on_startup_tooltip: |
+    Oculta la ventana de la consola al lanzar Blender
+    PREDETERMINADO: Activado
+  blender_startup_arguments_tooltip: |
+    Argumentos que se pasarán al lanzar Blender (después del ejecutable de Blender, es decir, [… <args>])
+    PREDETERMINADO: Ninguno
+    Ejemplo: --background
+  bash_arguments_tooltip: |
+    Instrucciones que se pasarán a bash al lanzar Blender (antes del ejecutable de Blender, es decir, [<args> …])
+    PREDETERMINADO: Ninguno
+    Ejemplo: env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia nohup
+  bash_arguments: "Argumentos de Bash:"
+  use_nohup: "Registrar la salida de Bash con nohup"
+  use_nohup_tooltip: |
+    Antepone el comando "nohup" a tus argumentos de Bash
+    PREDETERMINADO: Desactivado
+    Ejemplo: si tu cadena de argumentos de Bash es "konsole --hold --separate -e" y esta opción está activada, el comando se lanzará como "nohup konsole --hold --separate -e". Ten en cuenta que nohup guarda toda la salida en nohup.out, que normalmente se encuentra en el directorio principal de ${HOME} (~/nohup.out). Cada vez que se ejecuta nohup, el archivo no se sobrescribe, sino que se le añade la salida de bash de cada instancia de nohup, así que vigila el tamaño del archivo.
+  startup_arguments: "Argumentos de inicio:"
+
+title: Configuración

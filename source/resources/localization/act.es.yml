@@ -17,14 +17,38 @@ ok: Ok
 accept: Aceptar
 cancel: Cancelar
 quit: Salir
-prev: Anterior
+hide: Ocultar
+show: Mostrar
 next: Siguiente
-back: Atras
+prev: Anterior
+back: Atrás
 cont: Continuar
 finish: Finalizar
 "yes": "Sí"
 "no": "No"
+retry: Reintentar
+update: Actualizar
+later: Más tarde
 open_settings: Abrir configuración
+
+update_library: Actualizar Blender a la versión más reciente
+restart_now: Reiniciar ahora
+trash: Enviar a la papelera
+remove: Quitar
+delete: Eliminar
+dont_show_again: No volver a mostrar
+migrate: Migrar
+overwrite: Sobrescribir
+general_folder: Abrir carpeta de configuración general
+keep_both_versions: Conservar ambas versiones
+move_to_new: Mover a la nueva versión
+remove_settings: Quitar configuración
+
+reload: Recargar
+reload_tooltip: Recargar las versiones personalizadas desde el disco
+search: Buscar
+after: Después de
+before: Antes de
 
 # left icon
 launch: Lanzar
@@ -33,14 +57,24 @@ installed: Instalado
 lprev: " Anterior"
 updating: Actualizando
 deleting: Eliminando
+init: Inicializar
 
 prog:
   downloading: Descargando
   extracting: Extrayendo
   copying: Copiando datos...
+  progress: "%{title}: %{progress} de %{total} MB"
+
+  reading_local: Leyendo versiones locales
+  checking: Buscando nuevas versiones
+  last_check: Última comprobación a las %{time}
 
 # actions
 a:
+  settings_win: Mostrar ventana de configuración
+  docs: Abrir documentación
+
+
   prev: Abrir archivo anterior
   prev_tooltip: |
     Esta acción abre el último archivo utilizado en esta versión.
@@ -79,6 +113,8 @@ a:
   release_notes: Mostrar notas de la versión
   release_notes_patch: Mostrar detalles del parche
   release_notes_pr: Mostrar detalles del PR
+  fetch_pr_name: Obtener nombre del PR
+
   folder_build: Mostrar carpetas de la versión
   config: Mostrar carpeta de configuración
   config_portable: Mostrar carpeta de configuración portable
@@ -86,3 +122,10 @@ a:
   edit: Editar versión...
   delete: Eliminar de la unidad
   trash: Enviar a la papelera
+
+  check: Comprobar
+  check_tooltip: |
+      Buscar nuevas versiones en línea
+      (Mantén SHIFT para forzar la comprobación de las versiones estables y automatizadas)
+
+  version_tooltip: La versión de Blender Launcher que se está ejecutando. Pulsa para ver el registro de cambios.

@@ -1,0 +1,29 @@
+stable_tooltip: Versiones listas para producción.
+daily_tooltip: Versiones generadas cada día. Tienen las últimas novedades y correcciones de errores, pero pueden ser inestables.
+experimental_tooltip: Incluyen nuevas funciones que podrían llegar a las versiones oficiales de Blender. Pueden ser muy inestables.
+bforartists_tooltip: Un fork popular de Blender que busca mejorar la interfaz.
+upbge_tooltip: Versiones estables de UPBGE, un fork de Blender para el desarrollo de videojuegos.
+upbge_weekly_tooltip: Versiones semanales de UPBGE con las últimas novedades.
+
+
+visibility_tooltip: |
+  Muestra u oculta este repositorio en la vista del lanzador.
+  Si se desactiva, también se dejará de consultar automáticamente,
+  salvo que otro repositorio comparta el mismo comportamiento de consulta.
+
+download_tooltip: |
+  Activa o desactiva la consulta de este repositorio.
+  Si fuerzas la comprobación manteniendo SHIFT al pulsar el botón "Comprobar",
+  se descargarán todas las categorías visibles, sea cual sea su configuración de consulta.
+
+no_builds: ¡No se encontraron versiones de este tipo!
+
+upload_time: Fecha de subida
+commit_time: Fecha del commit
+
+no_new_builds: No hay nuevas versiones disponibles
+nothing: Todavía no hay nada que mostrar
+version: Versión
+branch: Rama
+show_build_hash_tooltip: Pulsa para mostrar el hash de la versión
+show_datetime_tooltip: Pulsa para mostrar la fecha y la hora

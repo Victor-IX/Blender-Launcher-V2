@@ -1,0 +1,30 @@
+status:
+  reading: Leyendo versiones...
+  found: Se encontraron %{count} versiones
+  header: "Versión detectada en la cabecera: %{version}"
+
+
+help: |
+  La consulta de versión admite ^ y - para buscar versiones concretas según su antigüedad.
+  Ejemplos de consultas de versión válidas:
+
+any_v_placeholder: Cualquiera (*.*.*)
+
+chrono:
+  latest: Más reciente (^)
+  any: Cualquiera (*)
+  oldest: Más antigua (-)
+
+version: "Selección de versión: "
+branch: "Rama: "
+bhash: "Hash de la versión: "
+date: "Selección de fecha: "
+
+save_current: Guardar la búsqueda actual para los archivos .blend creados en %{short_v}
+
+timer: Lanzando en %{time} s
+errors:
+  invalid_query: "Consulta de búsqueda de versión no válida: %{query}"
+  invalid_position: '%{value} debe ser uno de ["^", "*", "-"]'
+  hash_temporal: build_hash no se puede buscar por antigüedad
+  branch_temporal: branch no se puede buscar por antigüedad

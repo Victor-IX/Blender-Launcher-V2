@@ -1,0 +1,15 @@
+title: Creador de entradas de versión
+
+text: "Crear nueva versión para: %{path}"
+
+exe: "Nombre del ejecutable: "
+
+autodetect: Detectar información automáticamente
+
+svn: "Número de versión: "
+hash: "Hash de la versión: "
+ctime: "Fecha del commit: "
+branch: "Nombre de la rama: "
+custom: "Nombre personalizado: "
+fav: "Favorito: "
+exe_placeholder: blender, bforartists, etc.
