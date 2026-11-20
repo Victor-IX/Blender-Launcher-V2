@@ -46,7 +46,8 @@ jobs:
           cd ../..
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          draft: true
           files: ./Blender_Launcher_${{  github.ref_name }}_macos_arm64.zip

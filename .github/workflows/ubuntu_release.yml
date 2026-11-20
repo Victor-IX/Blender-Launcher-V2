@@ -38,7 +38,8 @@ jobs:
           cd ./dist/release/
           zip Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip "./Blender Launcher"
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          draft: true
           files: ./dist/release/Blender_Launcher_${{ env.RELEASE_VERSION }}_Ubuntu_x64.zip
