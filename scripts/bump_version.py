@@ -68,6 +68,16 @@ def update_version_in_doc(file_path, new_version, old_version):
     with open(file_path, "w") as file:
         file.write(content)
 
+def update_uv_lockfile():
+    # Missing the sync of the uv lockfile causes automated release builds to fail
+    # This does not update dependencies, just what BLV2's version is.
+    import shutil
+    from subprocess import call
+
+    if (uvpath := shutil.which("uv")) is not None:
+        retcode = call([uvpath, "lock"])
+        if retcode != 0:
+            print(f"WARNING: UV update returned non-zero code {retcode}!")
 
 def update_program_version(new_version):
     old_version_str = old_version()
@@ -76,6 +86,7 @@ def update_program_version(new_version):
     update_version_in_pyproject_toml(pyproject_toml_path, new_version)
     update_version_in_version_txt(version_txt_path, new_version)
     update_version_in_doc(doc_path, new_version, old_version_str)
+    update_uv_lockfile()
 
     print(f"Updated version to {new_version} in all files.")
 
