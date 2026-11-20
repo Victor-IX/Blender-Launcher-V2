@@ -22,6 +22,8 @@ VALID_ARCHIVE_TYPES = [
     "application/x-tar",
     "application/x-gzip",
     "application/x-xz",
+    # zep: I don't think this one is correct/standard, but Bforartists identify their xz files as x-compressed.
+    "application/x-compressed",
     "application/gzip",
     "application/x-dmg",
 ]
@@ -73,7 +75,7 @@ class DownloadTask(Task):
         dist = temp_folder / filename
         # Download the file
         try:
-            temp_folder.mkdir(exist_ok=True)
+            temp_folder.mkdir(parents=True, exist_ok=True)
             with self.manager.request("GET", self.link, preload_content=False, timeout=10) as r:
                 logger.debug(f"Response headers: {dict(r.headers)}")
 
