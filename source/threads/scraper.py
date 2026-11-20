@@ -123,7 +123,14 @@ class Scraper(QThread):
     def get_download_links(self):
         ss = self.scrapers()
 
-        for build in chain(*(s.scrape() for s in ss)):
+        for scraper in ss:
+            try:
+                self.scrape_single(scraper)
+            except Exception:
+                logger.error("Error when scraping with " + str(scraper) + "!", exc_info=True)
+
+    def scrape_single(self, s: BuildScraper):
+        for build in s.scrape():
             # Filter out builds that don't match the current platform for Windows
             if self.platform.lower() == "windows":
                 if self.architecture == "arm64" and "arm64" in build.link:
